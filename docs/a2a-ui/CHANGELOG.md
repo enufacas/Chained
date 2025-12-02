@@ -6,6 +6,99 @@ Format: `## [Date] PR #XXX - Title`
 
 ---
 
+## [2025-12-02] PR #TBD - Enhanced Frontend Error Logging and Monitoring
+
+### Problem
+After memory fix deployment, need better visibility into frontend errors:
+1. **Client-side errors invisible**: React errors, API failures not in GCP logs
+2. **Hard to debug**: Missing artifacts and progress issues difficult to trace
+3. **No retry logic**: Single API failures cause step failures
+4. **Limited monitoring**: Can't proactively detect issues
+
+### Analysis & Findings
+**Memory Fix Status**: ✅ Successfully deployed
+- Increased from 512Mi to 1Gi on 2025-12-02 01:35 UTC
+- Last OOM error: 2025-12-02 01:09:27 (before deployment)
+- Current status: No errors in logs after 1Gi deployment
+- Service revisions 00078, 00079 running with 1Gi
+
+**Root Cause of "1/8 steps showing" issue:**
+- OOM crashes **before fix** caused service restarts
+- In-memory pipeline data lost on restart
+- Frontend polling got empty responses
+- After reload: Backend empty + localStorage has old artifacts = inconsistent state
+
+### Implemented Solutions
+1. **Error Boundary Component** (`src/components/ErrorBoundary.tsx`)
+   - Catches React component errors
+   - Logs to GCP Cloud Run
+   - Displays user-friendly fallback UI
+   - Provides recovery options
+
+2. **Frontend Error Logging API** (`src/app/api/debug/log-error/route.ts`)
+   - Accepts error logs from frontend
+   - Persistent logging to GCP
+   - Supports: react-error, api-error, storage-error, generic
+
+3. **Structured Error Utilities** (`src/lib/error-logging.ts`)
+   - `logError()`, `logApiError()`, `logStorageError()`
+   - `setupGlobalErrorHandlers()` for unhandled errors
+   - Automatic backend error reporting
+
+4. **Pipeline API Enhancements** (`src/app/api/pipeline/route.ts`)
+   - Retry logic: 2 retries with exponential backoff
+   - 60-second timeout for agent calls
+   - Retry on 5xx errors and 429 (rate limiting)
+   - Detailed attempt tracking in logs
+
+5. **Storage Error Logging** (`src/lib/storage.ts`)
+   - Artifact save failures logged to backend
+   - Session save failures logged to backend
+   - Includes context for debugging
+
+### Technical Details
+**Files Modified:**
+- `src/components/ErrorBoundary.tsx` - NEW: Error boundary component
+- `src/app/api/debug/log-error/route.ts` - NEW: Error logging endpoint
+- `src/lib/error-logging.ts` - NEW: Error logging utilities
+- `src/app/api/pipeline/route.ts` - Enhanced with retry logic and timeouts
+- `src/app/page.tsx` - Integrated ErrorBoundary and global error handlers
+- `src/components/PipelineOutcomes.tsx` - Enhanced API error logging
+- `src/lib/storage.ts` - Enhanced storage error logging
+
+**Build Status:**
+- ✅ Linting: No ESLint warnings or errors
+- ✅ Build: Compiled successfully
+
+**Memory Verification:**
+```bash
+gcloud run services describe chained-ag-ui-frontend
+# memory: 1Gi ✅
+
+gcloud logging read 'severity>=ERROR AND timestamp>="2025-12-02T01:35:00Z"'
+# (empty - no errors) ✅
+```
+
+### Benefits
+1. **Better debugging**: All frontend errors visible in GCP logs
+2. **Proactive monitoring**: Can detect issues before users report
+3. **Improved resilience**: Automatic retry on transient failures
+4. **Enhanced UX**: Graceful error handling with recovery options
+
+### Monitoring
+Watch for these log patterns:
+- `Frontend Error Logger` - Frontend errors sent to backend
+- `React component error` - Component crashes
+- `API call error` - API failures with retry attempts
+- `Storage operation error` - localStorage issues
+
+### Related Documentation
+- ERROR_LOGGING_IMPROVEMENTS.md - Detailed implementation guide
+- MEMORY_OOM_FIX.md - Memory fix documentation
+- README.md - A2A UI architecture
+
+---
+
 ## [2025-12-02] PR #TBD - Fix Memory Exhaustion and Artifact Display Issues
 
 ### Problem

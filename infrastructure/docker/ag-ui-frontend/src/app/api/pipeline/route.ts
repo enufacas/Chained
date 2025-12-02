@@ -101,7 +101,7 @@ interface A2ATask {
   referenceTaskIds: string[];
 }
 
-// Call an A2A agent
+// Call an A2A agent with retry logic
 async function callA2AAgent(
   agentUrl: string, 
   message: string, 
@@ -113,47 +113,84 @@ async function callA2AAgent(
     return null;
   }
   
-  try {
-    const request: A2ASendMessageRequest = {
-      message: {
-        role: "user",
-        parts: [{ text: message }],
-      },
-      contextId: `pipeline-${Date.now()}-${crypto.randomUUID().substring(0, 8)}`,
-      metadata,
-      referenceTaskIds,
-    };
-    
-    const response = await fetch(`${agentUrl}/a2a/tasks`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(request),
-    });
-    
-    if (!response.ok) {
-      logWithTimestamp("ERROR", `Agent call failed: ${response.status}`, {
+  const maxRetries = 2;
+  const retryDelay = 1000; // 1 second
+  
+  for (let attempt = 1; attempt <= maxRetries + 1; attempt++) {
+    try {
+      const request: A2ASendMessageRequest = {
+        message: {
+          role: "user",
+          parts: [{ text: message }],
+        },
+        contextId: `pipeline-${Date.now()}-${crypto.randomUUID().substring(0, 8)}`,
+        metadata,
+        referenceTaskIds,
+      };
+      
+      logWithTimestamp("DEBUG", `Agent call attempt ${attempt}/${maxRetries + 1}`, {
         url: agentUrl,
-        status: response.status,
+        messageLength: message.length,
       });
+      
+      const response = await fetch(`${agentUrl}/a2a/tasks`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(request),
+        signal: AbortSignal.timeout(60000), // 60 second timeout
+      });
+      
+      if (!response.ok) {
+        const errorText = await response.text().catch(() => "Unknown error");
+        logWithTimestamp("ERROR", `Agent call failed with HTTP ${response.status}`, {
+          url: agentUrl,
+          status: response.status,
+          statusText: response.statusText,
+          attempt,
+          errorText: errorText.substring(0, 200),
+        });
+        
+        // Retry on 5xx errors or 429 (rate limiting)
+        if (attempt <= maxRetries && (response.status >= 500 || response.status === 429)) {
+          logWithTimestamp("WARN", `Retrying after ${retryDelay}ms (attempt ${attempt}/${maxRetries})`);
+          await new Promise(resolve => setTimeout(resolve, retryDelay * attempt));
+          continue;
+        }
+        
+        return null;
+      }
+      
+      const task = await response.json() as A2ATask;
+      logWithTimestamp("INFO", "Agent call successful", {
+        taskId: task.id,
+        state: task.status.state,
+        artifactsCount: task.artifacts?.length || 0,
+        attempt,
+      });
+      
+      return task;
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      logWithTimestamp("ERROR", `Agent call error on attempt ${attempt}`, {
+        url: agentUrl,
+        error: errorMessage,
+        errorType: error instanceof Error ? error.name : typeof error,
+      });
+      
+      // Retry on network errors
+      if (attempt <= maxRetries) {
+        logWithTimestamp("WARN", `Retrying after ${retryDelay}ms due to error (attempt ${attempt}/${maxRetries})`);
+        await new Promise(resolve => setTimeout(resolve, retryDelay * attempt));
+        continue;
+      }
+      
       return null;
     }
-    
-    const task = await response.json() as A2ATask;
-    logWithTimestamp("INFO", "Agent call successful", {
-      taskId: task.id,
-      state: task.status.state,
-    });
-    
-    return task;
-  } catch (error) {
-    logWithTimestamp("ERROR", "Agent call error", {
-      url: agentUrl,
-      error: error instanceof Error ? error.message : String(error),
-    });
-    return null;
   }
+  
+  return null;
 }
 
 // Pipeline states

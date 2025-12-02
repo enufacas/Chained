@@ -32,6 +32,8 @@ import RecipeBuilder from "@/components/RecipeBuilder";
 import ArtifactPreviewOverlay from "@/components/ArtifactPreviewOverlay";
 import ArtifactStream from "@/components/ArtifactStream";
 import { saveArtifact, saveSession, getStoredSessions, StoredArtifact } from "@/lib/storage";
+import ErrorBoundary from "@/components/ErrorBoundary";
+import { setupGlobalErrorHandlers } from "@/lib/error-logging";
 
 // =============================================================================
 // Types (Local types not shared across components)
@@ -2199,13 +2201,20 @@ export default function Home() {
     timestamp: new Date().toISOString(),
   });
 
+  // Setup global error handlers on mount
+  useEffect(() => {
+    setupGlobalErrorHandlers();
+  }, []);
+
   return (
-    <CopilotKit runtimeUrl="/api/copilotkit">
-      <MainContent
-        agents={agents}
-        apiStatus={apiStatus}
-        onApiStatusChange={setApiStatus}
-      />
-    </CopilotKit>
+    <ErrorBoundary>
+      <CopilotKit runtimeUrl="/api/copilotkit">
+        <MainContent
+          agents={agents}
+          apiStatus={apiStatus}
+          onApiStatusChange={setApiStatus}
+        />
+      </CopilotKit>
+    </ErrorBoundary>
   );
 }
