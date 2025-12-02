@@ -1,0 +1,296 @@
+#!/usr/bin/env python3
+"""
+Generate and update CHANGELOG.md from git commit history.
+
+This script:
+1. Parses git commits with conventional commit prefixes (feat, fix, chore, etc.)
+2. Categorizes changes by type
+3. Differentiates between user-prompted and bot-only changes
+4. Excludes auto-churn commits (data syncs, automated updates)
+5. Links to PRs when available
+6. Maintains chronological order by date
+"""
+
+import subprocess
+import re
+import sys
+from datetime import datetime
+from collections import defaultdict
+from typing import List, Dict, Tuple, Optional
+import argparse
+
+
+# Commit types and their display names
+COMMIT_TYPES = {
+    'feat': '✨ Features',
+    'fix': '🐛 Bug Fixes',
+    'docs': '📚 Documentation',
+    'chore': '🧹 Chores',
+    'refactor': '♻️ Refactors',
+    'test': '✅ Tests',
+    'perf': '⚡ Performance',
+    'ci': '👷 CI/CD',
+    'build': '🔨 Build',
+    'style': '💎 Style',
+    'revert': '⏪ Reverts',
+}
+
+# Patterns to identify auto-churn commits that should be excluded
+AUTO_CHURN_PATTERNS = [
+    r'^🔄\s+(AgentOps|data)\s+sync',
+    r'^🧠\s+Daily\s+Learning\s+Reflection',
+    r'^🏗️\s+Update\s+architecture\s+evolution\s+tracking',
+    r'^Update\s+AI\s+ideas\s+history',
+    r'^\[auto\]',
+    r'^chore:\s+update\s+reviewer\s+dashboard',
+    r'^Auto-merge',
+]
+
+# Actors that indicate user-initiated vs bot-only
+USER_ACTORS = ['enufacas']  # Add more user names as needed
+BOT_ACTORS = ['github-actions[bot]', 'copilot-swe-agent[bot]']
+
+
+class Commit:
+    """Represents a git commit with parsed metadata."""
+    
+    def __init__(self, sha: str, subject: str, author_name: str, author_email: str, date: str):
+        self.sha = sha
+        self.subject = subject
+        self.author_name = author_name
+        self.author_email = author_email
+        self.date = datetime.fromisoformat(date.replace('+0000', '+00:00').replace(' ', 'T', 1))
+        self.pr_number = self._extract_pr_number()
+        self.commit_type = self._extract_commit_type()
+        self.is_user_initiated = self._determine_user_initiated()
+        
+    def _extract_pr_number(self) -> Optional[int]:
+        """Extract PR number from commit subject like (#1234)."""
+        match = re.search(r'\(#(\d+)\)', self.subject)
+        return int(match.group(1)) if match else None
+    
+    def _extract_commit_type(self) -> Optional[str]:
+        """Extract commit type from conventional commit prefix."""
+        match = re.match(r'^(feat|fix|docs|chore|refactor|test|perf|ci|build|style|revert):', self.subject)
+        return match.group(1) if match else None
+    
+    def _determine_user_initiated(self) -> bool:
+        """Determine if this was user-initiated or bot-only."""
+        # Check if author is a known user
+        if any(user in self.author_email for user in USER_ACTORS):
+            return True
+        
+        # Check if it's a PR merge with Copilot author (user prompted through issue)
+        if self.pr_number and 'Copilot' in self.author_email and 'copilot-swe-agent' not in self.author_email:
+            # PRs merged by main Copilot account are usually user-initiated
+            return True
+        
+        return False
+    
+    def should_exclude(self) -> bool:
+        """Check if this commit should be excluded from changelog."""
+        # Check auto-churn patterns
+        for pattern in AUTO_CHURN_PATTERNS:
+            if re.search(pattern, self.subject, re.IGNORECASE):
+                return True
+        
+        # Exclude "Initial plan" commits
+        if self.subject.strip() == 'Initial plan':
+            return True
+        
+        return False
+    
+    def get_clean_subject(self) -> str:
+        """Get subject without PR number and prefix."""
+        # Remove PR number
+        subject = re.sub(r'\s*\(#\d+\)', '', self.subject)
+        
+        # Remove commit type prefix if present
+        if self.commit_type:
+            subject = re.sub(rf'^{self.commit_type}:\s*', '', subject)
+        
+        return subject.strip()
+    
+    def get_actor_badge(self) -> str:
+        """Get a badge indicating the actor type."""
+        if self.is_user_initiated:
+            return '👤'
+        return '🤖'
+
+
+def get_git_commits(since_date: Optional[str] = None) -> List[Commit]:
+    """Fetch commits from git history."""
+    cmd = ['git', 'log', '--all', '--format=%H|%s|%an|%ae|%ad', '--date=iso']
+    
+    if since_date:
+        cmd.extend(['--since', since_date])
+    
+    try:
+        result = subprocess.run(cmd, capture_output=True, text=True, check=True)
+        commits = []
+        
+        for line in result.stdout.strip().split('\n'):
+            if not line:
+                continue
+            
+            parts = line.split('|')
+            if len(parts) >= 5:
+                sha, subject, author_name, author_email, date = parts[:5]
+                commit = Commit(sha, subject, author_name, author_email, date)
+                
+                # Only include commits with conventional commit types
+                if commit.commit_type and not commit.should_exclude():
+                    commits.append(commit)
+        
+        return commits
+    
+    except subprocess.CalledProcessError as e:
+        print(f"Error running git command: {e}", file=sys.stderr)
+        return []
+
+
+def group_commits_by_date_and_type(commits: List[Commit]) -> Dict[str, Dict[str, List[Commit]]]:
+    """Group commits by date and type."""
+    grouped = defaultdict(lambda: defaultdict(list))
+    
+    for commit in commits:
+        date_key = commit.date.strftime('%Y-%m-%d')
+        grouped[date_key][commit.commit_type].append(commit)
+    
+    return grouped
+
+
+def generate_changelog_content(grouped_commits: Dict[str, Dict[str, List[Commit]]], 
+                               include_header: bool = True) -> str:
+    """Generate changelog markdown content."""
+    lines = []
+    
+    if include_header:
+        lines.extend([
+            '# Changelog',
+            '',
+            'All notable changes to the Chained project are documented in this file.',
+            '',
+            'The format captures:',
+            '- **Features** (feat): New capabilities and enhancements',
+            '- **Bug Fixes** (fix): Corrections and fixes',
+            '- **Major Improvements**: Significant changes that improve the system',
+            '- **Chores & Maintenance**: Routine updates and housekeeping',
+            '',
+            'Actor indicators:',
+            '- 👤 User-initiated (from issues or direct commits)',
+            '- 🤖 Bot-generated (autonomous system)',
+            '',
+            'This changelog excludes automated data syncs and routine maintenance commits.',
+            '',
+            '---',
+            '',
+        ])
+    
+    # Sort dates in reverse chronological order
+    sorted_dates = sorted(grouped_commits.keys(), reverse=True)
+    
+    for date in sorted_dates:
+        commits_by_type = grouped_commits[date]
+        
+        # Count features and major improvements
+        features = commits_by_type.get('feat', [])
+        major_improvements = [c for c in features if c.is_user_initiated]
+        
+        # Only create section if there are relevant commits
+        if not any(commits_by_type.values()):
+            continue
+        
+        lines.append(f'## {date}')
+        lines.append('')
+        
+        # Major Improvements section (user-initiated features)
+        if major_improvements:
+            lines.append('### ✨ Major Improvements')
+            lines.append('')
+            for commit in sorted(major_improvements, key=lambda c: c.date, reverse=True):
+                pr_link = f' [#{commit.pr_number}](https://github.com/enufacas/Chained/pull/{commit.pr_number})' if commit.pr_number else ''
+                lines.append(f'- {commit.get_actor_badge()} {commit.get_clean_subject()}{pr_link}')
+            lines.append('')
+        
+        # Features section (all features including bot-generated)
+        if features:
+            lines.append('### ✨ Features')
+            lines.append('')
+            for commit in sorted(features, key=lambda c: c.date, reverse=True):
+                pr_link = f' [#{commit.pr_number}](https://github.com/enufacas/Chained/pull/{commit.pr_number})' if commit.pr_number else ''
+                lines.append(f'- {commit.get_actor_badge()} {commit.get_clean_subject()}{pr_link}')
+            lines.append('')
+        
+        # Bug Fixes section
+        fixes = commits_by_type.get('fix', [])
+        if fixes:
+            lines.append('### 🐛 Bug Fixes')
+            lines.append('')
+            for commit in sorted(fixes, key=lambda c: c.date, reverse=True):
+                pr_link = f' [#{commit.pr_number}](https://github.com/enufacas/Chained/pull/{commit.pr_number})' if commit.pr_number else ''
+                lines.append(f'- {commit.get_actor_badge()} {commit.get_clean_subject()}{pr_link}')
+            lines.append('')
+        
+        # Other types grouped together
+        other_types = [t for t in COMMIT_TYPES.keys() if t not in ['feat', 'fix'] and t in commits_by_type]
+        if other_types:
+            lines.append('### 🧹 Chores & Maintenance')
+            lines.append('')
+            for commit_type in other_types:
+                for commit in sorted(commits_by_type[commit_type], key=lambda c: c.date, reverse=True):
+                    pr_link = f' [#{commit.pr_number}](https://github.com/enufacas/Chained/pull/{commit.pr_number})' if commit.pr_number else ''
+                    type_label = COMMIT_TYPES[commit_type].split(' ', 1)[1].rstrip('s')  # Remove emoji and plural
+                    lines.append(f'- {commit.get_actor_badge()} **{type_label}**: {commit.get_clean_subject()}{pr_link}')
+            lines.append('')
+        
+        lines.append('---')
+        lines.append('')
+    
+    return '\n'.join(lines)
+
+
+def main():
+    parser = argparse.ArgumentParser(description='Generate CHANGELOG.md from git history')
+    parser.add_argument('--since', help='Only include commits since this date (YYYY-MM-DD)')
+    parser.add_argument('--output', default='CHANGELOG.md', help='Output file path')
+    parser.add_argument('--append', action='store_true', help='Append to existing changelog')
+    parser.add_argument('--backfill', action='store_true', help='Generate complete history from inception')
+    
+    args = parser.parse_args()
+    
+    # Get commits
+    print(f"Fetching commits{' since ' + args.since if args.since else ' from inception'}...")
+    commits = get_git_commits(since_date=args.since)
+    print(f"Found {len(commits)} relevant commits")
+    
+    if not commits:
+        print("No commits to process")
+        return
+    
+    # Group commits
+    grouped = group_commits_by_date_and_type(commits)
+    
+    # Generate content
+    include_header = not args.append
+    content = generate_changelog_content(grouped, include_header=include_header)
+    
+    # Write to file
+    mode = 'a' if args.append else 'w'
+    with open(args.output, mode) as f:
+        f.write(content)
+    
+    print(f"Changelog written to {args.output}")
+    
+    # Print summary
+    print("\nSummary:")
+    print(f"  Total commits: {len(commits)}")
+    user_initiated = sum(1 for c in commits if c.is_user_initiated)
+    bot_generated = len(commits) - user_initiated
+    print(f"  User-initiated: {user_initiated}")
+    print(f"  Bot-generated: {bot_generated}")
+    print(f"  Date range: {min(c.date for c in commits).date()} to {max(c.date for c in commits).date()}")
+
+
+if __name__ == '__main__':
+    main()

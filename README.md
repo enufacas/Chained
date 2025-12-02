@@ -129,6 +129,26 @@ These workflows demonstrate an alternative approach to agent orchestration using
 
 **[📖 Gemini Context](./GEMINI.md)** - Project context for Gemini CLI
 
+### 📝 Changelog
+
+The project maintains a comprehensive **[CHANGELOG.md](./CHANGELOG.md)** tracking all notable changes:
+
+- **Features** (feat:) - New capabilities and enhancements
+- **Bug Fixes** (fix:) - Corrections and fixes
+- **Major Improvements** - User-initiated significant changes
+- **Chores & Maintenance** - Routine updates
+
+Each entry is marked with:
+- 👤 **User-initiated** - Features explicitly requested through issues
+- 🤖 **Bot-generated** - Autonomous agent work
+
+The changelog automatically excludes auto-churn commits (data syncs, routine updates) and is updated via:
+- **Manual updates**: Add entries when creating PRs
+- **Automated workflow**: `update-changelog.yml` generates entries on PR merge
+- **Script**: `tools/generate-changelog.py` for backfilling or regeneration
+
+**[📖 View Full Changelog](./CHANGELOG.md)** | **[📖 Changelog Maintenance Guide](./.github/instructions/changelog-maintenance.instructions.md)**
+
 ---
 
 ## 2. A2A Protocol on GitHub Actions
