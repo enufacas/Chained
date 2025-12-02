@@ -159,6 +159,12 @@ resource "google_cloud_run_v2_service" "academic_research" {
         value = var.project_id
       }
 
+      # Error Observer URL for agent error reporting
+      env {
+        name  = "ERROR_OBSERVER_URL"
+        value = google_cloud_run_v2_service.error_observer.uri
+      }
+
       # Direct API key value (from GitHub secrets) - fallback if Vertex AI is not used
       dynamic "env" {
         for_each = toset(var.google_api_key != "" ? ["enabled"] : [])
@@ -299,6 +305,12 @@ resource "google_cloud_run_v2_service" "blog_writer" {
         value = var.project_id
       }
 
+      # Error Observer URL for agent error reporting
+      env {
+        name  = "ERROR_OBSERVER_URL"
+        value = google_cloud_run_v2_service.error_observer.uri
+      }
+
       # Direct API key value (from GitHub secrets) - fallback if Vertex AI is not used
       dynamic "env" {
         for_each = toset(var.google_api_key != "" ? ["enabled"] : [])
@@ -429,6 +441,12 @@ resource "google_cloud_run_v2_service" "google_trends" {
       env {
         name  = "GOOGLE_CLOUD_PROJECT"
         value = var.project_id
+      }
+
+      # Error Observer URL for agent error reporting
+      env {
+        name  = "ERROR_OBSERVER_URL"
+        value = google_cloud_run_v2_service.error_observer.uri
       }
 
       # Direct API key value (from GitHub secrets) - fallback if Vertex AI is not used
@@ -1134,6 +1152,12 @@ resource "google_cloud_run_v2_service" "ag_ui_frontend" {
         value = google_cloud_run_v2_service.image_generator.uri
       }
 
+      # Error Observer URL for UI error reporting
+      env {
+        name  = "ERROR_OBSERVER_URL"
+        value = google_cloud_run_v2_service.error_observer.uri
+      }
+
       # GCP Project ID for blog URL construction in pipeline route
       # Blog URLs: https://storage.googleapis.com/${GCP_PROJECT_ID}-chained-blog/posts/${slug}.html
       # NOTE: This is different from GOOGLE_CLOUD_PROJECT which is used by the Google Auth library.
@@ -1272,6 +1296,201 @@ resource "google_cloud_run_v2_service_iam_member" "ag_ui_frontend_public" {
 }
 
 # =============================================================================
+# Cloud Run: Error Observer Agent
+# =============================================================================
+
+resource "google_cloud_run_v2_service" "error_observer" {
+  name     = "chained-error-observer"
+  location = var.region
+
+  template {
+    containers {
+      image = "${var.region}-docker.pkg.dev/${var.project_id}/chained/error-observer:${var.image_tag}"
+
+      resources {
+        limits = {
+          cpu    = "0.5"
+          memory = "512Mi"
+        }
+        cpu_idle          = true
+        startup_cpu_boost = true
+      }
+
+      env {
+        name  = "AGENT_NAME"
+        value = "error-observer"
+      }
+
+      env {
+        name  = "ENVIRONMENT"
+        value = var.environment
+      }
+
+      # GitHub PAT for repository_dispatch API calls
+      # This is required for the error observer to forward errors to GitHub
+      env {
+        name  = "GITHUB_PAT"
+        value_source {
+          secret_key_ref {
+            secret  = "github-pat"
+            version = "latest"
+          }
+        }
+      }
+
+      # Service URL for agent card
+      env {
+        name  = "SERVICE_URL"
+        value = "https://chained-error-observer-${data.google_project.project.number}.${var.region}.run.app"
+      }
+
+      ports {
+        container_port = 8090
+      }
+
+      startup_probe {
+        http_get {
+          path = "/health"
+          port = 8090
+        }
+        initial_delay_seconds = 5
+        timeout_seconds       = 3
+        period_seconds        = 5
+        failure_threshold     = 3
+      }
+
+      liveness_probe {
+        http_get {
+          path = "/health"
+          port = 8090
+        }
+        period_seconds    = 30
+        timeout_seconds   = 3
+        failure_threshold = 3
+      }
+    }
+
+    scaling {
+      min_instance_count = 0
+      max_instance_count = 3
+    }
+
+    max_instance_request_concurrency = 1 # Required when CPU < 1
+
+    service_account = google_service_account.adk_agents.email
+    timeout         = "300s"
+  }
+
+  traffic {
+    type    = "TRAFFIC_TARGET_ALLOCATION_TYPE_LATEST"
+    percent = 100
+  }
+
+  depends_on = [google_project_service.required_apis]
+}
+
+resource "google_cloud_run_v2_service_iam_member" "error_observer_public" {
+  project  = var.project_id
+  location = var.region
+  name     = google_cloud_run_v2_service.error_observer.name
+  role     = "roles/run.invoker"
+  member   = "allUsers"
+}
+
+# =============================================================================
+# Cloud Run: Log Consumer Agent
+# =============================================================================
+
+resource "google_cloud_run_v2_service" "log_consumer" {
+  name     = "chained-log-consumer"
+  location = var.region
+
+  template {
+    containers {
+      image = "${var.region}-docker.pkg.dev/${var.project_id}/chained/log-consumer:${var.image_tag}"
+
+      resources {
+        limits = {
+          cpu    = "0.5"
+          memory = "512Mi"
+        }
+        cpu_idle          = true
+        startup_cpu_boost = true
+      }
+
+      env {
+        name  = "AGENT_NAME"
+        value = "log-consumer"
+      }
+
+      env {
+        name  = "ENVIRONMENT"
+        value = var.environment
+      }
+
+      # Error Observer URL for sending error events
+      env {
+        name  = "ERROR_OBSERVER_URL"
+        value = google_cloud_run_v2_service.error_observer.uri
+      }
+
+      ports {
+        container_port = 8091
+      }
+
+      startup_probe {
+        http_get {
+          path = "/health"
+          port = 8091
+        }
+        initial_delay_seconds = 5
+        timeout_seconds       = 3
+        period_seconds        = 5
+        failure_threshold     = 3
+      }
+
+      liveness_probe {
+        http_get {
+          path = "/health"
+          port = 8091
+        }
+        period_seconds    = 30
+        timeout_seconds   = 3
+        failure_threshold = 3
+      }
+    }
+
+    scaling {
+      min_instance_count = 0
+      max_instance_count = 3
+    }
+
+    max_instance_request_concurrency = 1 # Required when CPU < 1
+
+    service_account = google_service_account.adk_agents.email
+    timeout         = "300s"
+  }
+
+  traffic {
+    type    = "TRAFFIC_TARGET_ALLOCATION_TYPE_LATEST"
+    percent = 100
+  }
+
+  depends_on = [
+    google_project_service.required_apis,
+    google_cloud_run_v2_service.error_observer,
+  ]
+}
+
+resource "google_cloud_run_v2_service_iam_member" "log_consumer_public" {
+  project  = var.project_id
+  location = var.region
+  name     = google_cloud_run_v2_service.log_consumer.name
+  role     = "roles/run.invoker"
+  member   = "allUsers"
+}
+
+# =============================================================================
 # Outputs
 # =============================================================================
 
@@ -1315,6 +1534,16 @@ output "ag_ui_frontend_url" {
   value       = google_cloud_run_v2_service.ag_ui_frontend.uri
 }
 
+output "error_observer_url" {
+  description = "URL of the Error Observer Agent"
+  value       = google_cloud_run_v2_service.error_observer.uri
+}
+
+output "log_consumer_url" {
+  description = "URL of the Log Consumer Agent"
+  value       = google_cloud_run_v2_service.log_consumer.uri
+}
+
 output "adk_dev_ui_info" {
   description = "ADK Dev UI access information"
   value       = <<-EOT
@@ -1337,6 +1566,8 @@ output "adk_dev_ui_info" {
     - Code Reviewer: ${google_cloud_run_v2_service.code_reviewer.uri}
     - Data Analyst: ${google_cloud_run_v2_service.data_analyst.uri}
     - Image Generator: ${google_cloud_run_v2_service.image_generator.uri}
+    - Error Observer: ${google_cloud_run_v2_service.error_observer.uri}
+    - Log Consumer: ${google_cloud_run_v2_service.log_consumer.uri}
 
     Health checks available at /health endpoint for each service.
     A2A Agent Cards available at /.well-known/agent.json
