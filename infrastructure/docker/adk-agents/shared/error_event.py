@@ -113,10 +113,10 @@ class ErrorEvent(BaseModel):
             task_type: Type of task (default: "error")
             
         Returns:
-            Hex digest of the hash
+            Hex digest of the hash (32 characters)
         """
         hash_input = f"{service}|{error_message}|{task_type}"
-        return hashlib.sha256(hash_input.encode()).hexdigest()[:16]
+        return hashlib.sha256(hash_input.encode()).hexdigest()[:32]
     
     @classmethod
     def from_exception(

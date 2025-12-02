@@ -45,6 +45,16 @@ interface ErrorObserverStatusData {
 }
 
 // =============================================================================
+// Helper Functions
+// =============================================================================
+
+function truncateMessage(message: string, maxLength: number = 100): string {
+  if (!message) return "";
+  if (message.length <= maxLength) return message;
+  return message.substring(0, maxLength) + "...";
+}
+
+// =============================================================================
 // Component
 // =============================================================================
 
@@ -248,8 +258,7 @@ export default function ErrorObserverStatus() {
                 <div className="text-xs">
                   <span className="text-slate-500">Message:</span>
                   <span className="ml-2 text-slate-300">
-                    {state.last_error.error_message?.substring(0, 100)}
-                    {state.last_error.error_message?.length > 100 && "..."}
+                    {truncateMessage(state.last_error.error_message)}
                   </span>
                 </div>
                 <div className="text-xs">

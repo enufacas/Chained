@@ -69,7 +69,8 @@ async function sendErrorToBackend(errorData: object): Promise<void> {
     await sendErrorToA2AObserver(errorData);
   } catch (err) {
     // Silently fail - error is already logged to console
-    throw err;
+    // We don't re-throw because this is fire-and-forget logging
+    console.warn("[Frontend Error] Backend logging failed:", err);
   }
 }
 
@@ -96,7 +97,8 @@ async function sendErrorToA2AObserver(errorData: any): Promise<void> {
       }),
     });
   } catch (err) {
-    // Silently fail - error is already logged
+    // Silently fail - error is already logged to console
+    // This is a fire-and-forget operation
     console.warn("[Frontend Error] Failed to send to A2A observer:", err);
   }
 }

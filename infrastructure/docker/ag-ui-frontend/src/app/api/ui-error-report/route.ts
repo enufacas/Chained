@@ -56,24 +56,25 @@ interface ErrorEvent {
 // Helper Functions
 // =============================================================================
 
-function computeErrorHash(service: string, errorMessage: string, taskType: string = "error"): string {
-  // Simple hash function for deduplication
+async function computeErrorHash(service: string, errorMessage: string, taskType: string = "error"): Promise<string> {
+  /**
+   * Compute error hash using SHA-256 (consistent with Python implementation).
+   * Uses Web Crypto API for proper cryptographic hashing.
+   */
   const hashInput = `${service}|${errorMessage}|${taskType}`;
+  const encoder = new TextEncoder();
+  const data = encoder.encode(hashInput);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
   
-  // Create a simple hash (in production, use a proper crypto hash)
-  let hash = 0;
-  for (let i = 0; i < hashInput.length; i++) {
-    const char = hashInput.charCodeAt(i);
-    hash = ((hash << 5) - hash) + char;
-    hash = hash & hash; // Convert to 32-bit integer
-  }
-  
-  return Math.abs(hash).toString(16).padStart(16, '0').substring(0, 16);
+  // Return first 32 characters (same as Python implementation)
+  return hashHex.substring(0, 32);
 }
 
-function createErrorEventFromUIError(report: UIErrorReport): ErrorEvent {
+async function createErrorEventFromUIError(report: UIErrorReport): Promise<ErrorEvent> {
   const now = new Date().toISOString();
-  const errorHash = computeErrorHash("a2a-ui", report.message, "ui-error");
+  const errorHash = await computeErrorHash("a2a-ui", report.message, "ui-error");
   
   const logs: string[] = [];
   if (report.user_agent) {
@@ -164,8 +165,8 @@ export async function POST(request: NextRequest) {
       hasStack: !!body.stack,
     });
     
-    // Create error event from UI error
-    const errorEvent = createErrorEventFromUIError(body);
+    // Create error event from UI error (async because of hash computation)
+    const errorEvent = await createErrorEventFromUIError(body);
     
     // Send to error observer (fire and forget - don't block response)
     // The observer will handle GitHub dispatch
