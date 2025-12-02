@@ -1069,7 +1069,7 @@ resource "google_cloud_run_v2_service" "ag_ui_frontend" {
       resources {
         limits = {
           cpu    = "0.5"
-          memory = "512Mi"
+          memory = "1Gi"  # Increased from 512Mi to 1Gi to prevent OOM errors
         }
         cpu_idle          = true
         startup_cpu_boost = true

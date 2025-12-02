@@ -352,6 +352,35 @@ npm run build
 
 ## Troubleshooting
 
+### Service Crashes / Memory Issues (FIXED: 2025-12-02)
+
+**Symptoms**: Missing artifacts, progress not updating, service unresponsive
+
+**Root Cause**: Memory exhaustion (512 MiB limit exceeded)
+
+**Fix**: Increased memory limit to 1 GiB in Terraform configuration
+
+If you still experience issues:
+1. Check GCP logs for OOM errors: `gcloud logging read 'resource.type="cloud_run_revision" AND resource.labels.service_name="chained-ag-ui-frontend" AND severity>=ERROR'`
+2. Verify memory limit: `gcloud run services describe chained-ag-ui-frontend --region=us-central1 --format=json | jq '.spec.template.spec.containers[0].resources.limits.memory'`
+3. Expected: "1Gi" (not "512Mi")
+
+See: [Memory OOM Fix Documentation](./MEMORY_OOM_FIX.md)
+
+### Missing Artifacts
+
+**Note**: Artifacts are stored in browser localStorage (client-side only)
+
+**Common Causes**:
+1. Browser cache cleared → artifacts lost
+2. Different browser/device → artifacts not synced
+3. Service restart during pipeline → in-memory data lost (mitigated by memory fix)
+
+**Verification**:
+1. Open browser DevTools → Application → Local Storage
+2. Check for `ag-ui-artifacts` and `ag-ui-sessions` keys
+3. If empty, create a new pipeline to generate artifacts
+
 ### Chat Not Working
 
 1. Check `/api/copilotkit` GET endpoint returns `available: true`
@@ -384,6 +413,9 @@ npm run build
 
 ## Documentation
 
+- [Memory OOM Fix](./MEMORY_OOM_FIX.md) - Memory exhaustion fix (2025-12-02)
+- [Artifact Persistence Fix](./ARTIFACT_PERSISTENCE_FIX.md) - Artifact storage implementation
+- [Session State Fix](./SESSION_STATE_FIX.md) - Session state tracking fix
 - [A2A Success History](../a2a/A2A_SUCCESS_HISTORY.md) - Milestone tracking
 - [A2A Status](../a2a/A2A_STATUS.md) - Overall implementation status
 - [A2A Integration Design](../a2a/A2A_INTEGRATION_DESIGN.md) - Architecture details

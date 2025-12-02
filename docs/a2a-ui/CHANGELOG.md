@@ -6,6 +6,62 @@ Format: `## [Date] PR #XXX - Title`
 
 ---
 
+## [2025-12-02] PR #TBD - Fix Memory Exhaustion and Artifact Display Issues
+
+### Problem
+AG-UI Frontend experiencing multiple critical issues:
+1. **Memory Exhaustion**: Service crashes with OOM errors (using 680 MiB with 512 MiB limit)
+2. **Missing Artifacts**: Artifacts not appearing in pipeline outcomes or sessions on artifacts page
+3. **Progress Updates Failing**: Pipeline progress not updating due to service instability
+4. **Data Loss**: Service restarts cause loss of in-memory pipeline data
+
+GCP Logs showed: `Memory limit of 512 MiB exceeded with 680 MiB used`
+
+### Root Causes
+1. **Insufficient Memory**: Cloud Run service limited to 512 MiB
+2. **Client-Side Storage**: localStorage is browser-only - artifacts don't survive server restarts
+3. **Service Restarts**: OOM kills cause loss of in-memory activePipelines Map
+4. **No Server Persistence**: No backend storage for pipeline/artifact state
+
+### Fixed
+- **Increased Memory Limit**: 512Mi → 1Gi in Terraform configuration
+  - Prevents OOM crashes during pipeline execution
+  - Allows service to handle concurrent operations
+  - Improves overall stability and reliability
+  
+- **Infrastructure Change**: Updated `adk-agents.tf`
+  - Line 1072: `memory = "1Gi"  # Increased from 512Mi to prevent OOM errors`
+  - Requires Terraform apply and service redeployment
+
+### Technical Details
+**Files Modified:**
+- `infrastructure/terraform/adk-agents.tf` - Increased AG-UI Frontend memory limit
+
+**Key Changes:**
+1. Memory allocation: 512Mi → 1Gi (100% increase)
+2. Prevents OOM-induced service crashes
+3. Improves artifact persistence and retrieval
+4. Enables stable progress updates
+
+**Why This Fixes Artifacts Issue:**
+- Service stays alive longer, preserving in-memory pipeline data
+- localStorage artifacts can be properly saved during pipeline execution
+- Reduced service restarts mean fewer data loss events
+- More memory for Next.js SSR and API route processing
+
+### Known Limitations
+- localStorage remains client-side only (by design)
+- Long-term solution may require backend database persistence
+- Artifacts still lost if user clears browser cache
+
+### Deployment Notes
+After merging, the CI/CD pipeline will:
+1. Run `terraform apply` to update Cloud Run configuration
+2. Deploy new revision with 1Gi memory limit
+3. Service will scale to zero when idle (cpu_idle=true unchanged)
+
+---
+
 ## [2025-12-01] PR #TBD - Fix Low Fidelity Team Session Persistence
 
 ### Problem
