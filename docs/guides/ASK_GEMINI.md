@@ -1,27 +1,57 @@
-# Ask Gemini - Escalation Standard for Copilot
+# Ask Gemini - Code-Fixing and Expert Consultation
 
-This guide documents the "ask gemini about X" escalation pattern, enabling GitHub Copilot users to consult Google's Gemini 3 Pro Preview for complex problems, second opinions, and expert insights during coding sessions.
+This guide documents how to get help from Google's Gemini 3 Pro Preview for **actual code fixes**, implementation solutions, and expert insights.
 
-## 🎯 Overview
+## 🔑 Two Ways to Use Gemini
 
-**What is "Ask Gemini"?**
-A human-controlled escalation mechanism that allows anyone using GitHub Copilot in the Chained repository to consult Gemini 3 Pro Preview for expert insights on complex problems.
+### Option 1: Gemini CLI Workflows (Recommended) ✅
 
-**Why Use It?**
-- Get second opinions on architectural decisions
-- Analyze security implications of code changes
-- Evaluate complex trade-offs (performance, maintainability, scalability)
-- Explore unfamiliar technical domains
-- Validate approaches against best practices
-- Strategic guidance on technology choices
+**For complex tasks with FULL repository access:**
 
-**How It Works:**
-1. Human says "ask gemini about X" during a Copilot session
-2. Copilot invokes the `@gemini-consultant` agent
-3. Agent calls Gemini 3 Pro Preview API via `tools/ask_gemini.py`
-4. Gemini provides expert analysis and recommendations
-5. Agent synthesizes Gemini's insights with Chained context
-6. Human receives comprehensive, actionable guidance
+Use these commands in issue comments:
+- `/gemini-invoke` - General purpose assistant with GitHub MCP server
+- `/gemini-fix` - Automatic issue fixing with PR creation
+- `/gemini-review` - Code review with repository context
+- `/gemini-triage` - Issue triage with codebase awareness
+
+**What they have:**
+- ✅ GitHub MCP server with direct file access
+- ✅ Can read, search, and analyze code automatically
+- ✅ Git commands and history access
+- ✅ Can create branches and PRs
+- ✅ Shell commands (cat, grep, git, gh)
+
+**When to use:** Complex tasks requiring extensive repository exploration, multi-file changes, or automatic PR creation.
+
+**Example:**
+```
+Comment on an issue:
+/gemini-fix
+
+# Gemini will:
+# - Analyze the issue with full repo access
+# - Explore relevant files automatically
+# - Implement the fix
+# - Create a PR with the changes
+```
+
+### Option 2: ask_gemini.py Tool (Quick Consultations) ⚠️
+
+**For quick consultations during Copilot sessions:**
+
+A simple tool for getting targeted advice when you control the context.
+
+**Important limitation:** This is just an API call with NO repository access. You must manually gather context using view() and bash() tools.
+
+**When to use:** Quick questions during active Copilot sessions where you already have the relevant code.
+
+---
+
+## 🎯 The Rest of This Guide
+
+The rest of this document covers **Option 2 (ask_gemini.py tool)** only.
+
+If you're using Gemini CLI workflows (Option 1), they already have full repository access and don't need manual context gathering.
 
 ## 🚀 Quick Start
 
@@ -57,18 +87,76 @@ This installs:
 ### Test the Setup
 
 ```bash
-# Test as a standalone tool
+# Test general consultation
 python3 tools/ask_gemini.py "What are the trade-offs between REST and GraphQL?"
 
+# Test code-fixing mode (NEW)
+python3 tools/ask_gemini.py --fix-code "Function crashes on None input" \
+  --file "src/utils.py" \
+  --code "def process(data): return data.split()"
+
 # You should see:
-# 🤔 Consulting Gemini 3 Pro Preview...
+# 🔧 Consulting Gemini for code fix...
 # ✅ Gemini's Response:
-# [Detailed analysis from Gemini]
+# [Before/After code with implementation steps]
 ```
 
 ## 📖 Usage Patterns
 
-### Pattern 1: During Copilot Session (Primary Use Case)
+### Pattern 0: Code Fix Request (🆕 PRIMARY USE CASE)
+
+**Human Action:**
+```
+"ask gemini to fix the authentication bug in tools/auth.py line 45"
+```
+
+**What Happens:**
+1. Copilot recognizes the "ask gemini" trigger
+2. Invokes `@gemini-consultant` agent in code-fixing mode
+3. Agent gathers code context from the file
+4. Agent uses `ask_gemini_fix_code()` to get actual solution
+5. Agent presents formatted response with working code
+
+**Response Format:**
+```markdown
+## 🤔 Gemini Consultation - Code Fix
+
+**Problem:** JWT tokens not validated for expiration
+
+**Files Affected:**
+- `tools/auth.py:45` - Missing expiration check
+
+**Gemini's Solution:**
+
+### Fix: tools/auth.py (Line 45)
+
+**Before:**
+```python
+def validate_token(token):
+    return jwt.decode(token, SECRET_KEY, algorithms=['HS256'])
+```
+
+**After:**
+```python
+import time
+
+def validate_token(token):
+    decoded = jwt.decode(token, SECRET_KEY, algorithms=['HS256'])
+    if decoded.get('exp') < time.time():
+        raise ValueError("Token expired")
+    return decoded.get('user_id')
+```
+
+**Implementation Steps:**
+1. Update tools/auth.py line 45
+2. Add `import time` at top
+3. Test with: `pytest tests/test_auth.py`
+
+**My Analysis:**
+Security vulnerability (CWE-613). Fix adds expiration validation.
+```
+
+### Pattern 1: Architecture Question (With Code Examples)
 
 **Human Action:**
 ```
@@ -79,7 +167,7 @@ python3 tools/ask_gemini.py "What are the trade-offs between REST and GraphQL?"
 1. Copilot recognizes the "ask gemini" trigger
 2. Invokes `@gemini-consultant` agent
 3. Agent uses `ask_gemini.py` to consult Gemini
-4. Agent presents formatted response with analysis
+4. Agent presents formatted response with code examples
 
 **Response Format:**
 ```markdown
@@ -96,16 +184,28 @@ python3 tools/ask_gemini.py "What are the trade-offs between REST and GraphQL?"
 **Gemini's Response:**
 [Detailed analysis of microservices vs monolithic trade-offs...]
 
+**Concrete Implementation:**
+```python
+# Recommended monolithic structure with clear boundaries
+# src/api/routes.py
+from flask import Flask
+from .modules import users, posts, auth
+
+app = Flask(__name__)
+app.register_blueprint(users.bp)
+app.register_blueprint(posts.bp)
+app.register_blueprint(auth.bp)
+```
+
 **My Analysis:**
 Given Chained's current team size and deployment patterns, starting with
-a well-structured monolith is recommended. Microservices add operational
-complexity that may not be justified at this stage.
+a well-structured monolith is recommended. The code above shows clear
+module boundaries that enable future decomposition if needed.
 
 **Recommendation:**
-1. Maintain monolithic architecture with clear module boundaries
-2. Design for future decomposition (loose coupling, clear interfaces)
-3. Revisit microservices when team grows beyond 10-15 developers
-4. Consider service-oriented architecture within the monolith first
+1. Use monolith with blueprint pattern shown above
+2. Design for future decomposition (loose coupling)
+3. Revisit microservices at 10-15 developers
 ```
 
 ### Pattern 2: Explicit Agent Mention
@@ -121,7 +221,12 @@ Same as Pattern 1, but explicitly mentions the agent.
 ### Pattern 3: Command-Line Tool (For Scripts/Automation)
 
 ```bash
-# Direct question
+# Code-fixing mode (NEW)
+python3 tools/ask_gemini.py --fix-code "Authentication allows expired tokens" \
+  --file tools/auth.py \
+  --code "def validate_token(token): return jwt.decode(token, KEY)"
+
+# General question with code examples
 python3 tools/ask_gemini.py "How should I structure error handling in async Python code?"
 
 # With additional context
@@ -138,9 +243,17 @@ python3 tools/ask_gemini.py \
 ### Pattern 4: Python API (For Custom Tools)
 
 ```python
-from tools.ask_gemini import ask_gemini
+from tools.ask_gemini import ask_gemini, ask_gemini_fix_code
 
-# Basic usage
+# Code-fixing mode (NEW)
+fix_response = ask_gemini_fix_code(
+    issue_description="Function crashes when data is None",
+    file_path="src/utils.py",
+    code_snippet="def process(data): return data.split()"
+)
+print(fix_response)
+
+# General consultation with code examples
 response = ask_gemini("What are the benefits of type hints in Python?")
 print(response)
 
