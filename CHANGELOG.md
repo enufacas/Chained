@@ -39,7 +39,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 - 👤 ⚙️ Workflows Add auto-merge to agentops-data-sync workflow [#3496](https://github.com/enufacas/Chained/pull/3496)
 - 👤 🎨 AG-UI Add A2A protocol artifacts to AG-UI and improve workflow UX [#3487](https://github.com/enufacas/Chained/pull/3487)
 - 👤 🔧 Agents Design proposal: Agent as Code infrastructure management [#3475](https://github.com/enufacas/Chained/pull/3475)
-- 👤 🎨 AG-UI AG-UI: Artifact preview overlay, localStorage persistence, expandable steps [#3470](https://github.com/enufacas/Chained/pull/3470)
+- 👤 🎨 AG-UI Artifact preview overlay, localStorage persistence, expandable steps [#3470](https://github.com/enufacas/Chained/pull/3470)
 - 👤 🎨 AG-UI mobile-friendly AG-UI redesign with combined progress/outcomes [#3469](https://github.com/enufacas/Chained/pull/3469)
 
 ### 🐛 Bug Fixes
@@ -137,7 +137,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 - 👤 🏗️ Infrastructure Fix Terraform deployment and configure GOOGLE_API_KEY securely for CopilotKit chat [#3366](https://github.com/enufacas/Chained/pull/3366)
 - 👤 Fix GitHub Models nonsense output with quality validation [#3362](https://github.com/enufacas/Chained/pull/3362)
 - 👤 GitHub Models API - use 'token' auth format and budget-friendly default model [#3358](https://github.com/enufacas/Chained/pull/3358)
-- 👤 🎨 AG-UI AG-UI Frontend 403 error by adding IAM member resources to Terraform plan targets [#3359](https://github.com/enufacas/Chained/pull/3359)
+- 👤 🎨 AG-UI Frontend 403 error by adding IAM member resources to Terraform plan targets [#3359](https://github.com/enufacas/Chained/pull/3359)
 - 👤 🎨 AG-UI Fix AG-UI Frontend Docker build: include devDependencies for compilation [#3356](https://github.com/enufacas/Chained/pull/3356)
 - 👤 🎨 AG-UI Fix A2A workflow: use gpt-4o-mini default, increase Gemini session turns [#3355](https://github.com/enufacas/Chained/pull/3355)
 - 👤 🎨 AG-UI Fix A2A workflow: change GitHub Models default to gpt-4o-mini, increase Gemini turns to 30 [#19779084538](https://github.com/enufacas/Chained/pull/19779084538)

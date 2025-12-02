@@ -219,7 +219,7 @@ class Commit:
         return False
     
     def get_clean_subject(self) -> str:
-        """Get subject without PR number and prefix."""
+        """Get subject without PR number, prefix, and redundant area labels."""
         # Remove PR number at the end like (#1234)
         subject = re.sub(r'\s*\(#\d+\)', '', self.subject)
         
@@ -232,6 +232,12 @@ class Commit:
         # Remove commit type prefix if present
         if self.commit_type:
             subject = re.sub(rf'^{self.commit_type}:\s*', '', subject)
+        
+        # Remove redundant area prefix from subject when area badge is present
+        # e.g., "AG-UI Add..." becomes "Add..." when 🎨 AG-UI is in the prefix
+        if self.codebase_area:
+            # Remove "AG-UI" or "AG-UI:" from the beginning
+            subject = re.sub(r'^AG-UI:?\s*', '', subject, flags=re.IGNORECASE)
         
         return subject.strip()
     
