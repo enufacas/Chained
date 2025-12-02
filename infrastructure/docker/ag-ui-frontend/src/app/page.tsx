@@ -31,6 +31,7 @@ import AgentCanvas from "@/components/AgentCanvas";
 import RecipeBuilder from "@/components/RecipeBuilder";
 import ArtifactPreviewOverlay from "@/components/ArtifactPreviewOverlay";
 import ArtifactStream from "@/components/ArtifactStream";
+import ErrorObserverStatus from "@/components/ErrorObserverStatus";
 import { saveArtifact, saveSession, getStoredSessions, StoredArtifact } from "@/lib/storage";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import { setupGlobalErrorHandlers } from "@/lib/error-logging";
@@ -2128,6 +2129,9 @@ ${data.stats.categories.map((cat: string) => `- ${cat}`).join("\n")}`;
             {/* De-emphasized Status Panels at Bottom */}
             <div className="space-y-2 opacity-75 hover:opacity-100 transition-opacity">
               <p className="text-[10px] text-slate-500 uppercase tracking-wider px-1">System Status</p>
+              
+              {/* Error Observer Status */}
+              <ErrorObserverStatus />
               
               {/* Compact CopilotKit Status */}
               <CompactApiStatus onStatusChange={onApiStatusChange} />
