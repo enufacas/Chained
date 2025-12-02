@@ -9,3 +9,6 @@ a2a-sdk[http-server]>=0.2.0  # Agent-to-Agent protocol with HTTP server support
 uvicorn>=0.30.0  # ASGI server for A2A agent servers
 httpx>=0.27.0  # Async HTTP client for GitHub Models API
 anthropic>=0.40.0  # Claude/Anthropic API client (supports Vertex AI)
+# Gemini API Support
+google-generativeai>=0.8.0  # Google AI Studio API for Gemini models
+google-cloud-aiplatform>=1.70.0  # Vertex AI API for Gemini models (optional)

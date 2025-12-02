@@ -202,6 +202,116 @@ jobs:
             echo "GCP_AVAILABLE=false" >> $GITHUB_ENV
           fi
       
+      # =========================================================================
+      # Gemini API Setup (for ask_gemini tool)
+      # =========================================================================
+      # This enables Copilot to use the ask_gemini tool for consulting Gemini
+      # Required secrets (choose one):
+      #   Option A: GEMINI_API_KEY (Google AI Studio)
+      #   Option B: GOOGLE_API_KEY + USE_VERTEX_AI=true (Vertex AI)
+      # =========================================================================
+      
+      - name: Check Gemini API configuration
+        id: check-gemini
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+          USE_VERTEX_AI: ${{ vars.USE_VERTEX_AI }}
+        run: |
+          GEMINI_MODE="none"
+          
+          # Check for Vertex AI mode
+          if [ "${USE_VERTEX_AI,,}" = "true" ] && [ -n "$GOOGLE_API_KEY" ]; then
+            GEMINI_MODE="vertex"
+            echo "gemini_mode=vertex" >> $GITHUB_OUTPUT
+            echo "✅ Gemini API configured: Vertex AI mode"
+            echo "   Using GOOGLE_API_KEY with Vertex AI"
+          # Check for Google AI Studio mode
+          elif [ -n "$GEMINI_API_KEY" ]; then
+            GEMINI_MODE="genai"
+            echo "gemini_mode=genai" >> $GITHUB_OUTPUT
+            echo "✅ Gemini API configured: Google AI Studio mode"
+            echo "   Using GEMINI_API_KEY"
+          # Check if GOOGLE_API_KEY available but Vertex AI not enabled
+          elif [ -n "$GOOGLE_API_KEY" ] && [ "${USE_VERTEX_AI,,}" != "true" ]; then
+            GEMINI_MODE="genai-fallback"
+            echo "gemini_mode=genai-fallback" >> $GITHUB_OUTPUT
+            echo "⚠️  GOOGLE_API_KEY found but USE_VERTEX_AI not set"
+            echo "   Will attempt to use as Google AI Studio key"
+          else
+            echo "gemini_mode=none" >> $GITHUB_OUTPUT
+            echo "⚠️  Gemini API not configured"
+            echo "   ask_gemini tool will not be available"
+            echo ""
+            echo "To enable, configure one of:"
+            echo "  Option A: Set GEMINI_API_KEY secret (Google AI Studio)"
+            echo "  Option B: Set GOOGLE_API_KEY secret + USE_VERTEX_AI=true variable (Vertex AI)"
+          fi
+          
+          echo "gemini_configured=$([[ $GEMINI_MODE != 'none' ]] && echo 'true' || echo 'false')" >> $GITHUB_OUTPUT
+      
+      - name: Configure Gemini environment for Copilot
+        if: steps.check-gemini.outputs.gemini_configured == 'true'
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+          USE_VERTEX_AI: ${{ vars.USE_VERTEX_AI }}
+          GEMINI_MODE: ${{ steps.check-gemini.outputs.gemini_mode }}
+          GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+        run: |
+          echo "🤖 Configuring Gemini API for ask_gemini tool..."
+          
+          if [ "$GEMINI_MODE" = "vertex" ]; then
+            # Vertex AI mode
+            echo "USE_VERTEX_AI=true" >> $GITHUB_ENV
+            echo "GOOGLE_API_KEY=$GOOGLE_API_KEY" >> $GITHUB_ENV
+            echo "GOOGLE_CLOUD_PROJECT=$GCP_PROJECT_ID" >> $GITHUB_ENV
+            echo "✅ Vertex AI mode enabled"
+            echo "   Model: gemini-3-pro-preview (or gemini-2.0-flash on Vertex AI)"
+            
+          elif [ "$GEMINI_MODE" = "genai" ] || [ "$GEMINI_MODE" = "genai-fallback" ]; then
+            # Google AI Studio mode
+            if [ -n "$GEMINI_API_KEY" ]; then
+              echo "GEMINI_API_KEY=$GEMINI_API_KEY" >> $GITHUB_ENV
+            elif [ -n "$GOOGLE_API_KEY" ]; then
+              echo "GEMINI_API_KEY=$GOOGLE_API_KEY" >> $GITHUB_ENV
+            fi
+            echo "✅ Google AI Studio mode enabled"
+            echo "   Model: gemini-3-pro-preview"
+          fi
+          
+          # Set as available for Copilot
+          echo "GEMINI_AVAILABLE=true" >> $GITHUB_ENV
+          echo "GEMINI_MODE=$GEMINI_MODE" >> $GITHUB_ENV
+      
+      - name: Verify ask_gemini tool
+        if: steps.check-gemini.outputs.gemini_configured == 'true'
+        run: |
+          echo "🧪 Testing ask_gemini tool..."
+          
+          # Test authentication mode detection
+          python3 -c "
+          import sys
+          sys.path.insert(0, 'tools')
+          from ask_gemini import get_auth_mode
+          mode, error = get_auth_mode()
+          if mode:
+              print(f'✅ Authentication mode: {mode}')
+              sys.exit(0)
+          else:
+              print(f'❌ Authentication failed: {error}')
+              sys.exit(1)
+          "
+          
+          if [ $? -eq 0 ]; then
+            echo "✅ ask_gemini tool is ready"
+            echo "ASK_GEMINI_READY=true" >> $GITHUB_ENV
+          else
+            echo "⚠️  ask_gemini tool authentication issue"
+            echo "ASK_GEMINI_READY=false" >> $GITHUB_ENV
+          fi
+        continue-on-error: true
+      
       - name: Pre-install and verify gcloud-mcp server
         if: steps.gcp-auth.outputs.auth_success == 'true'
         run: |
@@ -267,6 +377,8 @@ jobs:
           echo "| COPILOT_PAT | ${{ env.COPILOT_PAT_AVAILABLE == 'true' && '✅' || '⚠️' }} |" >> $GITHUB_STEP_SUMMARY
           echo "| GCP/gcloud | ${{ env.GCP_AVAILABLE == 'true' && '✅' || '⚠️ Not configured' }} |" >> $GITHUB_STEP_SUMMARY
           echo "| gcloud-mcp | ${{ env.GCLOUD_MCP_READY == 'true' && '✅ Ready' || (env.GCLOUD_MCP_READY == 'partial' && '⚠️ Partial' || '❌ Not available') }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Gemini API | ${{ env.GEMINI_AVAILABLE == 'true' && '✅' || '⚠️ Not configured' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| ask_gemini | ${{ env.ASK_GEMINI_READY == 'true' && '✅ Ready' || '⚠️ Not available' }} |" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### MCP Servers" >> $GITHUB_STEP_SUMMARY
           echo "- chained-repository: Chained repo data access" >> $GITHUB_STEP_SUMMARY
@@ -278,4 +390,29 @@ jobs:
           elif [ "${{ env.GCLOUD_MCP_READY }}" = "partial" ]; then
             echo "### ⚠️ gcloud-mcp Server (Partial)" >> $GITHUB_STEP_SUMMARY
             echo "The gcloud-mcp server is installed but some GCP APIs may be blocked by firewall." >> $GITHUB_STEP_SUMMARY
+          fi
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ env.GEMINI_AVAILABLE }}" = "true" ]; then
+            echo "### ✅ Gemini API (ask_gemini tool)" >> $GITHUB_STEP_SUMMARY
+            echo "The ask_gemini tool is configured and ready. Copilot can escalate to Gemini 3 Pro Preview." >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "**Mode:** ${{ env.GEMINI_MODE }}" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "**Usage:** Say 'ask gemini about [question]' or '@gemini-consultant [question]' in Copilot" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "**Example:**" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            echo 'ask gemini about whether to use REST or GraphQL for this API' >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+          else
+            echo "### ⚠️ Gemini API Not Configured" >> $GITHUB_STEP_SUMMARY
+            echo "The ask_gemini tool is not available. To enable:" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "**Option A: Google AI Studio (Recommended)**" >> $GITHUB_STEP_SUMMARY
+            echo "1. Get API key from https://aistudio.google.com/app/apikey" >> $GITHUB_STEP_SUMMARY
+            echo "2. Add secret GEMINI_API_KEY in Settings → Environments → copilot" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "**Option B: Vertex AI (For GCP users)**" >> $GITHUB_STEP_SUMMARY
+            echo "1. Add secret GOOGLE_API_KEY in Settings → Environments → copilot" >> $GITHUB_STEP_SUMMARY
+            echo "2. Add variable USE_VERTEX_AI=true in Settings → Environments → copilot" >> $GITHUB_STEP_SUMMARY
           fi
