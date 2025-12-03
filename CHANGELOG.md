@@ -26,6 +26,14 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ---
 
+## 2025-12-03
+
+### 🧹 Chores & Maintenance
+
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge [#3536](https://github.com/enufacas/Chained/pull/3536)
+
+---
+
 ## 2025-12-02
 
 ### ✨ Features
@@ -35,6 +43,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🐛 Bug Fixes
 
+- 👤 🔧 Tools Fix TypeScript ESLint errors in AG-UI frontend and add configurable GitHub repo for error-observer [#3537](https://github.com/enufacas/Chained/pull/3537)
 - 👤 ⚙️ Workflows Fix critical error observer issues: Terraform data source, missing workflow, security vulnerability [#3535](https://github.com/enufacas/Chained/pull/3535)
 - 👤 Implement A2A-native error observer system with GitHub dispatch integration [#3520](https://github.com/enufacas/Chained/pull/3520)
 
@@ -327,14 +336,13 @@ This changelog excludes automated data syncs and routine maintenance commits.
 - 👤 Fix A2A test failures: Add missing DiscoveryService methods and resolve port collisions [#3086](https://github.com/enufacas/Chained/pull/3086)
 - 👤 🔧 Tools Fix auto-merge script to recognize app-prefixed bot accounts and successfully merge 15 PRs [#3065](https://github.com/enufacas/Chained/pull/3065)
 - 👤 Fix meta-coordinator non-deterministic PR/issue processing [#3062](https://github.com/enufacas/Chained/pull/3062)
-- 👤 Fix: Mark all draft PRs as ready before merge eligibility check [#3048](https://github.com/enufacas/Chained/pull/3048)
 
 ### 🧹 Chores & Maintenance
 
 - 🤖 📚 Docs **Documentation**: Add Vertex AI API information to Gemini CLI documentation. [#3045](https://github.com/enufacas/Chained/pull/3045)
 - 👤 ⚙️ Workflows **Chore**: Update Gemini workflows to use gemini-3-pro-latest [#3057](https://github.com/enufacas/Chained/pull/3057)
 - 🤖 **Chore**: 🤖 Update pattern repetition analysis [#3054](https://github.com/enufacas/Chained/pull/3054)
-- 🤖 📊 GitHub Pages **Chore**: 📊 Update timeline data - 2025-11-26 01:25:21 UTC (x2) [#3061](https://github.com/enufacas/Chained/pull/3061)
+- 🤖 📊 GitHub Pages **Chore**: 📊 Update timeline data - 2025-11-26 01:25:21 UTC [#3061](https://github.com/enufacas/Chained/pull/3061)
 - 👤 ⚙️ Workflows **Test**: Add autonomous workflow configuration A/B testing with automated variant generation [#3052](https://github.com/enufacas/Chained/pull/3052)
 - 🤖 **Test**: Add a test file [#3043](https://github.com/enufacas/Chained/pull/3043)
 
