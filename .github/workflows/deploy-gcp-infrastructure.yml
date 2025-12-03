@@ -300,6 +300,12 @@ jobs:
           import_if_exists "google_cloud_run_v2_service" "ag_ui_frontend" \
             "projects/$PROJECT_ID/locations/$REGION/services/chained-ag-ui-frontend"
           
+          import_if_exists "google_cloud_run_v2_service" "error_observer" \
+            "projects/$PROJECT_ID/locations/$REGION/services/chained-error-observer"
+          
+          import_if_exists "google_cloud_run_v2_service" "log_consumer" \
+            "projects/$PROJECT_ID/locations/$REGION/services/chained-log-consumer"
+          
           # Import Storage buckets
           import_if_exists "google_storage_bucket" "blog" \
             "$PROJECT_ID-chained-blog"
