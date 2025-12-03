@@ -985,6 +985,24 @@ Domain: ${domain}`,
           totalDurationMs: pipeline.totalDurationMs,
           agentStepsCount: pipeline.a2aSteps?.length || 0,
           blogUrl: pipeline.results?.blog?.url,
+          // CRITICAL: Save a2aSteps so they can be reconstructed after container restart
+          // This allows the detail view to show agent details even after page refresh
+          a2aSteps: pipeline.a2aSteps?.map(step => ({
+            taskId: step.taskId,
+            agentName: step.agentName,
+            phase: step.phase,
+            status: step.status,
+            startTime: step.startTime,
+            endTime: step.endTime,
+            durationMs: step.durationMs,
+            message: step.message,
+            artifacts: step.artifacts.map(a => ({
+              name: a.name,
+              type: a.type,
+              // Don't store full data in metadata (too large), just preview
+              preview: a.preview || a.data.substring(0, 200),
+            })),
+          })),
         },
         a2aContextId: pipelineId,
         taskIds: taskIds,
