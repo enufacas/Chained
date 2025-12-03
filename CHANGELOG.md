@@ -30,8 +30,8 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x5) [#3547](https://github.com/enufacas/Chained/pull/3547)
 - 👤 📋 Instructions **Documentation**: Update A2A README with error observer system and add maintenance instructions [#3520](https://github.com/enufacas/Chained/pull/3520)
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x4) [#3544](https://github.com/enufacas/Chained/pull/3544)
 
 ---
 
@@ -45,6 +45,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🐛 Bug Fixes
 
+- 👤 🔧 Agents Fix error-observer GitHub dispatch, agent display, localStorage quota, concurrent writes, and A2A protocol compliance [#3548](https://github.com/enufacas/Chained/pull/3548)
 - 👤 🔧 Agents Enable Vertex AI API for ADK agent authentication [#3542](https://github.com/enufacas/Chained/pull/3542)
 - 👤 ⚙️ Workflows Add missing Cloud Run service imports to Terraform workflow [#3540](https://github.com/enufacas/Chained/pull/3540)
 - 👤 🔧 Tools Fix TypeScript ESLint errors in AG-UI frontend and add configurable GitHub repo for error-observer [#3537](https://github.com/enufacas/Chained/pull/3537)
