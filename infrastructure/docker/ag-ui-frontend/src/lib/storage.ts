@@ -566,13 +566,16 @@ export function getStoredSessions(): StoredSession[] {
  * Automatically strips large metadata for older sessions to prevent quota issues
  */
 export function saveSession(session: Omit<StoredSession, "createdAt">): StoredSession {
-  const stored: StoredSession = {
-    ...session,
-    createdAt: new Date().toISOString(),
-  };
+  if (!isStorageAvailable()) {
+    // Return session with new createdAt if storage not available (best effort)
+    return {
+      ...session,
+      createdAt: new Date().toISOString(),
+    };
+  }
 
-  if (!isStorageAvailable()) return stored;
-
+  let stored: StoredSession;
+  
   try {
     // Check storage limit BEFORE attempting to save
     if (isStorageNearLimit()) {
@@ -583,9 +586,20 @@ export function saveSession(session: Omit<StoredSession, "createdAt">): StoredSe
     const sessions = getStoredSessions();
     // Update existing or add new
     const existingIndex = sessions.findIndex((s) => s.id === session.id);
+    
     if (existingIndex >= 0) {
+      // Preserve original createdAt when updating existing session
+      stored = {
+        ...session,
+        createdAt: sessions[existingIndex].createdAt,
+      };
       sessions[existingIndex] = stored;
     } else {
+      // Create new session with current timestamp
+      stored = {
+        ...session,
+        createdAt: new Date().toISOString(),
+      };
       sessions.unshift(stored);
     }
 
@@ -634,6 +648,11 @@ export function saveSession(session: Omit<StoredSession, "createdAt">): StoredSe
       sessionType: session.type,
       artifactsCount: session.artifacts?.length || 0,
     });
+    // Return session with new createdAt if save fails
+    stored = {
+      ...session,
+      createdAt: new Date().toISOString(),
+    };
   }
 
   return stored;
