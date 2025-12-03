@@ -39,7 +39,7 @@ infrastructure/
    - `GCP_REGION` - Deployment region (default: us-central1)
 
 3. **Configure GitHub Repository Variables** (Settings → Secrets and variables → Actions → Variables):
-   - `GITHUB_REPO` - Repository for error-observer dispatch (format: `owner/repository`, e.g., `enufacas/Chained`)
+   - `GIT_REPO` - Repository for error-observer dispatch (format: `owner/repository`, e.g., `enufacas/Chained`)
 
 4. **Deploy via GitHub Actions**:
    - Go to Actions → Deploy GCP Infrastructure → Run workflow

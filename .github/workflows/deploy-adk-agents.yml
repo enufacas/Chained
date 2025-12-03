@@ -374,7 +374,7 @@ jobs:
                 -var="gemini_api_key=${{ secrets.GEMINI_API_KEY || '' }}" \
                 -var="gemini_api_key_secret=${{ secrets.GEMINI_API_KEY_SECRET_NAME || '' }}" \
                 -var="google_api_key_secret=${{ secrets.GOOGLE_API_KEY_SECRET_NAME || '' }}" \
-                -var="github_repo=${{ vars.GITHUB_REPO || '' }}" \
+                -var="git_repo=${{ vars.GIT_REPO || '' }}" \
                 google_service_account.adk_agents \
                 "projects/${{ env.GCP_PROJECT_ID }}/serviceAccounts/$SA_EMAIL"; then
                 echo "✅ Successfully imported service account"
@@ -408,7 +408,7 @@ jobs:
                 -var="gemini_api_key=${{ secrets.GEMINI_API_KEY || '' }}" \
                 -var="gemini_api_key_secret=${{ secrets.GEMINI_API_KEY_SECRET_NAME || '' }}" \
                 -var="google_api_key_secret=${{ secrets.GOOGLE_API_KEY_SECRET_NAME || '' }}" \
-                -var="github_repo=${{ vars.GITHUB_REPO || '' }}" \
+                -var="git_repo=${{ vars.GIT_REPO || '' }}" \
                 google_storage_bucket.blog \
                 "$BLOG_BUCKET"; then
                 echo "✅ Successfully imported blog storage bucket"
@@ -457,7 +457,7 @@ jobs:
                   -var="gemini_api_key=${{ secrets.GEMINI_API_KEY || '' }}" \
                   -var="gemini_api_key_secret=${{ secrets.GEMINI_API_KEY_SECRET_NAME || '' }}" \
                   -var="google_api_key_secret=${{ secrets.GOOGLE_API_KEY_SECRET_NAME || '' }}" \
-                  -var="github_repo=${{ vars.GITHUB_REPO || '' }}" \
+                  -var="git_repo=${{ vars.GIT_REPO || '' }}" \
                   "$TF_RESOURCE" \
                   "projects/${{ env.GCP_PROJECT_ID }}/locations/${{ env.GCP_REGION }}/services/$SERVICE_NAME"; then
                   echo "✅ Successfully imported $SERVICE_NAME"
@@ -481,7 +481,7 @@ jobs:
             -var="gemini_api_key=${{ secrets.GEMINI_API_KEY || '' }}" \
             -var="gemini_api_key_secret=${{ secrets.GEMINI_API_KEY_SECRET_NAME || '' }}" \
             -var="google_api_key_secret=${{ secrets.GOOGLE_API_KEY_SECRET_NAME || '' }}" \
-            -var="github_repo=${{ vars.GITHUB_REPO || '' }}" \
+            -var="git_repo=${{ vars.GIT_REPO || '' }}" \
             -target=google_cloud_run_v2_service.academic_research \
             -target=google_cloud_run_v2_service.blog_writer \
             -target=google_cloud_run_v2_service.google_trends \

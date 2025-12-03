@@ -71,7 +71,7 @@ variable "monthly_budget" {
 # GitHub Configuration
 # =============================================================================
 
-variable "github_repo" {
+variable "git_repo" {
   description = "GitHub repository for error-observer repository_dispatch (format: owner/repository)"
   type        = string
   default     = ""

@@ -13,7 +13,7 @@ GitHub Actions workflow `deploy-adk-agents.yml` was failing during the "Build AG
 
 Added support for configurable GitHub repository variable for error-observer agent:
 
-- **Variable Name**: `GITHUB_REPO`
+- **Variable Name**: `GIT_REPO`
 - **Format**: `owner/repository`
 - **Purpose**: Configure which repository error-observer dispatches errors to
 - **Default**: Falls back to `"enufacas/Chained"` if not set
@@ -76,7 +76,7 @@ interface ErrorEventDetail {
 
 **Added new variable:**
 ```hcl
-variable "github_repo" {
+variable "git_repo" {
   description = "GitHub repository for error-observer repository_dispatch (format: owner/repository)"
   type        = string
   default     = ""
@@ -88,8 +88,8 @@ variable "github_repo" {
 **Updated error-observer configuration:**
 ```hcl
 env {
-  name  = "GITHUB_REPO"
-  value = var.github_repo != "" ? var.github_repo : "enufacas/Chained"
+  name  = "GIT_REPO"
+  value = var.git_repo != "" ? var.git_repo : "enufacas/Chained"
 }
 ```
 
@@ -98,19 +98,19 @@ env {
 **Added variable to all Terraform commands:**
 - Import commands (3 locations)
 - Terraform plan command
-- Format: `-var="github_repo=${{ vars.GITHUB_REPO || '' }}"`
+- Format: `-var="git_repo=${{ vars.GIT_REPO || '' }}"`
 
 ### 3. Documentation
 
 #### File: `infrastructure/README.md`
 - Added step 3: Configure GitHub Repository Variables
-- Included `GITHUB_REPO` with format and example
+- Included `GIT_REPO` with format and example
 
 #### File: `infrastructure/terraform/terraform.tfvars.example`
 - Added GitHub Configuration section
-- Documented `github_repo` variable with example
+- Documented `git_repo` variable with example
 
-#### File: `docs/guides/GITHUB_REPO_VARIABLE_SETUP.md` (NEW)
+#### File: `docs/guides/GIT_REPO_VARIABLE_SETUP.md` (NEW)
 - Complete setup guide with step-by-step instructions
 - Format requirements and examples
 - Troubleshooting section
@@ -140,7 +140,7 @@ npm run build
 8 files changed, 160 insertions(+), 6 deletions(-)
 
  .github/workflows/deploy-adk-agents.yml                                     |  4 ++
- docs/guides/GITHUB_REPO_VARIABLE_SETUP.md                                   | 97 +++++++++++++++++
+ docs/guides/GIT_REPO_VARIABLE_SETUP.md                                      | 97 +++++++++++++++++
  infrastructure/README.md                                                    |  7 ++-
  infrastructure/docker/ag-ui-frontend/src/components/ErrorObserverStatus.tsx | 20 +++-
  infrastructure/docker/ag-ui-frontend/src/lib/error-logging.ts               | 17 +++-
@@ -151,7 +151,7 @@ npm run build
 
 ## How to Use the New Feature
 
-### Setting Up GITHUB_REPO Variable
+### Setting Up GIT_REPO Variable
 
 1. **Navigate to Repository Settings**:
    - Go to your GitHub repository
@@ -159,7 +159,7 @@ npm run build
 
 2. **Create Variable**:
    - Click "New repository variable"
-   - Name: `GITHUB_REPO`
+   - Name: `GIT_REPO`
    - Value: `owner/repository` (e.g., `enufacas/Chained`)
    - Click "Add variable"
 
@@ -203,7 +203,7 @@ gcloud run services describe chained-error-observer \
 ## Related Files
 
 - **Issue**: https://github.com/enufacas/Chained/actions/runs/19878308560/job/56970829912
-- **Setup Guide**: `docs/guides/GITHUB_REPO_VARIABLE_SETUP.md`
+- **Setup Guide**: `docs/guides/GIT_REPO_VARIABLE_SETUP.md`
 - **Infrastructure README**: `infrastructure/README.md`
 - **Terraform Variables**: `infrastructure/terraform/variables.tf`
 
