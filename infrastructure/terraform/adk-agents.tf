@@ -1152,10 +1152,16 @@ resource "google_cloud_run_v2_service" "ag_ui_frontend" {
         value = google_cloud_run_v2_service.image_generator.uri
       }
 
-      # Error Observer URL for UI error reporting
+      # Error Observer URL for UI error reporting and activity monitoring
       env {
         name  = "ERROR_OBSERVER_URL"
         value = google_cloud_run_v2_service.error_observer.uri
+      }
+
+      # Log Consumer URL for activity monitoring
+      env {
+        name  = "AGENT_LOG_CONSUMER_URL"
+        value = google_cloud_run_v2_service.log_consumer.uri
       }
 
       # GCP Project ID for blog URL construction in pipeline route

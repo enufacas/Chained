@@ -66,6 +66,41 @@ const AGENT_ENDPOINTS = {
     icon: "✍️",
     description: "Writes and publishes blog posts",
   },
+  "code-reviewer": {
+    url: process.env.AGENT_CODE_REVIEWER_URL || 
+      (isDevelopment ? "" : "https://chained-code-reviewer-sguacxy5gq-uc.a.run.app"),
+    displayName: "Code Reviewer",
+    icon: "👀",
+    description: "Reviews code and provides feedback",
+  },
+  "data-analyst": {
+    url: process.env.AGENT_DATA_ANALYST_URL || 
+      (isDevelopment ? "" : "https://chained-data-analyst-sguacxy5gq-uc.a.run.app"),
+    displayName: "Data Analyst",
+    icon: "📊",
+    description: "Analyzes data and generates insights",
+  },
+  "image-generator": {
+    url: process.env.AGENT_IMAGE_GENERATOR_URL || 
+      (isDevelopment ? "" : "https://chained-image-generator-sguacxy5gq-uc.a.run.app"),
+    displayName: "Image Generator",
+    icon: "🎨",
+    description: "Generates images using AI",
+  },
+  "error-observer": {
+    url: process.env.ERROR_OBSERVER_URL ||
+      (isDevelopment ? "" : "https://chained-error-observer-sguacxy5gq-uc.a.run.app"),
+    displayName: "Error Observer",
+    icon: "🔍",
+    description: "Monitors and reports system errors",
+  },
+  "log-consumer": {
+    url: process.env.AGENT_LOG_CONSUMER_URL || 
+      (isDevelopment ? "" : "https://chained-log-consumer-sguacxy5gq-uc.a.run.app"),
+    displayName: "Log Consumer",
+    icon: "📝",
+    description: "Consumes and processes Cloud Run logs",
+  },
   "adk-api-server": {
     url: ADK_API_URL,
     displayName: "ADK API Server",
