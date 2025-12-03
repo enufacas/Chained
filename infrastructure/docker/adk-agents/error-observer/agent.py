@@ -43,7 +43,7 @@ PORT = int(os.getenv("PORT", "8090"))
 
 # GitHub configuration
 GITHUB_TOKEN = os.getenv("GITHUB_PAT") or os.getenv("GITHUB_TOKEN")
-GITHUB_REPO = "enufacas/Chained"
+GITHUB_REPO = os.getenv("GITHUB_REPO", "enufacas/Chained")
 GITHUB_API_URL = "https://api.github.com"
 
 # Agent state tracking

@@ -486,6 +486,8 @@ jobs:
             -target=google_cloud_run_v2_service.image_generator \
             -target=google_cloud_run_v2_service.adk_api_server \
             -target=google_cloud_run_v2_service.ag_ui_frontend \
+            -target=google_cloud_run_v2_service.error_observer \
+            -target=google_cloud_run_v2_service.log_consumer \
             -target=google_service_account.adk_agents \
             -target=google_cloud_run_v2_service_iam_member.academic_research_public \
             -target=google_cloud_run_v2_service_iam_member.blog_writer_public \
@@ -495,6 +497,8 @@ jobs:
             -target=google_cloud_run_v2_service_iam_member.image_generator_public \
             -target=google_cloud_run_v2_service_iam_member.adk_api_server_public \
             -target=google_cloud_run_v2_service_iam_member.ag_ui_frontend_public \
+            -target=google_cloud_run_v2_service_iam_member.error_observer_public \
+            -target=google_cloud_run_v2_service_iam_member.log_consumer_public \
             -out=tfplan
 
       - name: Terraform Apply
@@ -511,6 +515,8 @@ jobs:
           echo "image_generator_url=$(terraform output -raw image_generator_url 2>/dev/null || echo '')" >> $GITHUB_OUTPUT
           echo "adk_api_server_url=$(terraform output -raw adk_api_server_url 2>/dev/null || echo '')" >> $GITHUB_OUTPUT
           echo "ag_ui_frontend_url=$(terraform output -raw ag_ui_frontend_url 2>/dev/null || echo '')" >> $GITHUB_OUTPUT
+          echo "error_observer_url=$(terraform output -raw error_observer_url 2>/dev/null || echo '')" >> $GITHUB_OUTPUT
+          echo "log_consumer_url=$(terraform output -raw log_consumer_url 2>/dev/null || echo '')" >> $GITHUB_OUTPUT
 
       - name: Summary
         run: |
@@ -538,6 +544,13 @@ jobs:
           echo "| Code Reviewer | ${{ steps.urls.outputs.code_reviewer_url }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Data Analyst | ${{ steps.urls.outputs.data_analyst_url }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Image Generator | ${{ steps.urls.outputs.image_generator_url }} |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### System Agents" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Agent | URL |" >> $GITHUB_STEP_SUMMARY
+          echo "|-------|-----|" >> $GITHUB_STEP_SUMMARY
+          echo "| Error Observer | ${{ steps.urls.outputs.error_observer_url }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Log Consumer | ${{ steps.urls.outputs.log_consumer_url }} |" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### 📋 Endpoints" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
