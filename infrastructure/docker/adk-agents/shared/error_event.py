@@ -286,7 +286,21 @@ class ErrorEvent(BaseModel):
         """
         Convert this error event to a GitHub repository_dispatch payload.
         
+        GitHub repository_dispatch API has a limit of 10 properties in client_payload.
+        We include the most important fields for triage.
+        
         Returns:
-            Dict suitable for GitHub repository_dispatch client_payload
+            Dict suitable for GitHub repository_dispatch client_payload (max 10 fields)
         """
-        return self.model_dump()
+        return {
+            "service": self.service,
+            "error_message": self.error_message,
+            "error_hash": self.error_hash,
+            "stack_trace": self.stack_trace,
+            "first_seen": self.first_seen,
+            "last_seen": self.last_seen,
+            "occurrences": self.occurrences,
+            "source_agent": self.source_agent,
+            "a2a_ui_url": self.a2a_ui_url,
+            "environment": self.environment,
+        }

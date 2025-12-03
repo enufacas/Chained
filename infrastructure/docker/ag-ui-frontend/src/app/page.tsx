@@ -399,8 +399,8 @@ function CompactAgentStatus() {
         </div>
       </button>
       {expanded && data && (
-        <div className="px-3 py-2 border-t border-slate-700/50 space-y-1">
-          {data.agents.slice(0, 4).map((agent, i) => (
+        <div className="px-3 py-2 border-t border-slate-700/50 space-y-1 max-h-64 overflow-y-auto">
+          {data.agents.map((agent, i) => (
             <div key={i} className="flex items-center gap-2 text-xs text-slate-400">
               <span>{agent.icon}</span>
               <span className="flex-1 truncate">{agent.displayName}</span>

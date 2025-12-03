@@ -77,6 +77,63 @@ const DEFAULT_PREFERENCES: UserPreferences = {
 const MAX_ARTIFACTS = 100;
 const MAX_SESSIONS = 50;
 
+// Storage size limits (in bytes)
+const MAX_STORAGE_SIZE = 4 * 1024 * 1024; // 4MB (localStorage typically has 5-10MB limit)
+const STORAGE_WARNING_THRESHOLD = 3 * 1024 * 1024; // 3MB - warn at 75%
+
+/**
+ * Get current storage size in bytes
+ */
+function getCurrentStorageSize(): number {
+  if (!isStorageAvailable()) return 0;
+  try {
+    let total = 0;
+    for (const key of Object.values(STORAGE_KEYS)) {
+      const value = localStorage.getItem(key);
+      if (value) {
+        total += new Blob([value]).size;
+      }
+    }
+    return total;
+  } catch {
+    return 0;
+  }
+}
+
+/**
+ * Check if we're approaching storage quota
+ */
+function isStorageNearLimit(): boolean {
+  return getCurrentStorageSize() >= STORAGE_WARNING_THRESHOLD;
+}
+
+/**
+ * Free up storage space by removing old items
+ */
+function pruneStorage(): void {
+  if (!isStorageAvailable()) return;
+  
+  try {
+    // Remove oldest artifacts first
+    const artifacts = getStoredArtifacts();
+    if (artifacts.length > MAX_ARTIFACTS / 2) {
+      const kept = artifacts.slice(0, Math.floor(MAX_ARTIFACTS / 2));
+      localStorage.setItem(STORAGE_KEYS.ARTIFACTS, JSON.stringify(kept));
+      console.log(`🧹 Pruned ${artifacts.length - kept.length} old artifacts to free space`);
+    }
+    
+    // Remove oldest sessions
+    const sessions = getStoredSessions();
+    if (sessions.length > MAX_SESSIONS / 2) {
+      const kept = sessions.slice(0, Math.floor(MAX_SESSIONS / 2));
+      localStorage.setItem(STORAGE_KEYS.SESSIONS, JSON.stringify(kept));
+      console.log(`🧹 Pruned ${sessions.length - kept.length} old sessions to free space`);
+    }
+  } catch (error) {
+    console.warn("Failed to prune storage:", error);
+  }
+}
+
 /**
  * Check if localStorage is available
  */
@@ -128,12 +185,34 @@ export function saveArtifact(artifact: Omit<StoredArtifact, "id" | "createdAt">)
   if (!isStorageAvailable()) return stored;
 
   try {
+    // Check if we're approaching storage limit and prune if needed
+    if (isStorageNearLimit()) {
+      console.warn("⚠️ Storage approaching limit, pruning old data...");
+      pruneStorage();
+    }
+    
     const artifacts = getStoredArtifacts();
     artifacts.unshift(stored);
 
     // Keep only the most recent artifacts
     const trimmed = artifacts.slice(0, MAX_ARTIFACTS);
-    localStorage.setItem(STORAGE_KEYS.ARTIFACTS, JSON.stringify(trimmed));
+    
+    // Try to save, catch quota errors
+    try {
+      localStorage.setItem(STORAGE_KEYS.ARTIFACTS, JSON.stringify(trimmed));
+    } catch (quotaError: any) {
+      if (quotaError.name === "QuotaExceededError") {
+        console.warn("💾 Storage quota exceeded, aggressive pruning...");
+        // Try aggressive pruning
+        pruneStorage();
+        // Try saving with reduced list
+        const reduced = artifacts.slice(0, Math.floor(MAX_ARTIFACTS / 4));
+        localStorage.setItem(STORAGE_KEYS.ARTIFACTS, JSON.stringify(reduced));
+        console.log(`✅ Saved after pruning to ${reduced.length} artifacts`);
+      } else {
+        throw quotaError;
+      }
+    }
   } catch (error) {
     console.warn("Failed to save artifact to storage:", error);
     logStorageError(error, "saveArtifact", STORAGE_KEYS.ARTIFACTS, {
@@ -345,6 +424,12 @@ export function saveSession(session: Omit<StoredSession, "createdAt">): StoredSe
   if (!isStorageAvailable()) return stored;
 
   try {
+    // Check storage limit
+    if (isStorageNearLimit()) {
+      console.warn("⚠️ Storage approaching limit, pruning old data...");
+      pruneStorage();
+    }
+    
     const sessions = getStoredSessions();
     // Update existing or add new
     const existingIndex = sessions.findIndex((s) => s.id === session.id);
@@ -356,7 +441,22 @@ export function saveSession(session: Omit<StoredSession, "createdAt">): StoredSe
 
     // Keep only the most recent sessions
     const trimmed = sessions.slice(0, MAX_SESSIONS);
-    localStorage.setItem(STORAGE_KEYS.SESSIONS, JSON.stringify(trimmed));
+    
+    // Try to save, catch quota errors
+    try {
+      localStorage.setItem(STORAGE_KEYS.SESSIONS, JSON.stringify(trimmed));
+    } catch (quotaError: any) {
+      if (quotaError.name === "QuotaExceededError") {
+        console.warn("💾 Session storage quota exceeded, aggressive pruning...");
+        pruneStorage();
+        // Try with reduced list
+        const reduced = sessions.slice(0, Math.floor(MAX_SESSIONS / 4));
+        localStorage.setItem(STORAGE_KEYS.SESSIONS, JSON.stringify(reduced));
+        console.log(`✅ Saved after pruning to ${reduced.length} sessions`);
+      } else {
+        throw quotaError;
+      }
+    }
   } catch (error) {
     console.warn("Failed to save session to storage:", error);
     logStorageError(error, "saveSession", STORAGE_KEYS.SESSIONS, {
