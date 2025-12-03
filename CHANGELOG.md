@@ -35,11 +35,12 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🐛 Bug Fixes
 
+- 👤 ⚙️ Workflows Fix critical error observer issues: Terraform data source, missing workflow, security vulnerability [#3535](https://github.com/enufacas/Chained/pull/3535)
 - 👤 Implement A2A-native error observer system with GitHub dispatch integration [#3520](https://github.com/enufacas/Chained/pull/3520)
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge [#3531](https://github.com/enufacas/Chained/pull/3531)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x2) [#3534](https://github.com/enufacas/Chained/pull/3534)
 
 ---
 
@@ -327,8 +328,6 @@ This changelog excludes automated data syncs and routine maintenance commits.
 - 👤 🔧 Tools Fix auto-merge script to recognize app-prefixed bot accounts and successfully merge 15 PRs [#3065](https://github.com/enufacas/Chained/pull/3065)
 - 👤 Fix meta-coordinator non-deterministic PR/issue processing [#3062](https://github.com/enufacas/Chained/pull/3062)
 - 👤 Fix: Mark all draft PRs as ready before merge eligibility check [#3048](https://github.com/enufacas/Chained/pull/3048)
-- 👤 [WIP] Troubleshoot error in action run [#3042](https://github.com/enufacas/Chained/pull/3042)
-- 👤 Fix confusing Gemini CLI authentication error with pre-flight validation [#3040](https://github.com/enufacas/Chained/pull/3040)
 
 ### 🧹 Chores & Maintenance
 
