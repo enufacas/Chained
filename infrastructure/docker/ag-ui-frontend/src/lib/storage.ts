@@ -87,11 +87,11 @@ const DEFAULT_PREFERENCES: UserPreferences = {
 
 // Max items to keep in storage
 const MAX_ARTIFACTS = 100;
-const MAX_SESSIONS = 50;
+const MAX_SESSIONS = 20; // Reduced from 50 to prevent quota issues
 
 // Storage size limits (in bytes)
 // Note: localStorage typically has a 5-10MB limit
-const STORAGE_WARNING_THRESHOLD = 3 * 1024 * 1024; // 3MB - warn at 75%
+const STORAGE_WARNING_THRESHOLD = 2 * 1024 * 1024; // 2MB - warn at 40% to be more aggressive
 
 // Concurrent write protection
 interface PendingWrite {
@@ -215,24 +215,61 @@ function pruneStorage(): void {
   if (!isStorageAvailable()) return;
   
   try {
-    // Remove oldest artifacts first
+    // Remove oldest artifacts first - keep only 1/3 to free more space
     const artifacts = getStoredArtifacts();
-    if (artifacts.length > MAX_ARTIFACTS / 2) {
-      const kept = artifacts.slice(0, Math.floor(MAX_ARTIFACTS / 2));
+    if (artifacts.length > MAX_ARTIFACTS / 3) {
+      const kept = artifacts.slice(0, Math.floor(MAX_ARTIFACTS / 3));
       localStorage.setItem(STORAGE_KEYS.ARTIFACTS, JSON.stringify(kept));
       console.log(`🧹 Pruned ${artifacts.length - kept.length} old artifacts to free space`);
     }
     
-    // Remove oldest sessions
+    // Remove oldest sessions - keep only 1/3 to free more space
     const sessions = getStoredSessions();
-    if (sessions.length > MAX_SESSIONS / 2) {
-      const kept = sessions.slice(0, Math.floor(MAX_SESSIONS / 2));
+    if (sessions.length > MAX_SESSIONS / 3) {
+      // Strip large metadata from old sessions before saving
+      const kept = sessions
+        .slice(0, Math.floor(MAX_SESSIONS / 3))
+        .map(s => stripLargeMetadata(s));
       localStorage.setItem(STORAGE_KEYS.SESSIONS, JSON.stringify(kept));
       console.log(`🧹 Pruned ${sessions.length - kept.length} old sessions to free space`);
     }
   } catch (error) {
     console.warn("Failed to prune storage:", error);
   }
+}
+
+/**
+ * Strip large metadata from sessions to reduce storage size
+ * Keeps essential data but removes bulky A2A protocol objects
+ */
+function stripLargeMetadata(session: StoredSession): StoredSession {
+  if (!session.metadata) return session;
+  
+  const metadata = { ...session.metadata };
+  
+  // Remove bulky turnResults array but keep summary info
+  if (metadata.turnResults && Array.isArray(metadata.turnResults)) {
+    const turnCount = metadata.turnResults.length;
+    delete metadata.turnResults; // Remove the large array
+    metadata.turnResultsCount = turnCount; // Keep count only
+  }
+  
+  // Keep only essential config
+  if (metadata.config) {
+    const config = metadata.config as Record<string, unknown>;
+    metadata.config = {
+      maxTurnsPerAgent: config.maxTurnsPerAgent,
+      executionMode: config.executionMode,
+    };
+  }
+  
+  // Remove finalResult if present (can be large)
+  delete metadata.finalResult;
+  
+  return {
+    ...session,
+    metadata,
+  };
 }
 
 /**
@@ -526,6 +563,7 @@ export function getStoredSessions(): StoredSession[] {
 
 /**
  * Save a session to storage with concurrent write protection
+ * Automatically strips large metadata for older sessions to prevent quota issues
  */
 export function saveSession(session: Omit<StoredSession, "createdAt">): StoredSession {
   const stored: StoredSession = {
@@ -536,7 +574,7 @@ export function saveSession(session: Omit<StoredSession, "createdAt">): StoredSe
   if (!isStorageAvailable()) return stored;
 
   try {
-    // Check storage limit
+    // Check storage limit BEFORE attempting to save
     if (isStorageNearLimit()) {
       console.warn("⚠️ Storage approaching limit, pruning old data...");
       pruneStorage();
@@ -552,7 +590,18 @@ export function saveSession(session: Omit<StoredSession, "createdAt">): StoredSe
     }
 
     // Keep only the most recent sessions
-    const trimmed = sessions.slice(0, MAX_SESSIONS);
+    let trimmed = sessions.slice(0, MAX_SESSIONS);
+    
+    // Strip large metadata from older sessions (keep only most recent 3 with full data)
+    trimmed = trimmed.map((s, index) => {
+      if (index < 3) {
+        // Keep full metadata for the 3 most recent sessions
+        return s;
+      } else {
+        // Strip metadata from older sessions to save space
+        return stripLargeMetadata(s);
+      }
+    });
     
     const dataToSave = JSON.stringify(trimmed);
     
@@ -565,13 +614,15 @@ export function saveSession(session: Omit<StoredSession, "createdAt">): StoredSe
     } catch (quotaError: unknown) {
       if (quotaError instanceof DOMException && quotaError.name === "QuotaExceededError") {
         console.warn("💾 Session storage quota exceeded, aggressive pruning...");
+        // Aggressive pruning - keep only 5 sessions with stripped metadata
         pruneStorage();
-        // Try with reduced list
-        const reduced = sessions.slice(0, Math.floor(MAX_SESSIONS / 4));
+        const reduced = sessions
+          .slice(0, 5)
+          .map(s => stripLargeMetadata(s));
         const reducedData = JSON.stringify(reduced);
         localStorage.setItem(STORAGE_KEYS.SESSIONS, reducedData);
         queueWrite(STORAGE_KEYS.SESSIONS, reducedData);
-        console.log(`✅ Saved after pruning to ${reduced.length} sessions`);
+        console.log(`✅ Saved after aggressive pruning to ${reduced.length} sessions`);
       } else {
         throw quotaError;
       }
