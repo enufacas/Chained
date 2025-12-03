@@ -24,7 +24,7 @@ from pydantic import BaseModel
 
 # Add shared utilities to path
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from shared.a2a_utils import parse_llm_json_response
+from shared.a2a_utils import parse_llm_json_response, report_agent_error
 from shared.gemini_client import (
     generate_content,
     is_available as gemini_is_available,
@@ -333,6 +333,16 @@ async def send_message(request: SendMessageRequest) -> Task:
         )
         
     except Exception as e:
+        # Report error to error observer
+        try:
+            await report_agent_error(
+                agent_name="code-reviewer",
+                exception=e,
+                task_type="agent_task",
+            )
+        except Exception:
+            pass  # Don't block on error reporting failure
+        
         return Task(
             id=task_id,
             contextId=request.contextId,
