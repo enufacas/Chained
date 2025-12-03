@@ -28,15 +28,20 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ## 2025-12-03
 
+### ✨ Features
+
+- 🤖 🧠 Learning 🧠 Learn from GitHub Copilot sources - 2025-12-03 [#3562](https://github.com/enufacas/Chained/pull/3562)
+
 ### 🐛 Bug Fixes
 
+- 👤 Fix AG-UI frontend: ERROR_OBSERVER_URL runtime config, localStorage quota, and pipeline detail persistence [#3558](https://github.com/enufacas/Chained/pull/3558)
 - 👤 Fix session timestamp preservation in work history page [#3555](https://github.com/enufacas/Chained/pull/3555)
 - 👤 Fix AG-UI Error Observer config race condition and session persistence data loss [#3554](https://github.com/enufacas/Chained/pull/3554)
 - 👤 Fix localStorage quota exceeded in AG-UI team runs and add E2E tests [#3552](https://github.com/enufacas/Chained/pull/3552)
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x9) [#3556](https://github.com/enufacas/Chained/pull/3556)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x10) [#3557](https://github.com/enufacas/Chained/pull/3557)
 - 👤 📋 Instructions **Documentation**: Update A2A README with error observer system and add maintenance instructions [#3520](https://github.com/enufacas/Chained/pull/3520)
 
 ---
@@ -274,10 +279,10 @@ This changelog excludes automated data syncs and routine maintenance commits.
 - 👤 🏗️ Infrastructure GCP infrastructure brainstorming, IaC, and CI/CD pipeline [#3190](https://github.com/enufacas/Chained/pull/3190)
 - 👤 ⚙️ Workflows Add self-evolving neural architecture for workflow adaptation [#3176](https://github.com/enufacas/Chained/pull/3176)
 - 👤 Implement lightweight ML code completion predictor with N-gram architecture [#3147](https://github.com/enufacas/Chained/pull/3147)
-- 🤖 🔧 Agents 🎯 Agent Missions - Pipeline (x2) [#3182](https://github.com/enufacas/Chained/pull/3182)
+- 🤖 🔧 Agents 🎯 Agent Missions - Pipeline [#3182](https://github.com/enufacas/Chained/pull/3182)
 - 👤 🧠 Learning Implement autonomous git commit strategy learning system [#3136](https://github.com/enufacas/Chained/pull/3136)
 - 👤 meta-coordination: 2025-11-26 14:55 run - merged 3 PRs, verified system health [#3150](https://github.com/enufacas/Chained/pull/3150)
-- 🤖 🧠 Learning 🧠 Learning Pipeline - 2025-11-26 (x2) [#3172](https://github.com/enufacas/Chained/pull/3172)
+- 🤖 🧠 Learning 🧠 Learning Pipeline - 2025-11-26 [#3172](https://github.com/enufacas/Chained/pull/3172)
 - 👤 meta-coordination: 2025-11-26 14:15 run - system health verification [#3145](https://github.com/enufacas/Chained/pull/3145)
 - 👤 meta-coordination: 2025-11-26 16:19 run - closed 8 stale PRs, reduced open PRs by 42% [#3160](https://github.com/enufacas/Chained/pull/3160)
 - 👤 🧠 Learning add commit validation to strategy learner (@create-guru) [#3161](https://github.com/enufacas/Chained/pull/3161)
@@ -309,14 +314,12 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: 📚 Sync World State to Docs - Pipeline (x2) [#3183](https://github.com/enufacas/Chained/pull/3183)
+- 🤖 **Documentation**: 📚 Sync World State to Docs - Pipeline [#3183](https://github.com/enufacas/Chained/pull/3183)
 - 👤 📚 Docs **Documentation**: Add prompt engineering origin note to README header [#3071](https://github.com/enufacas/Chained/pull/3071)
-- 👤 **Documentation**: Update CLI investigation to address device flow limitations at scale [#116](https://github.com/enufacas/Chained/pull/116)
-- 👤 **Documentation**: Add critical reality check on Copilot execution model and A2A limitations [#19692667508](https://github.com/enufacas/Chained/pull/19692667508)
 - 👤 **Chore**: meta-coordination: 2025-11-27 00:59 run - merged 2 PRs, updated memory [#3211](https://github.com/enufacas/Chained/pull/3211)
-- 🤖 📊 GitHub Pages **Chore**: 📊 Update timeline data - 2025-11-27 01:05:18 UTC (x6) [#3216](https://github.com/enufacas/Chained/pull/3216)
+- 🤖 📊 GitHub Pages **Chore**: 📊 Update timeline data - 2025-11-27 01:05:18 UTC (x5) [#3216](https://github.com/enufacas/Chained/pull/3216)
 - 🤖 **Chore**: 🤖 Update pattern repetition analysis (x3) [#3215](https://github.com/enufacas/Chained/pull/3215)
-- 🤖 **Chore**: 🌍 World Model Update - Pipeline (x2) [#3174](https://github.com/enufacas/Chained/pull/3174)
+- 🤖 **Chore**: 🌍 World Model Update - Pipeline [#3174](https://github.com/enufacas/Chained/pull/3174)
 - 🤖 **Chore**: 📊 Goal progress update: ✅ Completed [#3171](https://github.com/enufacas/Chained/pull/3171)
 - 🤖 **Chore**: update prompt generator performance data [#3072](https://github.com/enufacas/Chained/pull/3072)
 - 👤 **Test**: 🧠 Mission: Go Specialist Emerging Theme Research (idea:84) [#3185](https://github.com/enufacas/Chained/pull/3185)
