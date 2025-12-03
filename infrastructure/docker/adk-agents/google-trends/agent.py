@@ -689,6 +689,16 @@ async def send_message(request: SendMessageRequest) -> Task:
             "error": str(e)
         })
         
+        # Report error to error observer
+        try:
+            await report_agent_error(
+                agent_name="google-trends",
+                exception=e,
+                task_type="trends_analysis",
+            )
+        except Exception:
+            pass  # Don't block on error reporting failure
+        
         return Task(
             id=task_id,
             contextId=request.contextId,

@@ -36,6 +36,7 @@ from pydantic import BaseModel
 
 # Add shared utilities to path
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from shared.a2a_utils import report_agent_error
 from shared.gemini_client import (
     generate_content,
     is_available as gemini_is_available,
@@ -926,6 +927,16 @@ async def send_message(request: SendMessageRequest) -> Task:
             "error": str(e),
             "error_type": type(e).__name__
         })
+        
+        # Report error to error observer
+        try:
+            await report_agent_error(
+                agent_name="blog-writer",
+                exception=e,
+                task_type="blog_writing",
+            )
+        except Exception:
+            pass  # Don't block on error reporting failure
         
         return Task(
             id=task_id,

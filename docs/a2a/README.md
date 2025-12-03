@@ -67,6 +67,10 @@ The A2A implementation uses a **three-tier architecture** to accommodate GitHub 
 ```
 Chained/
 ├── docs/a2a/                           # This directory - all documentation
+├── docs/
+│   ├── error_observer_overview.md      # Error Observer system architecture
+│   ├── error_observer_schema.md        # Error event schema and formats
+│   └── cloudrun_log_consumer.md        # Log consumer design
 ├── tools/a2a/                          # Core A2A implementation
 │   ├── agent_card.py                   # Agent Card generation
 │   ├── agent_executor.py               # Agent execution wrapper
@@ -77,6 +81,16 @@ Chained/
 │   ├── github_branch_transport.py      # GitHub Branches transport
 │   ├── mcp_transport.py                # MCP transport (future)
 │   └── utils.py                        # Utilities
+├── infrastructure/docker/adk-agents/
+│   ├── error-observer/                 # 🔍 A2A Error Observer Agent
+│   │   ├── agent.py                    # Receives error_event tasks via A2A
+│   │   └── Dockerfile                  # Deploys to Cloud Run
+│   ├── log-consumer/                   # 📝 Cloud Run Log Consumer
+│   │   ├── agent.py                    # Converts logs to error_event tasks
+│   │   └── Dockerfile                  # Deploys to Cloud Run
+│   └── shared/
+│       ├── error_event.py              # ErrorEvent A2A task schema
+│       └── a2a_utils.py                # Error reporting utilities
 ├── .github/workflows/
 │   ├── a2a-agent-worker.yml            # Tier 2 worker
 │   ├── a2a-demo.yml                    # Fully autonomous A2A pipeline (analysis + implementation + PR)
@@ -85,6 +99,7 @@ Chained/
 │   ├── a2a-test-tier1-integration.yml  # Tier 1 tests
 │   ├── a2a-test-multi-agent-demo.yml   # Demo workflow
 │   ├── a2a-test-full-suite.yml         # Full test suite
+│   ├── handle-cloudrun-errors.yml      # GitHub dispatch handler for errors
 │   └── README-A2A-TESTING.md           # Testing guide
 ├── tests/
 │   ├── test_a2a_agent_cards.py         # Agent card tests
@@ -198,6 +213,65 @@ If you're new to the A2A implementation, read in this order:
 **Additional Resources:**
 12. **A2A_IMPLEMENTATION_SUMMARY.md** - What was built in Phase 1
 13. **A2A_PHASE_2B_TESTING_SUMMARY.md** - Testing results
+14. **A2A_SUCCESS_HISTORY.md** - Success milestones and conversation history
+
+## 🔍 A2A Error Observer System
+
+The **Error Observer** is a production A2A system that demonstrates real-world A2A protocol usage. It treats errors as **first-class A2A tasks** (PR #3520).
+
+### Architecture
+
+```
+Error Sources → error_event (A2A task) → error_observer → GitHub Issues
+     ↓                                         ↓
+  - Agents                            State & Monitoring
+  - UI Frontend                              ↓
+  - Cloud Run Logs                    AG-UI Activity View
+```
+
+### Components
+
+- **error-observer agent** (Cloud Run): Subscribes to `error_event` A2A tasks, dispatches to GitHub
+- **log-consumer agent** (Cloud Run): Converts Cloud Run logs to `error_event` tasks
+- **ErrorEvent schema**: Canonical error structure with A2A artifact conversion
+- **AG-UI integration**: Real-time error observer status monitoring
+- **GitHub workflow**: `handle-cloudrun-errors.yml` creates issues from dispatched errors
+
+### Key Features
+
+- ✅ **A2A Native**: Errors flow through standard A2A protocol
+- ✅ **Unified Pipeline**: Single flow for agent, UI, and log errors
+- ✅ **Observable**: Real-time status in AG-UI activity section
+- ✅ **Autonomous Triage**: GitHub integration enables Copilot-driven error resolution
+- ✅ **Production Ready**: Deployed to Cloud Run, fully operational
+
+### Documentation
+
+- **[error_observer_overview.md](../error_observer_overview.md)** - Complete system architecture
+- **[error_observer_schema.md](../error_observer_schema.md)** - Error event schema details
+- **[cloudrun_log_consumer.md](../cloudrun_log_consumer.md)** - Log processing design
+
+### Example: Agent Runtime Error Flow
+
+```python
+# 1. Agent encounters error
+try:
+    result = fetch_research_papers(topic)
+except APIError as e:
+    # 2. Report via A2A
+    await report_agent_error("academic-research", e)
+    raise
+
+# 3. error_observer receives error_event A2A task
+# 4. Validates and enriches error
+# 5. Dispatches to GitHub via repository_dispatch
+# 6. GitHub workflow creates issue
+# 7. Copilot agents can triage and fix
+```
+
+This demonstrates A2A's power: a unified protocol for diverse system behaviors (agent execution, error handling, monitoring).
+
+## 🎯 A2A Use Cases
 14. **A2A_TRANSPORT_COMPARISON.md** - Transport options
 15. **A2A_GITHUB_RUNNERS_COMPLIANCE.md** - Constraints and limitations
 16. **A2A_MCP_TRANSPORT_DESIGN.md** - Future MCP integration
