@@ -49,6 +49,8 @@ npm start
 
 ## Environment Variables
 
+See `.env.example` for the complete list. Key variables:
+
 ```env
 # LLM API Keys (at least one required for chat feature)
 # GOOGLE_API_KEY is preferred for Google Gemini
@@ -59,6 +61,9 @@ OPENAI_API_KEY=your_openai_api_key_here
 
 # ADK API Server URL
 NEXT_PUBLIC_ADK_API_URL=https://chained-adk-api-server-sguacxy5gq-uc.a.run.app
+
+# Error Observer URL (required for error tracking and status display)
+ERROR_OBSERVER_URL=https://chained-error-observer-sguacxy5gq-uc.a.run.app
 
 # CopilotKit Configuration (optional - for cloud features)
 COPILOTKIT_RUNTIME_URL=/api/copilotkit
