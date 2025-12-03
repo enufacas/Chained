@@ -86,12 +86,14 @@ const DEFAULT_PREFERENCES: UserPreferences = {
 };
 
 // Max items to keep in storage
-const MAX_ARTIFACTS = 100;
-const MAX_SESSIONS = 20; // Reduced from 50 to prevent quota issues
+// Reduced significantly to prevent quota errors on mobile/low-memory devices
+const MAX_ARTIFACTS = 30;  // Reduced from 100 to 30
+const MAX_SESSIONS = 10;    // Reduced from 20 to 10
 
 // Storage size limits (in bytes)
-// Note: localStorage typically has a 5-10MB limit
-const STORAGE_WARNING_THRESHOLD = 2 * 1024 * 1024; // 2MB - warn at 40% to be more aggressive
+// Note: localStorage typically has a 5-10MB limit, but can be as low as 2.5MB on some mobile browsers
+const STORAGE_WARNING_THRESHOLD = 1 * 1024 * 1024; // 1MB - warn at 20% of typical 5MB limit
+const STORAGE_MAX_ARTIFACT_SIZE = 100 * 1024; // 100KB - reject artifacts larger than this
 
 // Concurrent write protection
 interface PendingWrite {
@@ -210,28 +212,44 @@ function isStorageNearLimit(): boolean {
 
 /**
  * Free up storage space by removing old items
+ * Enhanced to remove large items first and be more aggressive
  */
 function pruneStorage(): void {
   if (!isStorageAvailable()) return;
   
   try {
-    // Remove oldest artifacts first - keep only 1/3 to free more space
+    // Remove oldest and largest artifacts first
     const artifacts = getStoredArtifacts();
-    if (artifacts.length > MAX_ARTIFACTS / 3) {
-      const kept = artifacts.slice(0, Math.floor(MAX_ARTIFACTS / 3));
+    if (artifacts.length > 0) {
+      // Sort by size (largest first) and age (oldest first)
+      const sorted = artifacts.sort((a, b) => {
+        const sizeA = new Blob([a.data]).size;
+        const sizeB = new Blob([b.data]).size;
+        // Prioritize removing large artifacts
+        if (Math.abs(sizeA - sizeB) > 10000) { // 10KB difference
+          return sizeB - sizeA; // Largest first
+        }
+        // Then by age
+        return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+      });
+      
+      // Keep only the smallest and newest 25% of items
+      const keepCount = Math.max(1, Math.floor(MAX_ARTIFACTS / 4));
+      const kept = sorted.slice(-keepCount); // Take from the end (smallest/newest)
       localStorage.setItem(STORAGE_KEYS.ARTIFACTS, JSON.stringify(kept));
-      console.log(`🧹 Pruned ${artifacts.length - kept.length} old artifacts to free space`);
+      console.log(`🧹 Aggressive prune: kept ${kept.length}/${artifacts.length} smallest artifacts`);
     }
     
-    // Remove oldest sessions - keep only 1/3 to free more space
+    // Remove oldest sessions - keep only newest 25%
     const sessions = getStoredSessions();
-    if (sessions.length > MAX_SESSIONS / 3) {
-      // Strip large metadata from old sessions before saving
+    if (sessions.length > 0) {
+      const keepCount = Math.max(1, Math.floor(MAX_SESSIONS / 4));
+      // Strip large metadata from kept sessions
       const kept = sessions
-        .slice(0, Math.floor(MAX_SESSIONS / 3))
+        .slice(0, keepCount)
         .map(s => stripLargeMetadata(s));
       localStorage.setItem(STORAGE_KEYS.SESSIONS, JSON.stringify(kept));
-      console.log(`🧹 Pruned ${sessions.length - kept.length} old sessions to free space`);
+      console.log(`🧹 Aggressive prune: kept ${kept.length}/${sessions.length} newest sessions`);
     }
   } catch (error) {
     console.warn("Failed to prune storage:", error);
@@ -312,6 +330,7 @@ function generateId(prefix: string): string {
 
 /**
  * Save an artifact to storage with concurrent write protection
+ * Now includes size validation to prevent quota exceeded errors
  */
 export function saveArtifact(artifact: Omit<StoredArtifact, "id" | "createdAt">): StoredArtifact {
   const stored: StoredArtifact = {
@@ -323,6 +342,15 @@ export function saveArtifact(artifact: Omit<StoredArtifact, "id" | "createdAt">)
   if (!isStorageAvailable()) return stored;
 
   try {
+    // Validate artifact size before attempting to save
+    const artifactSize = new Blob([artifact.data]).size;
+    if (artifactSize > STORAGE_MAX_ARTIFACT_SIZE) {
+      console.warn(`⚠️ Artifact "${artifact.name}" too large (${Math.round(artifactSize / 1024)}KB), truncating to ${Math.round(STORAGE_MAX_ARTIFACT_SIZE / 1024)}KB`);
+      // Truncate large artifacts and add note
+      stored.data = artifact.data.substring(0, STORAGE_MAX_ARTIFACT_SIZE - 1000) + "\n\n[Truncated due to size limit]";
+      stored.preview = stored.data.substring(0, 200);
+    }
+    
     // Check if we're approaching storage limit and prune if needed
     if (isStorageNearLimit()) {
       console.warn("⚠️ Storage approaching limit, pruning old data...");
@@ -346,14 +374,14 @@ export function saveArtifact(artifact: Omit<StoredArtifact, "id" | "createdAt">)
     } catch (quotaError: unknown) {
       if (quotaError instanceof DOMException && quotaError.name === "QuotaExceededError") {
         console.warn("💾 Storage quota exceeded, aggressive pruning...");
-        // Try aggressive pruning
+        // Try aggressive pruning - keep only newest 25%
         pruneStorage();
-        // Try saving with reduced list
+        // Try saving with drastically reduced list
         const reduced = artifacts.slice(0, Math.floor(MAX_ARTIFACTS / 4));
         const reducedData = JSON.stringify(reduced);
         localStorage.setItem(STORAGE_KEYS.ARTIFACTS, reducedData);
         queueWrite(STORAGE_KEYS.ARTIFACTS, reducedData);
-        console.log(`✅ Saved after pruning to ${reduced.length} artifacts`);
+        console.log(`✅ Saved after aggressive pruning to ${reduced.length} artifacts`);
       } else {
         throw quotaError;
       }

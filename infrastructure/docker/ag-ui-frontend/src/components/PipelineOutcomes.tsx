@@ -90,6 +90,23 @@ function sessionToPipelineResult(session: StoredSession): PipelineResult {
     }
   }
   
+  // Reconstruct a2aSteps from metadata if available
+  let a2aSteps: Array<{
+    taskId: string;
+    agentName: string;
+    phase: string;
+    status: string;
+    startTime: string;
+    endTime?: string;
+    durationMs?: number;
+    message?: string;
+    artifacts: Array<{ name: string; type: string; preview?: string }>;
+  }> | undefined;
+  
+  if (session.metadata?.a2aSteps && Array.isArray(session.metadata.a2aSteps)) {
+    a2aSteps = session.metadata.a2aSteps as typeof a2aSteps;
+  }
+  
   return {
     id: session.id,
     topic: session.topic,
@@ -106,6 +123,9 @@ function sessionToPipelineResult(session: StoredSession): PipelineResult {
         wordCount: 0, // Not stored in session
       },
     } : undefined,
+    // Include a2aSteps if available from metadata
+    a2aSteps,
+    totalDurationMs: session.metadata?.totalDurationMs as number | undefined,
   };
 }
 
