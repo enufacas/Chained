@@ -1290,6 +1290,8 @@ resource "google_cloud_run_v2_service" "ag_ui_frontend" {
     google_cloud_run_v2_service.code_reviewer,
     google_cloud_run_v2_service.data_analyst,
     google_cloud_run_v2_service.image_generator,
+    google_cloud_run_v2_service.error_observer,
+    google_cloud_run_v2_service.log_consumer,
   ]
 }
 

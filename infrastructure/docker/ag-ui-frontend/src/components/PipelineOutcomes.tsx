@@ -15,7 +15,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import PipelineDetailView from "./PipelineDetailView";
-import { getArtifactsBySourceId } from "@/lib/storage";
+import { getArtifactsBySourceId, getStoredSessions, getArtifactById, type StoredSession } from "@/lib/storage";
 import { logApiError } from "@/lib/error-logging";
 
 
@@ -62,6 +62,53 @@ const PHASE_ICONS: { [key: string]: { icon: string; color: string } } = {
   complete: { icon: "🎉", color: "emerald" },
 };
 
+/**
+ * Convert a StoredSession from localStorage to PipelineResult format
+ * Reconstructs full pipeline data from stored session and artifacts
+ */
+function sessionToPipelineResult(session: StoredSession): PipelineResult {
+  // Extract blog URL from metadata or artifacts
+  let blogUrl: string | undefined;
+  
+  if (session.metadata?.blogUrl) {
+    blogUrl = session.metadata.blogUrl as string;
+  } else if (session.artifacts && session.artifacts.length > 0) {
+    // Try to find blog artifact
+    for (const artifactId of session.artifacts) {
+      const artifact = getArtifactById(artifactId);
+      if (artifact?.name?.toLowerCase().includes("blog") && artifact?.data) {
+        try {
+          const parsed = JSON.parse(artifact.data);
+          if (parsed.url) {
+            blogUrl = parsed.url;
+            break;
+          }
+        } catch {
+          // Ignore parse errors
+        }
+      }
+    }
+  }
+  
+  return {
+    id: session.id,
+    topic: session.topic,
+    status: session.status as PipelineResult["status"],
+    createdAt: session.createdAt,
+    updatedAt: session.completedAt || session.createdAt,
+    progress: session.status === "completed" ? 100 : 
+              session.status === "failed" ? 0 : 50,
+    currentPhase: session.status === "completed" ? "complete" : "writing",
+    results: blogUrl ? {
+      blog: {
+        title: session.topic,
+        url: blogUrl,
+        wordCount: 0, // Not stored in session
+      },
+    } : undefined,
+  };
+}
+
 export default function PipelineOutcomes() {
   const [data, setData] = useState<PipelineListResponse | null>(null);
   const [loading, setLoading] = useState(true);
@@ -70,13 +117,51 @@ export default function PipelineOutcomes() {
 
   const fetchPipelines = useCallback(async () => {
     try {
-      const response = await fetch("/api/pipeline?limit=10");
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      // First, get sessions from localStorage
+      const storedSessions = getStoredSessions();
+      const storedWorkflows = storedSessions.filter(s => s.type === "workflow");
+      
+      // Convert stored sessions to pipeline results
+      const localPipelines = storedWorkflows
+        .map(sessionToPipelineResult)
+        .slice(0, 20); // Limit to most recent 20
+      
+      console.log(`[PipelineOutcomes] Loaded ${localPipelines.length} pipelines from localStorage`);
+      
+      // Try to fetch from API for active pipelines
+      let apiPipelines: PipelineResult[] = [];
+      try {
+        const response = await fetch("/api/pipeline?limit=10");
+        if (response.ok) {
+          const result = await response.json();
+          apiPipelines = result.pipelines || [];
+          console.log(`[PipelineOutcomes] Loaded ${apiPipelines.length} pipelines from API`);
+        }
+      } catch (apiError) {
+        console.warn("[PipelineOutcomes] API fetch failed, using localStorage only:", apiError);
       }
-      const result = await response.json();
-      setData(result);
+      
+      // Merge: API pipelines (active) + localStorage pipelines (completed/historical)
+      // Remove duplicates by ID, preferring API version for active pipelines
+      const apiIds = new Set(apiPipelines.map(p => p.id));
+      const uniqueLocalPipelines = localPipelines.filter(p => !apiIds.has(p.id));
+      
+      const allPipelines = [...apiPipelines, ...uniqueLocalPipelines]
+        .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+        .slice(0, 10); // Show top 10
+      
+      const activePipelinesCount = allPipelines.filter(
+        p => p.status === "pending" || p.status === "running"
+      ).length;
+      
+      setData({
+        pipelines: allPipelines,
+        total: allPipelines.length,
+        activePipelinesCount,
+      });
       setError(null);
+      
+      console.log(`[PipelineOutcomes] Total pipelines: ${allPipelines.length} (${activePipelinesCount} active)`);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : "Failed to load pipelines";
       console.error("[PipelineOutcomes] Fetch error:", err);
