@@ -90,7 +90,7 @@ const MAX_ARTIFACTS = 100;
 const MAX_SESSIONS = 50;
 
 // Storage size limits (in bytes)
-const MAX_STORAGE_SIZE = 4 * 1024 * 1024; // 4MB for localStorage
+// Note: localStorage typically has a 5-10MB limit
 const STORAGE_WARNING_THRESHOLD = 3 * 1024 * 1024; // 3MB - warn at 75%
 
 // Concurrent write protection
@@ -306,8 +306,8 @@ export function saveArtifact(artifact: Omit<StoredArtifact, "id" | "createdAt">)
       
       // Queue background sync to IndexedDB (non-blocking)
       queueWrite(STORAGE_KEYS.ARTIFACTS, dataToSave);
-    } catch (quotaError: any) {
-      if (quotaError.name === "QuotaExceededError") {
+    } catch (quotaError: unknown) {
+      if (quotaError instanceof DOMException && quotaError.name === "QuotaExceededError") {
         console.warn("💾 Storage quota exceeded, aggressive pruning...");
         // Try aggressive pruning
         pruneStorage();
@@ -562,8 +562,8 @@ export function saveSession(session: Omit<StoredSession, "createdAt">): StoredSe
       
       // Queue background sync to IndexedDB (non-blocking)
       queueWrite(STORAGE_KEYS.SESSIONS, dataToSave);
-    } catch (quotaError: any) {
-      if (quotaError.name === "QuotaExceededError") {
+    } catch (quotaError: unknown) {
+      if (quotaError instanceof DOMException && quotaError.name === "QuotaExceededError") {
         console.warn("💾 Session storage quota exceeded, aggressive pruning...");
         pruneStorage();
         // Try with reduced list
