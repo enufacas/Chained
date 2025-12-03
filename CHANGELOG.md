@@ -30,7 +30,8 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x3) [#3541](https://github.com/enufacas/Chained/pull/3541)
+- 👤 📋 Instructions **Documentation**: Update A2A README with error observer system and add maintenance instructions [#3520](https://github.com/enufacas/Chained/pull/3520)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x4) [#3544](https://github.com/enufacas/Chained/pull/3544)
 
 ---
 
@@ -38,6 +39,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### ✨ Features
 
+- 👤 🔧 Agents Add missing agents to AG-UI activity monitoring, implement end-to-end error reporting, and update A2A documentation [#3546](https://github.com/enufacas/Chained/pull/3546)
 - 👤 Implement main-branch-only automated changelog with 100% PR coverage, codebase area grouping, actor differentiation, auto-merge, and smart deduplication [#3519](https://github.com/enufacas/Chained/pull/3519)
 - 🤖 🧠 Learning 🧠 Learn from GitHub Copilot sources - 2025-12-02 [#3524](https://github.com/enufacas/Chained/pull/3524)
 
@@ -322,29 +324,9 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 - 👤 🔧 Agents WIP: Implement A2A Protocol for agent-to-agent orchestration on GitHu… [#3085](https://github.com/enufacas/Chained/pull/3085)
 - 👤 🔧 Agents WIP: Implement A2A Protocol for agent-to-agent orchestration on GitHub Actions [#3066](https://github.com/enufacas/Chained/pull/3066)
-- 👤 🧠 Learning Complete learning mission idea:77 - Web API Innovation research [#3028](https://github.com/enufacas/Chained/pull/3028)
-- 👤 🔧 Tools Complete TypeScript trends learning mission (idea:74) - @investigate-champion [#3025](https://github.com/enufacas/Chained/pull/3025)
-- 👤 Autonomous code reviewer with self-improving criteria [#3015](https://github.com/enufacas/Chained/pull/3015)
-- 👤 ⚙️ Workflows Research: Claude AI trends, GPT-5.1, and agentic workflow maturity (idea:73) [#3024](https://github.com/enufacas/Chained/pull/3024)
-- 👤 🔧 Agents Complete AI/ML trends investigation (idea:75) - Multi-agent coordination patterns and sustainable growth insights [#3026](https://github.com/enufacas/Chained/pull/3026)
-- 👤 🧠 Learning @create-guru: Acknowledge GitHub Copilot learning session - 2025-11-25 [#3036](https://github.com/enufacas/Chained/pull/3036)
-- 👤 Initial plan [#3056](https://github.com/enufacas/Chained/pull/3056)
-- 🤖 🔧 Agents 📊 Sync agent data to GitHub Pages [#3070](https://github.com/enufacas/Chained/pull/3070)
-- 🤖 🔧 Agents 🔄 Daily agent evaluation and governance [#3067](https://github.com/enufacas/Chained/pull/3067)
-- 🤖 🔧 Agents 🌍 World Model: Agent Evaluation Sync [#3069](https://github.com/enufacas/Chained/pull/3069)
 
 ### 🐛 Bug Fixes
 
 - 👤 Fix A2A test failures: Add missing DiscoveryService methods and resolve port collisions [#3086](https://github.com/enufacas/Chained/pull/3086)
-- 👤 🔧 Tools Fix auto-merge script to recognize app-prefixed bot accounts and successfully merge 15 PRs [#3065](https://github.com/enufacas/Chained/pull/3065)
-
-### 🧹 Chores & Maintenance
-
-- 🤖 📚 Docs **Documentation**: Add Vertex AI API information to Gemini CLI documentation. [#3045](https://github.com/enufacas/Chained/pull/3045)
-- 👤 ⚙️ Workflows **Chore**: Update Gemini workflows to use gemini-3-pro-latest [#3057](https://github.com/enufacas/Chained/pull/3057)
-- 🤖 **Chore**: 🤖 Update pattern repetition analysis [#3054](https://github.com/enufacas/Chained/pull/3054)
-- 🤖 📊 GitHub Pages **Chore**: 📊 Update timeline data - 2025-11-26 01:25:21 UTC [#3061](https://github.com/enufacas/Chained/pull/3061)
-- 👤 ⚙️ Workflows **Test**: Add autonomous workflow configuration A/B testing with automated variant generation [#3052](https://github.com/enufacas/Chained/pull/3052)
-- 🤖 **Test**: Add a test file [#3043](https://github.com/enufacas/Chained/pull/3043)
 
 ---
