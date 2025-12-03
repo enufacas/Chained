@@ -28,9 +28,13 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ## 2025-12-03
 
+### 🐛 Bug Fixes
+
+- 👤 Fix localStorage quota exceeded in AG-UI team runs and add E2E tests [#3552](https://github.com/enufacas/Chained/pull/3552)
+
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x6) [#3549](https://github.com/enufacas/Chained/pull/3549)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x7) [#3551](https://github.com/enufacas/Chained/pull/3551)
 - 👤 📋 Instructions **Documentation**: Update A2A README with error observer system and add maintenance instructions [#3520](https://github.com/enufacas/Chained/pull/3520)
 
 ---
@@ -317,18 +321,5 @@ This changelog excludes automated data syncs and routine maintenance commits.
 - 🤖 **Chore**: 📊 Goal progress update: ✅ Completed [#3171](https://github.com/enufacas/Chained/pull/3171)
 - 🤖 **Chore**: update prompt generator performance data [#3072](https://github.com/enufacas/Chained/pull/3072)
 - 👤 **Test**: 🧠 Mission: Go Specialist Emerging Theme Research (idea:84) [#3185](https://github.com/enufacas/Chained/pull/3185)
-
----
-
-## 2025-11-25
-
-### ✨ Features
-
-- 👤 🔧 Agents WIP: Implement A2A Protocol for agent-to-agent orchestration on GitHu… [#3085](https://github.com/enufacas/Chained/pull/3085)
-- 👤 🔧 Agents WIP: Implement A2A Protocol for agent-to-agent orchestration on GitHub Actions [#3066](https://github.com/enufacas/Chained/pull/3066)
-
-### 🐛 Bug Fixes
-
-- 👤 Fix A2A test failures: Add missing DiscoveryService methods and resolve port collisions [#3086](https://github.com/enufacas/Chained/pull/3086)
 
 ---
