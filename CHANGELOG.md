@@ -30,7 +30,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge [#3536](https://github.com/enufacas/Chained/pull/3536)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x2) [#3539](https://github.com/enufacas/Chained/pull/3539)
 
 ---
 
@@ -43,6 +43,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🐛 Bug Fixes
 
+- 👤 ⚙️ Workflows Add missing Cloud Run service imports to Terraform workflow [#3540](https://github.com/enufacas/Chained/pull/3540)
 - 👤 🔧 Tools Fix TypeScript ESLint errors in AG-UI frontend and add configurable GitHub repo for error-observer [#3537](https://github.com/enufacas/Chained/pull/3537)
 - 👤 ⚙️ Workflows Fix critical error observer issues: Terraform data source, missing workflow, security vulnerability [#3535](https://github.com/enufacas/Chained/pull/3535)
 - 👤 Implement A2A-native error observer system with GitHub dispatch integration [#3520](https://github.com/enufacas/Chained/pull/3520)
