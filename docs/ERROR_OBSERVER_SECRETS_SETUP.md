@@ -13,8 +13,16 @@ The error observer agent requires a GitHub Personal Access Token (PAT) to dispat
 **Purpose:** Allows the error observer agent to call GitHub's `repository_dispatch` API to create error notification events.
 
 **Required Permissions:**
-- `repo` scope (full control of private repositories)
-  - Needed to trigger repository_dispatch events
+
+For **public repositories** (like enufacas/Chained):
+- Classic PAT: `public_repo` scope (access to public repositories)
+- Fine-grained PAT: `contents: write` permission
+
+For **private repositories**:
+- Classic PAT: `repo` scope (full control of private repositories)
+- Fine-grained PAT: `contents: write` permission
+
+**Recommended:** Use `public_repo` scope for public repos to follow least privilege principle.
 
 **Where it's used:**
 - Error observer agent reads it as `GITHUB_PAT` environment variable
@@ -24,6 +32,8 @@ The error observer agent requires a GitHub Personal Access Token (PAT) to dispat
 
 ### Step 1: Create GitHub Personal Access Token
 
+#### Option A: Classic Token (Recommended for simplicity)
+
 1. Go to GitHub Settings → Developer settings → Personal access tokens → Tokens (classic)
    - URL: https://github.com/settings/tokens
 
@@ -32,13 +42,37 @@ The error observer agent requires a GitHub Personal Access Token (PAT) to dispat
 3. Configure the token:
    - **Note**: `Chained Error Observer Agent`
    - **Expiration**: Recommended 90 days (set reminder to rotate)
-   - **Scopes**: Select `repo` (Full control of private repositories)
+   - **Scopes**: 
+     - For **public repositories** (like enufacas/Chained): Select `public_repo` (Access public repositories)
+     - For **private repositories**: Select `repo` (Full control of private repositories)
 
 4. Click "Generate token"
 
 5. **IMPORTANT**: Copy the token immediately (starts with `ghp_`)
    - You won't be able to see it again!
    - Example format: `ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx`
+
+#### Option B: Fine-grained Token (More secure, repository-specific)
+
+1. Go to GitHub Settings → Developer settings → Personal access tokens → Fine-grained tokens
+   - URL: https://github.com/settings/tokens?type=beta
+
+2. Click "Generate new token"
+
+3. Configure the token:
+   - **Token name**: `Chained Error Observer Agent`
+   - **Expiration**: Recommended 90 days
+   - **Repository access**: Select "Only select repositories" → Choose `enufacas/Chained`
+   - **Repository permissions**:
+     - Contents: **Read and write** (required for repository_dispatch)
+
+4. Click "Generate token"
+
+5. **IMPORTANT**: Copy the token immediately (starts with `github_pat_`)
+   - You won't be able to see it again!
+   - Example format: `github_pat_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx`
+
+**Recommendation:** Use Option B (fine-grained token) for better security - it's scoped to a specific repository with minimal permissions.
 
 ### Step 2: Store Token in GCP Secret Manager
 
@@ -141,8 +175,9 @@ If you want to use the GitHub PAT directly in GitHub Actions workflows (not reco
    - Never hardcode in Terraform files
 
 2. **Use least privilege**
-   - Only grant `repo` scope if working with private repos
-   - Consider using `public_repo` scope if working with public repos only
+   - For **public repositories**: Use `public_repo` scope (classic) or fine-grained token with `contents: write`
+   - For **private repositories**: Use `repo` scope (classic) or fine-grained token with `contents: write`
+   - **Best practice**: Use fine-grained tokens scoped to specific repository
 
 3. **Rotate regularly**
    - Set token expiration to 90 days
@@ -261,7 +296,10 @@ GITHUB_API_URL = "https://api.github.com"
 ## Summary
 
 **Required:**
-1. ✅ Create GitHub PAT with `repo` scope
+1. ✅ Create GitHub PAT:
+   - **Public repo**: `public_repo` scope (classic) OR fine-grained token with `contents: write`
+   - **Private repo**: `repo` scope (classic) OR fine-grained token with `contents: write`
+   - **Recommended**: Fine-grained token for better security
 2. ✅ Store in GCP Secret Manager as `github-pat`
 3. ✅ Grant service account `roles/secretmanager.secretAccessor`
 4. ✅ Deploy via Terraform (reads from Secret Manager automatically)
@@ -277,8 +315,12 @@ GITHUB_API_URL = "https://api.github.com"
 
 ---
 
-**Document Version:** 1.0  
-**Last Updated:** 2025-12-02  
+**Document Version:** 1.1  
+**Last Updated:** 2025-12-03  
+**Changelog:**
+- v1.1 (2025-12-03): Added fine-grained token option, clarified public_repo vs repo scope
+- v1.0 (2025-12-02): Initial version
+
 **Related Files:**
 - `infrastructure/terraform/adk-agents.tf` - Terraform configuration
 - `infrastructure/docker/adk-agents/error-observer/agent.py` - Agent implementation
