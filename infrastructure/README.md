@@ -38,10 +38,13 @@ infrastructure/
    - `GCP_SA_KEY` - Service account key JSON
    - `GCP_REGION` - Deployment region (default: us-central1)
 
-3. **Deploy via GitHub Actions**:
+3. **Configure GitHub Repository Variables** (Settings → Secrets and variables → Actions → Variables):
+   - `GIT_REPO` - Repository for error-observer dispatch (format: `owner/repository`, e.g., `enufacas/Chained`)
+
+4. **Deploy via GitHub Actions**:
    - Go to Actions → Deploy GCP Infrastructure → Run workflow
 
-4. **Or deploy locally**:
+5. **Or deploy locally**:
    ```bash
    cd terraform
    cp terraform.tfvars.example terraform.tfvars

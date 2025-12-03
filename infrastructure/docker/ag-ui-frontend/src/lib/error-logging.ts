@@ -18,6 +18,19 @@ interface LogErrorOptions {
   context?: ErrorContext;
 }
 
+interface ErrorData {
+  type: string;
+  timestamp: string;
+  error: {
+    name: string;
+    message: string;
+    stack?: string;
+  };
+  url: string;
+  userAgent: string;
+  context?: ErrorContext;
+}
+
 /**
  * Log an error with structured format
  */
@@ -56,7 +69,7 @@ export function logError(
 /**
  * Send error to backend API
  */
-async function sendErrorToBackend(errorData: object): Promise<void> {
+async function sendErrorToBackend(errorData: ErrorData): Promise<void> {
   try {
     // Send to debug endpoint for logging
     await fetch("/api/debug/log-error", {
@@ -77,7 +90,7 @@ async function sendErrorToBackend(errorData: object): Promise<void> {
 /**
  * Send error to A2A Error Observer
  */
-async function sendErrorToA2AObserver(errorData: any): Promise<void> {
+async function sendErrorToA2AObserver(errorData: ErrorData): Promise<void> {
   try {
     const errorObj = errorData.error || {};
     

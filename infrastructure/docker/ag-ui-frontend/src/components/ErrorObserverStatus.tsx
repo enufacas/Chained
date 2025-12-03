@@ -27,10 +27,28 @@ interface ErrorSummary {
   dispatch_status: string;
 }
 
+interface ErrorEventDetail {
+  service: string;
+  region: string;
+  environment: string;
+  error_message: string;
+  stack_trace?: string | null;
+  logs: string[];
+  run_console_url?: string | null;
+  a2a_ui_url?: string | null;
+  error_hash: string;
+  first_seen: string;
+  last_seen: string;
+  occurrences: number;
+  source_agent?: string | null;
+  source_channel: string;
+  metadata: Record<string, unknown>;
+}
+
 interface ErrorObserverState {
   status: "idle" | "ingesting" | "dispatching" | "success" | "failure";
   status_message: string;
-  last_error: any | null;
+  last_error: ErrorEventDetail | null;
   last_dispatch_time: string | null;
   last_dispatch_status: string | null;
   errors_handled_24h: number;

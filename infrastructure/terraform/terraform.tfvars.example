@@ -47,3 +47,12 @@ monthly_budget = 50
 
 # OpenAI API Key (alternative for CopilotKit chat if using OpenAI instead of Gemini)
 # openai_api_key_secret = "openai-api-key"
+
+# =============================================================================
+# GitHub Configuration for Error Observer
+# =============================================================================
+# Repository for error-observer to dispatch errors to GitHub Actions
+# Format: owner/repository (e.g., "enufacas/Chained")
+# =============================================================================
+
+# git_repo = "your-username/your-repository"
