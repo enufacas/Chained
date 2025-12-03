@@ -64,6 +64,7 @@ resource "google_project_service" "required_apis" {
     "logging.googleapis.com",
     "cloudtrace.googleapis.com",
     "secretmanager.googleapis.com",
+    "aiplatform.googleapis.com",  # Required for Vertex AI (Gemini models)
   ])
 
   project            = var.project_id
