@@ -299,4 +299,155 @@ describe('Storage utilities', () => {
       expect(getStoredArtifacts()).toHaveLength(0);
     });
   });
+
+  describe('A2A Error Flow States', () => {
+    beforeEach(() => {
+      localStorageMock.clear();
+    });
+
+    it('should store error artifacts from A2A error flow', () => {
+      const errorArtifact = saveArtifact({
+        name: 'error_event',
+        type: 'application/json',
+        data: JSON.stringify({
+          service: 'a2a-ui',
+          error_message: 'localStorage quota exceeded',
+          error_hash: 'abc123',
+          first_seen: '2025-12-03T00:00:00Z',
+          last_seen: '2025-12-03T00:00:00Z',
+        }),
+        source: 'workflow',
+        sourceId: 'error-workflow-1',
+        sourceName: 'Error Handling Workflow',
+        agentName: 'error-observer',
+        a2aType: 'artifact',
+      });
+
+      expect(errorArtifact.agentName).toBe('error-observer');
+      expect(errorArtifact.a2aType).toBe('artifact');
+
+      const stored = getStoredArtifacts();
+      expect(stored).toHaveLength(1);
+      expect(stored[0].name).toBe('error_event');
+    });
+
+    it('should track session for error handling workflow', () => {
+      const errorSession = saveSession({
+        id: 'error-session-1',
+        type: 'workflow',
+        name: 'Error Handling',
+        topic: 'Handle localStorage quota error',
+        status: 'completed',
+        artifacts: ['error-artifact-1'],
+        a2aContextId: 'error-context-1',
+        taskIds: ['task-error-1'],
+      });
+
+      expect(errorSession.a2aContextId).toBe('error-context-1');
+      expect(errorSession.taskIds).toEqual(['task-error-1']);
+
+      const stored = getStoredSessions();
+      expect(stored[0].type).toBe('workflow');
+    });
+
+    it('should handle multiple error states in session', () => {
+      // Save initial error session
+      saveSession({
+        id: 'error-session-multi',
+        type: 'workflow',
+        name: 'Multiple Errors',
+        topic: 'Handle multiple errors',
+        status: 'running',
+        artifacts: ['error-1'],
+      });
+
+      // Update with more errors
+      saveSession({
+        id: 'error-session-multi',
+        type: 'workflow',
+        name: 'Multiple Errors',
+        topic: 'Handle multiple errors',
+        status: 'completed',
+        artifacts: ['error-1', 'error-2', 'error-3'],
+        completedAt: new Date().toISOString(),
+      });
+
+      const stored = getStoredSessions();
+      expect(stored[0].artifacts).toHaveLength(3);
+      expect(stored[0].status).toBe('completed');
+    });
+
+    it('should store error dispatch results', () => {
+      const dispatchResult = saveArtifact({
+        name: 'dispatch_result',
+        type: 'application/json',
+        data: JSON.stringify({
+          success: true,
+          message: 'Error event dispatched to GitHub',
+          error_hash: 'abc123',
+          timestamp: '2025-12-03T00:00:00Z',
+        }),
+        source: 'workflow',
+        sourceId: 'error-workflow-1',
+        sourceName: 'Error Dispatch',
+        agentName: 'error-observer',
+      });
+
+      const data = JSON.parse(dispatchResult.data);
+      expect(data.success).toBe(true);
+      expect(data.message).toContain('dispatched to GitHub');
+    });
+
+    it('should track error observer state transitions', () => {
+      // Initial idle state
+      const session = saveSession({
+        id: 'error-observer-session',
+        type: 'workflow',
+        name: 'Error Observer',
+        topic: 'Monitor errors',
+        status: 'running',
+        artifacts: [],
+        metadata: { state: 'idle' },
+      });
+
+      // Transition to ingesting
+      saveSession({
+        id: 'error-observer-session',
+        type: 'workflow',
+        name: 'Error Observer',
+        topic: 'Monitor errors',
+        status: 'running',
+        artifacts: ['error-1'],
+        metadata: { state: 'ingesting' },
+      });
+
+      // Transition to dispatching
+      saveSession({
+        id: 'error-observer-session',
+        type: 'workflow',
+        name: 'Error Observer',
+        topic: 'Monitor errors',
+        status: 'running',
+        artifacts: ['error-1', 'dispatch-1'],
+        metadata: { state: 'dispatching' },
+      });
+
+      // Final success state
+      saveSession({
+        id: 'error-observer-session',
+        type: 'workflow',
+        name: 'Error Observer',
+        topic: 'Monitor errors',
+        status: 'completed',
+        artifacts: ['error-1', 'dispatch-1', 'result-1'],
+        metadata: { state: 'success' },
+        completedAt: new Date().toISOString(),
+      });
+
+      const stored = getStoredSessions();
+      expect(stored[0].status).toBe('completed');
+      expect(stored[0].metadata?.state).toBe('success');
+      expect(stored[0].artifacts).toHaveLength(3);
+    });
+  });
 });

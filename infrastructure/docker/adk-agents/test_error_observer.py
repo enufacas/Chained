@@ -143,23 +143,46 @@ def test_error_event_to_github_payload():
     
     event = ErrorEvent(
         service="test-service",
+        region="us-central1",
+        environment="production",
         error_message="Test error",
         error_hash="abc123",
         first_seen="2025-12-02T10:00:00Z",
         last_seen="2025-12-02T10:00:00Z",
+        occurrences=5,
+        source_agent="test-agent",
         source_channel="runtime",
-        metadata={"key": "value"}
+        a2a_ui_url="https://ui.example.com",
+        stack_trace="Test stack trace",
+        metadata={"key": "value"},
+        logs=["log1", "log2"],
+        run_console_url="https://console.cloud.google.com"
     )
     
     payload = event.to_github_payload()
     
+    # GitHub repository_dispatch API allows max 10 properties
     assert isinstance(payload, dict)
+    assert len(payload) <= 10, f"GitHub payload has {len(payload)} fields, max 10 allowed"
+    
+    # Verify essential fields are included
     assert payload["service"] == "test-service"
     assert payload["error_message"] == "Test error"
     assert payload["error_hash"] == "abc123"
-    assert payload["metadata"] == {"key": "value"}
+    assert payload["stack_trace"] == "Test stack trace"
+    assert payload["first_seen"] == "2025-12-02T10:00:00Z"
+    assert payload["last_seen"] == "2025-12-02T10:00:00Z"
+    assert payload["occurrences"] == 5
+    assert payload["source_agent"] == "test-agent"
+    assert payload["a2a_ui_url"] == "https://ui.example.com"
+    assert payload["environment"] == "production"
     
-    print(f"  ✅ Created GitHub payload")
+    # Verify less important fields are NOT included (to stay under limit)
+    assert "metadata" not in payload, "metadata should be excluded to stay under 10 field limit"
+    assert "logs" not in payload, "logs should be excluded to stay under 10 field limit"
+    assert "region" not in payload, "region should be excluded to stay under 10 field limit"
+    
+    print(f"  ✅ Created GitHub payload with {len(payload)} fields (max 10)")
     print(f"  ✅ Payload keys: {', '.join(payload.keys())}")
     print(f"  ✅ Service: {payload['service']}")
 
