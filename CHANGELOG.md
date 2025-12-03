@@ -30,11 +30,12 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🐛 Bug Fixes
 
+- 👤 Fix AG-UI Error Observer config race condition and session persistence data loss [#3554](https://github.com/enufacas/Chained/pull/3554)
 - 👤 Fix localStorage quota exceeded in AG-UI team runs and add E2E tests [#3552](https://github.com/enufacas/Chained/pull/3552)
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x7) [#3551](https://github.com/enufacas/Chained/pull/3551)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x8) [#3553](https://github.com/enufacas/Chained/pull/3553)
 - 👤 📋 Instructions **Documentation**: Update A2A README with error observer system and add maintenance instructions [#3520](https://github.com/enufacas/Chained/pull/3520)
 
 ---
@@ -304,9 +305,6 @@ This changelog excludes automated data syncs and routine maintenance commits.
 - 👤 📚 Docs Add comprehensive fix summary documentation [#3125](https://github.com/enufacas/Chained/pull/3125)
 - 👤 ⚙️ Workflows Fix bash arithmetic increment causing workflow exit with -e flag [#3148](https://github.com/enufacas/Chained/pull/3148)
 - 👤 ⚙️ Workflows Fix meta-coordinator: move auto-merge to workflow, fix CI syntax error [#3142](https://github.com/enufacas/Chained/pull/3142)
-- 👤 ⚙️ Workflows Fix async/await in a2a-test-tier1-integration workflow [#3089](https://github.com/enufacas/Chained/pull/3089)
-- 👤 ⚙️ Workflows Fix invalid Gemini model name in workflows: gemini-3-pro-latest → gemini-3-pro-preview [#3088](https://github.com/enufacas/Chained/pull/3088)
-- 👤 ⚙️ Workflows Fix DiscoveryService attribute access in a2a workflow test [#3087](https://github.com/enufacas/Chained/pull/3087)
 
 ### 🧹 Chores & Maintenance
 
