@@ -1338,10 +1338,16 @@ resource "google_cloud_run_v2_service" "error_observer" {
         }
       }
 
+      # GitHub repository for repository_dispatch
+      env {
+        name  = "GITHUB_REPO"
+        value = "enufacas/Chained"
+      }
+
       # Service URL for agent card
       env {
         name  = "SERVICE_URL"
-        value = "https://chained-error-observer-${data.google_project.project.number}.${var.region}.run.app"
+        value = "https://chained-error-observer-${data.google_project.current.number}.${var.region}.run.app"
       }
 
       ports {
