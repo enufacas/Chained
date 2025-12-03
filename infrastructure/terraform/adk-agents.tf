@@ -224,11 +224,11 @@ resource "google_cloud_run_v2_service" "academic_research" {
     }
 
     scaling {
-      min_instance_count              = 0
-      max_instance_count              = 3
+      min_instance_count = 0
+      max_instance_count = 3
     }
 
-    max_instance_request_concurrency = 1  # Required when CPU < 1
+    max_instance_request_concurrency = 1 # Required when CPU < 1
 
     service_account = google_service_account.adk_agents.email
     timeout         = "300s"
@@ -370,11 +370,11 @@ resource "google_cloud_run_v2_service" "blog_writer" {
     }
 
     scaling {
-      min_instance_count              = 0
-      max_instance_count              = 3
+      min_instance_count = 0
+      max_instance_count = 3
     }
 
-    max_instance_request_concurrency = 1  # Required when CPU < 1
+    max_instance_request_concurrency = 1 # Required when CPU < 1
 
     service_account = google_service_account.adk_agents.email
     timeout         = "300s"
@@ -508,11 +508,11 @@ resource "google_cloud_run_v2_service" "google_trends" {
     }
 
     scaling {
-      min_instance_count              = 0
-      max_instance_count              = 3
+      min_instance_count = 0
+      max_instance_count = 3
     }
 
-    max_instance_request_concurrency = 1  # Required when CPU < 1
+    max_instance_request_concurrency = 1 # Required when CPU < 1
 
     service_account = google_service_account.adk_agents.email
     timeout         = "300s"
@@ -631,11 +631,11 @@ resource "google_cloud_run_v2_service" "code_reviewer" {
     }
 
     scaling {
-      min_instance_count              = 0
-      max_instance_count              = 3
+      min_instance_count = 0
+      max_instance_count = 3
     }
 
-    max_instance_request_concurrency = 1  # Required when CPU < 1
+    max_instance_request_concurrency = 1 # Required when CPU < 1
 
     service_account = google_service_account.adk_agents.email
     timeout         = "300s"
@@ -754,11 +754,11 @@ resource "google_cloud_run_v2_service" "data_analyst" {
     }
 
     scaling {
-      min_instance_count              = 0
-      max_instance_count              = 3
+      min_instance_count = 0
+      max_instance_count = 3
     }
 
-    max_instance_request_concurrency = 1  # Required when CPU < 1
+    max_instance_request_concurrency = 1 # Required when CPU < 1
 
     service_account = google_service_account.adk_agents.email
     timeout         = "300s"
@@ -877,11 +877,11 @@ resource "google_cloud_run_v2_service" "image_generator" {
     }
 
     scaling {
-      min_instance_count              = 0
-      max_instance_count              = 3
+      min_instance_count = 0
+      max_instance_count = 3
     }
 
-    max_instance_request_concurrency = 1  # Required when CPU < 1
+    max_instance_request_concurrency = 1 # Required when CPU < 1
 
     service_account = google_service_account.adk_agents.email
     timeout         = "300s"
@@ -1038,11 +1038,11 @@ resource "google_cloud_run_v2_service" "adk_api_server" {
     }
 
     scaling {
-      min_instance_count              = 0
-      max_instance_count              = 3
+      min_instance_count = 0
+      max_instance_count = 3
     }
 
-    max_instance_request_concurrency = 1  # Required when CPU < 1
+    max_instance_request_concurrency = 1 # Required when CPU < 1
 
     service_account = google_service_account.adk_agents.email
     timeout         = "300s"
@@ -1087,7 +1087,7 @@ resource "google_cloud_run_v2_service" "ag_ui_frontend" {
       resources {
         limits = {
           cpu    = "0.5"
-          memory = "1Gi"  # Increased from 512Mi to 1Gi to prevent OOM errors
+          memory = "1Gi" # Increased from 512Mi to 1Gi to prevent OOM errors
         }
         cpu_idle          = true
         startup_cpu_boost = true
@@ -1266,11 +1266,11 @@ resource "google_cloud_run_v2_service" "ag_ui_frontend" {
     }
 
     scaling {
-      min_instance_count              = 0
-      max_instance_count              = 3
+      min_instance_count = 0
+      max_instance_count = 3
     }
 
-    max_instance_request_concurrency = 1  # Required when CPU < 1
+    max_instance_request_concurrency = 1 # Required when CPU < 1
 
     service_account = google_service_account.adk_agents.email
     timeout         = "300s"
@@ -1335,7 +1335,7 @@ resource "google_cloud_run_v2_service" "error_observer" {
       # GitHub PAT for repository_dispatch API calls
       # This is required for the error observer to forward errors to GitHub
       env {
-        name  = "GITHUB_PAT"
+        name = "GITHUB_PAT"
         value_source {
           secret_key_ref {
             secret  = "github-pat"
