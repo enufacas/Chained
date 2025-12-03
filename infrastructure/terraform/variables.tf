@@ -66,3 +66,13 @@ variable "monthly_budget" {
   type        = number
   default     = 50  # Conservative default, leaving room for Gemini API
 }
+
+# =============================================================================
+# GitHub Configuration
+# =============================================================================
+
+variable "github_repo" {
+  description = "GitHub repository for error-observer repository_dispatch (format: owner/repository)"
+  type        = string
+  default     = ""
+}

@@ -1341,7 +1341,7 @@ resource "google_cloud_run_v2_service" "error_observer" {
       # GitHub repository for repository_dispatch
       env {
         name  = "GITHUB_REPO"
-        value = "enufacas/Chained"
+        value = var.github_repo != "" ? var.github_repo : "enufacas/Chained"
       }
 
       # Service URL for agent card
