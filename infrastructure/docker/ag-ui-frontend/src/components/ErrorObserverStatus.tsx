@@ -146,7 +146,7 @@ export default function ErrorObserverStatus() {
           <span className="text-2xl">🔧</span>
           <div>
             <div className="text-sm font-medium text-slate-300">Error Observer</div>
-            <div className="text-xs text-slate-500">Not configured</div>
+            <div className="text-xs text-slate-500">Not configured (ERROR_OBSERVER_URL not set)</div>
           </div>
         </div>
       </div>
@@ -154,6 +154,27 @@ export default function ErrorObserverStatus() {
   }
 
   const state = statusData.state;
+  
+  // Configured but error fetching status
+  if (statusData.configured && !state && 'error' in statusData) {
+    return (
+      <div className="bg-slate-800/50 border border-yellow-500/30 rounded-xl p-4">
+        <div className="flex items-center gap-3">
+          <span className="text-2xl">⚠️</span>
+          <div>
+            <div className="text-sm font-medium text-yellow-400">Error Observer</div>
+            <div className="text-xs text-slate-500">
+              Configured but unreachable: {statusData.error as string}
+            </div>
+            <div className="text-xs text-slate-600 mt-1">
+              URL: {statusData.url}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   if (!state) {
     return null;
   }

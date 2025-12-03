@@ -470,6 +470,7 @@ ${JSON.stringify(session.context, null, 2)}`;
 
 /**
  * Persist turn artifacts to localStorage for cross-page access
+ * NOTE: Only saves artifact IDs and summary info to prevent localStorage quota issues
  */
 function persistTurnArtifacts(turnResult: TurnResult, session: TeamSession): void {
   try {
@@ -511,6 +512,26 @@ function persistTurnArtifacts(turnResult: TurnResult, session: TeamSession): voi
       })() : null;
     
     const artifactIds = existingSession?.artifacts || [];
+    
+    // Create lightweight turn summary (no full A2A protocol objects)
+    const turnSummary = {
+      stepIndex: turnResult.stepIndex,
+      agentId: turnResult.agentId,
+      agentName: turnResult.agentName,
+      status: turnResult.status,
+      startedAt: turnResult.startedAt,
+      completedAt: turnResult.completedAt,
+      durationMs: turnResult.durationMs,
+      taskId: turnResult.taskId,
+      turnNumber: turnResult.turnNumber,
+      artifactCount: turnResult.artifacts?.length || 0,
+      // Store only IDs, not full objects (drastically reduces size)
+      hasAgentCard: !!turnResult.agentCard,
+      hasTask: !!turnResult.task,
+      message: turnResult.message,
+      error: turnResult.error,
+    };
+    
     saveSession({
       id: session.id,
       type: sourceType,
@@ -523,9 +544,12 @@ function persistTurnArtifacts(turnResult: TurnResult, session: TeamSession): voi
         currentTurn: session.currentTurn,
         totalTurns: session.totalTurns,
         recipeId: session.recipeId,
-        // Include turnResults progressively as they complete
-        // This ensures data is available even if session is interrupted
-        turnResults: session.turnResults,
+        // Store lightweight turn summaries instead of full turnResults
+        // This prevents localStorage quota exceeded errors
+        turnSummaries: [
+          ...(existingSession?.metadata?.turnSummaries || []),
+          turnSummary,
+        ],
         config: session.config,
       },
       a2aContextId: session.context.contextId as string,
@@ -777,6 +801,8 @@ async function executeSessionAsync(
   activeSessions.set(sessionId, session);
   
   // Final persistence update with completion status
+  // NOTE: Do NOT save full turnResults here - it causes localStorage quota exceeded
+  // Full turnResults are saved in activeSessions Map and available via GET /api/team?session=id
   try {
     const sourceType = recipe.id.startsWith("custom-") ? "team" : "recipe";
     saveSession({
@@ -791,10 +817,13 @@ async function executeSessionAsync(
         currentTurn: session.currentTurn,
         totalTurns: session.totalTurns,
         recipeId: session.recipeId,
-        finalResult: session.finalResult,
-        // CRITICAL: Include complete turnResults with all A2A protocol objects
-        // This preserves high-fidelity data for session history after page reloads
-        turnResults: session.turnResults,
+        // Save lightweight summaries instead of full turnResults
+        turnResultsCount: session.turnResults.length,
+        completedTurns: session.turnResults.filter(t => t.status === "completed").length,
+        failedTurns: session.turnResults.filter(t => t.status === "failed").length,
+        // NOTE: Full turnResults with A2A protocol objects are kept in activeSessions Map
+        // They can be retrieved via GET /api/team?session=id
+        // This prevents localStorage quota exceeded errors while maintaining data availability
         config: session.config,
       },
       a2aContextId: session.context.contextId as string,
