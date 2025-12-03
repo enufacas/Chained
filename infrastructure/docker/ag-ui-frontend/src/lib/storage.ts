@@ -103,18 +103,28 @@ interface PendingWrite {
 const pendingWrites: Map<string, PendingWrite> = new Map();
 const WRITE_DEBOUNCE_MS = 100; // Debounce concurrent writes by 100ms
 
+// A2A Protocol flag - disable debouncing for A2A artifacts to ensure immediate persistence
+let isA2AArtifact = false;
+
 /**
  * Queue a write operation to prevent concurrent write conflicts
- * This debounces rapid writes to the same key
+ * This debounces rapid writes to the same key EXCEPT for A2A protocol artifacts
+ * which are written immediately to ensure protocol compliance
  */
-function queueWrite(key: string, value: string): void {
+function queueWrite(key: string, value: string, immediate: boolean = false): void {
+  // A2A artifacts are written immediately (no debounce) to maintain protocol compliance
+  if (immediate || isA2AArtifact) {
+    syncToIndexedDB(key, value);
+    return;
+  }
+
   // Clear any existing timeout for this key
   const existing = pendingWrites.get(key);
   if (existing) {
     clearTimeout(existing.timestamp);
   }
 
-  // Queue the write with debouncing
+  // Queue the write with debouncing for non-A2A data
   const timeoutId = window.setTimeout(() => {
     pendingWrites.delete(key);
     // Background sync to IndexedDB if available
@@ -404,6 +414,7 @@ export function clearArtifacts(): void {
 
 /**
  * Save an A2A Agent Card as an artifact
+ * A2A artifacts are written immediately (no debounce) to maintain protocol compliance
  */
 export function saveAgentCard(
   agentCard: object,
@@ -412,7 +423,8 @@ export function saveAgentCard(
   sourceId: string,
   sourceName: string
 ): StoredArtifact {
-  return saveArtifact({
+  isA2AArtifact = true;
+  const result = saveArtifact({
     name: `${agentName} Agent Card`,
     type: "application/json",
     data: JSON.stringify(agentCard, null, 2),
@@ -423,6 +435,8 @@ export function saveAgentCard(
     agentName,
     a2aType: "agent-card",
   });
+  isA2AArtifact = false;
+  return result;
 }
 
 /**

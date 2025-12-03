@@ -108,7 +108,7 @@ def test_error_event_from_cloudrun_log():
 
 
 def test_error_event_to_a2a_artifact():
-    """Test converting ErrorEvent to A2A artifact."""
+    """Test converting ErrorEvent to A2A protocol-compliant artifact."""
     print("\n✓ Testing ErrorEvent.to_a2a_artifact()...")
     
     event = ErrorEvent(
@@ -117,24 +117,47 @@ def test_error_event_to_a2a_artifact():
         error_hash="abc123",
         first_seen="2025-12-02T10:00:00Z",
         last_seen="2025-12-02T10:00:00Z",
+        occurrences=5,
         source_channel="runtime"
     )
     
     artifact = event.to_a2a_artifact()
     
-    assert artifact["name"] == "error_event"
-    assert artifact["type"] == "error_event"
-    assert isinstance(artifact["data"], str)
+    # Validate A2A Protocol compliance (per https://github.com/a2aproject/A2A)
+    assert "artifact_id" in artifact, "A2A artifact must have artifact_id (UUID)"
+    assert "parts" in artifact, "A2A artifact must have parts array"
+    assert isinstance(artifact["parts"], list), "parts must be an array"
+    assert len(artifact["parts"]) > 0, "parts must contain at least one content part"
     
-    # Verify it's valid JSON
-    data = json.loads(artifact["data"])
+    # Validate first part is a DataPart
+    part = artifact["parts"][0]
+    assert part["kind"] == "data", "Part kind must be 'data' for DataPart"
+    assert "data" in part, "DataPart must have data field"
+    assert isinstance(part["data"], dict), "DataPart data must be a dict"
+    
+    # Validate data content
+    data = part["data"]
     assert data["service"] == "test-service"
     assert data["error_message"] == "Test error"
+    assert data["error_hash"] == "abc123"
     
-    print(f"  ✅ Created A2A artifact")
+    # Validate optional fields
+    assert "name" in artifact, "Artifact should have a name"
+    assert "description" in artifact, "Artifact should have a description"
+    assert "metadata" in artifact, "Artifact should have metadata"
+    
+    # Validate metadata
+    metadata = artifact["metadata"]
+    assert metadata["error_hash"] == "abc123"
+    assert metadata["service"] == "test-service"
+    assert metadata["occurrences"] == 5
+    
+    print(f"  ✅ A2A protocol-compliant artifact created")
+    print(f"  ✅ Artifact ID: {artifact['artifact_id']}")
     print(f"  ✅ Artifact name: {artifact['name']}")
-    print(f"  ✅ Artifact type: {artifact['type']}")
-    print(f"  ✅ Data is valid JSON: {len(artifact['data'])} bytes")
+    print(f"  ✅ Parts: {len(artifact['parts'])} content parts")
+    print(f"  ✅ Part kind: {part['kind']} (DataPart)")
+    print(f"  ✅ Metadata keys: {', '.join(metadata.keys())}")
 
 
 def test_error_event_to_github_payload():
