@@ -271,22 +271,65 @@ class ErrorEvent(BaseModel):
     
     def to_a2a_artifact(self) -> Dict[str, Any]:
         """
-        Convert this error event to an A2A artifact.
+        Convert this error event to an A2A protocol-compliant artifact.
+        
+        Per A2A Protocol Specification:
+        https://github.com/a2aproject/A2A
+        
+        An Artifact must contain:
+        - artifact_id: unique identifier (UUID)
+        - parts: array of content parts (DataPart, FilePart, or TextPart)
+        - name: optional human-readable name
+        - description: optional description
+        - metadata: optional extension metadata
         
         Returns:
-            A2A artifact dict with error event data
+            A2A protocol-compliant artifact dict
         """
+        import uuid
+        
         return {
-            "name": "error_event",
-            "type": "error_event",
-            "data": self.model_dump_json(indent=2),
+            "artifact_id": str(uuid.uuid4()),
+            "name": f"error_event_{self.error_hash[:8]}",
+            "description": f"Error from {self.service}: {self.error_message[:100]}",
+            "parts": [
+                {
+                    "kind": "data",
+                    "data": self.model_dump(),
+                    "metadata": {
+                        "content_type": "application/json",
+                        "schema": "error_event_v1"
+                    }
+                }
+            ],
+            "metadata": {
+                "error_hash": self.error_hash,
+                "service": self.service,
+                "first_seen": self.first_seen,
+                "last_seen": self.last_seen,
+                "occurrences": self.occurrences
+            }
         }
     
     def to_github_payload(self) -> Dict[str, Any]:
         """
         Convert this error event to a GitHub repository_dispatch payload.
         
+        GitHub repository_dispatch API has a limit of 10 properties in client_payload.
+        We include the most important fields for triage.
+        
         Returns:
-            Dict suitable for GitHub repository_dispatch client_payload
+            Dict suitable for GitHub repository_dispatch client_payload (max 10 fields)
         """
-        return self.model_dump()
+        return {
+            "service": self.service,
+            "error_message": self.error_message,
+            "error_hash": self.error_hash,
+            "stack_trace": self.stack_trace,
+            "first_seen": self.first_seen,
+            "last_seen": self.last_seen,
+            "occurrences": self.occurrences,
+            "source_agent": self.source_agent,
+            "a2a_ui_url": self.a2a_ui_url,
+            "environment": self.environment,
+        }

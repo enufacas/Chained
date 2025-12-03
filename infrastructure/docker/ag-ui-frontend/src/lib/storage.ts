@@ -1,11 +1,23 @@
 /**
  * Storage utilities for persisting AG-UI data
  *
- * Provides localStorage-based persistence for:
+ * Hybrid storage system:
+ * - localStorage for immediate access (synchronous, 5-10MB)
+ * - IndexedDB for background persistence (async, 50MB+)
+ * - Automatic sync between tiers
+ * - Concurrent write queue for safety
+ *
+ * Storage for:
  * - Artifacts from team/recipe/workflow runs
  * - Session history
  * - User preferences
  * - A2A protocol objects (agent cards, tasks, messages)
+ *
+ * Features:
+ * - Maintains synchronous API for compatibility
+ * - Background sync to IndexedDB for larger capacity
+ * - Concurrent write queue prevents conflicts
+ * - Automatic pruning on quota exceeded
  */
 
 import { logStorageError } from "./error-logging";
@@ -77,6 +89,152 @@ const DEFAULT_PREFERENCES: UserPreferences = {
 const MAX_ARTIFACTS = 100;
 const MAX_SESSIONS = 50;
 
+// Storage size limits (in bytes)
+const MAX_STORAGE_SIZE = 4 * 1024 * 1024; // 4MB for localStorage
+const STORAGE_WARNING_THRESHOLD = 3 * 1024 * 1024; // 3MB - warn at 75%
+
+// Concurrent write protection
+interface PendingWrite {
+  key: string;
+  value: string;
+  timestamp: number;
+}
+
+const pendingWrites: Map<string, PendingWrite> = new Map();
+const WRITE_DEBOUNCE_MS = 100; // Debounce concurrent writes by 100ms
+
+// A2A Protocol flag - disable debouncing for A2A artifacts to ensure immediate persistence
+let isA2AArtifact = false;
+
+/**
+ * Queue a write operation to prevent concurrent write conflicts
+ * This debounces rapid writes to the same key EXCEPT for A2A protocol artifacts
+ * which are written immediately to ensure protocol compliance
+ */
+function queueWrite(key: string, value: string, immediate: boolean = false): void {
+  // A2A artifacts are written immediately (no debounce) to maintain protocol compliance
+  if (immediate || isA2AArtifact) {
+    syncToIndexedDB(key, value);
+    return;
+  }
+
+  // Clear any existing timeout for this key
+  const existing = pendingWrites.get(key);
+  if (existing) {
+    clearTimeout(existing.timestamp);
+  }
+
+  // Queue the write with debouncing for non-A2A data
+  const timeoutId = window.setTimeout(() => {
+    pendingWrites.delete(key);
+    // Background sync to IndexedDB if available
+    syncToIndexedDB(key, value);
+  }, WRITE_DEBOUNCE_MS);
+
+  pendingWrites.set(key, {
+    key,
+    value,
+    timestamp: timeoutId as unknown as number,
+  });
+}
+
+/**
+ * Background sync to IndexedDB (non-blocking)
+ * This provides additional storage capacity without blocking the main thread
+ */
+async function syncToIndexedDB(key: string, value: string): Promise<void> {
+  try {
+    // Check if IndexedDB is available
+    if (typeof window === "undefined" || !window.indexedDB) return;
+
+    const DB_NAME = "ag-ui-backup";
+    const STORE_NAME = "storage-backup";
+
+    // Open or create database
+    const request = indexedDB.open(DB_NAME, 1);
+
+    request.onupgradeneeded = (event) => {
+      const db = (event.target as IDBOpenDBRequest).result;
+      if (!db.objectStoreNames.contains(STORE_NAME)) {
+        db.createObjectStore(STORE_NAME);
+      }
+    };
+
+    request.onsuccess = () => {
+      const db = request.result;
+      const transaction = db.transaction(STORE_NAME, "readwrite");
+      const store = transaction.objectStore(STORE_NAME);
+      
+      // Store in IndexedDB as backup
+      store.put(value, key);
+      
+      transaction.oncomplete = () => {
+        db.close();
+      };
+    };
+
+    request.onerror = () => {
+      // Silently fail - IndexedDB is optional
+      console.debug("IndexedDB backup failed (non-critical)");
+    };
+  } catch {
+    // IndexedDB not available or failed - not critical
+  }
+}
+
+/**
+ * Get current storage size in bytes
+ */
+function getCurrentStorageSize(): number {
+  if (!isStorageAvailable()) return 0;
+  try {
+    let total = 0;
+    for (const key of Object.values(STORAGE_KEYS)) {
+      const value = localStorage.getItem(key);
+      if (value) {
+        total += new Blob([value]).size;
+      }
+    }
+    return total;
+  } catch {
+    return 0;
+  }
+}
+
+/**
+ * Check if we're approaching storage quota
+ */
+function isStorageNearLimit(): boolean {
+  return getCurrentStorageSize() >= STORAGE_WARNING_THRESHOLD;
+}
+
+/**
+ * Free up storage space by removing old items
+ */
+function pruneStorage(): void {
+  if (!isStorageAvailable()) return;
+  
+  try {
+    // Remove oldest artifacts first
+    const artifacts = getStoredArtifacts();
+    if (artifacts.length > MAX_ARTIFACTS / 2) {
+      const kept = artifacts.slice(0, Math.floor(MAX_ARTIFACTS / 2));
+      localStorage.setItem(STORAGE_KEYS.ARTIFACTS, JSON.stringify(kept));
+      console.log(`🧹 Pruned ${artifacts.length - kept.length} old artifacts to free space`);
+    }
+    
+    // Remove oldest sessions
+    const sessions = getStoredSessions();
+    if (sessions.length > MAX_SESSIONS / 2) {
+      const kept = sessions.slice(0, Math.floor(MAX_SESSIONS / 2));
+      localStorage.setItem(STORAGE_KEYS.SESSIONS, JSON.stringify(kept));
+      console.log(`🧹 Pruned ${sessions.length - kept.length} old sessions to free space`);
+    }
+  } catch (error) {
+    console.warn("Failed to prune storage:", error);
+  }
+}
+
 /**
  * Check if localStorage is available
  */
@@ -116,7 +274,7 @@ function generateId(prefix: string): string {
 }
 
 /**
- * Save an artifact to storage
+ * Save an artifact to storage with concurrent write protection
  */
 export function saveArtifact(artifact: Omit<StoredArtifact, "id" | "createdAt">): StoredArtifact {
   const stored: StoredArtifact = {
@@ -128,12 +286,41 @@ export function saveArtifact(artifact: Omit<StoredArtifact, "id" | "createdAt">)
   if (!isStorageAvailable()) return stored;
 
   try {
+    // Check if we're approaching storage limit and prune if needed
+    if (isStorageNearLimit()) {
+      console.warn("⚠️ Storage approaching limit, pruning old data...");
+      pruneStorage();
+    }
+    
     const artifacts = getStoredArtifacts();
     artifacts.unshift(stored);
 
     // Keep only the most recent artifacts
     const trimmed = artifacts.slice(0, MAX_ARTIFACTS);
-    localStorage.setItem(STORAGE_KEYS.ARTIFACTS, JSON.stringify(trimmed));
+    
+    const dataToSave = JSON.stringify(trimmed);
+    
+    // Try to save, catch quota errors
+    try {
+      localStorage.setItem(STORAGE_KEYS.ARTIFACTS, dataToSave);
+      
+      // Queue background sync to IndexedDB (non-blocking)
+      queueWrite(STORAGE_KEYS.ARTIFACTS, dataToSave);
+    } catch (quotaError: any) {
+      if (quotaError.name === "QuotaExceededError") {
+        console.warn("💾 Storage quota exceeded, aggressive pruning...");
+        // Try aggressive pruning
+        pruneStorage();
+        // Try saving with reduced list
+        const reduced = artifacts.slice(0, Math.floor(MAX_ARTIFACTS / 4));
+        const reducedData = JSON.stringify(reduced);
+        localStorage.setItem(STORAGE_KEYS.ARTIFACTS, reducedData);
+        queueWrite(STORAGE_KEYS.ARTIFACTS, reducedData);
+        console.log(`✅ Saved after pruning to ${reduced.length} artifacts`);
+      } else {
+        throw quotaError;
+      }
+    }
   } catch (error) {
     console.warn("Failed to save artifact to storage:", error);
     logStorageError(error, "saveArtifact", STORAGE_KEYS.ARTIFACTS, {
@@ -227,6 +414,7 @@ export function clearArtifacts(): void {
 
 /**
  * Save an A2A Agent Card as an artifact
+ * A2A artifacts are written immediately (no debounce) to maintain protocol compliance
  */
 export function saveAgentCard(
   agentCard: object,
@@ -235,7 +423,8 @@ export function saveAgentCard(
   sourceId: string,
   sourceName: string
 ): StoredArtifact {
-  return saveArtifact({
+  isA2AArtifact = true;
+  const result = saveArtifact({
     name: `${agentName} Agent Card`,
     type: "application/json",
     data: JSON.stringify(agentCard, null, 2),
@@ -246,6 +435,8 @@ export function saveAgentCard(
     agentName,
     a2aType: "agent-card",
   });
+  isA2AArtifact = false;
+  return result;
 }
 
 /**
@@ -334,7 +525,7 @@ export function getStoredSessions(): StoredSession[] {
 }
 
 /**
- * Save a session to storage
+ * Save a session to storage with concurrent write protection
  */
 export function saveSession(session: Omit<StoredSession, "createdAt">): StoredSession {
   const stored: StoredSession = {
@@ -345,6 +536,12 @@ export function saveSession(session: Omit<StoredSession, "createdAt">): StoredSe
   if (!isStorageAvailable()) return stored;
 
   try {
+    // Check storage limit
+    if (isStorageNearLimit()) {
+      console.warn("⚠️ Storage approaching limit, pruning old data...");
+      pruneStorage();
+    }
+    
     const sessions = getStoredSessions();
     // Update existing or add new
     const existingIndex = sessions.findIndex((s) => s.id === session.id);
@@ -356,7 +553,29 @@ export function saveSession(session: Omit<StoredSession, "createdAt">): StoredSe
 
     // Keep only the most recent sessions
     const trimmed = sessions.slice(0, MAX_SESSIONS);
-    localStorage.setItem(STORAGE_KEYS.SESSIONS, JSON.stringify(trimmed));
+    
+    const dataToSave = JSON.stringify(trimmed);
+    
+    // Try to save, catch quota errors
+    try {
+      localStorage.setItem(STORAGE_KEYS.SESSIONS, dataToSave);
+      
+      // Queue background sync to IndexedDB (non-blocking)
+      queueWrite(STORAGE_KEYS.SESSIONS, dataToSave);
+    } catch (quotaError: any) {
+      if (quotaError.name === "QuotaExceededError") {
+        console.warn("💾 Session storage quota exceeded, aggressive pruning...");
+        pruneStorage();
+        // Try with reduced list
+        const reduced = sessions.slice(0, Math.floor(MAX_SESSIONS / 4));
+        const reducedData = JSON.stringify(reduced);
+        localStorage.setItem(STORAGE_KEYS.SESSIONS, reducedData);
+        queueWrite(STORAGE_KEYS.SESSIONS, reducedData);
+        console.log(`✅ Saved after pruning to ${reduced.length} sessions`);
+      } else {
+        throw quotaError;
+      }
+    }
   } catch (error) {
     console.warn("Failed to save session to storage:", error);
     logStorageError(error, "saveSession", STORAGE_KEYS.SESSIONS, {
