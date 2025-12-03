@@ -32,6 +32,18 @@ interface PipelineResult {
     trends?: { trendingKeywords: string[]; recommendedFocus: string };
     blog?: { title: string; url: string; wordCount: number };
   };
+  a2aSteps?: Array<{
+    taskId: string;
+    agentName: string;
+    phase: string;
+    status: string;
+    startTime: string;
+    endTime?: string;
+    durationMs?: number;
+    message?: string;
+    artifacts: Array<{ name: string; type: string; preview?: string }>;
+  }>;
+  totalDurationMs?: number;
 }
 
 interface PipelineListResponse {
