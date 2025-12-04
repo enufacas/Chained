@@ -4,6 +4,16 @@ This document provides a comprehensive look at the key technical capabilities of
 
 ## 🤖 GitHub Copilot Custom Agents: Complete System
 
+**🔗 Quick Links for Demo**:
+- **[.copilot-instructions.md](../.copilot-instructions.md)** - Repository-wide instructions (root level)
+- **[.github/instructions/](../.github/instructions/)** - Path-specific instructions directory
+- **[.github/agents/](../.github/agents/)** - 100+ agent definitions
+- **[copilot-setup-steps.yml](../.github/workflows/copilot-setup-steps.yml)** - Copilot environment configuration
+- **[mcp.json](../.github/copilot/mcp.json)** - MCP server setup (includes custom GCP server)
+- **[PR #3218](https://github.com/enufacas/Chained/pull/3218)** - Real agent task example (A2A implementation)
+
+---
+
 The repository demonstrates **GitHub Copilot's custom agent capabilities** through an agent system with over 100 specialized agents for testing and demonstration.
 
 ### Three-Layer Instruction Architecture
@@ -103,6 +113,15 @@ Agents are automatically assigned to issues based on content analysis:
 
 ## 🔮 Gemini Workflows: Multi-Model Support
 
+**🔗 Quick Links for Demo**:
+- **[gemini-review.yml](../.github/workflows/gemini-review.yml)** - PR code review with Gemini
+- **[gemini-triage.yml](../.github/workflows/gemini-triage.yml)** - Issue triage automation
+- **[gemini-fix.yml](../.github/workflows/gemini-fix.yml)** - Automated bug fixes
+- **[gemini-invoke.yml](../.github/workflows/gemini-invoke.yml)** - Manual Gemini invocation
+- **[gemini-dispatch.yml](../.github/workflows/gemini-dispatch.yml)** - Webhook-triggered Gemini tasks
+
+---
+
 The repository demonstrates how **GitHub Actions can orchestrate non-Copilot AI models** through custom workflows, proving that agent orchestration isn't limited to one provider.
 
 ### How Gemini Workflows Work
@@ -168,6 +187,16 @@ The pattern is simple: wrap the model's CLI or API in a GitHub Action, provide a
 
 ## 🔗 A2A Protocol on GCP: Testing Implementation
 
+**🔗 Quick Links for Demo**:
+- **[AG-UI Frontend](https://chained-ag-ui-frontend-sguacxy5gq-uc.a.run.app/)** - Live chat interface for testing A2A pipelines
+- **[Academic Research Agent](https://chained-academic-research-sguacxy5gq-uc.a.run.app)** - Research paper analysis
+- **[Google Trends Agent](https://chained-google-trends-sguacxy5gq-uc.a.run.app)** - Trend data collection
+- **[Blog Writer Agent](https://chained-blog-writer-sguacxy5gq-uc.a.run.app)** - Content generation
+- **[docs/a2a/README.md](../docs/a2a/README.md)** - Complete A2A documentation
+- **[PR #3218](https://github.com/enufacas/Chained/pull/3218)** - A2A implementation with GeminiAgentExecutor
+
+---
+
 The repository includes an **A2A (Agent-to-Agent) implementation** deployed to Google Cloud Run for testing agent collaboration patterns.
 
 ### Live A2A System
@@ -209,24 +238,40 @@ Complete technical details:
 
 ## 💬 Copilot Chat vs Agent Tasks: Demonstration Guide
 
+**🔗 Quick Links for Demo**:
+- **[PR #3218](https://github.com/enufacas/Chained/pull/3218)** - Use Copilot Chat on this PR for read-only Q&A
+- **[PR #3548](https://github.com/enufacas/Chained/pull/3548)** - Another great PR for Copilot Chat demos
+- **[Actions Tab](https://github.com/enufacas/Chained/actions)** - View agent task runners in action
+- **[copilot-setup-steps.yml](../.github/workflows/copilot-setup-steps.yml)** - Agent task configuration
+- **[Workflow Runs](https://github.com/enufacas/Chained/actions/workflows/copilot-setup-steps.yml)** - History of agent executions
+
+---
+
 This section demonstrates GitHub Copilot's two execution models through live examples and use cases.
 
 ### Example 1: Copilot Chat - Interactive Code Questions
 
-**🔗 Try It**: Open any issue or PR in this repository and click the Copilot Chat button
+**🔗 Demo Links**:
+- **Try on [PR #3218](https://github.com/enufacas/Chained/pull/3218)** - Click Copilot Chat button in PR
+- **Try on [PR #3548](https://github.com/enufacas/Chained/pull/3548)** - Another example PR
+- **Try on [any open issue](https://github.com/enufacas/Chained/issues)** - Ask questions about issues
 
 **What It Demonstrates**:
 - Conversational AI directly in GitHub's web interface
 - Instant answers about code, issues, and repository context
 - Available in GitHub.com, mobile app, and VS Code
 
-**Example Interaction**:
+**Example Questions to Ask Copilot Chat**:
 ```
-You: "Explain how the three-layer instruction architecture works"
-Copilot: [Analyzes .copilot-instructions.md and provides detailed explanation]
+On PR #3218:
+"What does this PR implement?"
+"Explain the GeminiAgentExecutor class"
+"How does the A2A task lifecycle work?"
 
-You: "How do I add a new agent?"
-Copilot: [References .github/agents/ directory and provides step-by-step guide]
+On PR #3548:
+"What errors were fixed in this PR?"
+"Explain the localStorage quota handling"
+"How does the error observer system work?"
 ```
 
 **Why It Matters**:
@@ -241,7 +286,12 @@ Copilot: [References .github/agents/ directory and provides step-by-step guide]
 
 ### Example 2: Copilot Agent Tasks - Autonomous Code Changes
 
-**🔗 See It In Action**: [PR #3218](https://github.com/enufacas/Chained/pull/3218) - A2A protocol implementation
+**🔗 Demo Links**:
+- **[PR #3218](https://github.com/enufacas/Chained/pull/3218)** - A2A protocol implementation by agent
+- **[PR #3548](https://github.com/enufacas/Chained/pull/3548)** - Error observer fixes by agent
+- **[Actions Tab](https://github.com/enufacas/Chained/actions)** - See runners executing agent tasks
+- **[Workflow Runs](https://github.com/enufacas/Chained/actions/workflows/copilot-setup-steps.yml)** - History of all agent executions
+- **[copilot-setup-steps.yml](../.github/workflows/copilot-setup-steps.yml)** - Agent environment setup
 
 **What It Demonstrates**:
 - Autonomous coding agent executing as GitHub Actions workflow
@@ -269,7 +319,11 @@ Copilot: [References .github/agents/ directory and provides step-by-step guide]
 
 ### Example 3: GitHub Runners - Where Agent Tasks Execute
 
-**🔗 View Configuration**: [copilot-setup-steps.yml](../.github/workflows/copilot-setup-steps.yml)
+**🔗 Demo Links**:
+- **[Actions Tab](https://github.com/enufacas/Chained/actions)** - Live view of runners executing tasks
+- **[copilot-setup-steps.yml](../.github/workflows/copilot-setup-steps.yml)** - Runner configuration
+- **[Workflow Runs](https://github.com/enufacas/Chained/actions/workflows/copilot-setup-steps.yml)** - Execution history
+- **[Settings → Actions → Runners](https://github.com/enufacas/Chained/settings/actions/runners)** - Runner management (org/repo admins)
 
 **What It Demonstrates**:
 - Agent task execution environment setup
@@ -309,7 +363,13 @@ Copilot: [References .github/agents/ directory and provides step-by-step guide]
 
 ### Example 4: Managing Agent Tasks From Multiple Interfaces
 
-**🔗 Access Points**:
+**🔗 Demo Links**:
+- **[GitHub.com Issues](https://github.com/enufacas/Chained/issues)** - Click "Copilot" button on any issue
+- **[Actions Tab](https://github.com/enufacas/Chained/actions)** - Monitor agent task execution
+- **[VS Code GitHub Extension](https://marketplace.visualstudio.com/items?itemName=GitHub.vscode-pull-request-github)** - IDE integration
+- **[GitHub Mobile App](https://github.com/mobile)** - iOS/Android trigger
+
+**Access Points**:
 - **GitHub.com**: Issue → "Copilot" button → "Create task"
 - **VS Code**: GitHub extension → Issue → "Assign to Copilot"
 - **Mobile**: GitHub app → Issue → "..." menu → "Assign to Copilot"
