@@ -33,10 +33,14 @@ This changelog excludes automated data syncs and routine maintenance commits.
 - 👤 Restructure Copilot section for demo/presentation format [#3218](https://github.com/enufacas/Chained/pull/3218)
 - 👤 Streamline A2A section and remove production-ready language [#3520](https://github.com/enufacas/Chained/pull/3520)
 
+### 🐛 Bug Fixes
+
+- 👤 Add dual test buttons for Error Observer: internal dispatch + GitHub webhook pipeline [#3582](https://github.com/enufacas/Chained/pull/3582)
+
 ### 🧹 Chores & Maintenance
 
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x3) [#3583](https://github.com/enufacas/Chained/pull/3583)
 - 👤 📚 Docs **Documentation**: Add dedicated Demo & Deep Dive documentation page [#3579](https://github.com/enufacas/Chained/pull/3579)
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x2) [#3581](https://github.com/enufacas/Chained/pull/3581)
 
 ---
 
