@@ -26,6 +26,14 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ---
 
+## 2025-12-04
+
+### 🧹 Chores & Maintenance
+
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge [#3578](https://github.com/enufacas/Chained/pull/3578)
+
+---
+
 ## 2025-12-03
 
 ### ✨ Features
@@ -35,6 +43,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🐛 Bug Fixes
 
+- 👤 🔧 Tools Fix TypeScript build error: use shared Pipeline interface in PipelineOutcomes [#3580](https://github.com/enufacas/Chained/pull/3580)
 - 👤 Fix AG-UI frontend: ERROR_OBSERVER_URL runtime config, localStorage quota, and pipeline detail persistence [#3558](https://github.com/enufacas/Chained/pull/3558)
 - 👤 Fix session timestamp preservation in work history page [#3555](https://github.com/enufacas/Chained/pull/3555)
 - 👤 Fix AG-UI Error Observer config race condition and session persistence data loss [#3554](https://github.com/enufacas/Chained/pull/3554)
