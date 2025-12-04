@@ -10,6 +10,8 @@ Not configured (ERROR_OBSERVER_URL not set)
 
 This prevents the error observer from capturing and dispatching errors, which is critical for the autonomous error handling system.
 
+Additionally, we need to test the complete GitHub webhook pipeline to ensure errors flow from Cloud Run → Error Observer → GitHub → Workflow → Issue/Comment.
+
 ## Root Cause Analysis
 
 ### Terraform Configuration (Verified Correct)
@@ -65,7 +67,46 @@ const handleTestDispatch = async () => {
 }
 ```
 
-### 2. Environment Debug Endpoint
+### 2. Test GitHub Webhook Button
+
+Added a "Test GitHub Webhook" button to test the complete cloud run errors pipeline:
+- ✅ Appears in both "not configured" and "configured" states  
+- ✅ Purple-themed (🎯) to distinguish from test error button (🧪 blue)
+- ✅ Sends test webhook via error_observer to GitHub repository_dispatch
+- ✅ Tests full pipeline: Frontend → Error Observer → GitHub → Workflow → Issue
+- ✅ Provides success message with link to check GitHub Actions
+- ✅ Auto-clears result message after 5 seconds
+
+**Location**: `infrastructure/docker/ag-ui-frontend/src/app/api/test-github-webhook/route.ts`
+
+**Pipeline Tested**:
+1. Frontend → POST /api/test-github-webhook
+2. Create error event → POST error_observer/a2a/tasks
+3. Error observer → GitHub repository_dispatch (event_type: "cloudrun-error")
+4. GitHub → Trigger handle-cloudrun-errors.yml workflow
+5. Workflow → Create issue or comment with error details
+6. Success feedback shown in UI
+
+**Features**:
+```typescript
+const handleTestWebhook = async () => {
+  // Sends test webhook that triggers GitHub workflow:
+  {
+    service: "a2a-ui-test",
+    error_message: "Test GitHub webhook dispatch...",
+    error_hash: "computed-hash",
+    stack_trace: "Full test stack trace...",
+    environment: "test",
+    metadata: {
+      test: true,
+      test_type: "github-webhook",
+      expected_workflow: "handle-cloudrun-errors.yml"
+    }
+  }
+}
+```
+
+### 3. Environment Debug Endpoint
 
 Created `/api/debug/env` endpoint to diagnose configuration issues:
 - ✅ Returns status of ERROR_OBSERVER_URL and related env vars
@@ -172,30 +213,40 @@ terraform apply
 
 ### Files Modified
 
-1. **ErrorObserverStatus.tsx** (165 lines added)
-   - Added `dispatching` and `dispatchResult` state
-   - Implemented `handleTestDispatch` function
-   - Added test button to "not configured" state
-   - Added test button to expanded details
+1. **ErrorObserverStatus.tsx** (+277 lines total)
+   - Added `dispatching` and `dispatchResult` state for test error dispatch
+   - Added `webhookDispatching` and `webhookResult` state for GitHub webhook test
+   - Implemented `handleTestDispatch` function (test error to observer)
+   - Implemented `handleTestWebhook` function (test webhook to GitHub)
+   - Added test error button to "not configured" state
+   - Added test webhook button to "not configured" state
+   - Added both test buttons to expanded details
    - Added link to debug endpoint
 
-2. **route.ts** (New file - 48 lines)
-   - Created `/api/debug/env` endpoint
-   - Returns environment variable status
-   - Provides troubleshooting recommendations
+2. **route.ts** (New files - 95 lines total)
+   - Created `/api/debug/env` endpoint (48 lines)
+   - Created `/api/test-github-webhook` endpoint (236 lines)
 
 ### Testing
 
 **Manual Testing Required**:
-1. ✅ Test button appears in "not configured" state
-2. ✅ Test button appears in expanded details when configured
-3. ✅ Button shows loading state during dispatch
-4. ✅ Success message displays with error hash
-5. ✅ Failure message displays on error
-6. ✅ Result message clears after 5 seconds
-7. ✅ Status refreshes after successful dispatch
-8. ✅ Debug endpoint returns expected JSON
-9. ✅ Debug link works in "not configured" state
+1. ✅ Test error button appears in "not configured" state
+2. ✅ Test error button appears in expanded details when configured
+3. ✅ Test error button shows loading state during dispatch
+4. ✅ Test error success message displays with error hash
+5. ✅ Test error failure message displays on error
+6. ✅ Test error result message clears after 5 seconds
+7. ✅ Status refreshes after successful test error dispatch
+8. ✅ Test webhook button appears in "not configured" state
+9. ✅ Test webhook button appears in expanded details when configured
+10. ✅ Test webhook button shows loading state during dispatch
+11. ✅ Test webhook success message displays
+12. ✅ Test webhook failure message displays on error
+13. ✅ Test webhook result message clears after 5 seconds
+14. ✅ GitHub Actions workflow triggers from webhook
+15. ✅ GitHub issue/comment created from test webhook
+16. ✅ Debug endpoint returns expected JSON
+17. ✅ Debug link works in "not configured" state
 
 **Existing Tests**:
 - `__tests__/api/error-observer.test.ts` - Tests error observer API
