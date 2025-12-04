@@ -16,7 +16,6 @@ import { NextResponse } from "next/server";
 // Force dynamic rendering - this endpoint should never be cached
 // because environment variables can change between deployments
 export const dynamic = 'force-dynamic';
-export const revalidate = 0;
 
 export async function GET() {
   // Check all error observer related environment variables

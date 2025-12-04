@@ -1083,6 +1083,7 @@ resource "google_cloud_run_v2_service" "ag_ui_frontend" {
   template {
     # Add label to track deployment version - forces new revision when image_tag changes
     # This ensures Cloud Run creates a new revision that picks up environment variable changes
+    # Note: substr limit of 63 is Kubernetes label value length limit
     labels = {
       "deployment-version" = substr(replace(var.image_tag, ".", "-"), 0, 63)
     }

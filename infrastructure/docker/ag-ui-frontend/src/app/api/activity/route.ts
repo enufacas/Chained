@@ -16,7 +16,6 @@ import { NextRequest } from "next/server";
 
 // Force dynamic rendering - fetches real-time agent status
 export const dynamic = 'force-dynamic';
-export const revalidate = 0;
 
 // =============================================================================
 // Logging Utilities
