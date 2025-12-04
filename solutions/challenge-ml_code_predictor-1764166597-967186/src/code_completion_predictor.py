@@ -1,5 +1,5 @@
 """
-Code Completion Predictor - Lightweight ML Architecture by @create-guru
+Code Completion Predictor - Lightweight ML Architecture by @create-botter
 
 An innovative code completion system combining N-gram analysis with contextual
 weighting for intelligent code prediction. Optimized for real-time inference
@@ -25,7 +25,7 @@ Requirements Met:
     3. ✓ Confidence scores for all predictions
     4. ✓ Real-time inference optimization
 
-Created by @create-guru with visionary and inventive design principles.
+Created by @create-botter with visionary and inventive design principles.
 """
 
 import re
@@ -432,7 +432,7 @@ class CodeCompletionPredictor:
         >>> print(f"{line} (confidence: {confidence:.0%})")
         return a - b (confidence: 72%)
     
-    Created by @create-guru - Challenge ID: challenge-ml_code_predictor-1764166597-967186
+    Created by @create-botter - Challenge ID: challenge-ml_code_predictor-1764166597-967186
     """
     
     # Line terminators for different languages
@@ -697,7 +697,7 @@ def train_model(code_samples: List[str], language: str = 'python', n: int = 5) -
 # Demo/CLI functionality
 if __name__ == '__main__':
     print("=" * 70)
-    print("Code Completion Predictor Demo by @create-guru")
+    print("Code Completion Predictor Demo by @create-botter")
     print("Challenge ID: challenge-ml_code_predictor-1764166597-967186")
     print("=" * 70)
     print()

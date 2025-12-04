@@ -11,7 +11,7 @@ Demonstrates the key features of the Code Completion Predictor:
 - Performance statistics
 
 Challenge ID: challenge-ml_code_predictor-1764080154-287095
-Created by @create-guru
+Created by @create-botter
 """
 
 import sys
@@ -259,7 +259,7 @@ def main():
     print("=" * 60)
     print("Code Completion Predictor - Usage Examples")
     print("Challenge ID: challenge-ml_code_predictor-1764080154-287095")
-    print("Created by @create-guru")
+    print("Created by @create-botter")
     print("=" * 60)
     
     example_1_basic_completion()

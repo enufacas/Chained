@@ -7,7 +7,7 @@ Tests new features:
 - Contextual prompt adaptation
 - Auto-tuning integration
 
-Created by @create-guru as part of the infrastructure enhancement.
+Created by @create-botter as part of the infrastructure enhancement.
 """
 
 import json
@@ -217,10 +217,10 @@ def test_prompt_adaptation():
         
         base_prompt = "Fix this bug: {issue_body}"
         
-        # Test adaptation for create-guru (if it exists)
+        # Test adaptation for create-botter (if it exists)
         adapted = adapter.adapt_prompt_for_agent(
             base_prompt,
-            "create-guru",
+            "create-botter",
             issue_context={"labels": ["feature", "infrastructure"], "keywords": ["infrastructure"]}
         )
         
@@ -261,7 +261,7 @@ def test_contextual_enhancement():
         
         enhanced = adapter.enhance_prompt_with_context(
             base_prompt,
-            "create-guru",
+            "create-botter",
             issue_title="Add new infrastructure component",
             issue_labels=["feature", "infrastructure"],
             issue_body="We need to build a new infrastructure component for handling async tasks"

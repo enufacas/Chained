@@ -790,7 +790,7 @@ Part of the Chained project. See repository LICENSE file.
 
 ## 🙏 Acknowledgments
 
-- **Challenge Generator**: Creative Coding Challenge Generator (@create-guru)
+- **Challenge Generator**: Creative Coding Challenge Generator (@create-botter)
 - **Documentation Lead**: @docs-tech-lead (this solution)
 - **Inspiration**: GitHub Copilot, Chained AI ecosystem
 - **Learning Resources**: TLDR Tech, Hacker News AI trends

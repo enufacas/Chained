@@ -5,7 +5,7 @@ Example Usage for Code Completion Predictor
 This example demonstrates how to use the Code Completion Predictor
 for various code completion tasks.
 
-Created by @create-guru for the Chained autonomous AI ecosystem.
+Created by @create-botter for the Chained autonomous AI ecosystem.
 """
 
 import sys
@@ -363,7 +363,7 @@ def main():
     """Run all examples"""
     print("\n" + "="*70)
     print("Code Completion Predictor - Examples")
-    print("Created by @create-guru")
+    print("Created by @create-botter")
     print("="*70)
     
     examples = [

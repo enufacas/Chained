@@ -181,10 +181,10 @@ class TestPromptGenerator(unittest.TestCase):
         prompt, template_id = self.generator.generate_prompt(
             issue_body=issue_body,
             category="feature",
-            agent="create-guru"
+            agent="create-botter"
         )
         
-        self.assertIn("@create-guru", prompt)
+        self.assertIn("@create-botter", prompt)
         self.assertIn(issue_body, prompt)
     
     def test_generate_prompt_with_learning_context(self):

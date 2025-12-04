@@ -15,7 +15,7 @@ This investigation analyzes the Chained agent ecosystem to understand current pa
 **Total Agent Types**: 24 unique specializations
 
 **Distribution by Archetype**:
-- **Builder** (4 agents): create-guru, engineer-master, engineer-wizard, feature-architect
+- **Builder** (4 agents): create-botter, engineer-master, engineer-wizard, feature-architect
 - **Communicator** (4 agents): doc-master, teach-wizard, support-master, coach-master
 - **Guardian** (3 agents): security-guardian, validate-pro, validate-wizard
 - **Validator** (2 agents): test-champion, assert-specialist

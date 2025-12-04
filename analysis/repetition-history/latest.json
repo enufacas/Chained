@@ -1,1 +1,343 @@
-2025-11-28-01-00-08.json
+{
+  "metadata": {
+    "generated_at": "2025-11-28T01:00:21.995572+00:00",
+    "repository": ".",
+    "analysis_period_days": 30,
+    "since_date": "2025-10-29T01:00:08.683907+00:00"
+  },
+  "summary": {
+    "total_agents": 2,
+    "total_contributions": 2416,
+    "agents": [
+      "copilot-swe-agent",
+      "copilot"
+    ]
+  },
+  "commit_message_patterns": {
+    "copilot-swe-agent": {
+      "total_commits": 1821,
+      "unique_templates": 1196,
+      "most_common_count": 607,
+      "repetition_rate": 0.3333333333333333,
+      "emoji_usage": {
+        "\ud83c\udf0d": 1,
+        "\ud83d\udcdd": 1,
+        "\ud83e\udde0": 2,
+        "\ud83c\udfed": 5,
+        "\ud83c\udfa8": 2,
+        "\ud83c\udfd7": 1
+      }
+    },
+    "copilot": {
+      "total_commits": 595,
+      "unique_templates": 595,
+      "most_common_count": 1,
+      "repetition_rate": 0.0016806722689075631,
+      "emoji_usage": {
+        "\ud83e\udde0": 8,
+        "\ud83c\udfaf": 3,
+        "\ud83d\udd10": 3,
+        "\ud83d\udcca": 1,
+        "\ud83d\udcda": 1,
+        "\ud83d\udcad": 1,
+        "\ud83e\uddf9": 1
+      }
+    }
+  },
+  "code_similarity": {
+    "copilot-swe-agent": {
+      "total_structures": 522,
+      "unique_structures": 454,
+      "duplicate_structures": 68,
+      "similarity_rate": 0.13026819923371646,
+      "duplicates": [
+        {
+          "hash": "e55f75a29310d7b60f7ac1d390c8ae42",
+          "occurrences": 4,
+          "files": [
+            "infrastructure/docker/adk-agents/academic-research/__init__.py",
+            "infrastructure/docker/adk-agents/blog-writer/__init__.py",
+            "infrastructure/docker/adk-agents/google-trends/__init__.py",
+            "infrastructure/docker/adk-agents/shared/__init__.py"
+          ]
+        },
+        {
+          "hash": "4deba0f7cd10dbe4b764ee7ae413494a",
+          "occurrences": 2,
+          "files": [
+            "tools/a2a/__init__.py",
+            "tools/a2a/__init__.py"
+          ]
+        },
+        {
+          "hash": "41adc37dd1a5f1635e38fc03840301d8",
+          "occurrences": 2,
+          "files": [
+            "tools/create_labels.py",
+            "tools/create_labels.py"
+          ]
+        },
+        {
+          "hash": "cf40906eb63f67468937a22abc712399",
+          "occurrences": 2,
+          "files": [
+            "tools/a2a/__init__.py",
+            "tools/a2a/__init__.py"
+          ]
+        },
+        {
+          "hash": "dfa697081a104328aa0b67942ef22841",
+          "occurrences": 2,
+          "files": [
+            "tools/a2a/agent_card.py",
+            "tools/a2a/agent_card.py"
+          ]
+        },
+        {
+          "hash": "107e3613bc093fbe89105ffe3115ba38",
+          "occurrences": 2,
+          "files": [
+            "tools/a2a/agent_executor.py",
+            "tools/a2a/agent_executor.py"
+          ]
+        },
+        {
+          "hash": "6b9579a37a43e4399b45f93bdd1d7f9d",
+          "occurrences": 2,
+          "files": [
+            "tools/a2a/agent_server.py",
+            "tools/a2a/agent_server.py"
+          ]
+        },
+        {
+          "hash": "65270473a2bf62900b77798e31a1a60d",
+          "occurrences": 2,
+          "files": [
+            "tools/a2a/client.py",
+            "tools/a2a/client.py"
+          ]
+        },
+        {
+          "hash": "c2bdbd61b327d0f816d9a4981643be7d",
+          "occurrences": 2,
+          "files": [
+            "tools/a2a/discovery.py",
+            "tools/a2a/discovery.py"
+          ]
+        },
+        {
+          "hash": "3a7ba4f3bfbcf5d6f32064e56d0d7673",
+          "occurrences": 2,
+          "files": [
+            "tools/a2a/github_branch_transport.py",
+            "tools/a2a/github_branch_transport.py"
+          ]
+        }
+      ]
+    },
+    "copilot": {
+      "total_structures": 476,
+      "unique_structures": 447,
+      "duplicate_structures": 29,
+      "similarity_rate": 0.06092436974789916,
+      "duplicates": [
+        {
+          "hash": "e55f75a29310d7b60f7ac1d390c8ae42",
+          "occurrences": 4,
+          "files": [
+            "infrastructure/docker/adk-agents/academic-research/__init__.py",
+            "infrastructure/docker/adk-agents/blog-writer/__init__.py",
+            "infrastructure/docker/adk-agents/google-trends/__init__.py",
+            "infrastructure/docker/adk-agents/shared/__init__.py"
+          ]
+        },
+        {
+          "hash": "277746cd8c4c9f286349e7751850d6c9",
+          "occurrences": 2,
+          "files": [
+            "solutions/challenge-ml_code_predictor-1764166597-967186/src/code_completion_predictor.py",
+            "solutions/challenge-ml_code_predictor-1764080154-287095/src/code_completion_predictor.py"
+          ]
+        },
+        {
+          "hash": "63326501bdf3be404af26571c259321d",
+          "occurrences": 2,
+          "files": [
+            "solutions/challenge-ml_code_predictor-1764166597-967186/tests/test_code_completion_predictor.py",
+            "solutions/challenge-ml_code_predictor-1764080154-287095/tests/test_code_completion_predictor.py"
+          ]
+        },
+        {
+          "hash": "dfa697081a104328aa0b67942ef22841",
+          "occurrences": 2,
+          "files": [
+            "tools/a2a/agent_card.py",
+            "tools/a2a/agent_card.py"
+          ]
+        },
+        {
+          "hash": "107e3613bc093fbe89105ffe3115ba38",
+          "occurrences": 2,
+          "files": [
+            "tools/a2a/agent_executor.py",
+            "tools/a2a/agent_executor.py"
+          ]
+        },
+        {
+          "hash": "6b9579a37a43e4399b45f93bdd1d7f9d",
+          "occurrences": 2,
+          "files": [
+            "tools/a2a/agent_server.py",
+            "tools/a2a/agent_server.py"
+          ]
+        },
+        {
+          "hash": "65270473a2bf62900b77798e31a1a60d",
+          "occurrences": 2,
+          "files": [
+            "tools/a2a/client.py",
+            "tools/a2a/client.py"
+          ]
+        },
+        {
+          "hash": "c2bdbd61b327d0f816d9a4981643be7d",
+          "occurrences": 2,
+          "files": [
+            "tools/a2a/discovery.py",
+            "tools/a2a/discovery.py"
+          ]
+        },
+        {
+          "hash": "3a7ba4f3bfbcf5d6f32064e56d0d7673",
+          "occurrences": 2,
+          "files": [
+            "tools/a2a/github_branch_transport.py",
+            "tools/a2a/github_branch_transport.py"
+          ]
+        },
+        {
+          "hash": "18f514ff08a63b463e4219796b8c5adc",
+          "occurrences": 2,
+          "files": [
+            "tools/a2a/github_transport.py",
+            "tools/a2a/github_transport.py"
+          ]
+        }
+      ]
+    }
+  },
+  "file_sequence_patterns": {
+    "copilot-swe-agent": {
+      "total_commits": 1213,
+      "unique_sequences": 916,
+      "most_common_count": 47,
+      "repetition_rate": 0.038746908491343775,
+      "top_sequences": [
+        {
+          "pattern": ".github/agent-system/meta-coordinator-memory.json",
+          "count": 47
+        },
+        {
+          "pattern": ".github/workflows/auto-review-merge.yml",
+          "count": 16
+        },
+        {
+          "pattern": ".github/workflows/copilot-graphql-assign.yml",
+          "count": 14
+        },
+        {
+          "pattern": ".github/workflows/meta-coordinator.yml",
+          "count": 13
+        },
+        {
+          "pattern": ".github/workflows/a2a-parallel-agents.yml",
+          "count": 11
+        }
+      ]
+    },
+    "copilot": {
+      "total_commits": 519,
+      "unique_sequences": 469,
+      "most_common_count": 25,
+      "repetition_rate": 0.04816955684007707,
+      "top_sequences": [
+        {
+          "pattern": ".github/agent-system/meta-coordinator-memory.json",
+          "count": 25
+        },
+        {
+          "pattern": "README.md",
+          "count": 5
+        },
+        {
+          "pattern": ".github/workflows/a2a-parallel-agents.yml",
+          "count": 4
+        },
+        {
+          "pattern": "docs/index.html|docs/script.js|docs/style.css",
+          "count": 3
+        },
+        {
+          "pattern": ".github/workflows/meta-coordinator.yml",
+          "count": 3
+        }
+      ]
+    }
+  },
+  "solution_approaches": {
+    "copilot-swe-agent": {
+      "total_contributions": 1821,
+      "unique_approaches": 12,
+      "approaches": [
+        "feature_addition",
+        "testing",
+        "workflow_automation",
+        "shell_scripting",
+        "refactoring",
+        "python_development",
+        "security",
+        "yaml_configuration",
+        "bug_fixing",
+        "markdown_documentation",
+        "optimization",
+        "documentation"
+      ],
+      "diversity_score": 0.6589785831960462
+    },
+    "copilot": {
+      "total_contributions": 595,
+      "unique_approaches": 12,
+      "approaches": [
+        "feature_addition",
+        "testing",
+        "workflow_automation",
+        "shell_scripting",
+        "refactoring",
+        "python_development",
+        "security",
+        "yaml_configuration",
+        "bug_fixing",
+        "markdown_documentation",
+        "optimization",
+        "documentation"
+      ],
+      "diversity_score": 2.0168067226890756
+    }
+  },
+  "repetition_flags": [
+    {
+      "agent_id": "copilot-swe-agent",
+      "type": "low_approach_diversity",
+      "severity": "medium",
+      "description": "Agent shows low approach diversity: 0.7%",
+      "metric": 0.6589785831960462
+    },
+    {
+      "agent_id": "copilot",
+      "type": "low_approach_diversity",
+      "severity": "medium",
+      "description": "Agent shows low approach diversity: 2.0%",
+      "metric": 2.0168067226890756
+    }
+  ]
+}

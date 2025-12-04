@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Tests for GitHub Actions Data Collector
-Created by @create-guru
+Created by @create-botter
 
 Comprehensive test suite for the GitHub Actions workflow data collector.
 """
@@ -447,7 +447,7 @@ class TestGitHubActionsDataCollector:
         """Run all tests."""
         print("="*70)
         print("🧪 Running GitHub Actions Data Collector Test Suite")
-        print("   @create-guru")
+        print("   @create-botter")
         print("="*70)
         
         try:

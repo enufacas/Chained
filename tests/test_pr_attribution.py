@@ -28,7 +28,7 @@ def test_pr_attribution_patterns():
     test_cases = [
         ("PR with @agent in title", "@engineer-master implements API", ["engineer-master"]),
         ("PR with @agent in body", "This PR adds feature.\n\n@secure-specialist reviewed.", ["secure-specialist"]),
-        ("PR with multiple agents", "@create-guru and @organize-guru worked together", ["create-guru", "organize-guru"]),
+        ("PR with multiple agents", "@create-botter and @organize-guru worked together", ["create-botter", "organize-guru"]),
         ("PR without agent", "Regular PR without agent mention", []),
         ("PR with bold @agent", "**@accelerate-master** optimized performance", ["accelerate-master"]),
         ("PR with @agent in parentheses", "Fixed issue (@troubleshoot-expert)", ["troubleshoot-expert"]),

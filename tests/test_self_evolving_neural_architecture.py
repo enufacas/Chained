@@ -3,7 +3,7 @@
 Tests for Self-Evolving Neural Architecture
 
 This module provides comprehensive tests for the self-evolving neural
-architecture system created by @create-guru.
+architecture system created by @create-botter.
 """
 
 import json
@@ -421,7 +421,7 @@ class TestSelfEvolvingNeuralArchitecture:
         assert "Self-Evolving Neural Architecture Report" in report
         assert "test-workflow" in report
         assert "Success Rate" in report
-        assert "@create-guru" in report
+        assert "@create-botter" in report
 
 
 class TestEvolvingArchitectureManager:
@@ -505,7 +505,7 @@ class TestEvolvingArchitectureManager:
         assert "Self-Evolving Neural Architecture System Report" in report
         assert "workflow-1" in report
         assert "workflow-2" in report
-        assert "@create-guru" in report
+        assert "@create-botter" in report
 
 
 class TestIntegration:

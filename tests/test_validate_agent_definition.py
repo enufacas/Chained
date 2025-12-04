@@ -39,7 +39,7 @@ def test_single_file():
     print_test("Single file validation")
     
     result = subprocess.run(
-        ['python3', 'tools/validate-agent-definition.py', '-f', '.github/agents/create-guru.md'],
+        ['python3', 'tools/validate-agent-definition.py', '-f', '.github/agents/create-botter.md'],
         capture_output=True,
         text=True
     )

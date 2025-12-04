@@ -309,7 +309,7 @@ class TestMetaAgentCoordinator(unittest.TestCase):
             'accelerate-master',
             'assert-specialist',
             'coach-master',
-            'create-guru',
+            'create-botter',
             'engineer-master',
             'investigate-champion',
             'secure-specialist',
@@ -323,7 +323,7 @@ class TestMetaAgentCoordinator(unittest.TestCase):
             mapped_specs.update(specs)
         
         for spec in specializations:
-            if spec not in ['coach-master', 'create-guru']:  # These might be variants
+            if spec not in ['coach-master', 'create-botter']:  # These might be variants
                 # At least check base patterns exist
                 self.assertTrue(len(mapped_specs) > 0)
 

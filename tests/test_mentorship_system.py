@@ -119,7 +119,7 @@ MOCK_REGISTRY = {
         {
             "id": "agent-hof-2",
             "name": "🏆 Mentor2",
-            "specialization": "create-guru",
+            "specialization": "create-botter",
             "status": "hall_of_fame",
             "metrics": {
                 "overall_score": 0.87,
@@ -218,7 +218,7 @@ class TestMentorAssignment(unittest.TestCase):
         
         # Should return any available mentor
         self.assertIsNotNone(mentor)
-        self.assertIn(mentor['specialization'], ['engineer-master', 'create-guru'])
+        self.assertIn(mentor['specialization'], ['engineer-master', 'create-botter'])
     
     @patch('assign_mentor.REGISTRY_FILE')
     @patch('assign_mentor.MENTORSHIP_REGISTRY')

@@ -31,7 +31,7 @@ EvolutionRecord = agent_evolution_system.EvolutionRecord
 AgentEvolutionSystem = agent_evolution_system.AgentEvolutionSystem
 
 
-def create_test_agent(agent_id: str, specialization: str = 'create-guru',
+def create_test_agent(agent_id: str, specialization: str = 'create-botter',
                      creativity: int = 50, caution: int = 50, speed: int = 50,
                      overall_score: float = 0.5) -> dict:
     """Create a test agent dictionary."""
@@ -107,7 +107,7 @@ class TestAgentGenes:
     
     def test_mutation(self):
         """Test gene mutation."""
-        genes = AgentGenes(50, 50, 50, 'create-guru')
+        genes = AgentGenes(50, 50, 50, 'create-botter')
         
         # Mutate with 100% rate to ensure changes
         mutated = genes.mutate(mutation_rate=1.0)
@@ -131,7 +131,7 @@ class TestAgentGenes:
     def test_mutation_bounds(self):
         """Test mutation respects bounds."""
         # Test lower bound
-        genes_low = AgentGenes(0, 0, 0, 'create-guru')
+        genes_low = AgentGenes(0, 0, 0, 'create-botter')
         mutated_low = genes_low.mutate(mutation_rate=1.0)
         
         assert mutated_low.creativity >= 0
@@ -139,7 +139,7 @@ class TestAgentGenes:
         assert mutated_low.speed >= 0
         
         # Test upper bound
-        genes_high = AgentGenes(100, 100, 100, 'create-guru')
+        genes_high = AgentGenes(100, 100, 100, 'create-botter')
         mutated_high = genes_high.mutate(mutation_rate=1.0)
         
         assert mutated_high.creativity <= 100
@@ -209,7 +209,7 @@ class TestEvolutionSystem:
             assert genes.creativity == 70
             assert genes.caution == 60
             assert genes.speed == 80
-            assert genes.specialization == 'create-guru'
+            assert genes.specialization == 'create-botter'
             
             print("✅ Gene extraction works")
         finally:

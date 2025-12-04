@@ -896,7 +896,7 @@ top_agents = [
     "secure-specialist",
     "accelerate-master",
     "investigate-champion",
-    "create-guru",
+    "create-botter",
     "engineer-master"
 ]
 

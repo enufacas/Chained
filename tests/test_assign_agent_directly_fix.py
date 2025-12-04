@@ -39,7 +39,7 @@ def test_agent_info_retrieval():
     test_agents = [
         "engineer-master",
         "secure-specialist", 
-        "create-guru",
+        "create-botter",
         "assert-specialist",
         "organize-guru"
     ]

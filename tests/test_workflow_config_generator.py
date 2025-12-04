@@ -4,7 +4,7 @@ Tests for Workflow Configuration Variant Generator
 
 Tests the automatic generation of workflow configuration variants for A/B testing.
 
-Author: @create-guru
+Author: @create-botter
 """
 
 import json

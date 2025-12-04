@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Tests for the Workflow Activity Report Generator.
-Created by @create-guru
+Created by @create-botter
 
 Tests the core functionality of the workflow activity reporter,
 including archival score calculation and report generation.
@@ -433,7 +433,7 @@ def test_markdown_report_generation():
             ('Active Workflow in table', 'Active Workflow' in markdown_report),
             ('Recommendations section', '## 💡 Archival Recommendations' in markdown_report),
             ('Score range table', '| ≥ 70 |' in markdown_report),
-            ('Created by attribution', '@create-guru' in markdown_report),
+            ('Created by attribution', '@create-botter' in markdown_report),
         ]
         
         all_passed = True
@@ -486,7 +486,7 @@ def main():
     """Run all tests."""
     print("=" * 60)
     print("🧪 Workflow Activity Report Tests")
-    print("   Created by @create-guru")
+    print("   Created by @create-botter")
     print("=" * 60)
     
     # Change to repo root

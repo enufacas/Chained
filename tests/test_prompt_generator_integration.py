@@ -99,7 +99,7 @@ class TestPromptGeneratorIntegration(unittest.TestCase):
             issue_number=100,
             success=True,
             resolution_time_hours=3.5,
-            agent_used="create-guru",
+            agent_used="create-botter",
             feedback_text="Excellent systematic implementation with comprehensive tests"
         )
         
@@ -313,12 +313,12 @@ class TestPromptGeneratorWithoutReinforcement(unittest.TestCase):
         prompt, template_id = self.generator.generate_prompt(
             issue_body="Add user authentication",
             category="feature",
-            agent="create-guru"
+            agent="create-botter"
         )
         
         # Should still work
         self.assertIsNotNone(prompt)
-        self.assertIn("@create-guru", prompt)
+        self.assertIn("@create-botter", prompt)
         self.assertIn("Add user authentication", prompt)
     
     def test_outcome_recording_without_reinforcement(self):

@@ -21,8 +21,8 @@ def test_copilot_agent_comment_parsing():
             'should_match': True
         },
         {
-            'body': '<!--COPILOT_AGENT:create-guru-->\nAdd feature',
-            'specialization': 'create-guru',
+            'body': '<!--COPILOT_AGENT:create-botter-->\nAdd feature',
+            'specialization': 'create-botter',
             'should_match': True
         },
         {
@@ -217,8 +217,8 @@ def test_agent_mention_extraction():
                 'description': 'Non-agent username format'
             },
             {
-                'text': 'feat: implement feature (@create-guru)',
-                'expected': ['create-guru'],
+                'text': 'feat: implement feature (@create-botter)',
+                'expected': ['create-botter'],
                 'description': 'Agent mention in commit style'
             }
         ]

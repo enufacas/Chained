@@ -1,7 +1,7 @@
 """
 Usage Examples for Code Completion Predictor
 
-Demonstrates all features and capabilities of the @create-guru code completion system.
+Demonstrates all features and capabilities of the @create-botter code completion system.
 
 Examples:
     1. Basic code completion
@@ -280,7 +280,7 @@ def example_8_typescript_support():
 def main():
     """Run all examples."""
     print("\n" + "=" * 70)
-    print("Code Completion Predictor - Usage Examples by @create-guru")
+    print("Code Completion Predictor - Usage Examples by @create-botter")
     print("=" * 70)
     print("\n")
     

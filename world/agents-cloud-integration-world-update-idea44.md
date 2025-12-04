@@ -285,7 +285,7 @@ Cloud Infrastructure (stability: 84.0)
         "primary_agents": [
           "engineer-master",
           "troubleshoot-expert",
-          "create-guru"
+          "create-botter"
         ]
       },
       "innovation_score": 0.95

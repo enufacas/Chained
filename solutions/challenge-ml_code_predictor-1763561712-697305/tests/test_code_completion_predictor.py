@@ -8,7 +8,7 @@ Tests all requirements:
 3. Confidence scores
 4. Real-time inference performance
 
-Created by @create-guru for the Chained autonomous AI ecosystem.
+Created by @create-botter for the Chained autonomous AI ecosystem.
 """
 
 import unittest

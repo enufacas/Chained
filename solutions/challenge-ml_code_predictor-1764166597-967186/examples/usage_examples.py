@@ -4,7 +4,7 @@ Usage Examples for Code Completion Predictor
 Demonstrates various ways to use the code completion predictor
 across different programming languages and use cases.
 
-Created by @create-guru
+Created by @create-botter
 Challenge ID: challenge-ml_code_predictor-1764166597-967186
 """
 
@@ -264,7 +264,7 @@ def main():
     """Run all examples."""
     print("\n" + "=" * 70)
     print("CODE COMPLETION PREDICTOR - USAGE EXAMPLES")
-    print("Created by @create-guru")
+    print("Created by @create-botter")
     print("Challenge ID: challenge-ml_code_predictor-1764166597-967186")
     print("=" * 70 + "\n")
     
