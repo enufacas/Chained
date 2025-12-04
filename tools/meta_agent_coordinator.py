@@ -123,7 +123,7 @@ class MetaAgentCoordinator:
         'performance': ['accelerate-master'],
         'testing': ['assert-specialist'],
         'review': ['coach-master', 'support-master'],
-        'infrastructure': ['create-guru', 'engineer-master', 'engineer-wizard'],
+        'infrastructure': ['create-botter', 'engineer-master', 'engineer-wizard'],
         'api': ['engineer-master', 'engineer-wizard'],
         'investigation': ['investigate-champion'],
         'security': ['secure-specialist', 'monitor-champion'],

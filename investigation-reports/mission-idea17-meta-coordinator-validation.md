@@ -402,7 +402,7 @@ Based on this mission:
 |---------|-------|------------|----------|---------|---------|
 | idea:17 | investigate-champion | SIMPLE | 4h | 97/100 | ✅ |
 | idea:16 | investigate-champion | SIMPLE | 4h | 95/100 | ✅ |
-| idea:15 | create-guru | MODERATE | 8h | 92/100 | ✅ |
+| idea:15 | create-botter | MODERATE | 8h | 92/100 | ✅ |
 
 **Insight:** @investigate-champion consistently delivers exceptional quality on investigation missions.
 

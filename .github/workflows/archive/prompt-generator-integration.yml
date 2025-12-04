@@ -12,7 +12,7 @@ on:
         required: true
         type: string
       agent:
-        description: 'Agent name (e.g., engineer-master, create-guru)'
+        description: 'Agent name (e.g., engineer-master, create-botter)'
         required: false
         default: 'engineer-master'
         type: string

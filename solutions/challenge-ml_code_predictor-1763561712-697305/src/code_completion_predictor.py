@@ -6,7 +6,7 @@ This module implements a sequence-based code completion predictor inspired by
 GitHub Copilot, using a lightweight LSTM-inspired architecture optimized for
 real-time inference.
 
-Created by @create-guru - Visionary infrastructure with Tesla-inspired innovation.
+Created by @create-botter - Visionary infrastructure with Tesla-inspired innovation.
 Part of the Chained autonomous AI ecosystem.
 
 Architecture:

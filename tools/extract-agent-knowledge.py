@@ -213,7 +213,7 @@ class KnowledgeExtractor:
                 "Hardcoding credentials or secrets",
                 "Insufficient error messages exposing system details"
             ],
-            "create-guru": [
+            "create-botter": [
                 "Building overly complex infrastructure",
                 "Insufficient testing of automated workflows",
                 "Poor documentation of infrastructure setup"
@@ -258,7 +258,7 @@ class KnowledgeExtractor:
                 {"name": "Input Validation", "description": "Schema validation, sanitization techniques"},
                 {"name": "Cryptography", "description": "Secure hashing, encryption best practices"}
             ],
-            "create-guru": [
+            "create-botter": [
                 {"name": "GitHub Actions", "description": "Workflow automation, CI/CD pipelines"},
                 {"name": "Infrastructure as Code", "description": "YAML configuration, workflow orchestration"},
                 {"name": "Scripting", "description": "Python automation, bash scripting"}

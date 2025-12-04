@@ -40,7 +40,7 @@ Adopt a **phased cloud-native transition** that preserves agent ecosystem integr
 ### 1.1 Current Agent System Analysis
 
 **Chained's Agent Ecosystem (47 agents):**
-- **Infrastructure Specialists:** 9 agents (cloud-architect, infrastructure-specialist, create-guru, etc.)
+- **Infrastructure Specialists:** 9 agents (cloud-architect, infrastructure-specialist, create-botter, etc.)
 - **Engineering Specialists:** 9 agents (engineer-master, APIs-architect, develop-specialist, etc.)
 - **Quality Specialists:** 4 agents (assert-specialist, edge-cases-pro, validator-pro, etc.)
 - **Security Specialists:** 5 agents (secure-specialist, guardian-master, monitor-champion, etc.)

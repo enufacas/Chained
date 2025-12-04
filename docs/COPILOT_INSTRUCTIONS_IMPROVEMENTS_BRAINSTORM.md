@@ -205,7 +205,7 @@ When work requires multiple agent specializations:
 1. **Sequential Handoff**
    ```
    @investigate-champion analyzes → 
-   @create-guru implements → 
+   @create-botter implements → 
    @assert-specialist tests → 
    @coach-master reviews
    ```

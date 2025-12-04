@@ -21,7 +21,7 @@ Custom agents **ARE** working correctly. Here's the proof:
    - assert-specialist, investigate-champion, troubleshoot-expert
    - accelerate-master, engineer-master, engineer-wizard
    - secure-specialist, monitor-champion, organize-guru
-   - create-guru, coach-master, support-master
+   - create-botter, coach-master, support-master
 
 4. **Assignment System Operational**
    - Issues are analyzed and matched to agents

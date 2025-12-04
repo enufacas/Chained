@@ -1,6 +1,6 @@
 # Autonomous Issue Prioritizer - Quick Reference
 
-**@create-guru** - Multi-Armed Bandit Issue Prioritization System
+**@create-botter** - Multi-Armed Bandit Issue Prioritization System
 
 ## 🚀 Quick Start
 
@@ -113,4 +113,4 @@ See `tools/AUTONOMOUS_ISSUE_PRIORITIZER_README.md` for:
 
 ---
 
-**Created by @create-guru with visionary Tesla-inspired innovation** ⚡
+**Created by @create-botter with visionary Tesla-inspired innovation** ⚡

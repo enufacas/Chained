@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Workflow Anomaly Detector
-Created by @create-guru
+Created by @create-botter
 
 Detects unusual workflow execution patterns that might indicate problems:
 - Unusually long execution times
@@ -451,7 +451,7 @@ class WorkflowAnomalyDetector:
         """Generate a human-readable anomaly report."""
         print("\n" + "="*70)
         print("🔍 Workflow Anomaly Detection Report")
-        print("   Created by @create-guru")
+        print("   Created by @create-botter")
         print("="*70 + "\n")
         
         results = self.run_full_analysis()
@@ -541,7 +541,7 @@ def main():
     import argparse
     
     parser = argparse.ArgumentParser(
-        description='Workflow anomaly detector by @create-guru'
+        description='Workflow anomaly detector by @create-botter'
     )
     parser.add_argument(
         '--report',

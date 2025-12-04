@@ -73,7 +73,7 @@ Specialized in asserting coverage. Inspired by Leslie Lamport - specification-dr
 ### 💭 [coach-master.md](./coach-master.md)
 Specialized in coaching team development. Inspired by Barbara Liskov - principled and guiding, but more direct. Focuses on code reviews, best practices, and knowledge sharing.
 
-### 🏭 [create-guru.md](./create-guru.md)
+### 🏭 [create-botter.md](./create-botter.md)
 Specialized in creating infrastructure. Inspired by Nikola Tesla - inventive and visionary. Focuses on features, infrastructure, and tools.
 
 ### 🔧 [engineer-master.md](./engineer-master.md)

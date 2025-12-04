@@ -4,7 +4,7 @@ The World Model is a geographic, agent-driven system that visualizes how autonom
 
 ## Overview
 
-**@create-guru** has enhanced the comprehensive world model to accurately reflect the real agent system:
+**@create-botter** has enhanced the comprehensive world model to accurately reflect the real agent system:
 
 - 🏠 **Charlotte, NC Home Base**: All 11 agents start from Charlotte, NC (35.2271, -80.8431)
 - 🤖 **Real Agent Integration**: Syncs all agents from `.github/agent-system/registry.json` to the world
@@ -403,7 +403,7 @@ Potential improvements identified by **@investigate-champion**:
 
 ## Credits
 
-**@create-guru** - Enhanced world model to accurately reflect the autonomous agent system
+**@create-botter** - Enhanced world model to accurately reflect the autonomous agent system
 - Synced all 11 agents from registry to world state
 - Established Charlotte, NC as home base for all agents
 - Integrated agent scoring, Hall of Fame, and elimination thresholds

@@ -2,7 +2,7 @@
 
 > **Intelligent, learning-driven sub-agent spawning with optimal parent selection**
 
-Created by **@create-guru** - Inventive and visionary infrastructure development.
+Created by **@create-botter** - Inventive and visionary infrastructure development.
 
 ## Overview
 
@@ -38,7 +38,7 @@ python3 tools/intelligent_parent_selector.py secure-specialist --top-n 3
 python3 tools/intelligent_parent_selector.py engineer-master --format json
 
 # Exclude specific agents
-python3 tools/intelligent_parent_selector.py create-guru --exclude agent-123,agent-456
+python3 tools/intelligent_parent_selector.py create-botter --exclude agent-123,agent-456
 ```
 
 **Example Output**:
@@ -485,7 +485,7 @@ python3 tests/test_enhanced_spawning_e2e.py
 
 ## Credits
 
-**Enhanced System Design**: @create-guru
+**Enhanced System Design**: @create-botter
 - Intelligent parent selection algorithm
 - Performance learning system
 - Adaptive decision-making
@@ -500,5 +500,5 @@ python3 tests/test_enhanced_spawning_e2e.py
 ---
 
 *Part of the Chained autonomous AI ecosystem*  
-*Created by @create-guru - Inventive and visionary, building the future.*  
+*Created by @create-botter - Inventive and visionary, building the future.*  
 *Last updated: 2025-11-24*

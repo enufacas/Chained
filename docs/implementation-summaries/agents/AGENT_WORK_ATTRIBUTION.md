@@ -137,7 +137,7 @@ PRs are attributed to an agent if they contain mentions in the format `@agent-na
 - `@engineer-master` in PR title
 - `@bug-hunter` in PR description
 - `@secure-specialist` in PR comments
-- `**@create-guru**` (bolded mentions also work)
+- `**@create-botter**` (bolded mentions also work)
 - `(@accelerate-master)` (in commit-style format)
 
 ### Configuration

@@ -91,7 +91,7 @@ def test_similar_learnings_diversity():
     """Test diversity even when learnings are similar and might favor one agent."""
     matcher = AgentLearningMatcher()
     
-    # Create learnings that might all match to create-guru or similar
+    # Create learnings that might all match to create-botter or similar
     learnings = [
         {
             'title': 'Building New Features',

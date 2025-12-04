@@ -387,7 +387,7 @@ AGENT_PATTERNS = {
             r'\bimplement', r'\bconstruct', r'\bdevelop'
         ]
     },
-    'create-guru': {
+    'create-botter': {
         'keywords': [
             'feature', 'new', 'create', 'build', 'implement', 'infrastructure',
             'system', 'innovative', 'groundbreaking', 'visionary', 'invention',
@@ -897,9 +897,9 @@ def match_issue_to_agent(title, body="", exclude_tech_leads=True):
     # Find the best match from available agents
     if not scores or max(scores.values()) == 0:
         # No clear match - use fallback strategy with variety
-        # Instead of always using create-guru, rotate through capable general agents
+        # Instead of always using create-botter, rotate through capable general agents
         fallback_agents = [
-            'create-guru',        # Infrastructure & feature creation
+            'create-botter',        # Infrastructure & feature creation
             'investigate-champion',  # General investigation
             'meta-coordinator',   # Multi-task coordination
             'engineer-master',    # Systematic engineering
@@ -996,7 +996,7 @@ def main():
     except Exception as e:
         print(json.dumps({
             'error': str(e),
-            'agent': 'create-guru',
+            'agent': 'create-botter',
             'score': 0,
             'confidence': 'low',
             'reason': 'Error processing input, using default agent'

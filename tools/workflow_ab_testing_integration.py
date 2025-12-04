@@ -5,7 +5,7 @@ Workflow A/B Testing Integration Tool
 Integrates workflow configuration generation with the A/B testing engine.
 Provides end-to-end workflow for creating and managing workflow experiments.
 
-Author: @create-guru
+Author: @create-botter
 Inspired by: Nikola Tesla - Seamless system integration
 """
 

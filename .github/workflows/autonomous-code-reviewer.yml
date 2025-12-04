@@ -124,7 +124,7 @@ jobs:
           fi
           
           # Create review comment
-          comment="## ${emoji} Autonomous Code Review"$'\n\n'"**Status:** ${status}"$'\n'"**Overall Score:** ${score_pct}"$'\n\n'"### Review Summary"$'\n\n'"This PR has been automatically reviewed by the autonomous code reviewer system."$'\n\n'"**Issues Found:** ${issues_count}"$'\n\n'"### Suggestions for Improvement"$'\n\n'"${suggestions}"$'\n\n'"### About This Review"$'\n\n'"The autonomous code reviewer learns from PR outcomes to continuously improve its criteria. This review evaluates:"$'\n'"- Code complexity and maintainability"$'\n'"- Code style and formatting"$'\n'"- Documentation quality"$'\n'"- Test coverage"$'\n'"- Security considerations"$'\n\n'"**Note:** This is an automated assessment. Manual review by tech leads may still be required for protected paths."$'\n\n'"---"$'\n'"*🤖 Autonomous Code Reviewer v1.0 - @create-guru infrastructure*"$'\n'"*This system learns and improves with each review cycle*"
+          comment="## ${emoji} Autonomous Code Review"$'\n\n'"**Status:** ${status}"$'\n'"**Overall Score:** ${score_pct}"$'\n\n'"### Review Summary"$'\n\n'"This PR has been automatically reviewed by the autonomous code reviewer system."$'\n\n'"**Issues Found:** ${issues_count}"$'\n\n'"### Suggestions for Improvement"$'\n\n'"${suggestions}"$'\n\n'"### About This Review"$'\n\n'"The autonomous code reviewer learns from PR outcomes to continuously improve its criteria. This review evaluates:"$'\n'"- Code complexity and maintainability"$'\n'"- Code style and formatting"$'\n'"- Documentation quality"$'\n'"- Test coverage"$'\n'"- Security considerations"$'\n\n'"**Note:** This is an automated assessment. Manual review by tech leads may still be required for protected paths."$'\n\n'"---"$'\n'"*🤖 Autonomous Code Reviewer v1.0 - @create-botter infrastructure*"$'\n'"*This system learns and improves with each review cycle*"
           
           # Post comment
           gh pr comment ${pr_num} --body "${comment}" --repo ${{ github.repository }}
@@ -213,7 +213,7 @@ jobs:
                        -m "The autonomous code reviewer has updated its criteria based on this PR outcome." \
                        -m "This improves future review accuracy." \
                        -m "" \
-                       -m "Updated by: @create-guru Autonomous Code Reviewer"
+                       -m "Updated by: @create-botter Autonomous Code Reviewer"
             
             # Push branch
             git push origin "$BRANCH_NAME"
@@ -327,4 +327,4 @@ jobs:
           
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "---" >> $GITHUB_STEP_SUMMARY
-          echo "*Built by **@create-guru** - Self-improving autonomous review system*" >> $GITHUB_STEP_SUMMARY
+          echo "*Built by **@create-botter** - Self-improving autonomous review system*" >> $GITHUB_STEP_SUMMARY

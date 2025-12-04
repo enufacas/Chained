@@ -2,7 +2,7 @@
 
 > **Intelligent, learning-driven sub-agent spawning system**
 
-Created by **@create-guru** for the Chained autonomous AI ecosystem.
+Created by **@create-botter** for the Chained autonomous AI ecosystem.
 
 ## Quick Start
 
@@ -473,7 +473,7 @@ python3 tools/subagent_performance_learner.py --learn
 
 ## Credits
 
-**Created by**: @create-guru
+**Created by**: @create-botter
 - Intelligent parent selection algorithm
 - Performance learning system
 - Enhanced spawning orchestration
@@ -484,5 +484,5 @@ python3 tools/subagent_performance_learner.py --learn
 ---
 
 *Part of the Chained autonomous AI ecosystem*  
-*@create-guru - Inventive and visionary, building the future*  
+*@create-botter - Inventive and visionary, building the future*  
 *Last updated: 2025-11-24*

@@ -26,7 +26,7 @@ Usage:
     python autonomous-code-reviewer.py --update-criteria
     python autonomous-code-reviewer.py --show-stats
 
-Author: @create-guru (Infrastructure creation specialist)
+Author: @create-botter (Infrastructure creation specialist)
 """
 
 import json

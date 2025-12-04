@@ -10,7 +10,7 @@ Advanced quality metrics for prompt templates based on multiple factors:
 - Template clarity and structure
 
 Part of the self-improving prompt generator system.
-Created by @create-guru - infrastructure creation inspired by Nikola Tesla.
+Created by @create-botter - infrastructure creation inspired by Nikola Tesla.
 """
 
 import json

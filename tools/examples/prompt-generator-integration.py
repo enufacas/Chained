@@ -181,7 +181,7 @@ def main():
         issue_number=456,
         issue_body="Implement dark mode support across the application with user preference persistence.",
         labels=['feature', 'enhancement'],
-        agent='create-guru'
+        agent='create-botter'
     )
     
     print(f"Template: {result2['template_id']}")

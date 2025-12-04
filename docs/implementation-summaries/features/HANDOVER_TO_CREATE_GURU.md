@@ -1,7 +1,7 @@
-# 🔧 Handover: Autonomous System Implementation to @create-guru
+# 🔧 Handover: Autonomous System Implementation to @create-botter
 
 **From:** @support-master (Documentation Phase Complete)  
-**To:** @create-guru (Infrastructure Implementation Phase)  
+**To:** @create-botter (Infrastructure Implementation Phase)  
 **Date:** 2025-11-15  
 **Issue:** #1042 - Chained System Architect Prompt: Unified Autonomous Loop & Critical Constraints
 
@@ -13,7 +13,7 @@
 
 All architectural documentation, specifications, templates, and validation tools are complete and ready to serve as the implementation blueprint.
 
-**Phase 2: Infrastructure Implementation 🚧 READY TO START** (assigned to @create-guru)
+**Phase 2: Infrastructure Implementation 🚧 READY TO START** (assigned to @create-botter)
 
 Implementation of the documented architecture into working workflows, enforcement mechanisms, and orchestration systems.
 
@@ -69,7 +69,7 @@ Implementation of the documented architecture into working workflows, enforcemen
 
 ---
 
-## 🎯 What @create-guru Needs to Implement
+## 🎯 What @create-botter Needs to Implement
 
 ### Core Mission
 
@@ -118,7 +118,7 @@ These are **absolute rules** that must be implemented in ALL workflows:
 
 ### 4. @agent-name Mentions
 - ✅ Use `@agent-name` everywhere for accountability
-- Example: "@create-guru will implement the infrastructure"
+- Example: "@create-botter will implement the infrastructure"
 
 ### 5. Issue/PR Updates
 - ✅ Post status comment before marking complete
@@ -288,7 +288,7 @@ If you encounter:
 ## 📞 Handover Contact
 
 **@support-master** documentation is complete and serves as the specification.  
-**@create-guru** is now the owner for infrastructure implementation.
+**@create-botter** is now the owner for infrastructure implementation.
 
 All documentation commits preserved in:
 - `e6c9ba3` - Core documentation and tools
@@ -300,4 +300,4 @@ All documentation commits preserved in:
 
 ---
 
-*Handover prepared by @support-master for @create-guru - 2025-11-15*
+*Handover prepared by @support-master for @create-botter - 2025-11-15*

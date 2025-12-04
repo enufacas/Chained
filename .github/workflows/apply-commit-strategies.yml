@@ -1,7 +1,7 @@
 name: "Learning: Apply Commit Strategies"
 
 # Workflow that applies learned commit strategies to improve commit quality
-# Part of the autonomous commit strategy learning system by @create-guru
+# Part of the autonomous commit strategy learning system by @create-botter
 on:
   schedule:
     # Run weekly on Monday at 03:00 UTC to review and apply strategies
@@ -228,7 +228,7 @@ jobs:
           git checkout -b "${BRANCH_NAME}"
           
           # Commit changes
-          git commit -m "docs: update commit strategy guide - ${REC_COUNT} recommendations by @create-guru"
+          git commit -m "docs: update commit strategy guide - ${REC_COUNT} recommendations by @create-botter"
           
           git push origin "${BRANCH_NAME}"
           
@@ -236,7 +236,7 @@ jobs:
           cat > /tmp/pr_body.txt << 'EOF_MARKER'
           ## 💡 Commit Strategy Application
 
-          **@create-guru** has analyzed the repository's commit patterns and generated actionable recommendations to improve commit quality.
+          **@create-botter** has analyzed the repository's commit patterns and generated actionable recommendations to improve commit quality.
 
           ### 📊 Summary
 
@@ -267,7 +267,7 @@ jobs:
           ---
 
           *🤖 Created by workflow: [Apply Learned Commit Strategies](${WORKFLOW_URL})*
-          *✨ Powered by autonomous learning infrastructure (@create-guru)*
+          *✨ Powered by autonomous learning infrastructure (@create-botter)*
           EOF_MARKER
           
           # Substitute environment variables in PR body using sed (compatible with all runners)
@@ -283,7 +283,7 @@ jobs:
           gh pr create \
             --title "💡 Apply Learned Commit Strategies - $(date -u +%Y-%m-%d)" \
             --body-file /tmp/pr_body_final.txt \
-            --label "automated,learning,infrastructure,create-guru" \
+            --label "automated,learning,infrastructure,create-botter" \
             --base main \
             --head "${BRANCH_NAME}"
           
@@ -316,7 +316,7 @@ jobs:
 
           **About This System:**
 
-          This is part of the autonomous commit strategy learning infrastructure created by **@create-guru**. The system:
+          This is part of the autonomous commit strategy learning infrastructure created by **@create-botter**. The system:
           
           - Continuously analyzes commit patterns
           - Learns from successful merges
@@ -326,7 +326,7 @@ jobs:
 
           ---
 
-          *🤖 Automated analysis by @create-guru's learning infrastructure*
+          *🤖 Automated analysis by @create-botter's learning infrastructure*
           EOF_MARKER
           
           # Substitute environment variables using sed
@@ -338,7 +338,7 @@ jobs:
           gh issue create \
             --title "${ISSUE_TITLE}" \
             --body-file /tmp/issue_final.txt \
-            --label "learning,automated,infrastructure,create-guru" || echo "Issue creation skipped or failed"
+            --label "learning,automated,infrastructure,create-botter" || echo "Issue creation skipped or failed"
 
       - name: Log activity
         run: |
@@ -348,5 +348,5 @@ jobs:
           echo "Recommendations: ${{ steps.recommendations.outputs.recommendation_count || 0 }}"
           echo "Top Recommendation: ${{ steps.recommendations.outputs.top_recommendation || 'none' }}"
           echo "Trend: ${{ steps.trends.outputs.overall_trend || 'unknown' }}"
-          echo "By: @create-guru"
+          echo "By: @create-botter"
           echo "Timestamp: $(date -u +'%Y-%m-%d %H:%M:%S UTC')"

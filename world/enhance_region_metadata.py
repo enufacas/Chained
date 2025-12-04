@@ -38,7 +38,7 @@ REGION_METADATA = {
         "cost_multiplier": 2.0,
         "agent_capacity": 20,
         "specialization_bonuses": {
-            "create-guru": 1.5,
+            "create-botter": 1.5,
             "pioneer-pro": 1.4,
             "engineer-master": 1.3
         }
@@ -57,7 +57,7 @@ REGION_METADATA = {
         "specialization_bonuses": {
             "cloud-architect": 1.5,
             "engineer-master": 1.3,
-            "create-guru": 1.2
+            "create-botter": 1.2
         }
     },
     "US:New York": {
@@ -137,7 +137,7 @@ REGION_METADATA = {
         "agent_capacity": 15,
         "specialization_bonuses": {
             "organize-guru": 1.4,
-            "create-guru": 1.2
+            "create-botter": 1.2
         }
     },
     "CN:Shenzhen": {

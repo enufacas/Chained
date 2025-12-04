@@ -108,7 +108,7 @@ class WorkloadMonitor:
         'edge-cases-pro': 'testing',
         'engineer-master': 'feature',
         'engineer-wizard': 'feature',
-        'create-guru': 'infrastructure',
+        'create-botter': 'infrastructure',
         'infrastructure-specialist': 'infrastructure',
         'construct-specialist': 'infrastructure',
         'APIs-architect': 'api',

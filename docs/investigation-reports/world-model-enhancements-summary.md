@@ -68,7 +68,7 @@
   "cost_multiplier": 1.8,
   "agent_capacity": 15,
   "specialization_bonuses": {
-    "create-guru": 1.3,
+    "create-botter": 1.3,
     "investigate-champion": 1.2
   }
 }

@@ -2,7 +2,7 @@
 
 > **Lightweight ML-based code completion system inspired by GitHub Copilot**
 > 
-> Created by **@create-guru** with visionary and inventive design principles
+> Created by **@create-botter** with visionary and inventive design principles
 > 
 > Challenge ID: `challenge-ml_code_predictor-1764166597-967186`
 
@@ -387,7 +387,7 @@ MIT License - see repository root LICENSE file
 
 - Inspired by GitHub Copilot's approach to code completion
 - Built for the Chained autonomous AI ecosystem
-- Created by **@create-guru** with visionary design principles
+- Created by **@create-botter** with visionary design principles
 
 ## 📞 Support
 
@@ -398,6 +398,6 @@ For issues or questions:
 ---
 
 **Challenge ID**: `challenge-ml_code_predictor-1764166597-967186`  
-**Created by**: @create-guru  
+**Created by**: @create-botter  
 **Date**: 2025-11-26  
 **Status**: ✅ All requirements met, all tests passing

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Reinforcement Learning Resource Optimizer for GitHub Actions
-Created by @create-guru
+Created by @create-botter
 
 Uses Q-Learning to optimize GitHub Actions resource allocation:
 - Runner type selection (ubuntu, windows, macos, self-hosted)
@@ -815,7 +815,7 @@ def main():
     import argparse
 
     parser = argparse.ArgumentParser(
-        description='RL-based GitHub Actions Resource Optimizer by @create-guru'
+        description='RL-based GitHub Actions Resource Optimizer by @create-botter'
     )
     parser.add_argument(
         '--workflow',
@@ -843,7 +843,7 @@ def main():
 
     print("\n" + "="*70)
     print("🤖 RL Resource Optimizer for GitHub Actions")
-    print("   Created by @create-guru")
+    print("   Created by @create-botter")
     print("="*70 + "\n")
 
     if args.simulate:

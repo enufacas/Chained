@@ -86,12 +86,12 @@ class AgentGenes:
             'secure-ninja': ['secure-specialist', 'secure-pro', 'guardian-master'],
             'secure-pro': ['secure-specialist', 'secure-ninja', 'monitor-champion'],
             'engineer-master': ['engineer-wizard', 'APIs-architect', 'construct-specialist'],
-            'engineer-wizard': ['engineer-master', 'APIs-architect', 'create-guru'],
+            'engineer-wizard': ['engineer-master', 'APIs-architect', 'create-botter'],
             'assert-specialist': ['assert-whiz', 'validator-pro', 'edge-cases-pro'],
             'assert-whiz': ['assert-specialist', 'validator-pro'],
             'investigate-champion': ['investigate-specialist'],
             'coach-master': ['coach-wizard', 'guide-wizard', 'support-master'],
-            'create-guru': ['create-champion', 'develop-specialist', 'infrastructure-specialist'],
+            'create-botter': ['create-champion', 'develop-specialist', 'infrastructure-specialist'],
         }
         
         # Get related specializations or return current
@@ -199,7 +199,7 @@ class AgentEvolutionSystem:
             creativity=traits.get('creativity', 50),
             caution=traits.get('caution', 50),
             speed=traits.get('speed', 50),
-            specialization=agent.get('specialization', 'create-guru')
+            specialization=agent.get('specialization', 'create-botter')
         )
     
     def calculate_fitness(self, agent: Dict[str, Any]) -> float:

@@ -1,7 +1,7 @@
 """
 Code Completion Predictor Package
 
-A lightweight ML-powered code completion system by @create-guru.
+A lightweight ML-powered code completion system by @create-botter.
 """
 
 from .code_completion_predictor import (
@@ -19,4 +19,4 @@ __all__ = [
 ]
 
 __version__ = '1.0.0'
-__author__ = '@create-guru'
+__author__ = '@create-botter'

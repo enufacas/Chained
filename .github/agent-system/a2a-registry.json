@@ -861,8 +861,8 @@
         "security_prodigy"
       ]
     },
-    "create-guru": {
-      "agent_name": "create-guru",
+    "create-botter": {
+      "agent_name": "create-botter",
       "port": 9536,
       "url": "http://localhost:9536/",
       "card_url": "http://localhost:9536/.well-known/agent-card",

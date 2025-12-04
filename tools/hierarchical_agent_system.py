@@ -115,7 +115,7 @@ class HierarchicalAgentSystem:
         'engineer-wizard': AgentRole.SPECIALIST,
         'investigate-champion': AgentRole.SPECIALIST,
         'secure-specialist': AgentRole.SPECIALIST,
-        'create-guru': AgentRole.SPECIALIST,
+        'create-botter': AgentRole.SPECIALIST,
         'organize-guru': AgentRole.SPECIALIST,
         'monitor-champion': AgentRole.SPECIALIST,
         

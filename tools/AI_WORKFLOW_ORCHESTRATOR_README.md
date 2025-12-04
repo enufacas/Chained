@@ -1,6 +1,6 @@
 # AI-Powered Workflow Orchestrator - Complete System
 
-**Created by @workflows-tech-lead** 🔧 | **Enhanced by @create-guru** 🏭
+**Created by @workflows-tech-lead** 🔧 | **Enhanced by @create-botter** 🏭
 
 A comprehensive AI-powered system for predicting workflow execution times, optimizing scheduling, detecting anomalies, and continuously learning from actual performance data.
 
@@ -33,7 +33,7 @@ The AI-Powered Workflow Orchestrator is a complete ecosystem consisting of four 
 - Feeds data back to predictor for continuous learning
 
 ### 4. Workflow Anomaly Detector (`workflow_anomaly_detector.py`) ⭐ NEW
-**Proactive health monitoring system** - Created by @create-guru
+**Proactive health monitoring system** - Created by @create-botter
 - Detects unusual execution time patterns (duration anomalies)
 - Monitors failure rate increases
 - Tracks performance degradation trends
@@ -73,7 +73,7 @@ The AI-Powered Workflow Orchestrator is a complete ecosystem consisting of four 
                    │                │
 ┌──────────────────▼───────┐   ┌────▼─────────────────────────┐
 │  Workflow Execution      │   │  Workflow Anomaly Detector   │
-│  Tracker                 │   │  (NEW - @create-guru)        │
+│  Tracker                 │   │  (NEW - @create-botter)        │
 │  - Records actual times  │   │  - Duration anomalies        │
 │  - Compares predictions  │   │  - Failure rate monitoring   │
 │  - Accuracy metrics      │   │  - Trend analysis            │
@@ -441,7 +441,7 @@ print(f"Accuracy: {comparison.prediction_error:.1f}% error")
 2. **Advanced ML Models**: LSTM/GRU for better time-series predictions
 3. **Cost Optimization**: Factor in GitHub Actions billing
 4. **Auto-Scheduling**: Automatically apply recommendations
-5. ~~**Anomaly Detection**: Alert on unusual patterns~~ ✅ **Implemented by @create-guru**
+5. ~~**Anomaly Detection**: Alert on unusual patterns~~ ✅ **Implemented by @create-botter**
 6. **Multi-Repository**: Support for organization-wide optimization
 
 ### Research Directions

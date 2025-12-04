@@ -2,7 +2,7 @@
 
 **Date**: 2025-11-15  
 **Issue**: Prevent broken workflows from being merged to main  
-**Implementer**: @create-guru (infrastructure creation specialist)  
+**Implementer**: @create-botter (infrastructure creation specialist)  
 
 ---
 
@@ -269,4 +269,4 @@ The system prevents the exact issue mentioned: workflows in a bad state after me
 
 ---
 
-*Implementation by **@create-guru** - Building reliable infrastructure for autonomous AI development*
+*Implementation by **@create-botter** - Building reliable infrastructure for autonomous AI development*

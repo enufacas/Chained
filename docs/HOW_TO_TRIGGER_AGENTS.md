@@ -31,7 +31,7 @@ This should:
 ```
 
 **That's it!** The system will:
-- Automatically match this to an appropriate agent (likely `@designer-engineer` or `@create-guru`)
+- Automatically match this to an appropriate agent (likely `@designer-engineer` or `@create-botter`)
 - Assign Copilot within 15 minutes
 - Start working on implementation
 
@@ -222,7 +222,7 @@ The intelligent matching system (`tools/match-issue-to-agent.py`) works like thi
 3. **Selects the best match**:
    - High confidence: score ≥ 5
    - Medium confidence: score ≥ 3
-   - Low confidence: score < 3 (defaults to @create-guru)
+   - Low confidence: score < 3 (defaults to @create-botter)
 4. **Adds labels** and **updates issue** with agent assignment
 
 ### Behind the Scenes Example
@@ -244,7 +244,7 @@ Here are all the agents and what they specialize in:
 
 ### Infrastructure & Development (9 agents)
 - `@APIs-architect` - API construction and design
-- `@create-guru` - Infrastructure creation (default agent)
+- `@create-botter` - Infrastructure creation (default agent)
 - `@create-champion` - Tool creation
 - `@construct-specialist` - System construction
 - `@develop-specialist` - API development

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 GitHub Actions Workflow Data Collector
-Created by @create-guru
+Created by @create-botter
 
 Automatically collects real workflow execution data from GitHub Actions API
 to feed the AI-powered workflow predictor with actual performance metrics.
@@ -429,7 +429,7 @@ class GitHubActionsDataCollector:
         """Generate a comprehensive collection report."""
         print("\n" + "="*70)
         print("📊 GitHub Actions Data Collection Report")
-        print("   Created by @create-guru")
+        print("   Created by @create-botter")
         print("="*70 + "\n")
         
         report = {
@@ -464,7 +464,7 @@ class GitHubActionsDataCollector:
 def main():
     """Main entry point."""
     parser = argparse.ArgumentParser(
-        description='GitHub Actions Workflow Data Collector by @create-guru'
+        description='GitHub Actions Workflow Data Collector by @create-botter'
     )
     parser.add_argument(
         '--collect',
@@ -514,7 +514,7 @@ def main():
     
     if args.collect:
         print("\n🚀 GitHub Actions Data Collector")
-        print("   @create-guru")
+        print("   @create-botter")
         print("="*50 + "\n")
         
         result = collector.collect_and_record(

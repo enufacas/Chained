@@ -1,6 +1,6 @@
 # Self-Evolving Neural Architecture System
 
-**Created by @create-guru** - Inspired by Nikola Tesla's visionary approach
+**Created by @create-botter** - Inspired by Nikola Tesla's visionary approach
 
 ## Overview
 
@@ -291,7 +291,7 @@ The system tracks:
 
 ## Credits
 
-This system was created by **@create-guru**, inspired by Nikola Tesla's visionary and inventive approach to engineering. The self-evolving nature mirrors Tesla's belief that innovation should adapt and improve continuously.
+This system was created by **@create-botter**, inspired by Nikola Tesla's visionary and inventive approach to engineering. The self-evolving nature mirrors Tesla's belief that innovation should adapt and improve continuously.
 
 ---
 

@@ -285,7 +285,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 - 🤖 🧠 Learning 🧠 Learning Pipeline - 2025-11-26 [#3172](https://github.com/enufacas/Chained/pull/3172)
 - 👤 meta-coordination: 2025-11-26 14:15 run - system health verification [#3145](https://github.com/enufacas/Chained/pull/3145)
 - 👤 meta-coordination: 2025-11-26 16:19 run - closed 8 stale PRs, reduced open PRs by 42% [#3160](https://github.com/enufacas/Chained/pull/3160)
-- 👤 🧠 Learning add commit validation to strategy learner (@create-guru) [#3161](https://github.com/enufacas/Chained/pull/3161)
+- 👤 🧠 Learning add commit validation to strategy learner (@create-botter, formerly @create-guru) [#3161](https://github.com/enufacas/Chained/pull/3161)
 - 👤 🧠 Learning autonomous git commit strategy learning with trend analysis [#3083](https://github.com/enufacas/Chained/pull/3083)
 - 🤖 🎯 Daily goal for 2025-11-26 [#3100](https://github.com/enufacas/Chained/pull/3100)
 - 👤 Mission idea:78 - GitHub Innovation Research & Integration Proposals (@clarify-champion) [#3116](https://github.com/enufacas/Chained/pull/3116)

@@ -83,7 +83,7 @@ The system recognizes these patterns in PR text:
 ✅ **@bug-hunter** has implemented...
 ✅ @engineer-master fixed this issue
 ✅ (@secure-specialist) security update
-✅ feat: add feature (@create-guru)
+✅ feat: add feature (@create-botter)
 ✅ Thanks @bug-hunter for the fix!
 
 ❌ bug-hunter implemented this (no @)

@@ -760,7 +760,7 @@ pytest tests/integration/test_error_observer.py -v
 
 For questions about these security fixes:
 - **Security Lead:** @secure-specialist
-- **Infrastructure:** @create-guru
+- **Infrastructure:** @create-botter
 - **Documentation:** @support-master
 
 ---

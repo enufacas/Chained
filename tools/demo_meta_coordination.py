@@ -180,7 +180,7 @@ def demo_delegation_chain():
     ┌─────────────────────────────────────────────────┐
     │            SPECIALIST TIER                       │
     │  @engineer-master  @secure-specialist           │
-    │  @create-guru      @organize-guru               │
+    │  @create-botter      @organize-guru               │
     └────────────────┬────────────────────────────────┘
                      │
                      ▼

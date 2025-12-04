@@ -111,7 +111,7 @@ Updated meta-coordinator agent definition to include:
                        ▼
 ┌─────────────────────────────────────────────────────────────┐
 │                    SPECIALIST TIER                          │
-│  - engineer-master, secure-specialist, create-guru, etc.    │
+│  - engineer-master, secure-specialist, create-botter, etc.    │
 │  - Domain-specific implementation and design                │
 │  - Can delegate to: Workers                                 │
 └──────────────────────┬──────────────────────────────────────┘

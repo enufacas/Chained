@@ -1,6 +1,6 @@
 # Self-Improving Prompt Generator Enhancements
 
-**Created by @create-guru** - Infrastructure enhancements for the autonomous prompt generation system
+**Created by @create-botter** - Infrastructure enhancements for the autonomous prompt generation system
 
 ## Overview
 
@@ -147,7 +147,7 @@ Enhances prompts based on agent specialization, issue context, and repository st
 
 ```bash
 # Adapt prompt for specific agent
-python3 tools/contextual-prompt-adapter.py create-guru \
+python3 tools/contextual-prompt-adapter.py create-botter \
   --prompt "Implement this feature: {issue_body}" \
   --labels "feature,infrastructure" \
   --title "Add new infrastructure component" \
@@ -164,7 +164,7 @@ from contextual_prompt_adapter import ContextualPromptAdapter
 adapter = ContextualPromptAdapter()
 enhanced_prompt = adapter.enhance_prompt_with_context(
     base_prompt,
-    agent_name="create-guru",
+    agent_name="create-botter",
     issue_title=title,
     issue_labels=labels,
     issue_body=body
@@ -382,4 +382,4 @@ To add new features to the self-improving prompt system:
 
 ---
 
-**@create-guru** - Building infrastructure that evolves itself, inspired by the vision of Nikola Tesla
+**@create-botter** - Building infrastructure that evolves itself, inspired by the vision of Nikola Tesla

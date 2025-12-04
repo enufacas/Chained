@@ -1,6 +1,6 @@
 # Autonomous Issue Prioritizer - Implementation Summary
 
-**Author:** @create-guru (Nikola Tesla)  
+**Author:** @create-botter (Nikola Tesla)  
 **Date:** 2024-11-24  
 **Status:** ✅ Production Ready
 
@@ -223,7 +223,7 @@ All code review feedback addressed:
 
 ### Tesla-Inspired Vision
 
-Following **@create-guru**'s philosophy:
+Following **@create-botter**'s philosophy:
 
 - **Visionary:** Applied advanced ML (Bayesian MAB) to practical problem
 - **Elegant:** Clean mathematical foundation with simple interface
@@ -289,5 +289,5 @@ It embodies the visionary spirit of Nikola Tesla—combining elegant mathematics
 
 ---
 
-**⚡ Created by @create-guru with visionary Tesla-inspired innovation**  
+**⚡ Created by @create-botter with visionary Tesla-inspired innovation**  
 *Building intelligent systems that learn and adapt autonomously*

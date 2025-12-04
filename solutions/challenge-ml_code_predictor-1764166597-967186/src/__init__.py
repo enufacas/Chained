@@ -1,7 +1,7 @@
 """
 Code Completion Predictor Package
 
-A lightweight ML-based code completion system created by @create-guru.
+A lightweight ML-based code completion system created by @create-botter.
 
 Challenge ID: challenge-ml_code_predictor-1764166597-967186
 """
@@ -21,5 +21,5 @@ __all__ = [
 ]
 
 __version__ = '1.0.0'
-__author__ = '@create-guru'
+__author__ = '@create-botter'
 __challenge_id__ = 'challenge-ml_code_predictor-1764166597-967186'

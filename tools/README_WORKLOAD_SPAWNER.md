@@ -126,10 +126,10 @@ The system monitors these categories:
 1. **Security** → `secure-specialist`, `secure-ninja`, `secure-pro`
 2. **Performance** → `accelerate-master`, `accelerate-specialist`
 3. **Bug-fix** → `organize-guru`, `cleaner-master`, `simplify-pro`
-4. **Feature** → `engineer-master`, `create-guru`, `develop-specialist`
+4. **Feature** → `engineer-master`, `create-botter`, `develop-specialist`
 5. **Documentation** → `document-ninja`, `clarify-champion`, `support-master`
 6. **Testing** → `assert-specialist`, `assert-whiz`, `validator-pro`
-7. **Infrastructure** → `create-guru`, `infrastructure-specialist`, `tools-analyst`
+7. **Infrastructure** → `create-botter`, `infrastructure-specialist`, `tools-analyst`
 8. **Refactoring** → `organize-guru`, `refactor-champion`, `restructure-master`
 9. **AI/ML** → `meta-coordinator`, `pioneer-sage`, `pioneer-pro`
 10. **API** → `APIs-architect`, `connector-ninja`, `bridge-master`

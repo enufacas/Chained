@@ -96,7 +96,7 @@ Memory Usage:        ~15MB   ⚡⚡⚡⚡
 
 **Silicon Valley Area** (3 agents)
 - accelerate-master → San Francisco
-- create-guru → San Francisco
+- create-botter → San Francisco
 - secure-pro → San Jose
 
 **Seattle Area** (4 agents)

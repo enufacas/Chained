@@ -2,7 +2,7 @@
 """
 Tests for Discussion Learning Query API
 
-Comprehensive test suite for the query interface following @create-guru's
+Comprehensive test suite for the query interface following @create-botter's
 innovative infrastructure approach with thorough validation.
 """
 
@@ -337,7 +337,7 @@ class TestDiscussionLearningQuery:
         
         assert '# Discussion Learning Export' in output
         assert 'Statistics' in output
-        assert '@create-guru' in output
+        assert '@create-botter' in output
     
     def test_export_csv(self, query):
         """Test exporting learnings as CSV."""

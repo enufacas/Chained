@@ -1,5 +1,5 @@
 # Self-Evolving Neural Architecture Workflow
-# Created by @create-guru
+# Created by @create-botter
 #
 # This workflow integrates the self-evolving neural architecture system
 # with GitHub Actions to automatically adapt workflows based on success rates.
@@ -127,7 +127,7 @@ jobs:
         with:
           commit_message: "🧬 Neural architecture evolution cycle"
           file_pattern: ".github/agent-system/evolving_architectures/*.json"
-          commit_author: "create-guru[bot] <create-guru[bot]@users.noreply.github.com>"
+          commit_author: "create-botter[bot] <create-botter[bot]@users.noreply.github.com>"
       
       - name: Add summary
         run: |

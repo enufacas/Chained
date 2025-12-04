@@ -260,7 +260,7 @@ jobs:
             -m "" \
             -m "Results saved to learnings/hypothesis_testing/" \
             -m "" \
-            -m "Co-authored-by: @create-guru <create-guru@chained.ai>"
+            -m "Co-authored-by: @create-botter <create-botter@chained.ai>"
           
           # Push
           git push origin "${BRANCH_NAME}"
@@ -270,7 +270,7 @@ jobs:
             --title "feat: AI code pattern hypothesis testing results ${TIMESTAMP}" \
             --body "## 🔬 AI Code Pattern Hypothesis Testing Results
 
-          **@create-guru** has completed automated hypothesis testing on the codebase.
+          **@create-botter** has completed automated hypothesis testing on the codebase.
 
           ### 📊 Summary
           - **Hypotheses Generated:** ${{ steps.test_hypotheses.outputs.total }}
@@ -342,7 +342,7 @@ jobs:
         run: |
           echo "## ✅ Workflow Complete" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**@create-guru** has successfully completed AI code pattern hypothesis testing." >> $GITHUB_STEP_SUMMARY
+          echo "**@create-botter** has successfully completed AI code pattern hypothesis testing." >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### Results" >> $GITHUB_STEP_SUMMARY
           echo "- Generated: ${{ steps.test_hypotheses.outputs.total }} hypotheses" >> $GITHUB_STEP_SUMMARY

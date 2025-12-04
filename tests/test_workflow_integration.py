@@ -203,7 +203,7 @@ def test_agent_specialization_coverage():
         ('Documentation', ['support-master', 'coach-master']),
         ('Testing', ['assert-specialist']),
         ('Performance', ['accelerate-master']),
-        ('Features', ['create-guru', 'engineer-master', 'engineer-wizard']),
+        ('Features', ['create-botter', 'engineer-master', 'engineer-wizard']),
         ('Code structure', ['organize-guru']),
         ('Investigation', ['investigate-champion']),
         ('Multi-agent coordination', ['meta-coordinator']),

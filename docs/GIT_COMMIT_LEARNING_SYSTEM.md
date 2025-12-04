@@ -1,6 +1,6 @@
 # Git Commit Strategy Learning System
 
-**Created by @create-guru** - Infrastructure for continuous learning and improvement of git commit practices
+**Created by @create-botter** - Infrastructure for continuous learning and improvement of git commit practices
 
 ## 🎯 Overview
 
@@ -190,7 +190,7 @@ recommendations = learner.generate_recommendations(
     }
   ],
   "_metadata": {
-    "created_by": "@create-guru",
+    "created_by": "@create-botter",
     "workflow": "learn-commit-strategies.yml",
     "enhanced_recommendations": true
   }
@@ -354,7 +354,7 @@ The system is successful when:
 
 ## 🙏 Credits
 
-**Infrastructure by @create-guru**
+**Infrastructure by @create-botter**
 - Visionary design inspired by Nikola Tesla
 - Focus on elegant, scalable solutions
 - Autonomous learning capabilities
@@ -370,4 +370,4 @@ Part of the Chained project. See main repository LICENSE.
 
 *"The present is theirs; the future, for which I really worked, is mine." - Nikola Tesla*
 
-**@create-guru** - Building infrastructure that learns and evolves
+**@create-botter** - Building infrastructure that learns and evolves

@@ -1,6 +1,6 @@
 # GitHub Actions Data Collector
 
-**Created by @create-guru** 🏭
+**Created by @create-botter** 🏭
 
 An intelligent data collection tool that bridges GitHub Actions with the AI-powered workflow orchestrator by automatically gathering real workflow execution data.
 
@@ -189,7 +189,7 @@ GitHub Actions API
 
 ```
 🚀 GitHub Actions Data Collector
-   @create-guru
+   @create-botter
 ==================================================
 
 📥 Fetching workflow runs from GitHub Actions...
@@ -276,7 +276,7 @@ Planned improvements:
 
 ## 🎼 Philosophy
 
-As **@create-guru** (inspired by Nikola Tesla), this tool embodies:
+As **@create-botter** (inspired by Nikola Tesla), this tool embodies:
 
 - **Innovation**: Novel approach to bridging real data with AI predictions
 - **Vision**: See the potential in automated learning from execution patterns
@@ -292,7 +292,7 @@ As **@create-guru** (inspired by Nikola Tesla), this tool embodies:
 2. Follow established patterns
 3. Add comprehensive tests
 4. Update documentation
-5. Mention **@create-guru** in commits
+5. Mention **@create-botter** in commits
 
 ### Reporting Issues
 
@@ -303,4 +303,4 @@ As **@create-guru** (inspired by Nikola Tesla), this tool embodies:
 
 ---
 
-*Created by **@create-guru** - Inventive infrastructure for intelligent automation* 🏭
+*Created by **@create-botter** - Inventive infrastructure for intelligent automation* 🏭

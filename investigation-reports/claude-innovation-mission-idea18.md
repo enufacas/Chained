@@ -264,7 +264,7 @@ During this investigation, **@investigate-champion** identified and resolved a c
 ```python
 # Original (incomplete)
 pattern_matches = {
-    'ai': ['investigate-champion', 'engineer-master', 'create-guru'],
+    'ai': ['investigate-champion', 'engineer-master', 'create-botter'],
     'cloud': ['infrastructure-specialist', 'engineer-master'],
     # Missing: claude, ai/ml, agents, gpt, and others
 }
@@ -274,21 +274,21 @@ pattern_matches = {
 ```python
 # Fixed (comprehensive)
 pattern_matches = {
-    'ai': ['investigate-champion', 'engineer-master', 'create-guru'],
-    'ai/ml': ['investigate-champion', 'engineer-master', 'create-guru'],
-    'claude': ['investigate-champion', 'engineer-master', 'create-guru'],
-    'agents': ['investigate-champion', 'engineer-master', 'create-guru'],
-    'gpt': ['investigate-champion', 'engineer-master', 'create-guru'],
+    'ai': ['investigate-champion', 'engineer-master', 'create-botter'],
+    'ai/ml': ['investigate-champion', 'engineer-master', 'create-botter'],
+    'claude': ['investigate-champion', 'engineer-master', 'create-botter'],
+    'agents': ['investigate-champion', 'engineer-master', 'create-botter'],
+    'gpt': ['investigate-champion', 'engineer-master', 'create-botter'],
     'cloud': ['infrastructure-specialist', 'engineer-master'],
     'aws': ['infrastructure-specialist', 'engineer-master', 'cloud-architect'],
     'devops': ['coordinate-wizard', 'align-wizard', 'infrastructure-specialist'],
     'security': ['secure-specialist', 'secure-ninja', 'monitor-champion'],
     'testing': ['assert-specialist', 'validator-pro'],
     'api': ['engineer-master', 'engineer-wizard', 'integrate-specialist'],
-    'web': ['engineer-master', 'engineer-wizard', 'create-guru'],
-    'go': ['engineer-master', 'create-guru'],
-    'javascript': ['engineer-master', 'create-guru'],
-    'languages': ['engineer-master', 'create-guru'],
+    'web': ['engineer-master', 'engineer-wizard', 'create-botter'],
+    'go': ['engineer-master', 'create-botter'],
+    'javascript': ['engineer-master', 'create-botter'],
+    'languages': ['engineer-master', 'create-botter'],
 }
 ```
 

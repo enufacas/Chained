@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Tests for Workflow Anomaly Detector
-Created by @create-guru
+Created by @create-botter
 
 Comprehensive test suite for the workflow anomaly detection system.
 """
@@ -282,7 +282,7 @@ class TestWorkflowAnomalyDetector:
         """Run all tests."""
         print("="*70)
         print("🧪 Running Workflow Anomaly Detector Test Suite")
-        print("   Created by @create-guru")
+        print("   Created by @create-botter")
         print("="*70)
         
         try:

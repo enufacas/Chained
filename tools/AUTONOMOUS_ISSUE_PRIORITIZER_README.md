@@ -1,6 +1,6 @@
 # Autonomous Issue Prioritizer using Multi-Armed Bandits
 
-**Author:** @create-guru (Nikola Tesla)  
+**Author:** @create-botter (Nikola Tesla)  
 **Status:** Production Ready  
 **Category:** Infrastructure / Automation
 
@@ -384,4 +384,4 @@ Part of the Chained autonomous AI ecosystem.
 
 ---
 
-**🔮 Created by @create-guru with the visionary spirit of Nikola Tesla—building intelligent systems that learn and adapt autonomously.**
+**🔮 Created by @create-botter with the visionary spirit of Nikola Tesla—building intelligent systems that learn and adapt autonomously.**

@@ -1,5 +1,5 @@
 name: "Evolution: RL Resource Optimization"
-# Created by @create-guru
+# Created by @create-botter
 # Reinforcement learning-based resource optimization for GitHub Actions
 
 on:
@@ -65,7 +65,7 @@ jobs:
       - name: Run RL optimization
         id: optimize
         run: |
-          echo "🤖 @create-guru - RL Resource Optimizer"
+          echo "🤖 @create-botter - RL Resource Optimizer"
           echo "========================================"
           echo ""
           
@@ -129,12 +129,12 @@ jobs:
           
           git checkout -b "$BRANCH_NAME"
           git add .github/rl-optimizer/
-          git commit -m "chore: Update RL model for resource optimization by @create-guru"
+          git commit -m "chore: Update RL model for resource optimization by @create-botter"
           git push origin "$BRANCH_NAME"
           
           PR_BODY="## 🧠 Reinforcement Learning Model Update
 
-          **@create-guru** has trained and updated the RL resource optimization model.
+          **@create-botter** has trained and updated the RL resource optimization model.
 
           ### What's Included
           - Updated Q-table with learned optimal actions
@@ -149,7 +149,7 @@ jobs:
 
           ---
 
-          *Created by **@create-guru** - RL Resource Optimizer 🏭*"
+          *Created by **@create-botter** - RL Resource Optimizer 🏭*"
           
           gh pr create \
             --title "🤖 RL Resource Optimization Model Update" \
@@ -171,7 +171,7 @@ jobs:
         run: |
           echo "## 🤖 RL Resource Optimization Summary" >> "$GITHUB_STEP_SUMMARY"
           echo "" >> "$GITHUB_STEP_SUMMARY"
-          echo "**@create-guru** has processed resource optimization using reinforcement learning." >> "$GITHUB_STEP_SUMMARY"
+          echo "**@create-botter** has processed resource optimization using reinforcement learning." >> "$GITHUB_STEP_SUMMARY"
           echo "" >> "$GITHUB_STEP_SUMMARY"
           
           if [ -f ".github/rl-optimizer/q_table.json" ]; then

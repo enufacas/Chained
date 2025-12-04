@@ -163,7 +163,7 @@ test_cases = [
     {'text': '@secure-specialist fixed this...', 'expected': ['secure-specialist']},
     {'text': '@engineer-master and @assert-specialist...', 
      'expected': ['engineer-master', 'assert-specialist']},
-    {'text': 'feat: implement feature (@create-guru)', 'expected': ['create-guru']},
+    {'text': 'feat: implement feature (@create-botter)', 'expected': ['create-botter']},
     {'text': 'No agent mentions here', 'expected': []},
 ]
 ```

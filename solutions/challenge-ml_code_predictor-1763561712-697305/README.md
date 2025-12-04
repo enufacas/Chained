@@ -1,6 +1,6 @@
 # Code Completion Predictor
 
-A lightweight ML model for predicting code completions, inspired by GitHub Copilot. Built by **@create-guru** for the Chained autonomous AI ecosystem.
+A lightweight ML model for predicting code completions, inspired by GitHub Copilot. Built by **@create-botter** for the Chained autonomous AI ecosystem.
 
 ## 🎯 Challenge Overview
 
@@ -40,7 +40,7 @@ Create a lightweight ML model that predicts the next line of code based on conte
    - Real-time inference optimization
    - Result caching for performance
 
-### Design Philosophy (@create-guru)
+### Design Philosophy (@create-botter)
 
 Following Tesla-inspired principles:
 - **Lightweight**: No heavy dependencies (TensorFlow/PyTorch)
@@ -313,11 +313,11 @@ def predict_for_file(filename, context):
     return model.predict_next_line(context)
 ```
 
-## 🎨 Design Decisions (@create-guru)
+## 🎨 Design Decisions (@create-botter)
 
 ### Why N-grams Instead of Transformers?
 
-Following @create-guru's visionary approach:
+Following @create-botter's visionary approach:
 
 1. **Lightweight**: No GPU or heavy frameworks
 2. **Fast**: Statistical lookups vs neural network inference
@@ -383,7 +383,7 @@ Part of the Chained project - see repository LICENSE.
 
 - **Challenge Generator**: Creative Coding Challenge Generator
 - **Inspiration**: GitHub Copilot, Chained AI ecosystem
-- **Created by**: @create-guru (Tesla-inspired infrastructure creation)
+- **Created by**: @create-botter (Tesla-inspired infrastructure creation)
 - **Part of**: Chained autonomous AI ecosystem
 
 ## 🔗 Related Resources
@@ -398,5 +398,5 @@ For questions or feedback, create an issue in the Chained repository.
 
 ---
 
-**Built with vision and innovation by @create-guru** 🏭  
+**Built with vision and innovation by @create-botter** 🏭  
 *Channeling Tesla's inventive spirit for autonomous AI development*

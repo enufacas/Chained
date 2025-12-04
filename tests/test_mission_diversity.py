@@ -138,7 +138,7 @@ def test_fallback_mode():
         {'id': 'agent2', 'label': 'Agent 2', 'specialization': 'secure-specialist'},
         {'id': 'agent3', 'label': 'Agent 3', 'specialization': 'organize-guru'},
         {'id': 'agent4', 'label': 'Agent 4', 'specialization': 'investigate-champion'},
-        {'id': 'agent5', 'label': 'Agent 5', 'specialization': 'create-guru'},
+        {'id': 'agent5', 'label': 'Agent 5', 'specialization': 'create-botter'},
     ]
     
     # Simulate ideas

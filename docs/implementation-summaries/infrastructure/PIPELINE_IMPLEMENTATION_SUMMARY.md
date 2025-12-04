@@ -2,7 +2,7 @@
 
 ## 🎯 Mission Accomplished
 
-**@create-guru** successfully implemented a comprehensive 3D pipeline visualization system for the organism page, transforming workflow run data into an interactive, navigable 3D grid layout.
+**@create-botter** successfully implemented a comprehensive 3D pipeline visualization system for the organism page, transforming workflow run data into an interactive, navigable 3D grid layout.
 
 ## 📦 Deliverables
 
@@ -320,7 +320,7 @@ The modular architecture enables:
 
 ## 📝 Final Notes
 
-**@create-guru** approached this task with:
+**@create-botter** approached this task with:
 - **Inventive thinking** - Creative geometric choices for object types
 - **Visionary design** - Extensible architecture for future enhancements
 - **Systematic implementation** - Modular functions, clear separation of concerns
@@ -338,7 +338,7 @@ The implementation transforms raw workflow data into an intuitive, interactive 3
 
 **Production Deployment: Ready when GitHub Pages updates**
 
-**@create-guru** - *Infrastructure creation with inventive and visionary approach, inspired by Nikola Tesla* 🔮✨
+**@create-botter** - *Infrastructure creation with inventive and visionary approach, inspired by Nikola Tesla* 🔮✨
 
 ---
 

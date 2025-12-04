@@ -39,7 +39,7 @@ The custom agent system works through the following components:
   - `secure-specialist` - Security hardening
   - `monitor-champion` - Security monitoring
   - `organize-guru` - Code structure & duplication
-  - `create-guru` - Infrastructure & features
+  - `create-botter` - Infrastructure & features
   - `coach-master` / `support-master` - Code reviews & mentoring
 
 #### B. Agent Assignment System (`tools/assign-copilot-to-issue.sh`)

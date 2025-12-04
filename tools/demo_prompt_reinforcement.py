@@ -153,7 +153,7 @@ def demo_pattern_enhancement():
         prompt, template_id = generator.generate_prompt(
             issue_body="Implement user profile editing functionality",
             category="feature",
-            agent="create-guru"
+            agent="create-botter"
         )
         
         print(f"\nEnhanced Prompt:\n{'-'*60}")

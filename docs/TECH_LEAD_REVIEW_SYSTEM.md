@@ -152,7 +152,7 @@ TECH_LEAD_THRESHOLDS = {
 ```
 ┌─────────────────────────────────────────┐
 │ PR Created by Agent X                   │
-│ (e.g., @create-guru implements feature) │
+│ (e.g., @create-botter implements feature) │
 └─────────────┬───────────────────────────┘
               │
               ▼

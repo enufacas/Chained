@@ -1,7 +1,7 @@
 """
 Code Completion Predictor - Tesla-Inspired ML Architecture
 
-An innovative code completion system by @create-guru, combining N-gram analysis
+An innovative code completion system by @create-botter, combining N-gram analysis
 with a lightweight neural-inspired prediction engine. Optimized for real-time
 inference with multi-language support.
 
@@ -25,7 +25,7 @@ Requirements Met:
     3. ✓ Confidence scores for all predictions
     4. ✓ Real-time inference optimization
 
-Created by @create-guru with visionary design principles.
+Created by @create-botter with visionary design principles.
 """
 
 import re
@@ -432,7 +432,7 @@ class CodeCompletionPredictor:
         >>> print(f"{line} (confidence: {confidence:.0%})")
         return a - b (confidence: 72%)
     
-    Created by @create-guru - Challenge ID: challenge-ml_code_predictor-1764080154-287095
+    Created by @create-botter - Challenge ID: challenge-ml_code_predictor-1764080154-287095
     """
     
     # Line terminators for different languages
@@ -697,7 +697,7 @@ def train_model(code_samples: List[str], language: str = 'python', n: int = 5) -
 # Demo/CLI functionality
 if __name__ == '__main__':
     print("=" * 70)
-    print("Code Completion Predictor Demo by @create-guru")
+    print("Code Completion Predictor Demo by @create-botter")
     print("Challenge ID: challenge-ml_code_predictor-1764080154-287095")
     print("=" * 70)
     print()

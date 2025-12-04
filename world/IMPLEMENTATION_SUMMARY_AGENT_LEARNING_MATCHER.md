@@ -135,7 +135,7 @@ Normalized to 0.0 - 1.0 range
 secure-specialist → Security, Programming
 accelerate-master → Performance, Programming
 investigate-champion → Programming, Tools, Performance
-create-guru → Programming, DevOps, AI_ML
+create-botter → Programming, DevOps, AI_ML
 meta-coordinator → AI_ML, Programming
 ```
 

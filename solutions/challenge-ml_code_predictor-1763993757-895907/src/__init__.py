@@ -1,7 +1,7 @@
 """
 Code Completion Predictor Package
 
-A lightweight ML model for code completion by @create-guru.
+A lightweight ML model for code completion by @create-botter.
 """
 
 from .code_completion_predictor import (

@@ -3,7 +3,7 @@
 Tests for Enhanced Refactoring Features
 Part of the Chained autonomous AI ecosystem
 
-Author: @create-guru
+Author: @create-botter
 """
 
 import os
@@ -321,7 +321,7 @@ def run_all_tests():
     """Run all test functions."""
     print("\n" + "="*70)
     print("Running Enhanced Refactoring Features Tests")
-    print("@create-guru")
+    print("@create-botter")
     print("="*70 + "\n")
     
     tests = [

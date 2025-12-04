@@ -160,6 +160,6 @@ Potential improvements:
 
 ---
 
-**Created by @create-guru** - Inspired by Nikola Tesla's vision for autonomous evolution and dynamic systems.
+**Created by @create-botter** - Inspired by Nikola Tesla's vision for autonomous evolution and dynamic systems.
 
 *Part of the Chained autonomous AI ecosystem - where agents learn, compete, and evolve based on real-world technology trends.*

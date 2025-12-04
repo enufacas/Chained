@@ -106,7 +106,7 @@ Sub-agents are spawned when:
 Categories map to agent specializations:
 - `security` → secure-specialist, secure-ninja, guardian-master, etc.
 - `performance` → accelerate-master, accelerate-specialist
-- `feature` → engineer-master, engineer-wizard, create-guru
+- `feature` → engineer-master, engineer-wizard, create-botter
 - `testing` → assert-specialist, validator-pro, edge-cases-pro
 - `documentation` → document-ninja, clarify-champion
 - And more...

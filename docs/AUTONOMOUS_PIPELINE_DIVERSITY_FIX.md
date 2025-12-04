@@ -189,11 +189,11 @@ If @cloud-architect already assigned:
 Workflow Run: https://github.com/enufacas/Chained/actions/workflows/autonomous-pipeline.yml
 
 Stage 4: Agent-Missions
-  Mission 1: "Implement Cloud Security" → @create-guru (score: 0.5)
-  Mission 2: "Add Testing Framework"   → @create-guru (score: 0.5)
-  Mission 3: "Code Review Automation"  → @create-guru (score: 0.5)
-  Mission 4: "Performance Optimization" → @create-guru (score: 0.5)
-  Mission 5: "Deploy Kubernetes"       → @create-guru (score: 0.5)
+  Mission 1: "Implement Cloud Security" → @create-botter (score: 0.5)
+  Mission 2: "Add Testing Framework"   → @create-botter (score: 0.5)
+  Mission 3: "Code Review Automation"  → @create-botter (score: 0.5)
+  Mission 4: "Performance Optimization" → @create-botter (score: 0.5)
+  Mission 5: "Deploy Kubernetes"       → @create-botter (score: 0.5)
 
 Result: 🔴 1/5 agents used (20% diversity)
 Issues: All duplicate on next run

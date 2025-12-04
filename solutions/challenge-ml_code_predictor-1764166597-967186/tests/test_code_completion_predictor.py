@@ -2,7 +2,7 @@
 Comprehensive Test Suite for Code Completion Predictor
 
 Tests all requirements, test cases, and edge cases for the challenge.
-Created by @create-guru with rigorous validation.
+Created by @create-botter with rigorous validation.
 
 Challenge ID: challenge-ml_code_predictor-1764166597-967186
 
@@ -675,7 +675,7 @@ def run_test_suite():
     
     # Print summary
     print("\n" + "=" * 70)
-    print("TEST SUMMARY - Code Completion Predictor by @create-guru")
+    print("TEST SUMMARY - Code Completion Predictor by @create-botter")
     print("Challenge ID: challenge-ml_code_predictor-1764166597-967186")
     print("=" * 70)
     print(f"Tests run: {result.testsRun}")

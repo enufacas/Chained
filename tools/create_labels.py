@@ -258,7 +258,7 @@ def main():
             "accelerate-master", "accelerate-specialist",
             "assert-specialist", "assert-whiz", "validator-pro", "edge-cases-pro",
             "coach-master", "coach-wizard", "guide-wizard", "support-master",
-            "create-guru", "create-champion", "infrastructure-specialist",
+            "create-botter", "create-champion", "infrastructure-specialist",
             "engineer-master", "engineer-wizard", "develop-specialist",
             "investigate-champion", "investigate-specialist",
             "secure-specialist", "secure-pro", "secure-ninja", "monitor-champion",

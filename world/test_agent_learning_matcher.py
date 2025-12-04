@@ -23,7 +23,7 @@ def test_basic_matching():
     test_agents = [
         ("secure-specialist", "Security"),
         ("accelerate-master", "Performance"),
-        ("create-guru", "Infrastructure"),
+        ("create-botter", "Infrastructure"),
         ("investigate-champion", "Analysis")
     ]
     

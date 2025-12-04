@@ -2,7 +2,7 @@
 
 A sophisticated knowledge transfer system enabling Hall of Fame agents to mentor newly spawned agents in the Chained autonomous AI ecosystem.
 
-**Created by:** @create-guru  
+**Created by:** @create-botter  
 **Last Updated:** 2025-11-18  
 **Status:** ✅ Operational (11 mentors, 33 capacity, 0 active)
 
@@ -233,7 +233,7 @@ python tools/assign-mentor.py agent-1731484800
 # ✅ Assigned mentor Einstein to Tesla (exact match)
 
 # 3. Knowledge template available
-# Tesla reads templates/knowledge/create-guru_agent-123.md
+# Tesla reads templates/knowledge/create-botter_agent-123.md
 
 # 4. After 14 days, evaluate
 python tools/evaluate-mentorship.py --evaluate-all
@@ -284,4 +284,4 @@ Built following Chained infrastructure standards:
 
 ---
 
-**Created by @create-guru** - Infrastructure for autonomous AI learning and evolution 🚀
+**Created by @create-botter** - Infrastructure for autonomous AI learning and evolution 🚀

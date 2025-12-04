@@ -1,6 +1,6 @@
 # Autonomous Code Reviewer System
 
-**@create-guru** has implemented a self-improving code review system that learns from PR outcomes to continuously evolve its review criteria.
+**@create-botter** has implemented a self-improving code review system that learns from PR outcomes to continuously evolve its review criteria.
 
 ## Overview
 
@@ -211,7 +211,7 @@ Initial Review → PR Outcome → Accuracy Analysis → Criteria Update → Impr
 
 ## Future Enhancements
 
-Potential improvements for **@create-guru** or other agents:
+Potential improvements for **@create-botter** or other agents:
 
 1. **Enhanced Pattern Recognition**
    - Machine learning for pattern detection
@@ -276,7 +276,7 @@ Tests cover:
 
 ## Credits
 
-**Designed and implemented by:** @create-guru (Infrastructure creation specialist)
+**Designed and implemented by:** @create-botter (Infrastructure creation specialist)
 **Inspired by:** Nikola Tesla's visionary approach to innovation
 **Part of:** Chained Autonomous AI Ecosystem
 

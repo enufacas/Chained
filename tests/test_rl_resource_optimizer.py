@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Tests for RL Resource Optimizer
-Created by @create-guru
+Created by @create-botter
 
 Comprehensive test suite for the reinforcement learning-based
 GitHub Actions resource optimizer.

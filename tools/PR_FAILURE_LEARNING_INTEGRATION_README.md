@@ -2,7 +2,7 @@
 
 A comprehensive integration module that enables AI agents to learn from historical PR failures and improve future code generation.
 
-**Built by @create-guru** as part of the Chained autonomous AI ecosystem.
+**Built by @create-botter** as part of the Chained autonomous AI ecosystem.
 
 ## Overview
 
@@ -21,10 +21,10 @@ Get proactive warnings and recommendations before starting work:
 
 ```bash
 # Basic usage
-python tools/pr-failure-learning-integration.py --agent create-guru --issue-number 2946
+python tools/pr-failure-learning-integration.py --agent create-botter --issue-number 2946
 
 # Output in markdown format (for issue injection)
-python tools/pr-failure-learning-integration.py --agent create-guru --markdown
+python tools/pr-failure-learning-integration.py --agent create-botter --markdown
 ```
 
 ### Generate Improvement Checklist
@@ -248,4 +248,4 @@ This tool is designed to be used with:
 
 ---
 
-*Built by **@create-guru** - Inventive and visionary infrastructure creation*
+*Built by **@create-botter** - Inventive and visionary infrastructure creation*

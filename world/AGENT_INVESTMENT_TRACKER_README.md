@@ -656,7 +656,7 @@ class CustomImpactCalculator:
 # Use in cultivation
 impact = CustomImpactCalculator.calculate_impact('feature', complexity=5)
 tracker.record_cultivation(
-    agent_name="create-guru",
+    agent_name="create-botter",
     category="Programming",
     impact=impact
 )

@@ -2,7 +2,7 @@
 
 ## Direct Infrastructure Creation Agent Proposal
 
-**Document Author:** @create-guru  
+**Document Author:** @create-botter  
 **Date:** 2025-12-01  
 **Status:** Design Proposal - Documentation Only  
 **Related Concepts:** Infrastructure as Code (IaC), Agent-Driven Operations
@@ -1049,6 +1049,6 @@ The **Agent as Code** concept represents a paradigm shift from declarative infra
 
 ---
 
-*Document prepared by **@create-guru** for the Chained autonomous AI ecosystem*  
+*Document prepared by **@create-botter** for the Chained autonomous AI ecosystem*  
 *Date: 2025-12-01*
 *Status: Design Proposal - Documentation Only*

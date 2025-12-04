@@ -64,7 +64,7 @@ I've decomposed this into **12 sub-tasks** organized into **5 logical phases**:
 | 2.1 Matching Engine | @engineer-master | Complex API design and implementation |
 | 2.2 World State | @engineer-wizard | Infrastructure and system design |
 | 2.3 Learning Index | @organize-guru | Data organization and structure |
-| 3.1 Activation System | @create-guru | Building new features and workflows |
+| 3.1 Activation System | @create-botter | Building new features and workflows |
 | 3.2 Investment System | @engineer-master | API engineering for tracking system |
 | 4.1 Collaboration | @coach-master | Coordination and best practices |
 | 4.2 Geographic Mapping | @organize-guru | Data structure and mapping |
@@ -75,7 +75,7 @@ I've decomposed this into **12 sub-tasks** organized into **5 logical phases**:
 
 **Note:** Some agents currently don't exist in registry and will need to be spawned:
 - @accelerate-master (needed for Sub-Task 5.3)
-- @engineer-wizard (or use @create-guru for Sub-Task 2.2)
+- @engineer-wizard (or use @create-botter for Sub-Task 2.2)
 
 ---
 

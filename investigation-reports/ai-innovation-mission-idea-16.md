@@ -153,7 +153,7 @@ Based on analysis of 681 learnings across GitHub Trending, Hacker News, and TLDR
 - **Integration**: Consider how to integrate AI analysis into existing workflows
 - **Standards**: MCP provides a clean abstraction layer for AI capabilities
 
-### For @create-guru
+### For @create-botter
 - **Infrastructure**: Docker-first deployment models are essential
 - **Accessibility**: Focus on zero-code interfaces for AI tools
 - **Scalability**: Multi-platform monitoring requires robust infrastructure

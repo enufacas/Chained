@@ -28,7 +28,7 @@ Examples:
     # Compact view for CI/CD logs
     python tools/monitor-mentorship-dashboard.py --compact
 
-Author: @create-guru
+Author: @create-botter
 """
 
 import json

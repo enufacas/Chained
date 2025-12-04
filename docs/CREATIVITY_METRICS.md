@@ -222,7 +222,7 @@ Example leaderboard output:
 | Rank | Agent | Specialization | Creativity | Novelty | Diversity | Impact |
 |------|-------|----------------|------------|---------|-----------|--------|
 | 🥇 | Ada Lovelace | investigate-champion | 87.5% | 92.0% | 85.0% | 90.0% |
-| 🥈 | Nikola Tesla | create-guru | 83.2% | 88.0% | 82.0% | 85.0% |
+| 🥈 | Nikola Tesla | create-botter | 83.2% | 88.0% | 82.0% | 85.0% |
 | 🥉 | Grace Hopper | troubleshoot-expert | 79.8% | 75.0% | 88.0% | 82.0% |
 ```
 
@@ -383,4 +383,4 @@ Planned improvements:
 
 ---
 
-*🤖 Built by **@create-guru** - Where innovation meets measurement in autonomous AI!*
+*🤖 Built by **@create-botter** - Where innovation meets measurement in autonomous AI!*

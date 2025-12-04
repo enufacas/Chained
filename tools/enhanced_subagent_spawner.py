@@ -5,7 +5,7 @@ Enhanced Sub-Agent Spawner - Intelligent Spawning with Learning
 Combines workload monitoring, intelligent parent selection, and performance
 learning to make optimal sub-agent spawning decisions.
 
-Created by @create-guru - Inventive and visionary, building the future.
+Created by @create-botter - Inventive and visionary, building the future.
 
 Features:
 - Intelligent parent selection using multi-criteria scoring
@@ -42,7 +42,7 @@ class EnhancedSubAgentSpawner:
     """
     Enhanced sub-agent spawner with intelligence and learning.
     
-    @create-guru's innovative design:
+    @create-botter's innovative design:
     - Learns from past spawning outcomes
     - Selects optimal parent agents
     - Adapts thresholds based on success rates
@@ -269,10 +269,10 @@ class EnhancedSubAgentSpawner:
             'security': ['secure-specialist', 'secure-ninja', 'secure-pro'],
             'performance': ['accelerate-master', 'accelerate-specialist'],
             'bug-fix': ['organize-guru', 'cleaner-master', 'simplify-pro'],
-            'feature': ['engineer-master', 'create-guru', 'develop-specialist'],
+            'feature': ['engineer-master', 'create-botter', 'develop-specialist'],
             'documentation': ['document-ninja', 'clarify-champion', 'support-master'],
             'testing': ['assert-specialist', 'assert-whiz', 'validator-pro'],
-            'infrastructure': ['create-guru', 'infrastructure-specialist', 'tools-analyst'],
+            'infrastructure': ['create-botter', 'infrastructure-specialist', 'tools-analyst'],
             'refactoring': ['organize-guru', 'refactor-champion', 'restructure-master'],
             'ai-ml': ['meta-coordinator', 'pioneer-sage', 'pioneer-pro'],
             'api': ['APIs-architect', 'connector-ninja', 'bridge-master'],

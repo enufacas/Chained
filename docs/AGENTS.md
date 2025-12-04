@@ -76,10 +76,10 @@ agent_overrides:
       - best-practices
 ```
 
-#### @create-guru
+#### @create-botter
 ```yaml
 agent_overrides:
-  create-guru:
+  create-botter:
     logging_style: "creative"
     review_focus: ["innovation", "feasibility", "integration"]
     max_file_changes: 30

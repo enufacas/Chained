@@ -1025,7 +1025,7 @@ If you cannot use the script, you MUST:
 - Security → @secure-specialist
 - Performance → @accelerate-master
 - Testing → @assert-specialist
-- Infrastructure → @create-guru or @infrastructure-specialist
+- Infrastructure → @create-botter or @infrastructure-specialist
 - APIs → @engineer-master or @APIs-architect
 - (Script uses match-issue-to-agent.py for comprehensive matching)
 

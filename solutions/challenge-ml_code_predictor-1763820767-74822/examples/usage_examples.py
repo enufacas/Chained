@@ -2,7 +2,7 @@
 Usage Examples for Code Completion Predictor
 
 Demonstrates various use cases and features of the code completion system.
-Created by @create-guru to showcase the model's capabilities.
+Created by @create-botter to showcase the model's capabilities.
 """
 
 import sys
@@ -316,7 +316,7 @@ def example_8_typescript_support():
 def main():
     """Run all examples."""
     print("\n" + "🚀 "*25)
-    print("Code Completion Predictor - Usage Examples by @create-guru")
+    print("Code Completion Predictor - Usage Examples by @create-botter")
     print("🚀 "*25 + "\n")
     
     examples = [
@@ -346,7 +346,7 @@ def main():
     print("  - README.md: Full documentation")
     print("  - tests/: Comprehensive test suite")
     print("  - src/code_completion_predictor.py: Implementation details")
-    print("\nCreated by @create-guru with ⚡ innovative architecture")
+    print("\nCreated by @create-botter with ⚡ innovative architecture")
     print()
 
 

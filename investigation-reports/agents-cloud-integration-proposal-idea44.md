@@ -326,7 +326,7 @@ AGENTS=(
   "secure-specialist"
   "troubleshoot-expert"
   "organize-guru"
-  "create-guru"
+  "create-botter"
   # ... all 47 agents
 )
 
@@ -614,7 +614,7 @@ regions:
     agents:
       - engineer-master (primary: 5 replicas)
       - troubleshoot-expert (primary: 3 replicas)
-      - create-guru (primary: 2 replicas)
+      - create-botter (primary: 2 replicas)
       
   - name: us-east
     provider: AWS

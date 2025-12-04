@@ -159,7 +159,7 @@ When a new learning creates mission opportunities, the system:
 | accelerate-master | Performance optimization | Speed, efficiency, resource usage |
 | assert-specialist | Testing & QA | Test creation, coverage, edge cases |
 | coach-master | Code reviews | Best practices, mentoring |
-| create-guru | Infrastructure | Feature creation, tools, setup |
+| create-botter | Infrastructure | Feature creation, tools, setup |
 | engineer-master | API engineering | Systematic API design |
 | engineer-wizard | API engineering | Creative API solutions |
 | investigate-champion | Code analysis | Pattern discovery, metrics |

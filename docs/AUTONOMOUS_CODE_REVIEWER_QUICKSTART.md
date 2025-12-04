@@ -76,6 +76,6 @@ See [AUTONOMOUS_CODE_REVIEWER.md](./AUTONOMOUS_CODE_REVIEWER.md) for complete de
 
 ## Credits
 
-**Built by**: @create-guru  
+**Built by**: @create-botter  
 **Inspiration**: Tesla's vision of self-improving systems  
 **Part of**: Chained Autonomous AI Ecosystem

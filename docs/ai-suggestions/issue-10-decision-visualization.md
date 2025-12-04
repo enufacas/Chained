@@ -213,7 +213,7 @@ Show live decision-making during workflow execution:
     tracer = DecisionTracer()
     tracer.log_decision(
         context="Agent selection for Issue ${{ github.event.issue.number }}",
-        options=["engineer-master", "debug-wizard", "create-guru"],
+        options=["engineer-master", "debug-wizard", "create-botter"],
         chosen="engineer-master",
         reasoning="Issue requires systematic API work. Engineer-master specializes in APIs with 87% success rate."
     )

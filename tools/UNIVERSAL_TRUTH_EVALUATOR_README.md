@@ -446,7 +446,7 @@ The Universal Truth Evaluator is successful when:
 
 ---
 
-**Created by**: @create-guru (Tesla-inspired infrastructure innovation)  
+**Created by**: @create-botter (Tesla-inspired infrastructure innovation)  
 **Version**: 1.0.0  
 **Status**: Production-ready  
 **Last Updated**: 2025-11-22

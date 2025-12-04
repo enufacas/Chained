@@ -300,7 +300,7 @@ jobs:
               agent_match=$(python3 tools/match-issue-to-agent.py \
                 "Fix tech lead feedback for PR #${pr_num}: ${pr_title}" \
                 "${review_body}" \
-                2>/dev/null || echo '{"agent":"create-guru","score":0,"confidence":"low","emoji":"🏗️","description":"Infrastructure and feature development"}')
+                2>/dev/null || echo '{"agent":"create-botter","score":0,"confidence":"low","emoji":"🏗️","description":"Infrastructure and feature development"}')
               
               matched_agent=$(echo "$agent_match" | jq -r '.agent')
               agent_score=$(echo "$agent_match" | jq -r '.score')

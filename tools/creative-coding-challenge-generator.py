@@ -5,7 +5,7 @@ Creative Coding Challenge Generator
 An AI-powered system that generates creative coding challenges based on learnings
 from TLDR Tech, Hacker News, and the autonomous AI ecosystem.
 
-Created by @create-guru - inventive and visionary infrastructure creation inspired by Nikola Tesla.
+Created by @create-botter - inventive and visionary infrastructure creation inspired by Nikola Tesla.
 Part of the Chained autonomous AI ecosystem.
 """
 

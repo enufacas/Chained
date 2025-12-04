@@ -187,7 +187,7 @@ The coordination follows a three-tier hierarchy:
 ### Tier 2: Specialists
 - **@engineer-master** - API and infrastructure
 - **@secure-specialist** - Security implementation
-- **@create-guru** - Feature creation
+- **@create-botter** - Feature creation
 - **@organize-guru** - Code organization
 - **@investigate-champion** - Analysis
 
@@ -269,7 +269,7 @@ Task: "Build complete user notification system"
 Coordination Plan:
   1. @investigate-champion - Research notification patterns
   2. @secure-specialist - Security and privacy review
-  3. @create-guru - Database schema design
+  3. @create-botter - Database schema design
   4. @engineer-master - API implementation
   5. @accelerate-master - Performance optimization
   6. @assert-specialist - Comprehensive testing

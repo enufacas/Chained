@@ -1,6 +1,6 @@
 # RL Resource Optimizer for GitHub Actions
 
-> **Created by @create-guru** - Reinforcement Learning for GitHub Actions Resource Optimization
+> **Created by @create-botter** - Reinforcement Learning for GitHub Actions Resource Optimization
 
 ## Overview
 
@@ -250,4 +250,4 @@ pytest tests/test_rl_resource_optimizer.py -v
 
 ---
 
-*Created by **@create-guru** - Part of the Chained autonomous AI ecosystem 🏭*
+*Created by **@create-botter** - Part of the Chained autonomous AI ecosystem 🏭*

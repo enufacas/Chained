@@ -6,7 +6,7 @@ Adapts prompts based on agent specialization, issue context, and repository stat
 Enhances base prompts with agent-specific guidance and contextual information.
 
 Part of the self-improving prompt generator system.
-Created by @create-guru - infrastructure creation inspired by Nikola Tesla.
+Created by @create-botter - infrastructure creation inspired by Nikola Tesla.
 """
 
 import json
@@ -417,7 +417,7 @@ def main():
     )
     parser.add_argument(
         "agent",
-        help="Agent name (e.g., create-guru, engineer-master)"
+        help="Agent name (e.g., create-botter, engineer-master)"
     )
     parser.add_argument(
         "--prompt",

@@ -105,7 +105,7 @@ The coordinator recognizes these task patterns:
 | **Performance** | optimize, speed, latency, efficient | accelerate-master |
 | **Testing** | test, coverage, validate, QA | assert-specialist |
 | **Review** | review, feedback, best practices | coach-master, support-master |
-| **Infrastructure** | infrastructure, build, pipeline | create-guru, engineer-master |
+| **Infrastructure** | infrastructure, build, pipeline | create-botter, engineer-master |
 | **API** | api, endpoint, rest, interface | engineer-master, engineer-wizard |
 | **Investigation** | investigate, analyze, debug | investigate-champion |
 | **Security** | security, vulnerability, auth | secure-specialist, monitor-champion |

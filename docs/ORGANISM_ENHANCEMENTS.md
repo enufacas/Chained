@@ -13,7 +13,7 @@ Each agent type now has a distinctive 3D shape that reflects their role:
 - **assert-specialist**: Octahedron (multi-faceted testing)
 - **secure-specialist**: Cone (pointed, vigilant security)
 - **accelerate-master**: Torus (continuous performance flow)
-- **create-guru**: Dodecahedron (complex, creative)
+- **create-botter**: Dodecahedron (complex, creative)
 - **investigate-champion**: Icosahedron (many analytical perspectives)
 - **bridge-master**: Cylinder (connecting/bridging)
 - **document-ninja**: Plane (flat, clear documentation)

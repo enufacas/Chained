@@ -144,7 +144,7 @@ A comprehensive 12-sub-task system that:
 
 **Agents to Spawn:**
 - @accelerate-master (for performance optimization)
-- @engineer-wizard (or use @create-guru as fallback)
+- @engineer-wizard (or use @create-botter as fallback)
 - Any other missing specializations
 
 ---
@@ -185,7 +185,7 @@ A comprehensive 12-sub-task system that:
 - **@organize-guru** (Robert Martin) - Learning Indexer
 
 ### Phase 3: Core Features
-- **@create-guru** (TBD) - Dormant Agent Activation
+- **@create-botter** (TBD) - Dormant Agent Activation
 
 ### Phase 4: Advanced Features
 - **@coach-master** (Turing) - Collaboration Framework + Final Review

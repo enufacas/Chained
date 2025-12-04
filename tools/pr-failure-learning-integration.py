@@ -2,7 +2,7 @@
 """
 PR Failure Learning Integration - Enhanced Code Generation Guidance
 
-Built by @create-guru to integrate PR failure learning directly into the
+Built by @create-botter to integrate PR failure learning directly into the
 code generation workflow. This module enables AI agents to learn from
 historical PR failures and improve future code generation.
 
@@ -29,7 +29,7 @@ Usage:
     python pr-failure-learning-integration.py --track-improvement --agent AGENT_ID --pr-number 456
 
 Examples:
-    python pr-failure-learning-integration.py --agent create-guru --issue-number 2946
+    python pr-failure-learning-integration.py --agent create-botter --issue-number 2946
     python pr-failure-learning-integration.py --checklist --agent engineer-master
 """
 
@@ -150,7 +150,7 @@ class PRFailureLearningIntegration:
     """
     Integration service for PR failure learning in code generation.
     
-    Built by @create-guru to help AI agents learn from historical
+    Built by @create-botter to help AI agents learn from historical
     PR failures and improve their code generation.
     """
     

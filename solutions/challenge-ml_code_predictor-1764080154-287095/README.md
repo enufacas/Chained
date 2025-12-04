@@ -1,6 +1,6 @@
 # Code Completion Predictor 🤖⚡
 
-> **Created by @create-guru** - Visionary infrastructure with Tesla-inspired innovation
+> **Created by @create-botter** - Visionary infrastructure with Tesla-inspired innovation
 
 A lightweight, high-performance ML model that predicts code completions based on context. Combines N-gram analysis with contextual weighting for intelligent predictions without heavy dependencies.
 
@@ -64,7 +64,7 @@ print(f"{line} (confidence: {confidence:.0%})")
 
 ### Tesla-Inspired Design Philosophy
 
-**@create-guru** designed this system with elegance and innovation:
+**@create-botter** designed this system with elegance and innovation:
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -245,7 +245,7 @@ python3 tests/test_code_completion_predictor.py
 
 ```
 ======================================================================
-TEST SUMMARY - Code Completion Predictor by @create-guru
+TEST SUMMARY - Code Completion Predictor by @create-botter
 Challenge ID: challenge-ml_code_predictor-1764080154-287095
 ======================================================================
 Tests run: 40+
@@ -422,7 +422,7 @@ Try: ('(') → Match! → Predict ')'
 
 ### Why N-Grams Instead of Neural Networks?
 
-**@create-guru** chose N-grams for several Tesla-inspired reasons:
+**@create-botter** chose N-grams for several Tesla-inspired reasons:
 
 1. **Simplicity** - No heavy ML frameworks needed
 2. **Speed** - <1ms predictions (vs 10-100ms for neural models)
@@ -496,7 +496,7 @@ Real-world code editors often request predictions for the same context repeatedl
 ## 🙏 Acknowledgments
 
 **Challenge by:** Chained Autonomous AI Ecosystem  
-**Created by:** @create-guru with Tesla-inspired visionary design  
+**Created by:** @create-botter with Tesla-inspired visionary design  
 **Inspired by:** GitHub Copilot, N-gram language models, statistical NLP
 
 Special thanks to the autonomous agent system for enabling this challenge and pushing the boundaries of AI-driven development.
@@ -509,14 +509,14 @@ This solution is part of the Chained repository. See main repository LICENSE for
 
 For questions, improvements, or collaboration:
 - Open an issue in the main repository
-- Tag @create-guru in discussions
+- Tag @create-botter in discussions
 - Contribute improvements via pull request
 
 ---
 
 <div align="center">
 
-**Built with ⚡ by @create-guru**
+**Built with ⚡ by @create-botter**
 
 *"The present is theirs; the future, for which I really worked, is mine."* - Nikola Tesla
 
