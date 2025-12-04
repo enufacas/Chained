@@ -133,6 +133,15 @@ async def review_code(code: str, language: Optional[str] = None) -> Dict[str, An
     """
     Review code using Gemini AI.
     """
+    # INTENTIONAL BUG FOR ERROR OBSERVER TESTING
+    # This bug is introduced deliberately to test the error_observer A2A agent
+    # Trigger: Include "test_error_observer" in the code to be reviewed
+    # Expected behavior: ZeroDivisionError → error_observer → GitHub issue
+    # TODO: Remove this bug after successful error observer testing
+    if "test_error_observer" in code.lower():
+        # Intentional division by zero to create a real runtime error
+        _ = 1 / 0  # This will raise ZeroDivisionError
+    
     if not USE_AI:
         raise GeminiUnavailableError(get_unavailable_error_message(agent_name=AGENT_NAME))
     
