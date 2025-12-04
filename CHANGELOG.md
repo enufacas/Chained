@@ -30,6 +30,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### ✨ Features
 
+- 👤 🔧 Agents Rename @create-guru agent to @create-botter [#3575](https://github.com/enufacas/Chained/pull/3575)
 - 🤖 🧠 Learning 🧠 Learn from GitHub Copilot sources - 2025-12-03 [#3562](https://github.com/enufacas/Chained/pull/3562)
 
 ### 🐛 Bug Fixes
@@ -41,7 +42,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x10) [#3557](https://github.com/enufacas/Chained/pull/3557)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x11) [#3569](https://github.com/enufacas/Chained/pull/3569)
 - 👤 📋 Instructions **Documentation**: Update A2A README with error observer system and add maintenance instructions [#3520](https://github.com/enufacas/Chained/pull/3520)
 
 ---
@@ -258,70 +259,5 @@ This changelog excludes automated data syncs and routine maintenance commits.
 - 👤 ⚙️ Workflows **Chore**: Refactor A2A workflow: Parallel agent execution with GitHub Artifacts [#3231](https://github.com/enufacas/Chained/pull/3231)
 - 👤 🧠 Learning **Test**: Enhance daily learning reflection with deduplicated topics and security-specific insights [#3301](https://github.com/enufacas/Chained/pull/3301)
 - 👤 🧠 Learning **Test**: 🧠 GitHub Copilot Learning Summary - 2025-11-27 (@construct-specialist) [#3296](https://github.com/enufacas/Chained/pull/3296)
-
----
-
-## 2025-11-26
-
-### ✨ Features
-
-- 👤 🔧 Agents feat(a2a): Implement A2A protocol with GeminiAgentExecutor and Task lifecycle [#3218](https://github.com/enufacas/Chained/pull/3218)
-- 👤 🔧 Agents Make A2A demo fully autonomous with dynamic agent selection [#3206](https://github.com/enufacas/Chained/pull/3206)
-- 👤 meta-coordination: Complete run - 2025-11-26 22:14 [#3198](https://github.com/enufacas/Chained/pull/3198)
-- 👤 📊 GitHub Pages Expand GitHub Pages footer with live stats [#3199](https://github.com/enufacas/Chained/pull/3199)
-- 👤 🧠 Learning 🧠 GitHub Copilot Learning Summary - November 26, 2025 [#3200](https://github.com/enufacas/Chained/pull/3200)
-- 👤 🔧 Agents feat(@connector-ninja): Agents-Cloud integration research for idea:86 [#3201](https://github.com/enufacas/Chained/pull/3201)
-- 👤 Initial plan [#3175](https://github.com/enufacas/Chained/pull/3175)
-- 👤 🔧 Agents AI Agents Emerging Theme Investigation (idea:83) [#3184](https://github.com/enufacas/Chained/pull/3184)
-- 👤 🏗️ Infrastructure 🎯 Mission: Cloud Infrastructure Research Report (idea:85) - @cloud-architect [#3186](https://github.com/enufacas/Chained/pull/3186)
-- 👤 🔧 Agents @engineer-wizard: Security-AI-Agents Integration Mission (idea:87) [#3187](https://github.com/enufacas/Chained/pull/3187)
-- 🤖 🧠 Learning 🧠 Learn from GitHub Copilot sources - 2025-11-26 [#3192](https://github.com/enufacas/Chained/pull/3192)
-- 👤 🏗️ Infrastructure GCP infrastructure brainstorming, IaC, and CI/CD pipeline [#3190](https://github.com/enufacas/Chained/pull/3190)
-- 👤 ⚙️ Workflows Add self-evolving neural architecture for workflow adaptation [#3176](https://github.com/enufacas/Chained/pull/3176)
-- 👤 Implement lightweight ML code completion predictor with N-gram architecture [#3147](https://github.com/enufacas/Chained/pull/3147)
-- 🤖 🔧 Agents 🎯 Agent Missions - Pipeline [#3182](https://github.com/enufacas/Chained/pull/3182)
-- 👤 🧠 Learning Implement autonomous git commit strategy learning system [#3136](https://github.com/enufacas/Chained/pull/3136)
-- 👤 meta-coordination: 2025-11-26 14:55 run - merged 3 PRs, verified system health [#3150](https://github.com/enufacas/Chained/pull/3150)
-- 🤖 🧠 Learning 🧠 Learning Pipeline - 2025-11-26 [#3172](https://github.com/enufacas/Chained/pull/3172)
-- 👤 meta-coordination: 2025-11-26 14:15 run - system health verification [#3145](https://github.com/enufacas/Chained/pull/3145)
-- 👤 meta-coordination: 2025-11-26 16:19 run - closed 8 stale PRs, reduced open PRs by 42% [#3160](https://github.com/enufacas/Chained/pull/3160)
-- 👤 🧠 Learning add commit validation to strategy learner (@create-botter, formerly @create-guru) [#3161](https://github.com/enufacas/Chained/pull/3161)
-- 👤 🧠 Learning autonomous git commit strategy learning with trend analysis [#3083](https://github.com/enufacas/Chained/pull/3083)
-- 🤖 🎯 Daily goal for 2025-11-26 [#3100](https://github.com/enufacas/Chained/pull/3100)
-- 👤 Mission idea:78 - GitHub Innovation Research & Integration Proposals (@clarify-champion) [#3116](https://github.com/enufacas/Chained/pull/3116)
-- 👤 🧠 Learning Complete Apple innovation learning mission (idea:81) - @investigate-champion [#3119](https://github.com/enufacas/Chained/pull/3119)
-- 👤 🧠 Learning Complete Nvidia Innovation learning mission - @bridge-master [#3120](https://github.com/enufacas/Chained/pull/3120)
-- 👤 🧠 Learning Add Daily Learning Reflection - 2025-11-26 (Programming) [#3129](https://github.com/enufacas/Chained/pull/3129)
-- 👤 🧠 Learning Generate GitHub Copilot learning files for 2025-11-26 session [#3130](https://github.com/enufacas/Chained/pull/3130)
-- 🤖 🔧 Agents 📊 Sync agent data to GitHub Pages [#3141](https://github.com/enufacas/Chained/pull/3141)
-- 👤 meta-coordination: execute 12:27 autonomous orchestration cycle [#3135](https://github.com/enufacas/Chained/pull/3135)
-- 👤 🔧 Agents A2A Protocol: Complete Phase 3A Implementation - Gemini & Copilot Multi-Agent Orchestration with Working Infrastructure [#3090](https://github.com/enufacas/Chained/pull/3090)
-
-### 🐛 Bug Fixes
-
-- 👤 [WIP] Fix build action error in CI pipeline [#3225](https://github.com/enufacas/Chained/pull/3225)
-- 👤 fix(a2a): Remove silent fallback on a2a-sdk installation [#3222](https://github.com/enufacas/Chained/pull/3222)
-- 👤 Fix a2a-demo.yml to use gemini-3-pro-preview model for Vertex AI compatibility [#3205](https://github.com/enufacas/Chained/pull/3205)
-- 👤 🏗️ Infrastructure Fix GCP infrastructure pipeline to import existing resources before apply [#3203](https://github.com/enufacas/Chained/pull/3203)
-- 👤 🏗️ Infrastructure Fix GCP infrastructure deployment: add missing IAM roles [#3202](https://github.com/enufacas/Chained/pull/3202)
-- 👤 Fix A2A demo to use run-gemini-cli action for Vertex AI auth [#3195](https://github.com/enufacas/Chained/pull/3195)
-- 👤 ⚙️ Workflows Resume A2A Work: Fix Tests and Add Live A2A Demo Workflow [#3188](https://github.com/enufacas/Chained/pull/3188)
-- 👤 Fix UNKNOWN merge status handling with progressive backoff and remove 10 PR limit [#3155](https://github.com/enufacas/Chained/pull/3155)
-- 👤 🔧 Tools [WIP] Fix merge script not merging PRs as expected [#3151](https://github.com/enufacas/Chained/pull/3151)
-- 👤 📚 Docs Add comprehensive fix summary documentation [#3125](https://github.com/enufacas/Chained/pull/3125)
-- 👤 ⚙️ Workflows Fix bash arithmetic increment causing workflow exit with -e flag [#3148](https://github.com/enufacas/Chained/pull/3148)
-- 👤 ⚙️ Workflows Fix meta-coordinator: move auto-merge to workflow, fix CI syntax error [#3142](https://github.com/enufacas/Chained/pull/3142)
-
-### 🧹 Chores & Maintenance
-
-- 🤖 **Documentation**: 📚 Sync World State to Docs - Pipeline [#3183](https://github.com/enufacas/Chained/pull/3183)
-- 👤 📚 Docs **Documentation**: Add prompt engineering origin note to README header [#3071](https://github.com/enufacas/Chained/pull/3071)
-- 👤 **Chore**: meta-coordination: 2025-11-27 00:59 run - merged 2 PRs, updated memory [#3211](https://github.com/enufacas/Chained/pull/3211)
-- 🤖 📊 GitHub Pages **Chore**: 📊 Update timeline data - 2025-11-27 01:05:18 UTC (x5) [#3216](https://github.com/enufacas/Chained/pull/3216)
-- 🤖 **Chore**: 🤖 Update pattern repetition analysis (x3) [#3215](https://github.com/enufacas/Chained/pull/3215)
-- 🤖 **Chore**: 🌍 World Model Update - Pipeline [#3174](https://github.com/enufacas/Chained/pull/3174)
-- 🤖 **Chore**: 📊 Goal progress update: ✅ Completed [#3171](https://github.com/enufacas/Chained/pull/3171)
-- 🤖 **Chore**: update prompt generator performance data [#3072](https://github.com/enufacas/Chained/pull/3072)
-- 👤 **Test**: 🧠 Mission: Go Specialist Emerging Theme Research (idea:84) [#3185](https://github.com/enufacas/Chained/pull/3185)
 
 ---
