@@ -12,7 +12,7 @@
 2. **A2A Protocol on GitHub Actions** - Applying agent-to-agent concepts to workflow runs
 3. **GCP Cloud Run A2A Experiments** - Deploying real A2A agents with a working chat interface
 
-**[📖 Documentation](./docs/INDEX.md)** | **[🤖 Agent Definitions](./.github/agents/)** | **[⚙️ Workflows](./.github/workflows/)**
+**[📖 Documentation](./docs/INDEX.md)** | **[🤖 Agent Definitions](./.github/agents/)** | **[⚙️ Workflows](./.github/workflows/)** | **[🎬 Demo & Deep Dive](./docs/DEMO_DEEP_DIVE.md)**
 
 ---
 
