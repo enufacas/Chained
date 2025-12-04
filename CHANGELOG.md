@@ -30,6 +30,8 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### ✨ Features
 
+- 👤 🔧 Agents Add intentional ZeroDivisionError to code-reviewer agent for error_observer testing [#3603](https://github.com/enufacas/Chained/pull/3603)
+- 🤖 🧠 Learning 🧠 Learn from GitHub Copilot sources - 2025-12-04 [#3596](https://github.com/enufacas/Chained/pull/3596)
 - 👤 Restructure Copilot section for demo/presentation format [#3218](https://github.com/enufacas/Chained/pull/3218)
 - 👤 Streamline A2A section and remove production-ready language [#3520](https://github.com/enufacas/Chained/pull/3520)
 
@@ -41,7 +43,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x5) [#3588](https://github.com/enufacas/Chained/pull/3588)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x6) [#3594](https://github.com/enufacas/Chained/pull/3594)
 - 👤 📚 Docs **Documentation**: Add dedicated Demo & Deep Dive documentation page [#3579](https://github.com/enufacas/Chained/pull/3579)
 
 ---
@@ -251,8 +253,6 @@ This changelog excludes automated data syncs and routine maintenance commits.
 - 🤖 🧠 Learning 🧠 Learn from GitHub Copilot sources - 2025-11-27 [#3280](https://github.com/enufacas/Chained/pull/3280)
 - 👤 🔧 Agents Add Agent Console GUI to ADK API Server [#3274](https://github.com/enufacas/Chained/pull/3274)
 - 👤 Add ADK API Server for google/adk-web integration [#3269](https://github.com/enufacas/Chained/pull/3269)
-- 🤖 create A2A coordination page [#3246](https://github.com/enufacas/Chained/pull/3246)
-- 👤 🔧 Agents Add ADK A2A blog pipeline with Python agents on GCP [#3242](https://github.com/enufacas/Chained/pull/3242)
 
 ### 🐛 Bug Fixes
 
@@ -262,10 +262,6 @@ This changelog excludes automated data syncs and routine maintenance commits.
 - 👤 🔧 Agents Fix Terraform import for adk_agents service account; add A2A URLs to README [#3278](https://github.com/enufacas/Chained/pull/3278)
 - 👤 🏗️ Infrastructure Fix Terraform 409 error by importing existing Cloud Run services [#3263](https://github.com/enufacas/Chained/pull/3263)
 - 👤 🔧 Agents Fix Terraform 409 error for existing service account in deploy-adk-agents [#3251](https://github.com/enufacas/Chained/pull/3251)
-- 👤 [WIP] Fix error in action job execution [#3247](https://github.com/enufacas/Chained/pull/3247)
-- 👤 ⚙️ Workflows prevent anomalous "Plan of Action" comments in a2a-parallel-agents workflow [#3245](https://github.com/enufacas/Chained/pull/3245)
-- 👤 🔧 Agents remove add_issue_comment from agent jobs and add autonomous mode instructions [#3244](https://github.com/enufacas/Chained/pull/3244)
-- 👤 Expand allowed shell commands in A2A implement step [#3243](https://github.com/enufacas/Chained/pull/3243)
 
 ### 🧹 Chores & Maintenance
 
