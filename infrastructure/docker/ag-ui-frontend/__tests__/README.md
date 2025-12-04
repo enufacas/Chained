@@ -27,7 +27,21 @@ npm run test:coverage
 __tests__/
 ├── api/
 │   ├── agent.test.ts      # Tests for /api/agent endpoint
-│   └── pipeline.test.ts   # Tests for /api/pipeline endpoint
+│   ├── pipeline.test.ts   # Tests for /api/pipeline endpoint
+│   ├── team.test.ts       # Tests for /api/team endpoint
+│   ├── activity.test.ts   # Tests for /api/activity endpoint
+│   ├── error-observer.test.ts # Tests for /api/error-observer endpoint
+│   └── registry.test.ts   # Tests for /api/registry endpoint
+├── components/
+│   └── ErrorBoundary.test.tsx  # Tests for ErrorBoundary component
+├── lib/
+│   ├── storage.test.ts    # Tests for storage utilities
+│   ├── storage-cleanup.test.ts # Tests for storage cleanup
+│   ├── storage-metadata-stripping.test.ts # Tests for metadata handling
+│   ├── storage-session-artifacts.test.ts # Tests for session artifacts
+│   └── storage-session-timestamp.test.ts # Tests for timestamp preservation
+├── e2e/
+│   └── custom-team-e2e.test.ts # End-to-end tests for team workflows
 ├── utils/
 │   └── testUtils.ts       # Shared test utilities
 └── README.md              # This file
@@ -61,6 +75,21 @@ Tests for **Feature 1: Pipeline Creation** and **Feature 3: Real-Time Status**
 | Completed data | Includes previously completed pipelines |
 | Data structure | Validates all required fields are present |
 
+## Component Tests
+
+### ErrorBoundary Component
+
+Tests for error boundary that catches React component errors:
+
+| Test | Description |
+|------|-------------|
+| Renders children normally | Verifies children render when no error occurs |
+| Catches errors | Shows fallback UI when child component throws |
+| Custom fallback | Uses custom fallback UI when provided |
+| Error callback | Calls onError callback when error is caught |
+| HOC pattern | Tests withErrorBoundary higher-order component |
+| Error logging | Verifies errors are logged to console and backend |
+
 ## Writing New Tests
 
 ### Testing API Routes
@@ -89,6 +118,47 @@ describe('Your API (/api/your-endpoint)', () => {
   });
 });
 ```
+
+### Testing React Components
+
+```typescript
+/**
+ * @jest-environment jsdom
+ */
+
+import React from 'react';
+import { render, screen, fireEvent } from '@testing-library/react';
+import '@testing-library/jest-dom';
+import YourComponent from '@/components/YourComponent';
+
+describe('YourComponent', () => {
+  // Mock console.error if testing error boundaries
+  const originalError = console.error;
+  beforeAll(() => {
+    console.error = jest.fn();
+  });
+  afterAll(() => {
+    console.error = originalError;
+  });
+
+  it('should render with props', () => {
+    render(<YourComponent prop="value" />);
+    
+    expect(screen.getByText('value')).toBeInTheDocument();
+  });
+
+  it('should handle user interaction', () => {
+    render(<YourComponent />);
+    
+    const button = screen.getByRole('button', { name: /click me/i });
+    fireEvent.click(button);
+    
+    expect(screen.getByText('Clicked!')).toBeInTheDocument();
+  });
+});
+```
+
+**Important:** Use `@jest-environment jsdom` at the top of component test files to enable DOM APIs (window, document, etc.).
 
 ### Using Test Utilities
 
