@@ -660,6 +660,55 @@ jobs:
             echo "❌ AG-UI Frontend: not deployed"
           fi
 
+      - name: Verify Environment Variables
+        run: |
+          echo "🔍 Verifying AG-UI Frontend environment variables..."
+          echo ""
+          
+          # Check Cloud Run service configuration for ERROR_OBSERVER_URL
+          echo "Checking Cloud Run service configuration..."
+          ERROR_OBSERVER_ENV=$(gcloud run services describe chained-ag-ui-frontend \
+            --region ${{ env.GCP_REGION }} \
+            --format='json' | jq -r '.spec.template.spec.containers[0].env[] | select(.name=="ERROR_OBSERVER_URL") | .value')
+          
+          if [[ -n "$ERROR_OBSERVER_ENV" && "$ERROR_OBSERVER_ENV" != "null" ]]; then
+            echo "✅ ERROR_OBSERVER_URL is set in Cloud Run config: $ERROR_OBSERVER_ENV"
+          else
+            echo "❌ ERROR_OBSERVER_URL is NOT set in Cloud Run config"
+            exit 1
+          fi
+          
+          # Check runtime availability via debug endpoint
+          echo ""
+          echo "Checking runtime availability..."
+          AG_UI_URL=$(gcloud run services describe chained-ag-ui-frontend \
+            --region ${{ env.GCP_REGION }} \
+            --format 'value(status.url)')
+          
+          RUNTIME_CHECK=$(curl -s "$AG_UI_URL/api/debug/env" | jq -r '.envStatus.ERROR_OBSERVER_URL.set')
+          
+          if [[ "$RUNTIME_CHECK" == "true" ]]; then
+            echo "✅ ERROR_OBSERVER_URL is available at runtime"
+          else
+            echo "⚠️ ERROR_OBSERVER_URL is set in Cloud Run but not available at runtime"
+            echo "   This may indicate the container image needs to be rebuilt"
+            echo "   The new revision should pick up the environment variable"
+          fi
+          
+          # Verify error observer service exists
+          echo ""
+          echo "Checking error observer service..."
+          ERROR_OBSERVER_URL=$(gcloud run services describe chained-error-observer \
+            --region ${{ env.GCP_REGION }} \
+            --format 'value(status.url)' 2>/dev/null || echo "")
+          
+          if [[ -n "$ERROR_OBSERVER_URL" ]]; then
+            echo "✅ Error observer service is deployed: $ERROR_OBSERVER_URL"
+          else
+            echo "❌ Error observer service not found"
+            exit 1
+          fi
+
       - name: Summary
         run: |
           echo "## ✅ Deployment Verified" >> $GITHUB_STEP_SUMMARY

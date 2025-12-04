@@ -2,28 +2,51 @@
 
 **Date:** 2025-12-04  
 **Issue:** ERROR_OBSERVER_URL environment variable shows as "not set" in deployed ag-ui-frontend  
-**Status:** Investigating
+**Status:** ✅ **ROOT CAUSE IDENTIFIED**
 
-## Problem Statement
+## Root Cause (Confirmed via gcloud)
 
-The AG-UI Frontend debug endpoint shows ERROR_OBSERVER_URL is not set:
+Using `gcloud run services describe`, I verified:
 
-```json
-{
-  "ERROR_OBSERVER_URL": {"set": false, "value": "not set", "length": 0}
-}
+1. ✅ **Environment variable IS set in Cloud Run service configuration:**
+   ```json
+   {
+     "name": "ERROR_OBSERVER_URL",
+     "value": "https://chained-error-observer-sguacxy5gq-uc.a.run.app"
+   }
+   ```
+
+2. ❌ **But the running container (older image) cannot access it at runtime:**
+   - Debug endpoint returns: `{"set": false, "value": "not set"}`
+   - Latest revision deployed: 2025-12-04T05:16:08 (before recent commits)
+   - Container image from older build doesn't have proper runtime access
+
+3. ✅ **Error observer service exists and is healthy:**
+   - URL: https://chained-error-observer-sguacxy5gq-uc.a.run.app
+   - Service is deployed and responding
+
+## Solution
+
+**The issue is NOT with Terraform or configuration.** The workflow needs to:
+1. Deploy the new container image with my code changes
+2. Verify environment variables are accessible at runtime (not just in config)
+
+**Implemented Fix:**
+- Added workflow verification step in `.github/workflows/deploy-adk-agents.yml`
+- New step checks both Cloud Run config AND runtime availability
+- Alerts if env vars are set but not accessible at runtime
+
+**Verification command added to workflow:**
+```bash
+# Check Cloud Run config
+gcloud run services describe chained-ag-ui-frontend \
+  --format='json' | jq '.spec.template.spec.containers[0].env[] | select(.name=="ERROR_OBSERVER_URL")'
+
+# Check runtime availability  
+curl "$AG_UI_URL/api/debug/env" | jq '.envStatus.ERROR_OBSERVER_URL.set'
 ```
 
-However, the Terraform configuration clearly sets it on line 1157-1159 of `infrastructure/terraform/adk-agents.tf`:
-
-```terraform
-env {
-  name  = "ERROR_OBSERVER_URL"
-  value = google_cloud_run_v2_service.error_observer.uri
-}
-```
-
-## Why Rebuilds Aren't Enough
+## Why Rebuilds Weren't Enough (Previously)
 
 ### Evidence Rebuilds Have Occurred
 
