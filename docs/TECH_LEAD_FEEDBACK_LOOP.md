@@ -298,7 +298,7 @@ The feedback handler uses `match-issue-to-agent.py` to determine which agent sho
 
 3. **Select best agent**
    - Highest scoring agent selected
-   - Fallback to `create-guru` if unclear
+   - Fallback to `create-botter` if unclear
    - Agent assigned via issue creation
 
 ### Example Matching

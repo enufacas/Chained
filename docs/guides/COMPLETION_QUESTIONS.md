@@ -89,7 +89,7 @@ N/A **World model update**: Not applicable for this workflow
 
 **Valid Responses**:
 ```markdown
-✅ **Agents reacting**: @engineer-master, @create-guru (2 agents)
+✅ **Agents reacting**: @engineer-master, @create-botter (2 agents)
 ✅ **Agents reacting**: None (learning ingestion stage)
 ⏭️ **Agents reacting**: Will be determined in assignment stage
 ```
@@ -97,7 +97,7 @@ N/A **World model update**: Not applicable for this workflow
 **Invalid Responses**:
 ```markdown
 ❌ "Some agents"
-❌ "engineer-master and create-guru" (missing @)
+❌ "engineer-master and create-botter" (missing @)
 ❌ "3 agents selected" (no names)
 ```
 
@@ -326,7 +326,7 @@ This is **Stage 4: Agent Assignment** of the autonomous loop.
    - @document-ninja (#460)
    - @assert-specialist (#461)
    - @troubleshoot-expert (#462)
-   - @create-guru (#463)
+   - @create-botter (#463)
 4. ✅ **Agent capacity**: 8/10 agents (validated with tools/validate_agent_capacity.py)
 5. ✅ **Agent movement**: Agents will move to idea locations when starting work
 6. ✅ **Mission issues**: Created 8 issues (#456-#463)

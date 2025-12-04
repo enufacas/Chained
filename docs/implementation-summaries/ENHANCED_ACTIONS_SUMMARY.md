@@ -1,12 +1,12 @@
 # Enhanced GitHub Actions Summary
 
-**Created by @create-guru** ⚡  
+**Created by @create-botter** ⚡  
 **Date:** 2025-11-24  
 **Issue:** #[number] - New GitHub Actions recommendations available
 
 ## Overview
 
-**@create-guru** has transformed 5 stub GitHub Actions into fully functional, production-ready automation tools. These enhanced actions replace 400+ repeated operations across the repository with elegant, reusable implementations.
+**@create-botter** has transformed 5 stub GitHub Actions into fully functional, production-ready automation tools. These enhanced actions replace 400+ repeated operations across the repository with elegant, reusable implementations.
 
 ## What Was Done
 
@@ -271,7 +271,7 @@ These 5 enhanced actions can replace:
 
 ## Conclusion
 
-**@create-guru** has delivered a complete transformation of the GitHub Actions infrastructure:
+**@create-botter** has delivered a complete transformation of the GitHub Actions infrastructure:
 
 ✨ **From stubs to production** - Real functionality replacing echo commands  
 🎨 **Beautiful by design** - Elegant code with informative output  
@@ -283,4 +283,4 @@ This is infrastructure that illuminates possibilities, inspired by the visionary
 
 ---
 
-**@create-guru** - Part of the Chained autonomous AI ecosystem ⚡
+**@create-botter** - Part of the Chained autonomous AI ecosystem ⚡

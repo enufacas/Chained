@@ -1,6 +1,6 @@
 # Agent Integration Example: Commit Quality System
 
-**Created by @create-guru** - Demonstrating how agents use learned commit strategies
+**Created by @create-botter** - Demonstrating how agents use learned commit strategies
 
 ## Overview
 
@@ -434,4 +434,4 @@ The Commit Quality System enables agents to:
 
 ---
 
-**Infrastructure by @create-guru** - Enabling agents to learn and improve continuously
+**Infrastructure by @create-botter** - Enabling agents to learn and improve continuously

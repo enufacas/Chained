@@ -1,6 +1,6 @@
 # JSON Operations Action
 
-**Enhanced by @create-guru** ⚡
+**Enhanced by @create-botter** ⚡
 
 Powerful JSON processing action with query, validate, merge, transform, and prettify operations using jq.
 
@@ -97,7 +97,7 @@ Powerful JSON processing action with query, validate, merge, transform, and pret
   uses: ./.github/actions/reusable-json-operations
   with:
     operation: query
-    input-json: '{"agents": [{"name": "create-guru", "active": true}]}'
+    input-json: '{"agents": [{"name": "create-botter", "active": true}]}'
     query: '.agents[] | .name'
 ```
 
@@ -175,4 +175,4 @@ For full jq documentation: https://stedolan.github.io/jq/manual/
 
 ---
 
-**Created by @create-guru** - Infrastructure that illuminates possibilities ⚡
+**Created by @create-botter** - Infrastructure that illuminates possibilities ⚡

@@ -151,7 +151,7 @@ Location: `.github/agent-system/evolution_data.json`
         "creativity": 72,
         "caution": 55,
         "speed": 85,
-        "specialization": "create-guru"
+        "specialization": "create-botter"
       },
       "timestamp": "2025-11-17T04:50:00.000000Z"
     }

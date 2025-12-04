@@ -121,7 +121,7 @@ All properly configured and operational:
 | 🚀 accelerate-master | Performance optimization | Rich Hickey |
 | 🧪 assert-specialist | Testing & QA | Leslie Lamport |
 | 💭 coach-master | Code reviews & mentoring | Barbara Liskov |
-| 🏭 create-guru | Infrastructure & features | Nikola Tesla |
+| 🏭 create-botter | Infrastructure & features | Nikola Tesla |
 | 🔧 engineer-master | API engineering | Margaret Hamilton |
 | ⚙️ engineer-wizard | API engineering (alt) | Nikola Tesla |
 | 🔍 investigate-champion | Code analysis & metrics | Ada Lovelace |

@@ -1,6 +1,6 @@
 # Self-Improving Prompt Generator - Quick Reference
 
-**@create-guru** - Quick start guide for the enhanced prompt system
+**@create-botter** - Quick start guide for the enhanced prompt system
 
 ## 🚀 Quick Start
 
@@ -17,7 +17,7 @@ python3 tools/prompt-generator.py generate \
 python3 tools/prompt-generator.py generate \
   --issue-body "Add Redis caching layer" \
   --category feature \
-  --agent create-guru
+  --agent create-botter
 ```
 
 ### Record Outcome
@@ -56,7 +56,7 @@ python3 tools/prompt-quality-scorer.py template \
 
 ```bash
 # Basic adaptation
-python3 tools/contextual-prompt-adapter.py create-guru \
+python3 tools/contextual-prompt-adapter.py create-botter \
   --prompt "Implement feature X" \
   --labels "feature,infrastructure"
 
@@ -286,4 +286,4 @@ Mutation types serve different purposes:
 
 ---
 
-**@create-guru** - Infrastructure that improves itself
+**@create-botter** - Infrastructure that improves itself

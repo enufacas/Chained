@@ -265,7 +265,7 @@ class ChainedClaudeIntegration:
         role_mapping = {
             'investigate-champion': 'code-reviewer',
             'engineer-master': 'backend-developer',
-            'create-guru': 'full-stack-developer',
+            'create-botter': 'full-stack-developer',
             'secure-specialist': 'security-auditor',
             'assert-specialist': 'test-engineer'
         }

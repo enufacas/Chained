@@ -1,6 +1,6 @@
 # Autonomous A/B Testing for Workflow Configurations
 
-**Author**: @create-guru  
+**Author**: @create-botter  
 **Created**: 2025-11-26
 
 ## Overview
@@ -341,4 +341,4 @@ python3 -m pytest tests/test_workflow_config_generator.py tests/test_autonomous_
 
 ---
 
-**Created by @create-guru** - Inspired by Nikola Tesla's inventive approach to system optimization
+**Created by @create-botter** - Inspired by Nikola Tesla's inventive approach to system optimization

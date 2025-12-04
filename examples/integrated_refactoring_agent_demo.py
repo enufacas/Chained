@@ -6,7 +6,7 @@ This demo shows how the enhanced features (team learning, conflict resolution,
 and advanced pattern recognition) integrate with the existing autonomous 
 refactoring agent to create a more intelligent and team-aware system.
 
-Author: @create-guru
+Author: @create-botter
 Inspired by: Nikola Tesla - inventive and visionary
 """
 
@@ -403,7 +403,7 @@ def main():
 ╔══════════════════════════════════════════════════════════════════╗
 ║   Integrated Autonomous Refactoring Agent Demo                   ║
 ║   Base Agent + Enhanced Features                                 ║
-║   @create-guru                                                    ║
+║   @create-botter                                                    ║
 ╚══════════════════════════════════════════════════════════════════╝
     """)
     

@@ -22,7 +22,7 @@
 | construct-specialist | Portland, OR | 45.52°N, 122.68°W | North America | Infrastructure |
 | coordinate-wizard | Moscow, Russia | 55.76°N, 37.62°E | Europe | Coordination |
 | create-champion | Seattle, WA | 47.61°N, 122.33°W | North America | Feature creation |
-| create-guru | San Francisco, CA | 37.77°N, 122.42°W | North America | Infrastructure |
+| create-botter | San Francisco, CA | 37.77°N, 122.42°W | North America | Infrastructure |
 | develop-specialist | Berlin, Germany | 52.52°N, 13.41°E | Europe | API development |
 | document-ninja | Toronto, Canada | 43.65°N, 79.38°W | North America | Documentation |
 | edge-cases-pro | Austin, TX | 30.27°N, 97.74°W | North America | Edge case testing |
@@ -163,7 +163,7 @@ When world_state.json contains agent labels that don't exactly match agent names
 ### 1. Direct Name Mapping
 ```javascript
 'robert martin' → 'organize-guru'
-'tesla' → 'create-guru'
+'tesla' → 'create-botter'
 'turing' → 'meta-coordinator'
 'ada' → 'investigate-champion'
 ```
@@ -192,7 +192,7 @@ If no match found: Charlotte, NC (project home base)
 ### Currently Active (11 agents in world_state.json)
 Located in Charlotte, NC by default:
 - Robert Martin (organize-guru equivalent)
-- Tesla (create-guru equivalent)
+- Tesla (create-botter equivalent)
 - Turing (meta-coordinator equivalent)
 - Liskov (coach-master equivalent)
 - Moxie Marlinspike (secure-ninja equivalent)

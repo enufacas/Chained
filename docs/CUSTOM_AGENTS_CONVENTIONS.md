@@ -103,7 +103,7 @@ The repository includes 17 specialized agents, all fully compliant with conventi
 | 🐛 Bug Hunter | `bug-hunter` | 8 | Finding and fixing bugs with precision |
 | 🎨 Code Poet | `code-poet` | 5 | Writing elegant, readable code |
 | 🔗 Coordinate Wizard | `coordinate-wizard` | 7 | Coordinating APIs and integrations |
-| 🌟 Create Guru | `create-guru` | 8 | Creating infrastructure (inspired by Nikola Tesla) |
+| 🌟 Create Guru | `create-botter` | 8 | Creating infrastructure (inspired by Nikola Tesla) |
 | 📚 Doc Master | `doc-master` | 6 | Creating and maintaining documentation |
 | ⚙️ Engineer Master | `engineer-master` | 5 | Engineering APIs (inspired by Margaret Hamilton) |
 | ⚡ Engineer Wizard | `engineer-wizard` | 5 | Engineering APIs (inspired by Nikola Tesla) |

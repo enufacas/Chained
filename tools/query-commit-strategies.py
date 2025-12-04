@@ -5,7 +5,7 @@ Query Learned Commit Strategies
 A utility for agents to access learned git commit strategies and get
 context-aware recommendations for their work.
 
-Created by @create-guru - Infrastructure for agent integration
+Created by @create-botter - Infrastructure for agent integration
 
 Usage:
     python query-commit-strategies.py --context feature

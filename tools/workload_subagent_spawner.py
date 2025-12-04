@@ -88,7 +88,7 @@ class WorkloadSubAgentSpawner:
             'organize-guru', 'cleaner-master', 'simplify-pro'
         ],
         'feature': [
-            'engineer-master', 'engineer-wizard', 'create-guru',
+            'engineer-master', 'engineer-wizard', 'create-botter',
             'develop-specialist', 'construct-specialist'
         ],
         'documentation': [
@@ -100,7 +100,7 @@ class WorkloadSubAgentSpawner:
             'edge-cases-pro'
         ],
         'infrastructure': [
-            'create-guru', 'infrastructure-specialist', 'tools-analyst'
+            'create-botter', 'infrastructure-specialist', 'tools-analyst'
         ],
         'refactoring': [
             'organize-guru', 'organize-specialist', 'refactor-champion',
@@ -559,7 +559,7 @@ class WorkloadSubAgentSpawner:
             'engineer-master': 'API engineering expert with systematic approach',
             'assert-specialist': 'Test coverage specialist with specification-driven approach',
             'document-ninja': 'Documentation specialist creating clear tutorials',
-            'create-guru': 'Infrastructure creation expert with visionary approach',
+            'create-botter': 'Infrastructure creation expert with visionary approach',
         }
         
         return descriptions.get(

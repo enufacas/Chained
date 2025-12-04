@@ -37,7 +37,7 @@ Print this or keep it handy! Quick lookup for key architectural concepts.
 
 | Category | Count | Examples |
 |----------|-------|----------|
-| **Infrastructure** | 9 | create-guru, engineer-master, APIs-architect |
+| **Infrastructure** | 9 | create-botter, engineer-master, APIs-architect |
 | **Security** | 5 | secure-specialist, guardian-master |
 | **Testing** | 4 | assert-specialist, validator-pro |
 | **Documentation** | 4 | support-master, clarify-champion |

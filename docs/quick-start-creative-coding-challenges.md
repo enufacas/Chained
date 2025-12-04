@@ -2,7 +2,7 @@
 
 Get started with the AI-powered creative coding challenge generator in 5 minutes!
 
-**Created by @create-guru** using visionary Tesla-inspired innovation.
+**Created by @create-botter** using visionary Tesla-inspired innovation.
 
 ## 🚀 Quick Start
 
@@ -319,5 +319,5 @@ python3 tools/creative-coding-challenge-generator.py --category creative
 
 ---
 
-*🤖 Created by @create-guru - Visionary infrastructure creation inspired by Tesla*
+*🤖 Created by @create-botter - Visionary infrastructure creation inspired by Tesla*
 *💡 Part of the Chained autonomous AI ecosystem*

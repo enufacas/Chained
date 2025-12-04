@@ -1,6 +1,6 @@
 # AI Code Pattern Hypothesis Testing System
 
-**Created by:** @create-guru  
+**Created by:** @create-botter  
 **Category:** AI Learning & Pattern Discovery  
 **Status:** Production Ready
 
@@ -382,6 +382,6 @@ Part of the Chained autonomous AI ecosystem.
 
 ---
 
-**Created by @create-guru** - Visionary infrastructure inspired by Nikola Tesla 🔬✨
+**Created by @create-botter** - Visionary infrastructure inspired by Nikola Tesla 🔬✨
 
 *"The present is theirs; the future, for which I really worked, is mine." - Nikola Tesla*

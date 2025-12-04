@@ -37,7 +37,7 @@ When creating or modifying workflows that assign work to custom agents, enforce 
    - Format: "Assigned agent: @agent-name (specialization)"
    - Example:
      ```markdown
-     **Assigned agent:** @create-guru (infrastructure creation)
+     **Assigned agent:** @create-botter (infrastructure creation)
      ```
 
 4. **Step-by-Step Instructions**

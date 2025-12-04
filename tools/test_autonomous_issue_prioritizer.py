@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Tests for Autonomous Issue Prioritizer
-Author: @create-guru (Nikola Tesla)
+Author: @create-botter (Nikola Tesla)
 
 Comprehensive test suite for the multi-armed bandit issue prioritizer.
 """

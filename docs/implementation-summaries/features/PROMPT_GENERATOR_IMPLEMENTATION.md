@@ -206,7 +206,7 @@ generator = PromptGenerator()
 prompt, template_id = generator.generate_prompt(
     issue_body="Implement dark mode",
     category="feature",
-    agent="create-guru"
+    agent="create-botter"
 )
 
 # Record

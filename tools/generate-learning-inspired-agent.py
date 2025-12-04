@@ -7,7 +7,7 @@ Hacker News and TLDR Tech. Does not use repository literals - generates
 completely new agent personalities and specializations at runtime.
 
 Part of the Chained autonomous AI ecosystem.
-Created by @create-guru - inspired by Nikola Tesla's vision for dynamic evolution.
+Created by @create-botter - inspired by Nikola Tesla's vision for dynamic evolution.
 """
 
 import json

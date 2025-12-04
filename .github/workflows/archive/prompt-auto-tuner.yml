@@ -2,7 +2,7 @@ name: "AI: Prompt Auto-Tuner"
 
 # Automatically tunes prompts based on historical performance data
 # This workflow runs periodically to evolve and optimize prompt templates
-# Created by @create-guru as part of the self-improving prompt generator
+# Created by @create-botter as part of the self-improving prompt generator
 
 on:
   # Run weekly to optimize templates based on accumulated data
@@ -182,7 +182,7 @@ jobs:
           # 🧬 Automated Prompt Tuning Report
           
           **Generated:** $(date -u +"%Y-%m-%d %H:%M UTC")
-          **By:** @create-guru (Prompt Auto-Tuner)
+          **By:** @create-botter (Prompt Auto-Tuner)
           
           ## 📊 Current Performance
           
@@ -261,12 +261,12 @@ jobs:
           success_pct=$(awk 'BEGIN {print ${{ steps.analyze.outputs.success_rate }} * 100}')
           
           # Create commit message
-          git commit -m "feat: auto-tune prompt templates (@create-guru)" \
+          git commit -m "feat: auto-tune prompt templates (@create-botter)" \
             -m "• Evolved ${{ steps.evolve.outputs.evolved_count || 0 }} templates" \
             -m "• Created ${{ steps.ab_test.outputs.test_count || 0 }} A/B tests" \
             -m "• Success rate: ${success_pct}%" \
             -m "" \
-            -m "Automated by prompt auto-tuner (@create-guru)"
+            -m "Automated by prompt auto-tuner (@create-botter)"
           
           echo "✓ Changes committed"
       
@@ -285,7 +285,7 @@ jobs:
           if [ -f /tmp/tuning_report.md ]; then
             pr_body=$(cat /tmp/tuning_report.md)
           else
-            pr_body="Automated prompt template tuning by @create-guru"
+            pr_body="Automated prompt template tuning by @create-botter"
           fi
           
           # Add workflow reference (use heredoc to avoid YAML issues with ---)

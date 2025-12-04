@@ -2,7 +2,7 @@ name: "Learning: Git Commit Strategies"
 
 # Learn optimal git commit strategies by analyzing repository history
 # Enhanced system that learns from successful merges and generates actionable recommendations
-# Created by @create-guru - Infrastructure for continuous learning and improvement
+# Created by @create-botter - Infrastructure for continuous learning and improvement
 on:
   schedule:
     # Run daily at 02:00 UTC to analyze commit patterns
@@ -224,7 +224,7 @@ jobs:
           import json
           import os
           
-          print("💡 Generating enhanced commit strategy recommendations by @create-guru...")
+          print("💡 Generating enhanced commit strategy recommendations by @create-botter...")
           
           # Load the latest learning file
           learning_file = os.environ.get('LEARNING_FILE', '')
@@ -326,7 +326,7 @@ jobs:
           data['recommendations'] = recommendations
           data['_metadata'] = {
               'note': 'Learning file generated from commit strategy analysis workflow',
-              'created_by': '@create-guru',
+              'created_by': '@create-botter',
               'workflow': 'learn-commit-strategies.yml',
               'enhanced_recommendations': True
           }
@@ -362,7 +362,7 @@ jobs:
           # Create simple issue using echo commands to avoid YAML/heredoc conflicts
           ISSUE_TITLE="📊 Learned Optimal Git Commit Strategies - $(date +%Y-%m-%d)"
           
-          echo "## 📊 Git Commit Strategy Analysis by @create-guru" > /tmp/issue.txt
+          echo "## 📊 Git Commit Strategy Analysis by @create-botter" > /tmp/issue.txt
           echo "" >> /tmp/issue.txt
           echo "The system has analyzed git commit patterns from the repository and generated actionable recommendations." >> /tmp/issue.txt
           echo "" >> /tmp/issue.txt
@@ -386,12 +386,12 @@ jobs:
           echo "" >> /tmp/issue.txt
           echo "*🤖 Created by workflow: [${{ github.workflow }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})*" >> /tmp/issue.txt
           echo "" >> /tmp/issue.txt
-          echo "*Infrastructure by **@create-guru** - Learning system for optimal git commit strategies*" >> /tmp/issue.txt
+          echo "*Infrastructure by **@create-botter** - Learning system for optimal git commit strategies*" >> /tmp/issue.txt
           
           gh issue create \
             --title "${ISSUE_TITLE}" \
             --body-file /tmp/issue.txt \
-            --label "learning,automated,copilot,analysis,create-guru" || echo "Issue creation skipped or failed"
+            --label "learning,automated,copilot,analysis,create-botter" || echo "Issue creation skipped or failed"
 
       - name: Store branch name for PR
         id: branch_info
@@ -429,7 +429,7 @@ jobs:
           git checkout -b "${BRANCH_NAME}"
           
           # Commit changes
-          git commit -m "📊 Learn commit strategies - $(date -u +%Y-%m-%d) - Analyzed $TOTAL_COMMITS commits by @create-guru"
+          git commit -m "📊 Learn commit strategies - $(date -u +%Y-%m-%d) - Analyzed $TOTAL_COMMITS commits by @create-botter"
           
           git push origin "${BRANCH_NAME}"
           
@@ -440,7 +440,7 @@ jobs:
           gh pr create \
             --title "📊 Learning Update: Git Commit Strategies - $(date -u +%Y-%m-%d)" \
             --body-file /tmp/pr_body.txt \
-            --label "automated,learning,copilot,create-guru" \
+            --label "automated,learning,copilot,create-botter" \
             --base main \
             --head "${BRANCH_NAME}"
           
@@ -456,6 +456,6 @@ jobs:
           echo "Commits: ${{ steps.analyze.outputs.total_commits }}"
           echo "Insights: ${{ steps.analyze.outputs.learning_count }}"
           echo "Recommendations: ${{ steps.recommend.outputs.recommendation_count || 0 }}"
-          echo "Infrastructure by: @create-guru"
+          echo "Infrastructure by: @create-botter"
           echo "Timestamp: $(date -u +'%Y-%m-%d %H:%M:%S UTC')"
           echo "===================="

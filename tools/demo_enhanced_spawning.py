@@ -2,7 +2,7 @@
 """
 Demo: Enhanced Sub-Agent Spawning
 
-Demonstrates the intelligent sub-agent spawning system created by @create-guru.
+Demonstrates the intelligent sub-agent spawning system created by @create-botter.
 Shows parent selection, performance learning, and enhanced spawning in action.
 
 Run: python3 tools/demo_enhanced_spawning.py
@@ -40,7 +40,7 @@ def demo_intelligent_parent_selection():
     selector = IntelligentParentSelector()
     
     # Select parents for different specializations
-    specializations = ['engineer-master', 'secure-specialist', 'create-guru']
+    specializations = ['engineer-master', 'secure-specialist', 'create-botter']
     
     for spec in specializations:
         print(f"\n🔍 Selecting parents for: {spec}")
@@ -204,7 +204,7 @@ def main():
     """Run all demos"""
     print("\n" + "=" * 70)
     print("  🚀 Enhanced Sub-Agent Spawning System Demo")
-    print("     Created by @create-guru")
+    print("     Created by @create-botter")
     print("=" * 70)
     
     print("\n💡 This demo showcases the intelligent sub-agent spawning features:")

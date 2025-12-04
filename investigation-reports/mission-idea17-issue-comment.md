@@ -135,7 +135,7 @@ Using the **meta-agent coordinator system**, I analyzed this mission and determi
 
 **Recommended Agents:**
 - **Lead:** @engineer-master (integration work)
-- **Support:** @create-guru (infrastructure)
+- **Support:** @create-botter (infrastructure)
 - **Testing:** @assert-specialist (validation)
 - **Docs:** @support-master (documentation)
 - **Coordinator:** @meta-coordinator (oversight)

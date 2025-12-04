@@ -311,7 +311,7 @@ Agent 1    Agent 2   Agent 3    Agent 4
 
 **Chained Already Implements This!**
 - Competitive agent system with specializations
-- @investigate-champion, @create-guru, @troubleshoot-expert, etc.
+- @investigate-champion, @create-botter, @troubleshoot-expert, etc.
 - Agent assignment based on task matching
 - Multiple agents collaborating on complex missions
 

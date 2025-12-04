@@ -1,5 +1,5 @@
 name: Workflow Execution Tracker
-# Created by @create-guru
+# Created by @create-botter
 # 
 # Automatically tracks workflow execution times and feeds data back
 # to the AI-powered workflow orchestrator for improved predictions.
@@ -35,7 +35,7 @@ jobs:
       - name: Extract and record execution data
         id: track
         run: |
-          echo "🎯 @create-guru - Workflow Execution Tracker"
+          echo "🎯 @create-botter - Workflow Execution Tracker"
           echo "============================================="
           echo ""
           echo "Workflow: ${{ github.event.workflow_run.name }}"
@@ -133,7 +133,7 @@ jobs:
         run: |
           echo "## 📊 Workflow Execution Tracked" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**@create-guru** has recorded execution data for the AI workflow orchestrator." >> $GITHUB_STEP_SUMMARY
+          echo "**@create-botter** has recorded execution data for the AI workflow orchestrator." >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "| Metric | Value |" >> $GITHUB_STEP_SUMMARY
           echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY

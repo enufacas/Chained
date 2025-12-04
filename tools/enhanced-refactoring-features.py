@@ -10,7 +10,7 @@ This module provides advanced capabilities for the autonomous refactoring agent:
 - Real-time feedback integration
 - A/B testing for refactoring suggestions
 
-Author: @create-guru
+Author: @create-botter
 Inspired by: Nikola Tesla - inventive and visionary approach
 """
 
@@ -670,7 +670,7 @@ def main():
     """Demo of enhanced refactoring features."""
     print("\n" + "="*70)
     print("Enhanced Autonomous Refactoring Agent Features")
-    print("@create-guru - Inventive and Visionary")
+    print("@create-botter - Inventive and Visionary")
     print("="*70)
     
     # Demo 1: Team-specific learning

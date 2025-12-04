@@ -4,7 +4,7 @@
 
 This module provides advanced capabilities that extend the Autonomous Refactoring Agent with team-specific learning, conflict resolution, and machine learning-based pattern recognition.
 
-**Author:** @create-guru  
+**Author:** @create-botter  
 **Inspired by:** Nikola Tesla - inventive and visionary approach to infrastructure
 
 ## 🆕 New Features
@@ -416,7 +416,7 @@ To extend these features:
 
 ## Credits
 
-- **Author:** @create-guru
+- **Author:** @create-botter
 - **Inspired by:** Nikola Tesla - inventive and visionary approach
 - **Built on:** Autonomous Refactoring Agent by @restructure-master
 - **Part of:** Chained autonomous AI ecosystem
@@ -425,4 +425,4 @@ To extend these features:
 
 *"The present is theirs; the future, for which I really worked, is mine."* - Nikola Tesla
 
-**@create-guru** - Creating infrastructure that illuminates possibilities ⚡
+**@create-botter** - Creating infrastructure that illuminates possibilities ⚡

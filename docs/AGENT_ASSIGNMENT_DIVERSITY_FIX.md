@@ -1,14 +1,14 @@
 # Agent Assignment Diversity Fix - Summary
 
 ## Problem Statement
-In workflow run [19402402000](https://github.com/enufacas/Chained/actions/runs/19402402000/job/55511844369#step:6:1), all 5 learning missions were assigned to the same agent (likely @create-guru or @organize-guru). This defeats the purpose of having 43+ specialized agents and was identified as a critical issue.
+In workflow run [19402402000](https://github.com/enufacas/Chained/actions/runs/19402402000/job/55511844369#step:6:1), all 5 learning missions were assigned to the same agent (likely @create-botter or @organize-guru). This defeats the purpose of having 43+ specialized agents and was identified as a critical issue.
 
 ## Root Causes Identified
 
 1. **No diversity constraint** - Old algorithm could assign all learnings to the highest-scoring agent
 2. **Deterministic learning selection** - Always selected the same learnings every workflow run
 3. **Wrong iteration approach** - Iterated through agents instead of learnings
-4. **Strict fallback** - Always defaulted to create-guru
+4. **Strict fallback** - Always defaulted to create-botter
 5. **Bug in source field handling** - Empty source caused IndexError
 
 ## Solutions Implemented
@@ -67,7 +67,7 @@ random.shuffle(learnings)  # Maximum variety!
 **File**: `tools/match-issue-to-agent.py`
 
 Improvements:
-- Diverse fallback pool: 5 agents instead of always create-guru
+- Diverse fallback pool: 5 agents instead of always create-botter
 - 80% threshold: Considers agents within 80% of max score
 - Random selection from top 5 candidates
 
@@ -132,11 +132,11 @@ Agents: assert-specialist, accelerate-master, investigate-champion,
 ### Before (Problem)
 ```
 Workflow Run 19402402000:
-  Mission 1 → @create-guru
-  Mission 2 → @create-guru  
-  Mission 3 → @create-guru
-  Mission 4 → @create-guru
-  Mission 5 → @create-guru
+  Mission 1 → @create-botter
+  Mission 2 → @create-botter  
+  Mission 3 → @create-botter
+  Mission 4 → @create-botter
+  Mission 5 → @create-botter
 
 Result: 🔴 All to ONE agent (20% of 43 agents used = 2.3%)
 ```
@@ -185,7 +185,7 @@ Plus: Different learnings selected each run for maximum variety!
 
 🎯 **Uses full pool of 43+ available agents**
 - Liberal matching considers more candidates
-- Diverse fallback prevents always-create-guru
+- Diverse fallback prevents always-create-botter
 
 📊 **Provides transparent distribution reporting**
 - Shows agent distribution summary

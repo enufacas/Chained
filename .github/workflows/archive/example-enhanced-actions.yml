@@ -1,6 +1,6 @@
 name: Example - Enhanced Custom Actions
 # This workflow demonstrates the enhanced custom GitHub Actions
-# Created by @create-guru
+# Created by @create-botter
 
 on:
   workflow_dispatch:
@@ -45,7 +45,7 @@ jobs:
             "name": "Chained",
             "type": "autonomous-ai",
             "agents": [
-              {"name": "create-guru", "specialization": "infrastructure"},
+              {"name": "create-botter", "specialization": "infrastructure"},
               {"name": "engineer-master", "specialization": "apis"}
             ],
             "metrics": {
@@ -171,7 +171,7 @@ jobs:
             import sys
             
             data = {
-                "message": "Hello from @create-guru!",
+                "message": "Hello from @create-botter!",
                 "action": "reusable-python-scripts",
                 "timestamp": "2025-11-24"
             }
@@ -243,7 +243,7 @@ jobs:
       
       - name: Create test file
         run: |
-          echo "Test file created by @create-guru" > test-git-ops.txt
+          echo "Test file created by @create-botter" > test-git-ops.txt
       
       - name: Show diff
         uses: ./.github/actions/reusable-git-operations
@@ -314,7 +314,7 @@ jobs:
           cat >> $GITHUB_STEP_SUMMARY <<'EOF'
           # Enhanced Custom Actions Test Results
           
-          **Created by @create-guru** - Visionary infrastructure inspired by Nikola Tesla
+          **Created by @create-botter** - Visionary infrastructure inspired by Nikola Tesla
           
           ## Actions Tested
           

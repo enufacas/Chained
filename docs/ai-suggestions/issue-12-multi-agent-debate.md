@@ -220,7 +220,7 @@ Topic: "Microservices vs Monolith for Agent System"
 Participants:
   - @architect-sage (Pro: Microservices)
   - @simplify-pro (Pro: Monolith)
-  - @create-guru (Moderator)
+  - @create-botter (Moderator)
 
 Key Arguments:
   Microservices: Better scalability, independent deployment

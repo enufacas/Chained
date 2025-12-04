@@ -216,7 +216,7 @@ You deeply understand the Chained autonomous AI ecosystem:
 - Learning workflows: Combined learning, analysis, knowledge graph building
 
 ### Agent Specializations
-- **Infrastructure**: APIs-architect, engineer-master, create-guru, infrastructure-specialist
+- **Infrastructure**: APIs-architect, engineer-master, create-botter, infrastructure-specialist
 - **Performance**: accelerate-master, accelerate-specialist
 - **Testing**: assert-specialist, assert-whiz, validator-pro, edge-cases-pro
 - **Security**: secure-specialist, secure-ninja, guardian-master

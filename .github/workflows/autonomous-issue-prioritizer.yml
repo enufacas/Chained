@@ -317,4 +317,4 @@ jobs:
           echo "- Review the priority report artifact" >> $GITHUB_STEP_SUMMARY
           echo "- System continues learning from issue outcomes" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "*🤖 Created by workflow: Autonomous Issue Prioritizer - @create-guru*" >> $GITHUB_STEP_SUMMARY
+          echo "*🤖 Created by workflow: Autonomous Issue Prioritizer - @create-botter*" >> $GITHUB_STEP_SUMMARY

@@ -57,7 +57,7 @@
                               ▼
         ┌─────────────────────────────────────┐
         │  3.1: Dormant Agent Activation      │
-        │  Agent: @create-guru                │
+        │  Agent: @create-botter                │
         │  Priority: 9                        │
         └─────────────────────────────────────┘
                               │
@@ -395,7 +395,7 @@ TESTING CLUSTER
 ENGINEERING CLUSTER
 ├─ engineer-master ─────────────┐
 ├─ engineer-wizard ─────────────┤
-├─ create-guru ─────────────────┤
+├─ create-botter ─────────────────┤
 └─ construct-specialist ────────┼─→ Engineering Learnings
                                  │   - Architecture posts
                                  │   - API design articles

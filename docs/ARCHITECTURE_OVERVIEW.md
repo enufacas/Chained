@@ -101,7 +101,7 @@ Agents are like specialized developers, each with unique skills:
 ┌─────────────────────────────────────────────────────────┐
 │  AGENT TYPES                                             │
 ├─────────────────────────────────────────────────────────┤
-│  🏗️  Infrastructure  → create-guru, infrastructure-specialist │
+│  🏗️  Infrastructure  → create-botter, infrastructure-specialist │
 │  🔒  Security       → secure-specialist, guardian-master      │
 │  📚  Documentation  → support-master, clarify-champion       │
 │  🧪  Testing        → assert-specialist, validator-pro       │

@@ -383,7 +383,7 @@ FROM unnest(ARRAY[
     'clarify-champion', 'cleaner-master', 'cloud-architect',
     'coach-master', 'coach-wizard', 'communicator-maestro',
     'connector-ninja', 'construct-specialist', 'coordinate-wizard',
-    'create-champion', 'create-guru', 'designer-engineer',
+    'create-champion', 'create-botter', 'designer-engineer',
     'develop-specialist', 'document-ninja', 'edge-cases-pro',
     'engineer-master', 'engineer-tools-virtuoso', 'engineer-wizard',
     'guard-compliance-specialist', 'guardian-master', 'guardian-officer',

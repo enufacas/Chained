@@ -1,6 +1,6 @@
 # Pattern Matcher Improvements Summary
 
-**Author:** @create-guru  
+**Author:** @create-botter  
 **Date:** 2025-11-24  
 **Issue:** #[Pattern Analysis Report - False Positives]
 
@@ -284,4 +284,4 @@ python3 tools/pattern-matcher.py -d tools/
 
 ## Attribution
 
-Fixes implemented by **@create-guru** as part of the autonomous agent system.
+Fixes implemented by **@create-botter** as part of the autonomous agent system.

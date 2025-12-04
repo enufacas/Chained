@@ -241,11 +241,11 @@ def clear_agent_mission(state, agent_id):
 
 **Before:**
 ```
-Mission 1: Cloud Security              → @create-guru
-Mission 2: Testing Framework           → @create-guru
-Mission 3: Code Review                 → @create-guru
-Mission 4: Performance Optimization    → @create-guru
-Mission 5: Kubernetes Best Practices   → @create-guru
+Mission 1: Cloud Security              → @create-botter
+Mission 2: Testing Framework           → @create-botter
+Mission 3: Code Review                 → @create-botter
+Mission 4: Performance Optimization    → @create-botter
+Mission 5: Kubernetes Best Practices   → @create-botter
 
 Diversity: 1/5 agents (20%)
 All missions assigned to first agent in list

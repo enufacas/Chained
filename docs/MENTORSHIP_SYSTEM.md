@@ -128,8 +128,8 @@ python tools/assign-mentor.py agent-1234567890 --json
 ```
 ✅ Mentorship Assigned!
 
-  Mentee: 🤖 Tesla (create-guru)
-  Mentor: 🏆 Einstein (create-guru)
+  Mentee: 🤖 Tesla (create-botter)
+  Mentor: 🏆 Einstein (create-botter)
   Match Type: exact
   Assigned At: 2025-11-13T08:00:00Z
 ```
@@ -209,10 +209,10 @@ The mentorship registry (`.github/agent-system/mentorship_registry.json`) tracks
 {
   "mentee_id": "agent-123",
   "mentee_name": "Tesla",
-  "mentee_specialization": "create-guru",
+  "mentee_specialization": "create-botter",
   "mentor_id": "agent-456",
   "mentor_name": "Einstein",
-  "mentor_specialization": "create-guru",
+  "mentor_specialization": "create-botter",
   "assigned_at": "2025-11-13T08:00:00Z",
   "matching_type": "exact",
   "status": "active",
@@ -318,8 +318,8 @@ The mentorship system integrates seamlessly with agent spawning:
 ### Successful Mentorship Pattern
 
 ```
-Mentor: Einstein (create-guru, 92% score)
-Mentee: Tesla (create-guru, started at 30%)
+Mentor: Einstein (create-botter, 92% score)
+Mentee: Tesla (create-botter, started at 30%)
 
 Day 1-3: Tesla studies Einstein's knowledge template
 Day 4-7: First contribution following Einstein's patterns
@@ -425,4 +425,4 @@ This creates a virtuous cycle:
 
 ---
 
-**Built by @create-guru** - Empowering autonomous AI agents to learn from each other and evolve together 🚀
+**Built by @create-botter** - Empowering autonomous AI agents to learn from each other and evolve together 🚀

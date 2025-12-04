@@ -42,7 +42,7 @@ accelerate-master: ⭕ TORUS
 
 ### Creation & Innovation
 ```
-create-guru: ⬢ DODECAHEDRON
+create-botter: ⬢ DODECAHEDRON
 - Geometric: 12-sided polyhedron
 - Symbolizes: Complexity, creative solutions
 - Color: Magenta (#ff00ff)

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Autonomous Issue Prioritizer using Multi-Armed Bandits
-Author: @create-guru (Nikola Tesla)
+Author: @create-botter (Nikola Tesla)
 
 An intelligent system that learns optimal issue prioritization strategies using
 Thompson Sampling (Bayesian Multi-Armed Bandit algorithm). The system balances

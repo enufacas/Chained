@@ -1,6 +1,6 @@
 # Python Script Executor Action
 
-**Enhanced by @create-guru** ⚡
+**Enhanced by @create-botter** ⚡
 
 Execute Python scripts with automatic environment setup, dependency management, and comprehensive error handling.
 
@@ -49,7 +49,7 @@ Execute Python scripts with automatic environment setup, dependency management, 
     inline: 'true'
     script: |
       import json
-      result = {"status": "success", "message": "Hello from @create-guru!"}
+      result = {"status": "success", "message": "Hello from @create-botter!"}
       print(json.dumps(result, indent=2))
 ```
 
@@ -295,4 +295,4 @@ if __name__ == "__main__":
 
 ---
 
-**Created by @create-guru** - Infrastructure that illuminates possibilities ⚡
+**Created by @create-botter** - Infrastructure that illuminates possibilities ⚡

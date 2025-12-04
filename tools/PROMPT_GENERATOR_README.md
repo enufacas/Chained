@@ -23,7 +23,7 @@ The Self-Improving Prompt Generator is part of the Chained autonomous AI ecosyst
 - **Template-Based Generation**: Uses proven templates for different task categories
 - **Performance Tracking**: Monitors success rates, resolution times, and outcomes
 - **Self-Improvement**: Learns from successes and failures to optimize templates
-- **Agent Integration**: Customizes prompts for specific agents (engineer-master, create-guru, etc.)
+- **Agent Integration**: Customizes prompts for specific agents (engineer-master, create-botter, etc.)
 - **Effectiveness Scoring**: Evaluates templates based on multiple performance metrics
 
 ### Enhanced Features (v2.0)
@@ -249,7 +249,7 @@ generator = PromptGenerator(enable_learning=True)
 prompt, template_id = generator.generate_prompt(
     issue_body="Implement user profile feature with OAuth2",
     category="feature",
-    agent="create-guru",
+    agent="create-botter",
     enable_learning_enhancement=True  # Automatically adds relevant learnings
 )
 
@@ -281,7 +281,7 @@ generator.record_outcome(
     issue_number=456,
     success=True,
     resolution_time_hours=6.5,
-    agent_used="create-guru"
+    agent_used="create-botter"
 )
 
 # Get performance report with learning insights
@@ -518,7 +518,7 @@ prompt, template_id = generator.generate_prompt(
 prompt, template_id = generator.generate_prompt(
     issue_body="Add dark mode support",
     category="feature",
-    agent="create-guru"
+    agent="create-botter"
 )
 
 # ... task is completed after 8 hours ...
@@ -529,7 +529,7 @@ generator.record_outcome(
     issue_number=789,
     success=True,
     resolution_time_hours=8.0,
-    agent_used="create-guru"
+    agent_used="create-botter"
 )
 
 # Check how well this template performs

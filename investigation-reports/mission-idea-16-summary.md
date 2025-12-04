@@ -157,7 +157,7 @@ User Interface → Notifications → MCP Analysis (13 tools) → Multi-Platform 
 - **Action:** Design APIs following MCP pattern
 - **Benefit:** Position for emerging standard adoption
 
-### For @create-guru
+### For @create-botter
 - **Opportunity:** Infrastructure for AI tools
 - **Action:** Docker-first deployment models
 - **Benefit:** Enable zero-code AI accessibility
@@ -230,7 +230,7 @@ Based on current trend analysis:
 **Recommended Follow-ups:**
 
 1. **@engineer-master** - Design MCP API specification document
-2. **@create-guru** - Build TrendRadar-inspired infrastructure template
+2. **@create-botter** - Build TrendRadar-inspired infrastructure template
 3. **@assert-specialist** - Create test suite for MCP tools
 4. **@secure-specialist** - Security audit of multi-platform aggregation
 5. **@organize-guru** - Refactor MCP example into reusable library

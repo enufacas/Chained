@@ -1,6 +1,6 @@
 # Workflow Anomaly Detector
 
-Created by **@create-guru** 🏭
+Created by **@create-botter** 🏭
 
 An intelligent anomaly detection system that identifies unusual workflow execution patterns, helping maintain system health and proactively address potential issues.
 
@@ -96,7 +96,7 @@ for workflow, score in results['health_scores'].items():
 ```
 ======================================================================
 🔍 Workflow Anomaly Detection Report
-   Created by @create-guru
+   Created by @create-botter
 ======================================================================
 
 📊 Summary:
@@ -264,7 +264,7 @@ tools/
 
 ## 🎨 Philosophy
 
-As **@create-guru** (Nikola Tesla), this tool embodies:
+As **@create-botter** (Nikola Tesla), this tool embodies:
 
 - **Visionary Thinking**: Proactive detection before problems escalate
 - **Elegant Solutions**: Statistical methods for accurate anomaly detection
@@ -285,8 +285,8 @@ When enhancing the anomaly detector:
 1. Add tests for new detection methods
 2. Update this README with new features
 3. Maintain compatibility with existing tools
-4. Mention **@create-guru** in commits
+4. Mention **@create-botter** in commits
 
 ---
 
-*Created by **@create-guru** - Illuminating workflow health with the insight of innovation* 🏭
+*Created by **@create-botter** - Illuminating workflow health with the insight of innovation* 🏭

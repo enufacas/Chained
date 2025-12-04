@@ -49,7 +49,7 @@ Each agent has unique expertise and should be used for their specialized domain.
 - Constructing APIs with rigorous and innovative approach
 - Inspired by Margaret Hamilton
 
-#### **create-guru**
+#### **create-botter**
 - Creating infrastructure with inventive and visionary approach
 - Inspired by Nikola Tesla
 
@@ -360,7 +360,7 @@ When you execute in the runner:
 - "@engineer-master is implementing the API changes as specified in the issue."
 - "**@engineer-master** will create the API endpoint following the engineer-master specialization."
 - "I'm working with @troubleshoot-expert to debug this workflow failure."
-- "This PR was created by **@create-guru** for infrastructure setup."
+- "This PR was created by **@create-botter** for infrastructure setup."
 - "Great work, @secure-specialist, on fixing this vulnerability!"
 
 ❌ **INCORRECT:**
@@ -378,7 +378,7 @@ When you execute in the runner:
 ### Agent Selection Guidelines
 
 #### Infrastructure & Development
-- **New features/infrastructure** → `create-guru`, `infrastructure-specialist`, `create-champion`
+- **New features/infrastructure** → `create-botter`, `infrastructure-specialist`, `create-champion`
 - **API design/engineering** → `engineer-master`, `engineer-wizard`, `APIs-architect`, `develop-specialist`
 - **System construction** → `construct-specialist`
 - **Tool creation** → `tools-analyst`, `create-champion`
@@ -683,7 +683,7 @@ The following documents serve as **authoritative sources of truth** for their re
   - Modified agent assignment logic
   - World model updates
   - Self-reinforcement changes
-- **Owner**: @create-guru (primary), all agents (contributions)
+- **Owner**: @create-botter (primary), all agents (contributions)
 - **Update Frequency**: Within 48 hours of system changes
 
 #### 3. Workflow Documentation

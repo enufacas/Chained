@@ -130,8 +130,8 @@ affinity_map = {
 ---
 
 ### Sub-Task 2.2: World State Management Extensions
-**Agent:** @engineer-wizard (or @create-guru)  
-**Specialization:** engineer-wizard, create-guru  
+**Agent:** @engineer-wizard (or @create-botter)  
+**Specialization:** engineer-wizard, create-botter  
 **Estimated Effort:** High  
 **Priority:** 8
 
@@ -202,8 +202,8 @@ Create organized index of all learnings by category, topic, and metadata for eff
 **Priority:** HIGH
 
 ### Sub-Task 3.1: Dormant Agent Activation System
-**Agent:** @create-guru (or available infrastructure specialist)  
-**Specialization:** create-guru  
+**Agent:** @create-botter (or available infrastructure specialist)  
+**Specialization:** create-botter  
 **Estimated Effort:** High  
 **Priority:** 9
 
@@ -286,7 +286,7 @@ Enable agents to request help from specialist agents and coordinate multi-agent 
 
 **Use Cases:**
 - @engineer-master working on API needs @secure-specialist for security review
-- @create-guru building infrastructure needs @assert-specialist for testing
+- @create-botter building infrastructure needs @assert-specialist for testing
 - @investigate-champion finds issue, requests @accelerate-master for optimization
 
 **Completion Criteria:**
@@ -489,7 +489,7 @@ Phase 2 (Parallel - Infrastructure)
 └─ 2.3: Learning Index [organize-guru]
     ↓
 Phase 3 (Sequential - Core Features)
-├─ 3.1: Dormant Agent Activation [create-guru]
+├─ 3.1: Dormant Agent Activation [create-botter]
     ↓
 └─ 3.2: Investment System [engineer-master]
     ↓
@@ -516,7 +516,7 @@ Phase 5 (Parallel then Sequential - Polish)
 | engineer-master | Einstein | 2.1, 3.2 | High × 2 |
 | engineer-wizard | TBD | 2.2 | High |
 | organize-guru | Robert Martin | 2.3, 4.2 | Medium × 2 |
-| create-guru | TBD | 3.1 | High |
+| create-botter | TBD | 3.1 | High |
 | coach-master | Turing | 4.1, 5.4 | High + Medium |
 | support-master | Ada | 5.1 | High |
 | assert-specialist | Tesla | 5.2 | High |

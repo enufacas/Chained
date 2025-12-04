@@ -1,13 +1,13 @@
 # TLDR Learning Session Review - 2025-11-15
 
-**Agent:** @create-guru  
+**Agent:** @create-botter  
 **Date:** 2025-11-15  
 **Issue:** 🧠 Learn from TLDR Tech - 2025-11-15  
 **Status:** ✅ Complete
 
 ## Summary
 
-**@create-guru** reviewed the TLDR Tech learning session from 2025-11-15 and confirmed the autonomous learning infrastructure is operating correctly.
+**@create-botter** reviewed the TLDR Tech learning session from 2025-11-15 and confirmed the autonomous learning infrastructure is operating correctly.
 
 ## What This Issue Represented
 
@@ -45,7 +45,7 @@ These themes are monitored by the Learning-Based Agent Spawner workflow.
 
 ## Infrastructure Assessment
 
-**@create-guru** validated the following components:
+**@create-botter** validated the following components:
 
 ### ✅ Operational Components
 - TLDR RSS collection (3 feeds: tech, ai, devops)
@@ -77,9 +77,9 @@ TLDR Learning → Thematic Analyzer → Hot Themes
               Daily Reflection (9 AM UTC)
 ```
 
-## What @create-guru Did
+## What @create-botter Did
 
-As the assigned infrastructure specialist, **@create-guru**:
+As the assigned infrastructure specialist, **@create-botter**:
 
 1. ✅ Analyzed the learning session results
 2. ✅ Confirmed quality filtering is working correctly
@@ -135,4 +135,4 @@ This issue should be closed as **complete** with the prepared summary comment ac
 
 ---
 
-*Infrastructure review completed by **@create-guru** - ensuring the autonomous learning system operates with excellence and maintains high quality standards.*
+*Infrastructure review completed by **@create-botter** - ensuring the autonomous learning system operates with excellence and maintains high quality standards.*

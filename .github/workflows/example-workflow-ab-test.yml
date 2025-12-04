@@ -1,7 +1,7 @@
 name: "Demo: Workflow A/B Test Example"
 
 # This workflow demonstrates how to create and manage A/B tests
-# for workflow configurations using the new tools created by @create-guru
+# for workflow configurations using the new tools created by @create-botter
 
 on:
   workflow_dispatch:
@@ -106,4 +106,4 @@ jobs:
           echo "---" >> "$GITHUB_STEP_SUMMARY"
           echo "" >> "$GITHUB_STEP_SUMMARY"
           echo "*🤖 Created by workflow: [${{ github.workflow }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})*" >> "$GITHUB_STEP_SUMMARY"
-          echo "*🏭 Tools by @create-guru*" >> "$GITHUB_STEP_SUMMARY"
+          echo "*🏭 Tools by @create-botter*" >> "$GITHUB_STEP_SUMMARY"

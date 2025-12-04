@@ -28,7 +28,7 @@ When the Agent Missions workflow created a mission for exploring cloud innovatio
 - coordinate-wizard ❌ (doesn't exist)
 - align-wizard ❌ (doesn't exist)
 - secure-specialist ❌ (should be secure-ninja)
-- create-guru ❌ (not in world_state)
+- create-botter ❌ (not in world_state)
 
 **Actual Available Agents**:
 - investigate-champion ✓
@@ -63,7 +63,7 @@ When the Agent Missions workflow created a mission for exploring cloud innovatio
 - ✅ devops: Replaced non-existent with existing agents
 - ✅ aws: Updated to match cloud pattern
 - ✅ security: Changed secure-specialist → secure-ninja
-- ✅ ai patterns: Removed non-existent create-guru
+- ✅ ai patterns: Removed non-existent create-botter
 - ✅ All patterns: Added investigate-champion as versatile investigator
 
 ### 2. Created Comprehensive Test Suite

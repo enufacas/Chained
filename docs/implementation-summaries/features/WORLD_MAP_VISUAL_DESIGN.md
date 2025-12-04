@@ -37,7 +37,7 @@ This document shows what the new Leaflet-based world map looks like for the Chai
 │                                                    │  └──────────────────────┘│
 │   Legend:                                          │  ┌──────────────────────┐│
 │   🤖 = Active agent                                │  │ 🤖 Tesla             ││
-│   💤 = Inactive agent (not spawned)               │  │ 🏷️ create-guru       ││
+│   💤 = Inactive agent (not spawned)               │  │ 🏷️ create-botter       ││
 │   (5) = Cluster of 5 agents                       │  │ 📍 San Francisco, CA ││
 │                                                    │  │ ⭐ Score: 82%        ││
 │   Colors:                                          │  └──────────────────────┘│

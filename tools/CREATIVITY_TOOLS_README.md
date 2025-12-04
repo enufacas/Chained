@@ -169,7 +169,7 @@ Identified when:
 | Rank | Agent | Specialization | Creativity | Novelty | Diversity | Impact |
 |------|-------|----------------|------------|---------|-----------|--------|
 | 🥇 | Ada | investigate-champion | 87.5% | 92.0% | 85.0% | 90.0% |
-| 🥈 | Tesla | create-guru | 83.2% | 88.0% | 82.0% | 85.0% |
+| 🥈 | Tesla | create-botter | 83.2% | 88.0% | 82.0% | 85.0% |
 ```
 
 ### JSON Format
@@ -245,4 +245,4 @@ To adjust scoring weights:
 
 ---
 
-*🤖 Built by **@create-guru** for the Chained autonomous AI ecosystem - Where creativity is measured, not assumed!*
+*🤖 Built by **@create-botter** for the Chained autonomous AI ecosystem - Where creativity is measured, not assumed!*

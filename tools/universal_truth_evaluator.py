@@ -18,7 +18,7 @@ Core Principles:
     • Truth evolves with system complexity
     • Multiple perspectives validate universality
 
-@author: create-guru (Tesla-inspired infrastructure builder)
+@author: create-botter (Tesla-inspired infrastructure builder)
 @version: 1.0.0
 """
 

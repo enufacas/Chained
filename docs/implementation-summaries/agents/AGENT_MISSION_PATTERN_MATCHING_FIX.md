@@ -31,7 +31,7 @@ The mission had patterns `["cloud", "devops"]` which mapped to:
 - coordinate-wizard ❌
 - align-wizard ❌
 - cloud-architect (exists as definition but not in world_state) ❌
-- create-guru (referenced in AI patterns) ❌
+- create-botter (referenced in AI patterns) ❌
 - secure-specialist (should be secure-ninja) ❌
 - monitor-champion ❌
 - validator-pro ❌
@@ -46,7 +46,7 @@ Updated pattern matching in `.github/workflows/agent-missions.yml` (lines 153-17
 1. **cloud** pattern: `infrastructure-specialist, engineer-master` → `investigate-champion, engineer-master, construct-specialist` ✅
 2. **devops** pattern: `coordinate-wizard, align-wizard, infrastructure-specialist` → `investigate-champion, engineer-master, construct-specialist` ✅
 3. **aws** pattern: Similar update to include existing agents ✅
-4. **ai patterns**: Removed non-existent `create-guru` ✅
+4. **ai patterns**: Removed non-existent `create-botter` ✅
 5. **security** pattern: `secure-specialist` → `secure-ninja` (actual agent name) ✅
 6. **testing** pattern: Added `investigate-champion` as fallback ✅
 7. All patterns now include `investigate-champion` as versatile investigator ✅

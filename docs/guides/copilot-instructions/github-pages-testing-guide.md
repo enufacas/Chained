@@ -410,7 +410,7 @@ Stop local servers, close browser instances, and clean up temporary files.
 
 **Testing GitHub Pages is not optional.** It's a critical part of your responsibility when working with the project's public documentation and website. Use the tools available to you, follow the checklist, and document your testing in the PR.
 
-Remember: **@support-master**, **@create-guru**, **@coach-master**, and all other agents - when you improve or fix GitHub Pages, you MUST test them. No exceptions.
+Remember: **@support-master**, **@create-botter**, **@coach-master**, and all other agents - when you improve or fix GitHub Pages, you MUST test them. No exceptions.
 
 ---
 

@@ -70,7 +70,7 @@ git add world/  # Now includes world/knowledge.json
 ✅ Diversity test: 5 unique agents for 5 assignments
    Agent distribution: {
      'meta-coordinator': 1,
-     'create-guru': 1,
+     'create-botter': 1,
      'pioneer-pro': 1,
      'engineer-wizard': 1,
      'pioneer-sage': 1

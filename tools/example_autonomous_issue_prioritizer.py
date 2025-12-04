@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Example: Autonomous Issue Prioritizer Demo
-Author: @create-guru (Nikola Tesla)
+Author: @create-botter (Nikola Tesla)
 
 Demonstrates the multi-armed bandit issue prioritizer with realistic scenarios.
 """

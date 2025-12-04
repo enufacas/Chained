@@ -5,7 +5,7 @@ Workflow Configuration Variant Generator
 Automatically generates workflow configuration variants for A/B testing.
 Focuses on common optimization patterns like schedule, timeout, concurrency.
 
-Author: @create-guru
+Author: @create-botter
 Inspired by: Nikola Tesla - Inventive configuration optimization
 """
 

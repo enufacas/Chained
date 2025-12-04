@@ -813,7 +813,7 @@
             "id": "test-5-subtask-1",
             "description": "Infrastructure work: Implement infrastructure and tooling for: Build authentication API with security audit and comprehensive testing",
             "required_specializations": [
-              "create-guru",
+              "create-botter",
               "engineer-master",
               "engineer-wizard"
             ],
@@ -878,7 +878,7 @@
         "estimated_duration": "long (1-3 days)",
         "required_agents": [
           "engineer-wizard",
-          "create-guru",
+          "create-botter",
           "secure-specialist",
           "engineer-master",
           "monitor-champion"
@@ -902,7 +902,7 @@
             "id": "test-5-subtask-1",
             "description": "Infrastructure work: Implement infrastructure and tooling for: Build authentication API with security audit and comprehensive testing",
             "required_specializations": [
-              "create-guru",
+              "create-botter",
               "engineer-master",
               "engineer-wizard"
             ],
@@ -967,7 +967,7 @@
         "estimated_duration": "long (1-3 days)",
         "required_agents": [
           "monitor-champion",
-          "create-guru",
+          "create-botter",
           "engineer-master",
           "secure-specialist",
           "engineer-wizard"
@@ -991,7 +991,7 @@
             "id": "test-5-subtask-1",
             "description": "Infrastructure work: Implement infrastructure and tooling for: Build authentication API with security audit and comprehensive testing",
             "required_specializations": [
-              "create-guru",
+              "create-botter",
               "engineer-master",
               "engineer-wizard"
             ],
@@ -1059,7 +1059,7 @@
           "secure-specialist",
           "monitor-champion",
           "engineer-master",
-          "create-guru"
+          "create-botter"
         ]
       },
       "assignments": {
@@ -1080,7 +1080,7 @@
             "id": "test-5-subtask-1",
             "description": "Infrastructure work: Implement infrastructure and tooling for: Build authentication API with security audit and comprehensive testing",
             "required_specializations": [
-              "create-guru",
+              "create-botter",
               "engineer-master",
               "engineer-wizard"
             ],
@@ -1146,7 +1146,7 @@
         "required_agents": [
           "engineer-master",
           "monitor-champion",
-          "create-guru",
+          "create-botter",
           "engineer-wizard",
           "secure-specialist"
         ]

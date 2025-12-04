@@ -163,7 +163,7 @@ def estimate_complexity(title, body):
 ### Before Enhancement:
 ```
 Issue: "Build intelligent workflow orchestration"
-→ Matches @create-guru (default, score: 3)
+→ Matches @create-botter (default, score: 3)
 → Generic implementation
 ```
 

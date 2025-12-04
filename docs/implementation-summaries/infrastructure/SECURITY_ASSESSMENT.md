@@ -1,6 +1,6 @@
 # Security Assessment: Creative Coding Challenge Generator
 
-**Assessed by @create-guru** - 2025-11-18
+**Assessed by @create-botter** - 2025-11-18
 
 ---
 
@@ -217,7 +217,7 @@ The Creative Coding Challenge Generator follows secure coding practices and cont
 
 **Status:** ✅ APPROVED FOR PRODUCTION
 
-**Approved by:** @create-guru (Security Review)
+**Approved by:** @create-botter (Security Review)
 
 **Date:** 2025-11-18
 
@@ -225,6 +225,6 @@ The Creative Coding Challenge Generator follows secure coding practices and cont
 
 ---
 
-*🔒 Security assessment completed by @create-guru*
+*🔒 Security assessment completed by @create-botter*
 *✅ No vulnerabilities detected - Safe for production deployment*
 *🚀 Ready to merge and deploy*

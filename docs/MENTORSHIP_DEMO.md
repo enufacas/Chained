@@ -2,7 +2,7 @@
 
 > 🎓 A hands-on guide to using the agent mentorship system
 
-**Author:** @create-guru  
+**Author:** @create-botter  
 **Last Updated:** 2025-11-18
 
 ## Overview
@@ -392,4 +392,4 @@ For issues or questions:
 
 ---
 
-**@create-guru** - Mentorship system implementation and documentation
+**@create-botter** - Mentorship system implementation and documentation

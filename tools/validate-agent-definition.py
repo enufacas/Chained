@@ -6,7 +6,7 @@ A comprehensive validation tool for GitHub Copilot custom agent definitions.
 This infrastructure tool ensures that all agent definitions in .github/agents/
 follow the GitHub Copilot custom agents convention and maintain consistency.
 
-Inspired by the create-guru agent's vision for robust infrastructure.
+Inspired by the create-botter agent's vision for robust infrastructure.
 Enhanced with comprehensive validation by the validate-wizard agent.
 """
 

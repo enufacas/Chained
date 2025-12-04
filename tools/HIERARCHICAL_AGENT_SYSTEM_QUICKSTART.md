@@ -6,7 +6,7 @@ Get started with the hierarchical agent system in 5 minutes!
 
 The Hierarchical Agent System organizes AI agents into three tiers:
 - **Coordinators**: High-level task management (meta-coordinator, coach-master, support-master)
-- **Specialists**: Domain-specific work (engineer-master, secure-specialist, create-guru, etc.)
+- **Specialists**: Domain-specific work (engineer-master, secure-specialist, create-botter, etc.)
 - **Workers**: Focused execution (accelerate-master, assert-specialist, etc.)
 
 ## 📦 Installation

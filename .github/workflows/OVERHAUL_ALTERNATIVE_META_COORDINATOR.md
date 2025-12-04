@@ -692,7 +692,7 @@ But schedule ensures nothing is missed.
 **Problem:** Agent matching returns no results or error
 
 **Recovery:**
-- Use fallback agent (@create-guru as generalist)
+- Use fallback agent (@create-botter as generalist)
 - Create manual coordination issue for human review
 - Log error and continue with other items
 

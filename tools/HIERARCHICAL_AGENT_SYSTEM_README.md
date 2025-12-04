@@ -57,7 +57,7 @@ The Hierarchical Agent System implements a true multi-tier agent organization fo
 - **Agents**:
   - `engineer-master`, `engineer-wizard`: API and infrastructure
   - `secure-specialist`: Security implementation
-  - `create-guru`: Feature creation
+  - `create-botter`: Feature creation
   - `organize-guru`: Code organization
   - `investigate-champion`: Analysis and investigation
   - `monitor-champion`: System monitoring
@@ -468,7 +468,7 @@ plan, chain = system.create_hierarchical_plan(
 # Level 1 (Specialists):
 #   - secure-specialist: Security audit
 #   - engineer-master: API design
-#   - create-guru: Database schema
+#   - create-botter: Database schema
 # Level 2 (Workers):
 #   - assert-specialist: Unit tests (delegated by engineer-master)
 #   - assert-specialist: Integration tests (delegated by secure-specialist)

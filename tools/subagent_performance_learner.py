@@ -5,7 +5,7 @@ Sub-Agent Performance Learner - Learn from Sub-Agent Successes and Failures
 Analyzes sub-agent performance to improve future spawning decisions.
 Tracks patterns, success rates, and optimal conditions for sub-agent effectiveness.
 
-Created by @create-guru - Inventive and visionary, building adaptive systems.
+Created by @create-botter - Inventive and visionary, building adaptive systems.
 
 Features:
 - Historical performance tracking

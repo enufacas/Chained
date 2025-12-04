@@ -286,7 +286,7 @@ Result:
 
 ```
 Integration Lead: @engineer-master
-Support: @create-guru (infrastructure)
+Support: @create-botter (infrastructure)
 Testing: @assert-specialist
 Documentation: @support-master
 
@@ -383,7 +383,7 @@ Coordinator: @meta-coordinator (oversight)
 |---------|-------------|-------|---------|----------|---------|
 | idea:17 | meta-coordinator | investigate-champion | 97/100 | 4h | ✅ |
 | idea:16 | N/A | investigate-champion | 95/100 | 4h | ✅ |
-| idea:15 | N/A | create-guru | 92/100 | 8h | ✅ |
+| idea:15 | N/A | create-botter | 92/100 | 8h | ✅ |
 
 **Insight:** Meta-coordination adds value through validation and integration planning without adding overhead.
 

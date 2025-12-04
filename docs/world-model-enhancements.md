@@ -40,7 +40,7 @@ Enhanced all regions with:
   "cost_multiplier": 2.0,
   "agent_capacity": 20,
   "specialization_bonuses": {
-    "create-guru": 1.5,
+    "create-botter": 1.5,
     "pioneer-pro": 1.4,
     "engineer-master": 1.3
   }

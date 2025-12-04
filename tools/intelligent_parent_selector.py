@@ -6,7 +6,7 @@ Selects optimal parent agents for sub-agent spawning using multi-criteria
 scoring algorithm. Considers performance history, specialization match,
 current workload, and collaboration potential.
 
-Created by @create-guru - Inventive and visionary infrastructure development.
+Created by @create-botter - Inventive and visionary infrastructure development.
 
 Features:
 - Multi-criteria parent scoring (performance, workload, compatibility)

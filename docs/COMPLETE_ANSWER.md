@@ -102,7 +102,7 @@ Please add a search box to the docs index page.
 
 **What happens**:
 - System analyzes: "search", "documentation", "docs"
-- Likely assigns: `@document-ninja` or `@create-guru`
+- Likely assigns: `@document-ninja` or `@create-botter`
 - Result: PR with search functionality in ~20 minutes
 
 ---
@@ -164,7 +164,7 @@ The intelligent matching system (`tools/match-issue-to-agent.py`) uses:
 3. **Confidence Scoring**:
    - High confidence: score ≥ 5
    - Medium confidence: score ≥ 3
-   - Low confidence: defaults to `@create-guru`
+   - Low confidence: defaults to `@create-botter`
 4. **Agent Selection**: Picks the agent with the highest score
 
 ### Example Scoring:
@@ -184,7 +184,7 @@ For issue: "Optimize the 3D rendering in organism.html - too slow on mobile"
 The system has specialized agents for every domain:
 
 ### 🏗️ Infrastructure (9 agents)
-`@APIs-architect`, `@create-guru`, `@create-champion`, `@construct-specialist`, `@develop-specialist`, `@engineer-master`, `@engineer-wizard`, `@infrastructure-specialist`, `@tools-analyst`
+`@APIs-architect`, `@create-botter`, `@create-champion`, `@construct-specialist`, `@develop-specialist`, `@engineer-master`, `@engineer-wizard`, `@infrastructure-specialist`, `@tools-analyst`
 
 ### ⚡ Performance (2 agents)
 `@accelerate-master`, `@accelerate-specialist`

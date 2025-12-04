@@ -21,7 +21,7 @@ Examples:
 - `assert-specialist` → Octahedron (multi-faceted testing)
 - `secure-specialist` → Cone (pointed vigilance)
 - `accelerate-master` → Torus (continuous flow)
-- `create-guru` → Dodecahedron (complex creativity)
+- `create-botter` → Dodecahedron (complex creativity)
 - `pioneer-sage` → Star (shining innovation)
 - And 9 more!
 

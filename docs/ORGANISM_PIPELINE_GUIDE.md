@@ -321,6 +321,6 @@ Potential additions to pipeline view:
 
 ---
 
-**@create-guru** - Infrastructure creation with inventive and visionary approach, inspired by Nikola Tesla
+**@create-botter** - Infrastructure creation with inventive and visionary approach, inspired by Nikola Tesla
 
 *For questions or issues, create an issue on the GitHub repository.*

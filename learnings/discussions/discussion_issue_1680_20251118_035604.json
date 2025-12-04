@@ -3,7 +3,7 @@
   "issue_title": "Update organism page",
   "issue_labels": [
     "copilot-assigned",
-    "agent:create-guru"
+    "agent:create-botter"
   ],
   "total_comments": 1,
   "participants": [
@@ -15,8 +15,8 @@
       "issue_number": 1680,
       "issue_title": "Update organism page",
       "insight_type": "agent_behavior",
-      "content": "-- COPILOT_AGENT:create-guru -->\n\n> **\ud83e\udd16 Agent Assignment**\n> \n> This issue has been assigned to GitHub Copilot with the **\ud83c\udfed create-guru** custom agent profile",
-      "context": "<!-- COPILOT_AGENT:create-guru -->\n\n> **\ud83e\udd16 Agent Assignment**\n> \n> This issue has been assigned to GitHub Copilot with the **\ud83c\udfed create-guru** custom agent profile.\n> \n> **@create-guru** - Please use the",
+      "content": "-- COPILOT_AGENT:create-botter -->\n\n> **\ud83e\udd16 Agent Assignment**\n> \n> This issue has been assigned to GitHub Copilot with the **\ud83c\udfed create-botter** custom agent profile",
+      "context": "<!-- COPILOT_AGENT:create-botter -->\n\n> **\ud83e\udd16 Agent Assignment**\n> \n> This issue has been assigned to GitHub Copilot with the **\ud83c\udfed create-botter** custom agent profile.\n> \n> **@create-botter** - Please use the",
       "participants": [
         "issue_author"
       ],
@@ -31,8 +31,8 @@
       "issue_number": 1680,
       "issue_title": "Update organism page",
       "insight_type": "process",
-      "content": "> \n> **@create-guru** - Please use the specialized approach and tools defined in [`",
-      "context": "<!-- COPILOT_AGENT:create-guru -->\n\n> **\ud83e\udd16 Agent Assignment**\n> \n> This issue has been assigned to GitHub Copilot with the **\ud83c\udfed create-guru** custom agent profile.\n> \n> **@create-guru** - Please use the",
+      "content": "> \n> **@create-botter** - Please use the specialized approach and tools defined in [`",
+      "context": "<!-- COPILOT_AGENT:create-botter -->\n\n> **\ud83e\udd16 Agent Assignment**\n> \n> This issue has been assigned to GitHub Copilot with the **\ud83c\udfed create-botter** custom agent profile.\n> \n> **@create-botter** - Please use the",
       "participants": [
         "issue_author"
       ],
@@ -44,8 +44,8 @@
       "issue_number": 1680,
       "issue_title": "Update organism page",
       "insight_type": "agent_behavior",
-      "content": "github/agents/create-guru",
-      "context": "<!-- COPILOT_AGENT:create-guru -->\n\n> **\ud83e\udd16 Agent Assignment**\n> \n> This issue has been assigned to GitHub Copilot with the **\ud83c\udfed create-guru** custom agent profile.\n> \n> **@create-guru** - Please use the",
+      "content": "github/agents/create-botter",
+      "context": "<!-- COPILOT_AGENT:create-botter -->\n\n> **\ud83e\udd16 Agent Assignment**\n> \n> This issue has been assigned to GitHub Copilot with the **\ud83c\udfed create-botter** custom agent profile.\n> \n> **@create-botter** - Please use the",
       "participants": [
         "issue_author"
       ],
@@ -60,8 +60,8 @@
       "issue_number": 1680,
       "issue_title": "Update organism page",
       "insight_type": "agent_behavior",
-      "content": "github/agents/create-guru",
-      "context": "<!-- COPILOT_AGENT:create-guru -->\n\n> **\ud83e\udd16 Agent Assignment**\n> \n> This issue has been assigned to GitHub Copilot with the **\ud83c\udfed create-guru** custom agent profile.\n> \n> **@create-guru** - Please use the",
+      "content": "github/agents/create-botter",
+      "context": "<!-- COPILOT_AGENT:create-botter -->\n\n> **\ud83e\udd16 Agent Assignment**\n> \n> This issue has been assigned to GitHub Copilot with the **\ud83c\udfed create-botter** custom agent profile.\n> \n> **@create-botter** - Please use the",
       "participants": [
         "issue_author"
       ],
@@ -77,7 +77,7 @@
       "issue_title": "Update organism page",
       "insight_type": "process",
       "content": "html to build the recent workflow runs",
-      "context": "<!-- COPILOT_AGENT:create-guru -->\n\n> **\ud83e\udd16 Agent Assignment**\n> \n> This issue has been assigned to GitHub Copilot with the **\ud83c\udfed create-guru** custom agent profile.\n> \n> **@create-guru** - Please use the",
+      "context": "<!-- COPILOT_AGENT:create-botter -->\n\n> **\ud83e\udd16 Agent Assignment**\n> \n> This issue has been assigned to GitHub Copilot with the **\ud83c\udfed create-botter** custom agent profile.\n> \n> **@create-botter** - Please use the",
       "participants": [
         "issue_author"
       ],
@@ -93,7 +93,7 @@
       "issue_title": "Update organism page",
       "insight_type": "agent_behavior",
       "content": "I would like to more systematically represent the recent agent activity on the organism github page",
-      "context": "<!-- COPILOT_AGENT:create-guru -->\n\n> **\ud83e\udd16 Agent Assignment**\n> \n> This issue has been assigned to GitHub Copilot with the **\ud83c\udfed create-guru** custom agent profile.\n> \n> **@create-guru** - Please use the",
+      "context": "<!-- COPILOT_AGENT:create-botter -->\n\n> **\ud83e\udd16 Agent Assignment**\n> \n> This issue has been assigned to GitHub Copilot with the **\ud83c\udfed create-botter** custom agent profile.\n> \n> **@create-botter** - Please use the",
       "participants": [
         "issue_author"
       ],
@@ -109,7 +109,7 @@
       "issue_title": "Update organism page",
       "insight_type": "process",
       "content": "I would like to see more of a 3d pipeline grid style layout where those agent within a run are building those PRs to accomplish those issues",
-      "context": "<!-- COPILOT_AGENT:create-guru -->\n\n> **\ud83e\udd16 Agent Assignment**\n> \n> This issue has been assigned to GitHub Copilot with the **\ud83c\udfed create-guru** custom agent profile.\n> \n> **@create-guru** - Please use the",
+      "context": "<!-- COPILOT_AGENT:create-botter -->\n\n> **\ud83e\udd16 Agent Assignment**\n> \n> This issue has been assigned to GitHub Copilot with the **\ud83c\udfed create-botter** custom agent profile.\n> \n> **@create-botter** - Please use the",
       "participants": [
         "issue_author"
       ],
@@ -124,7 +124,7 @@
       "issue_title": "Update organism page",
       "insight_type": "process",
       "content": "Please also create a visual object for Missions please review available data here docs/DATA_STORAGE_LIFECYCLE",
-      "context": "<!-- COPILOT_AGENT:create-guru -->\n\n> **\ud83e\udd16 Agent Assignment**\n> \n> This issue has been assigned to GitHub Copilot with the **\ud83c\udfed create-guru** custom agent profile.\n> \n> **@create-guru** - Please use the",
+      "context": "<!-- COPILOT_AGENT:create-botter -->\n\n> **\ud83e\udd16 Agent Assignment**\n> \n> This issue has been assigned to GitHub Copilot with the **\ud83c\udfed create-botter** custom agent profile.\n> \n> **@create-botter** - Please use the",
       "participants": [
         "issue_author"
       ],
@@ -138,7 +138,7 @@
       "issue_number": 1680,
       "issue_title": "Update organism page",
       "insight_type": "agent_behavior",
-      "content": "## \ud83e\udde0 Intelligent Agent Matching\n\nThis issue has been analyzed and matched to the \ud83c\udfed **@create-guru** specialization:\n\n- **Agent**: \ud83c\udfed **@create-guru**\n- **Match Confidence**: high\n- **Match Score**: 8\n- **Description**: Specialized agent for creating infrastructure",
+      "content": "## \ud83e\udde0 Intelligent Agent Matching\n\nThis issue has been analyzed and matched to the \ud83c\udfed **@create-botter** specialization:\n\n- **Agent**: \ud83c\udfed **@create-botter**\n- **Match Confidence**: high\n- **Match Score**: 8\n- **Description**: Specialized agent for creating infrastructure",
       "context": "\ud83e\udd16 **Copilot Assigned Successfully**\n\nGitHub Copilot has been automatically assigned to this issue via the official GitHub GraphQL API.\n\n## \ud83e\udde0 Intelligent Agent Matching\n\nThis issue has been analyzed an",
       "participants": [
         "enufacas"
@@ -168,7 +168,7 @@
       "issue_number": 1680,
       "issue_title": "Update organism page",
       "insight_type": "agent_behavior",
-      "content": "github/agents/create-guru",
+      "content": "github/agents/create-botter",
       "context": "\ud83e\udd16 **Copilot Assigned Successfully**\n\nGitHub Copilot has been automatically assigned to this issue via the official GitHub GraphQL API.\n\n## \ud83e\udde0 Intelligent Agent Matching\n\nThis issue has been analyzed an",
       "participants": [
         "enufacas"
@@ -184,7 +184,7 @@
       "issue_number": 1680,
       "issue_title": "Update organism page",
       "insight_type": "agent_behavior",
-      "content": "github/agents/create-guru",
+      "content": "github/agents/create-botter",
       "context": "\ud83e\udd16 **Copilot Assigned Successfully**\n\nGitHub Copilot has been automatically assigned to this issue via the official GitHub GraphQL API.\n\n## \ud83e\udde0 Intelligent Agent Matching\n\nThis issue has been analyzed an",
       "participants": [
         "enufacas"
@@ -200,7 +200,7 @@
       "issue_number": 1680,
       "issue_title": "Update organism page",
       "insight_type": "agent_behavior",
-      "content": "md)\n- **Assignment Method**: Generic Copilot with agent directives\n\n**IMPORTANT**: Always mention **@create-guru** by name in all conversations related to this issue",
+      "content": "md)\n- **Assignment Method**: Generic Copilot with agent directives\n\n**IMPORTANT**: Always mention **@create-botter** by name in all conversations related to this issue",
       "context": "\ud83e\udd16 **Copilot Assigned Successfully**\n\nGitHub Copilot has been automatically assigned to this issue via the official GitHub GraphQL API.\n\n## \ud83e\udde0 Intelligent Agent Matching\n\nThis issue has been analyzed an",
       "participants": [
         "enufacas"
@@ -215,7 +215,7 @@
       "issue_number": 1680,
       "issue_title": "Update organism page",
       "insight_type": "agent_behavior",
-      "content": "## \ud83c\udfaf Copilot Agent Directive\n\n**@create-guru** - Please use the **create-guru** custom agent profile from `",
+      "content": "## \ud83c\udfaf Copilot Agent Directive\n\n**@create-botter** - Please use the **create-botter** custom agent profile from `",
       "context": "\ud83e\udd16 **Copilot Assigned Successfully**\n\nGitHub Copilot has been automatically assigned to this issue via the official GitHub GraphQL API.\n\n## \ud83e\udde0 Intelligent Agent Matching\n\nThis issue has been analyzed an",
       "participants": [
         "enufacas"
@@ -230,7 +230,7 @@
       "issue_number": 1680,
       "issue_title": "Update organism page",
       "insight_type": "agent_behavior",
-      "content": "github/agents/create-guru",
+      "content": "github/agents/create-botter",
       "context": "\ud83e\udd16 **Copilot Assigned Successfully**\n\nGitHub Copilot has been automatically assigned to this issue via the official GitHub GraphQL API.\n\n## \ud83e\udde0 Intelligent Agent Matching\n\nThis issue has been analyzed an",
       "participants": [
         "enufacas"
@@ -261,7 +261,7 @@
       "issue_number": 1680,
       "issue_title": "Update organism page",
       "insight_type": "technical",
-      "content": "The implementation should align with the [create-guru agent definition](https://github",
+      "content": "The implementation should align with the [create-botter agent definition](https://github",
       "context": "\ud83e\udd16 **Copilot Assigned Successfully**\n\nGitHub Copilot has been automatically assigned to this issue via the official GitHub GraphQL API.\n\n## \ud83e\udde0 Intelligent Agent Matching\n\nThis issue has been analyzed an",
       "participants": [
         "enufacas"
@@ -277,7 +277,7 @@
       "issue_number": 1680,
       "issue_title": "Update organism page",
       "insight_type": "agent_behavior",
-      "content": "github/agents/create-guru",
+      "content": "github/agents/create-botter",
       "context": "\ud83e\udd16 **Copilot Assigned Successfully**\n\nGitHub Copilot has been automatically assigned to this issue via the official GitHub GraphQL API.\n\n## \ud83e\udde0 Intelligent Agent Matching\n\nThis issue has been analyzed an",
       "participants": [
         "enufacas"
@@ -293,7 +293,7 @@
       "issue_number": 1680,
       "issue_title": "Update organism page",
       "insight_type": "agent_behavior",
-      "content": "\u2705 **@create-guru** will analyze the issue requirements using the create-guru specialization\n2",
+      "content": "\u2705 **@create-botter** will analyze the issue requirements using the create-botter specialization\n2",
       "context": "\ud83e\udd16 **Copilot Assigned Successfully**\n\nGitHub Copilot has been automatically assigned to this issue via the official GitHub GraphQL API.\n\n## \ud83e\udde0 Intelligent Agent Matching\n\nThis issue has been analyzed an",
       "participants": [
         "enufacas"
@@ -306,7 +306,7 @@
       "issue_number": 1680,
       "issue_title": "Update organism page",
       "insight_type": "process",
-      "content": "\ud83d\udcbb **@create-guru** will create a branch and implement the solution following the create-guru approach\n3",
+      "content": "\ud83d\udcbb **@create-botter** will create a branch and implement the solution following the create-botter approach\n3",
       "context": "\ud83e\udd16 **Copilot Assigned Successfully**\n\nGitHub Copilot has been automatically assigned to this issue via the official GitHub GraphQL API.\n\n## \ud83e\udde0 Intelligent Agent Matching\n\nThis issue has been analyzed an",
       "participants": [
         "enufacas"
@@ -319,7 +319,7 @@
       "issue_number": 1680,
       "issue_title": "Update organism page",
       "insight_type": "technical",
-      "content": "\ud83d\udcdd **@create-guru** will open a PR with the implementation\n4",
+      "content": "\ud83d\udcdd **@create-botter** will open a PR with the implementation\n4",
       "context": "\ud83e\udd16 **Copilot Assigned Successfully**\n\nGitHub Copilot has been automatically assigned to this issue via the official GitHub GraphQL API.\n\n## \ud83e\udde0 Intelligent Agent Matching\n\nThis issue has been analyzed an",
       "participants": [
         "enufacas"
@@ -347,7 +347,7 @@
       "issue_number": 1680,
       "issue_title": "Update organism page",
       "insight_type": "agent_behavior",
-      "content": "\u2705 Issue will be automatically closed when complete\n\n**Estimated time:** Copilot typically starts work within a few minutes\n**Assigned agent:** **@create-guru** (create-guru specialization)\n**Assigned at:** 2025-11-18 03:37:13 UTC\n\n---\n*\ud83e\udd16 Automated via intelligent agent matching + GitHub GraphQL API with direct custom agent support*",
+      "content": "\u2705 Issue will be automatically closed when complete\n\n**Estimated time:** Copilot typically starts work within a few minutes\n**Assigned agent:** **@create-botter** (create-botter specialization)\n**Assigned at:** 2025-11-18 03:37:13 UTC\n\n---\n*\ud83e\udd16 Automated via intelligent agent matching + GitHub GraphQL API with direct custom agent support*",
       "context": "\ud83e\udd16 **Copilot Assigned Successfully**\n\nGitHub Copilot has been automatically assigned to this issue via the official GitHub GraphQL API.\n\n## \ud83e\udde0 Intelligent Agent Matching\n\nThis issue has been analyzed an",
       "participants": [
         "enufacas"

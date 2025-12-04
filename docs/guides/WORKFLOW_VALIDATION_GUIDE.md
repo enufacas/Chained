@@ -277,4 +277,4 @@ This prevents workflow failures and maintains repository health!
 
 ---
 
-*Built by **@create-guru** - Infrastructure for reliable automation*
+*Built by **@create-botter** - Infrastructure for reliable automation*

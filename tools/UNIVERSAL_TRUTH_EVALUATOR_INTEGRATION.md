@@ -271,6 +271,6 @@ See [README](./UNIVERSAL_TRUTH_EVALUATOR_README.md#-future-enhancements) for pla
 
 ---
 
-**Created by**: @create-guru  
+**Created by**: @create-botter  
 **Version**: 1.0.0  
 **Last Updated**: 2025-11-22

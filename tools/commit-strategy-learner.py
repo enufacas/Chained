@@ -7,7 +7,7 @@ from successful merges. This system analyzes commit patterns, correlates them
 with merge success, and generates actionable recommendations that evolve over time.
 
 Inspired by Tesla's approach: innovative, elegant, and forward-thinking.
-Enhanced by @create-guru with autonomous learning capabilities.
+Enhanced by @create-botter with autonomous learning capabilities.
 
 Architecture:
 - CommitStrategyAnalyzer: Core analysis engine with trend detection

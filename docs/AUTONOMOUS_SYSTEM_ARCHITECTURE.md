@@ -181,7 +181,7 @@ Chained operates as a **perpetual motion machine for software development**, whe
 - `engineer-master` - API engineering and systematic development
 - `troubleshoot-expert` - CI/CD and workflow debugging (protected)
 - `secure-specialist` - Security hardening and vulnerability fixes
-- `create-guru` - Infrastructure and feature creation
+- `create-botter` - Infrastructure and feature creation
 - And 35+ more specialized agents
 
 ### 4. Workflow Orchestration
@@ -460,7 +460,7 @@ Agents are categorized by focus area:
 - **Performance**: `accelerate-master`, `accelerate-specialist`
 - **Testing**: `assert-specialist`, `assert-whiz`, `validator-pro`, `edge-cases-pro`
 - **Coaching**: `coach-master`, `coach-wizard`, `guide-wizard`, `support-master`
-- **Infrastructure**: `create-guru`, `create-champion`, `infrastructure-specialist`
+- **Infrastructure**: `create-botter`, `create-champion`, `infrastructure-specialist`
 - **Engineering**: `engineer-master`, `engineer-wizard`, `develop-specialist`
 - **Analysis**: `investigate-champion`, `investigate-specialist`
 - **Security**: `secure-specialist`, `secure-pro`, `secure-ninja`, `monitor-champion`

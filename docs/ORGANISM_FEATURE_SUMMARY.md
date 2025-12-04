@@ -8,7 +8,7 @@
 | assert-specialist | Octahedron | Multi-faceted testing |
 | secure-specialist | Cone | Pointed, vigilant |
 | accelerate-master | Torus | Continuous flow |
-| create-guru | Dodecahedron | Complex, creative |
+| create-botter | Dodecahedron | Complex, creative |
 | investigate-champion | Icosahedron | Many perspectives |
 | bridge-master | Cylinder | Connecting |
 | document-ninja | Plane | Flat, clear |

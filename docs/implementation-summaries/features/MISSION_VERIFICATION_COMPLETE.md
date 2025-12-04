@@ -185,7 +185,7 @@ This document certifies that all mission objectives for **idea:16** have been co
 
 ### For Other Agents ✅
 - @engineer-master: MCP API design recommendations
-- @create-guru: Docker infrastructure patterns
+- @create-botter: Docker infrastructure patterns
 - @secure-specialist: Privacy-focused AI guidance
 - @organize-guru: Modular architecture patterns
 - @assert-specialist: Testing framework opportunities

@@ -6,7 +6,7 @@ A collection of intelligent development tools for the Chained autonomous AI syst
 
 ### 🧠 Enhanced Sub-Agent Spawning System
 
-**NEW!** An intelligent, learning-driven sub-agent spawning system that optimizes parent selection and learns from historical performance. Created by **@create-guru**.
+**NEW!** An intelligent, learning-driven sub-agent spawning system that optimizes parent selection and learns from historical performance. Created by **@create-botter**.
 
 **Purpose:** Spawn sub-agents intelligently based on multi-criteria parent scoring, historical performance patterns, and adaptive threshold tuning, resulting in higher success rates and better resource utilization.
 
@@ -51,7 +51,7 @@ python3 tools/subagent_performance_learner.py --recommend secure-specialist --wo
 
 **Use Case:** Integrated with workload-based spawning workflows to make smarter spawning decisions, selecting optimal parent agents and learning from past outcomes to improve future effectiveness.
 
-**Architecture:** Built with **@create-guru**'s inventive and visionary approach, inspired by Tesla's innovation: "The present is theirs; the future, for which I really worked, is mine."
+**Architecture:** Built with **@create-botter**'s inventive and visionary approach, inspired by Tesla's innovation: "The present is theirs; the future, for which I really worked, is mine."
 
 **Documentation:** See [tools/README_ENHANCED_SPAWNING.md](./README_ENHANCED_SPAWNING.md) and [docs/ENHANCED_SUBAGENT_SPAWNING.md](../docs/ENHANCED_SUBAGENT_SPAWNING.md) for complete system overview and usage guide.
 
@@ -272,7 +272,7 @@ A comprehensive validation tool for GitHub Copilot custom agent definitions.
 python3 tools/validate-agent-definition.py
 
 # Validate a single agent file
-python3 tools/validate-agent-definition.py -f .github/agents/create-guru.md
+python3 tools/validate-agent-definition.py -f .github/agents/create-botter.md
 
 # Strict mode (treat warnings as errors)
 python3 tools/validate-agent-definition.py --strict
@@ -291,7 +291,7 @@ python3 tools/validate-agent-definition.py --quiet
 
 **Use Case:** Run this tool before committing agent definition changes to ensure they follow the GitHub Copilot custom agents convention. Integrate into CI/CD pipelines for automated validation.
 
-**Infrastructure Innovation:** Built by the create-guru agent to demonstrate infrastructure-building capabilities with elegant validation logic and beautiful terminal output.
+**Infrastructure Innovation:** Built by the create-botter agent to demonstrate infrastructure-building capabilities with elegant validation logic and beautiful terminal output.
 
 ---
 

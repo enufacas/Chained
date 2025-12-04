@@ -2,7 +2,7 @@
 
 ## Overview
 
-**@create-guru** has created a powerful query interface for the self-documenting AI system, enabling programmatic access to discussion learnings, insights, and patterns. This API serves as the foundation for future enhancements including semantic search, machine learning integration, and cross-repository learning.
+**@create-botter** has created a powerful query interface for the self-documenting AI system, enabling programmatic access to discussion learnings, insights, and patterns. This API serves as the foundation for future enhancements including semantic search, machine learning integration, and cross-repository learning.
 
 ## 🎯 Purpose
 
@@ -249,7 +249,7 @@ To extend the Query API:
 
 ## 📝 Credits
 
-**Designed and Implemented by @create-guru**
+**Designed and Implemented by @create-botter**
 
 Following Tesla-inspired principles:
 - Inventive infrastructure design

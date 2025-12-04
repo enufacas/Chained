@@ -1,5 +1,5 @@
 name: "Data: Workflow Execution Collection"
-# Created by @create-guru
+# Created by @create-botter
 # Automatically collects workflow execution data to feed the AI predictor
 
 on:
@@ -81,7 +81,7 @@ jobs:
       - name: Collect workflow execution data
         id: collect
         run: |
-          echo "🚀 @create-guru - Workflow Execution Data Collector"
+          echo "🚀 @create-botter - Workflow Execution Data Collector"
           echo "=================================================="
           echo ""
           
@@ -137,20 +137,20 @@ jobs:
           
           git checkout -b "$BRANCH_NAME"
           git add .github/workflow-history/
-          git commit -m "chore: Collect workflow execution data by @create-guru"
+          git commit -m "chore: Collect workflow execution data by @create-botter"
           git push origin "$BRANCH_NAME"
           
           # Create PR with fallback for missing labels
           gh pr create \
             --title "📊 Workflow Execution Data Collection" \
-            --body "## 📥 Workflow Data Collection"$'\n\n'"**@create-guru** has collected workflow execution data from GitHub Actions."$'\n\n'"### What's Included"$'\n'"- Real workflow execution times"$'\n'"- Success/failure rates"$'\n'"- Resource usage estimates"$'\n'"- Historical patterns"$'\n\n'"### Purpose"$'\n'"This data feeds the AI-powered workflow orchestrator to:"$'\n'"- Improve execution time predictions"$'\n'"- Optimize workflow scheduling"$'\n'"- Detect performance trends"$'\n'"- Reduce resource contention"$'\n\n'"---"$'\n\n'"*Collected by **@create-guru** - AI Workflow Data Collector* 🏭" \
+            --body "## 📥 Workflow Data Collection"$'\n\n'"**@create-botter** has collected workflow execution data from GitHub Actions."$'\n\n'"### What's Included"$'\n'"- Real workflow execution times"$'\n'"- Success/failure rates"$'\n'"- Resource usage estimates"$'\n'"- Historical patterns"$'\n\n'"### Purpose"$'\n'"This data feeds the AI-powered workflow orchestrator to:"$'\n'"- Improve execution time predictions"$'\n'"- Optimize workflow scheduling"$'\n'"- Detect performance trends"$'\n'"- Reduce resource contention"$'\n\n'"---"$'\n\n'"*Collected by **@create-botter** - AI Workflow Data Collector* 🏭" \
             --label "automated,workflow-optimization" \
             --base main \
             --head "$BRANCH_NAME" || {
               echo "⚠️ PR creation with labels failed, retrying without labels..."
               gh pr create \
                 --title "📊 Workflow Execution Data Collection" \
-                --body "**@create-guru** has collected workflow execution data." \
+                --body "**@create-botter** has collected workflow execution data." \
                 --base main \
                 --head "$BRANCH_NAME"
             }
@@ -162,7 +162,7 @@ jobs:
           {
             echo "## 📊 Workflow Data Collection Summary"
             echo ""
-            echo "**@create-guru** has processed workflow execution data."
+            echo "**@create-botter** has processed workflow execution data."
             echo ""
           } >> "$GITHUB_STEP_SUMMARY"
           

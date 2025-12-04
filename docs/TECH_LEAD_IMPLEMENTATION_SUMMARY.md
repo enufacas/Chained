@@ -103,7 +103,7 @@ The user wanted to explore how to extend the auto Copilot review system for comp
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                    PR Created by Agent                      │
-│           (e.g., @create-guru implements feature)           │
+│           (e.g., @create-botter implements feature)           │
 └──────────────────────────┬──────────────────────────────────┘
                            │
                            ▼

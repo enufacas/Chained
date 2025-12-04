@@ -173,7 +173,7 @@ class GitAnalyzer:
         # All agents are inspired by legendary computer scientists
         agents = [
             'accelerate-master', 'assert-specialist', 'coach-master',
-            'construct-specialist', 'create-guru', 'engineer-master', 
+            'construct-specialist', 'create-botter', 'engineer-master', 
             'engineer-wizard', 'investigate-champion', 'meta-coordinator',
             'monitor-champion', 'organize-guru', 'secure-ninja',
             'secure-specialist', 'support-master', 'troubleshoot-expert'

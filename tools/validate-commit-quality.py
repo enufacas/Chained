@@ -5,7 +5,7 @@ Agent Commit Quality Validator
 Validates agent commits against learned strategies and provides
 real-time feedback for improvement.
 
-Created by @create-guru - Infrastructure for agent quality assurance
+Created by @create-botter - Infrastructure for agent quality assurance
 
 Usage:
     python validate-commit-quality.py --commit-hash abc123

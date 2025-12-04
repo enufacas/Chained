@@ -2,7 +2,7 @@
 
 ## Overview
 
-A visionary, self-improving infrastructure that autonomously learns optimal git commit strategies from repository history. Originally implemented by **@workflows-tech-lead** and enhanced by **@create-guru** with advanced trend analysis, continuous learning, and automated strategy application.
+A visionary, self-improving infrastructure that autonomously learns optimal git commit strategies from repository history. Originally implemented by **@workflows-tech-lead** and enhanced by **@create-botter** with advanced trend analysis, continuous learning, and automated strategy application.
 
 This system embodies Tesla's principle of elegant, powerful automation—learning from the past to illuminate the future.
 
@@ -147,7 +147,7 @@ Agents can leverage the learning system to:
 
 ### commit-strategy-learner.py
 
-Enhanced by **@create-guru**, located in `tools/commit-strategy-learner.py`:
+Enhanced by **@create-botter**, located in `tools/commit-strategy-learner.py`:
 
 **Core Features:**
 - Analyzes git history using subprocess (no dependencies)
@@ -253,8 +253,8 @@ Check the workflow runs at:
 - Actions → Apply Learned Commit Strategies (Weekly)
 
 Review generated artifacts:
-- Issues labeled with `learning`, `automated`, `analysis`, `create-guru`
-- PRs labeled with `automated`, `learning`, `infrastructure`, `create-guru`
+- Issues labeled with `learning`, `automated`, `analysis`, `create-botter`
+- PRs labeled with `automated`, `learning`, `infrastructure`, `create-botter`
 - Strategy guides in `docs/guides/commit-strategy-guide.md`
 
 ### Troubleshooting
@@ -310,7 +310,7 @@ Inspired by Tesla's vision of transformative automation:
 
 ### Design Philosophy
 
-Following **@create-guru**'s Tesla-inspired approach:
+Following **@create-botter**'s Tesla-inspired approach:
 
 - **Self-Improving**: The system gets better over time automatically
 - **Elegant**: Simple, powerful infrastructure with minimal complexity
@@ -322,7 +322,7 @@ Following **@create-guru**'s Tesla-inspired approach:
 ## Credits
 
 **Original Implementation:** @workflows-tech-lead (Systematic workflow engineering)
-**Enhanced Infrastructure:** @create-guru (Visionary automation and continuous learning)
+**Enhanced Infrastructure:** @create-botter (Visionary automation and continuous learning)
 **Philosophy:** Inspired by Nikola Tesla's approach to elegant, powerful systems
 
 ---

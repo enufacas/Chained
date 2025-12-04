@@ -56,7 +56,7 @@ Agent Diversity: 1/5 = 20% ❌
 │ Issue Y: @secure-specialist (score: 0.38, rank: 1)    │
 │ Issue Z: @cloud-architect (score: 0.32, rank: 1)      │
 │ Issue W: @pioneer-sage (score: 0.28, rank: 1)         │
-│ Issue V: @create-guru (score: 0.25, rank: 1)          │
+│ Issue V: @create-botter (score: 0.25, rank: 1)          │
 └─────────────────────────────────────────────────────────┘
 
 Agent Diversity: 5/5 = 100% ✅
