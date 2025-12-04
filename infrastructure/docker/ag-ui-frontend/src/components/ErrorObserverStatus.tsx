@@ -260,6 +260,14 @@ export default function ErrorObserverStatus() {
           <p className="text-xs text-slate-600 mt-2">
             Check Cloud Run logs if dispatch fails. The error observer URL should be configured in Terraform.
           </p>
+          <a 
+            href="/api/debug/env" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="text-xs text-blue-400 hover:text-blue-300 underline block mt-1"
+          >
+            🔍 View environment debug info
+          </a>
         </div>
       </div>
     );
