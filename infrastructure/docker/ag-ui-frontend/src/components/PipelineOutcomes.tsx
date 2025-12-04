@@ -17,22 +17,11 @@ import { useState, useEffect, useCallback } from "react";
 import PipelineDetailView from "./PipelineDetailView";
 import { getArtifactsBySourceId, getStoredSessions, getArtifactById, type StoredSession } from "@/lib/storage";
 import { logApiError } from "@/lib/error-logging";
+import { Pipeline, A2AStepDetail } from "@/types";
 
-
-interface PipelineResult {
-  id: string;
-  topic: string;
-  status: "pending" | "running" | "completed" | "failed";
-  createdAt: string;
-  updatedAt: string;
-  progress: number;
-  currentPhase: string;
-  results?: {
-    research?: { topic: string; domain: string; keywords: string[] };
-    trends?: { trendingKeywords: string[]; recommendedFocus: string };
-    blog?: { title: string; url: string; wordCount: number };
-  };
-}
+// Use the shared Pipeline interface from types
+// (PipelineResult is now an alias for consistency with existing code)
+type PipelineResult = Pipeline;
 
 interface PipelineListResponse {
   pipelines: PipelineResult[];
@@ -91,20 +80,10 @@ function sessionToPipelineResult(session: StoredSession): PipelineResult {
   }
   
   // Reconstruct a2aSteps from metadata if available
-  let a2aSteps: Array<{
-    taskId: string;
-    agentName: string;
-    phase: string;
-    status: string;
-    startTime: string;
-    endTime?: string;
-    durationMs?: number;
-    message?: string;
-    artifacts: Array<{ name: string; type: string; preview?: string }>;
-  }> | undefined;
+  let a2aSteps: A2AStepDetail[] | undefined;
   
   if (session.metadata?.a2aSteps && Array.isArray(session.metadata.a2aSteps)) {
-    a2aSteps = session.metadata.a2aSteps as typeof a2aSteps;
+    a2aSteps = session.metadata.a2aSteps as A2AStepDetail[];
   }
   
   return {
