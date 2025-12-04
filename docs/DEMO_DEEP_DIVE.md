@@ -4,7 +4,7 @@ This document provides a comprehensive look at the key technical capabilities of
 
 ## 🤖 GitHub Copilot Custom Agents: Complete System
 
-The repository demonstrates **GitHub Copilot's custom agent capabilities** through a production-ready agent system with over 100 specialized agents.
+The repository demonstrates **GitHub Copilot's custom agent capabilities** through an agent system with over 100 specialized agents for testing and demonstration.
 
 ### Three-Layer Instruction Architecture
 
@@ -97,7 +97,7 @@ Agents are automatically assigned to issues based on content analysis:
 - Each agent has distinct personality inspired by computing pioneers
 - View the full catalog: [.github/agents/README.md](../.github/agents/README.md)
 
-**Real Example**: See [issue #3520](https://github.com/enufacas/Chained/issues/3520) where the error observer system was implemented via agent assignment.
+**Real Example**: See [PR #3218](https://github.com/enufacas/Chained/pull/3218) where the A2A protocol was implemented with GeminiAgentExecutor and task lifecycle management.
 
 ---
 
@@ -166,137 +166,44 @@ The pattern is simple: wrap the model's CLI or API in a GitHub Action, provide a
 
 ---
 
-## 🔗 A2A Protocol on GCP: Production Implementation
+## 🔗 A2A Protocol on GCP: Testing Implementation
 
-The repository includes a **production A2A (Agent-to-Agent) implementation** deployed to Google Cloud Run, demonstrating real agent collaboration beyond GitHub Actions constraints.
+The repository includes an **A2A (Agent-to-Agent) implementation** deployed to Google Cloud Run for testing agent collaboration patterns.
 
 ### Live A2A System
 
 **Chat Interface**: [AG-UI Frontend](https://chained-ag-ui-frontend-sguacxy5gq-uc.a.run.app/)
-- Create research and blog pipelines via chat
-- Monitor real-time agent execution
+- Test research and blog pipelines via chat
+- Monitor agent execution
 - View A2A task IDs, artifacts, and timing
 - Powered by CopilotKit + Vertex AI (Gemini 2.0 Flash)
 
-**Deployed A2A Agents** (Cloud Run):
+**Deployed on GCP Cloud Run**: 6 test agents ([Academic Research](https://chained-academic-research-sguacxy5gq-uc.a.run.app), [Google Trends](https://chained-google-trends-sguacxy5gq-uc.a.run.app), [Blog Writer](https://chained-blog-writer-sguacxy5gq-uc.a.run.app), [Code Reviewer](https://chained-code-reviewer-sguacxy5gq-uc.a.run.app), [Data Analyst](https://chained-data-analyst-sguacxy5gq-uc.a.run.app), [Image Generator](https://chained-image-generator-sguacxy5gq-uc.a.run.app))
 
-| Agent | Live URL | Purpose |
-|-------|----------|---------|
-| Academic Research | [chained-academic-research](https://chained-academic-research-sguacxy5gq-uc.a.run.app) | Discovers research topics via academic APIs |
-| Google Trends | [chained-google-trends](https://chained-google-trends-sguacxy5gq-uc.a.run.app) | Analyzes SEO trends and keywords |
-| Blog Writer | [chained-blog-writer](https://chained-blog-writer-sguacxy5gq-uc.a.run.app) | Writes and publishes blog posts |
-| Code Reviewer | [chained-code-reviewer](https://chained-code-reviewer-sguacxy5gq-uc.a.run.app) | Reviews code and provides feedback |
-| Data Analyst | [chained-data-analyst](https://chained-data-analyst-sguacxy5gq-uc.a.run.app) | Analyzes data and generates insights |
-| Image Generator | [chained-image-generator](https://chained-image-generator-sguacxy5gq-uc.a.run.app) | Creates visual assets |
+### Key Features
 
-Each agent exposes standard A2A endpoints:
-- `/.well-known/agent.json` - AgentCard (discovery metadata)
-- `/health` - Health check
-- `POST /a2a/tasks` - Send A2A task messages
+**A2A Protocol Compliant**: Implements [A2A specification](https://github.com/a2aproject/A2A)
+- AgentCards for discovery (`.well-known/agent.json`)
+- Standard task message format
+- Artifact-based results
 
-### A2A Protocol Compliance
+**Built with GCP MCP Server**: Used custom GCP MCP server to:
+- Troubleshoot deployment errors
+- Configure Cloud Run services
+- Set up Vertex AI integration
+- Debug infrastructure issues
 
-The implementation follows the [A2A specification](https://github.com/a2aproject/A2A):
-
-**AgentCard**: Each agent publishes discovery metadata
-```json
-{
-  "name": "Academic Research Agent",
-  "capabilities": ["research", "academic-search"],
-  "version": "1.0.0",
-  "endpoints": {
-    "tasks": "https://chained-academic-research-sguacxy5gq-uc.a.run.app/a2a/tasks"
-  }
-}
-```
-
-**A2A Tasks**: Messages follow standard format
-```json
-{
-  "taskId": "unique-id",
-  "contextId": "pipeline-123",
-  "agentName": "research-agent",
-  "capabilities": ["research"],
-  "input": { "topic": "AI agents" },
-  "referenceTaskIds": ["previous-task-id"]
-}
-```
-
-**A2A Artifacts**: Results include structured outputs
-```json
-{
-  "taskId": "unique-id",
-  "status": "completed",
-  "artifacts": [
-    { "name": "research.json", "type": "application/json", "data": {...} }
-  ]
-}
-```
-
-### Three-Tier Architecture
-
-The system accommodates GitHub Actions runner constraints:
-
-**Tier 1: Same-Runner (HTTP)**
-- Multiple agents in single workflow job
-- Traditional A2A HTTP protocol (localhost)
-- Fast (<1ms latency)
-- Example: [a2a-local-orchestration.yml](../.github/workflows/a2a-local-orchestration.yml)
-
-**Tier 2: Cross-Runner (GitHub-Mediated)**
-- Long-running tasks, parallel execution
-- Communication via GitHub Artifacts or Branches
-- Slower (~5s polling) but enables true parallelism
-- Example: [a2a-parallel-agents.yml](../.github/workflows/a2a-parallel-agents.yml)
-
-**Tier 3: Cloud Run (Production)**
-- Real HTTP-based A2A agents deployed to Cloud Run
-- No runner constraints
-- Full A2A protocol support
-- Chat interface for human interaction
-- Live system: [AG-UI Frontend](https://chained-ag-ui-frontend-sguacxy5gq-uc.a.run.app/)
-
-### Infrastructure
-
-**Deployment**: `infrastructure/terraform/`
-- Cloud Run services for each agent
-- Vertex AI integration
-- Artifact Registry for Docker images
-- Secret Manager for credentials
-
-**Agent Implementation**: `infrastructure/docker/adk-agents/`
-- Python-based agents using Google ADK patterns
-- Dockerfile for each agent
-- Shared utilities for A2A protocol handling
-
-**Pipeline Orchestration**: `adk-a2a-blog-pipeline.yml`
-- Demonstrates multi-agent coordination
-- Research → Trends → Blog Writer flow
-- Deploys results to Cloud Storage
-
-### Real A2A Pipeline Example
-
-**Pipeline Flow**:
-```
-Academic Research Agent → discovers "AI Agent Collaboration" topic
-         ↓ (A2A task with referenceTaskIds)
-Google Trends Agent → analyzes SEO trends for keywords
-         ↓ (A2A task with previous artifacts)
-Blog Writer Agent → writes optimized blog post
-         ↓ (publishes to Cloud Storage)
-https://storage.googleapis.com/chained-blog/posts/ai-agent-collaboration.html
-```
-
-**Try it yourself**: Visit the [AG-UI Frontend](https://chained-ag-ui-frontend-sguacxy5gq-uc.a.run.app/) and ask to "create a blog pipeline about quantum computing"
+**Prompt Engineered**: All agents built using natural language prompts rather than hand-coded logic
 
 ### Documentation
 
-- **[A2A Documentation](./a2a/README.md)** - Complete A2A guide
-- **[A2A Success History](./a2a/A2A_SUCCESS_HISTORY.md)** - Working chat conversation and milestones
+Complete technical details:
+- **[A2A Documentation](./a2a/README.md)** - Full A2A guide
+- **[A2A Success History](./a2a/A2A_SUCCESS_HISTORY.md)** - Chat conversation and milestones
 - **[A2A Architecture](./a2a/A2A_GITHUB_RUNNERS_ARCHITECTURE.md)** - Three-tier design
-- **[ADK Pipeline Implementation](./ADK_A2A_PIPELINE_IMPLEMENTATION.md)** - GCP deployment guide
+- **[ADK Pipeline Implementation](./ADK_A2A_PIPELINE_IMPLEMENTATION.md)** - GCP deployment details
 
-**Real Implementation**: See [PR #3520](https://github.com/enufacas/Chained/pull/3520) for the error observer A2A system implementation.
+**Implementation Example**: See [PR #3218](https://github.com/enufacas/Chained/pull/3218) for GeminiAgentExecutor and task lifecycle.
 
 ---
 
