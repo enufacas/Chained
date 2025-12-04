@@ -35,12 +35,13 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🐛 Bug Fixes
 
+- 👤 Fix ERROR_OBSERVER_URL runtime access via Next.js dynamic export [#3591](https://github.com/enufacas/Chained/pull/3591)
 - 👤 Fix ERROR_OBSERVER_URL not set: remove fallback, add diagnostics, verify deployment [#3587](https://github.com/enufacas/Chained/pull/3587)
 - 👤 Add dual test buttons for Error Observer: internal dispatch + GitHub webhook pipeline [#3582](https://github.com/enufacas/Chained/pull/3582)
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x4) [#3584](https://github.com/enufacas/Chained/pull/3584)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x5) [#3588](https://github.com/enufacas/Chained/pull/3588)
 - 👤 📚 Docs **Documentation**: Add dedicated Demo & Deep Dive documentation page [#3579](https://github.com/enufacas/Chained/pull/3579)
 
 ---
@@ -252,7 +253,6 @@ This changelog excludes automated data syncs and routine maintenance commits.
 - 👤 Add ADK API Server for google/adk-web integration [#3269](https://github.com/enufacas/Chained/pull/3269)
 - 🤖 create A2A coordination page [#3246](https://github.com/enufacas/Chained/pull/3246)
 - 👤 🔧 Agents Add ADK A2A blog pipeline with Python agents on GCP [#3242](https://github.com/enufacas/Chained/pull/3242)
-- 👤 [WIP] Add proof of using artifacts from previous tasks [#3237](https://github.com/enufacas/Chained/pull/3237)
 
 ### 🐛 Bug Fixes
 
