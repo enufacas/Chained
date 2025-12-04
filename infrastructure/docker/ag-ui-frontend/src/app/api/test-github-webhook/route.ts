@@ -17,10 +17,7 @@ import { NextResponse } from "next/server";
 // Configuration
 // =============================================================================
 
-const ERROR_OBSERVER_URL = 
-  process.env.ERROR_OBSERVER_URL || 
-  process.env.AGENT_ERROR_OBSERVER_URL ||
-  "";
+const ERROR_OBSERVER_URL = process.env.ERROR_OBSERVER_URL || "";
 
 // =============================================================================
 // Types

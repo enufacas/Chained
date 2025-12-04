@@ -23,9 +23,7 @@ describe("Error Observer API", () => {
 
   describe("GET /api/error-observer/status", () => {
     it("should return not configured when ERROR_OBSERVER_URL is not set", async () => {
-      // Clear both possible env vars
       delete process.env.ERROR_OBSERVER_URL;
-      delete process.env.AGENT_ERROR_OBSERVER_URL;
 
       const response = await GET();
       const data = await response.json();
@@ -59,26 +57,6 @@ describe("Error Observer API", () => {
       expect(data.state).toBeDefined();
       expect(data.state.status).toBe("success");
       expect(data.lastUpdated).toBeDefined();
-    });
-
-    it("should fallback to AGENT_ERROR_OBSERVER_URL if ERROR_OBSERVER_URL not set", async () => {
-      delete process.env.ERROR_OBSERVER_URL;
-      process.env.AGENT_ERROR_OBSERVER_URL = "http://localhost:9090";
-
-      global.fetch = jest.fn().mockResolvedValue({
-        ok: true,
-        json: async () => ({
-          status: "idle",
-          errors_handled_24h: 0,
-        }),
-      } as Response);
-
-      const response = await GET();
-      const data = await response.json();
-
-      expect(response.status).toBe(200);
-      expect(data.configured).toBe(true);
-      expect(data.url).toBe("http://localhost:9090");
     });
 
     it("should handle fetch timeout gracefully", async () => {
