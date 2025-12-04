@@ -3,7 +3,8 @@ const config = {
   // Use ts-jest for TypeScript support
   preset: 'ts-jest',
   
-  // Test environment - use node for API routes
+  // Test environment - use node for API routes (default)
+  // Individual test files can override with @jest-environment jsdom comment
   testEnvironment: 'node',
   
   // Setup files to run after Jest is initialized
@@ -34,9 +35,11 @@ const config = {
     '/__tests__/utils/',
   ],
   
-  // Coverage settings - focus on API routes for now
+  // Coverage settings - include API routes and components
   collectCoverageFrom: [
     'src/app/api/**/*.{ts,tsx}',
+    'src/components/**/*.{ts,tsx}',
+    'src/lib/**/*.{ts,tsx}',
     '!src/**/*.d.ts',
     '!src/**/index.ts',
   ],

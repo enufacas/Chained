@@ -1,42 +1,18 @@
 /**
+ * @jest-environment jsdom
+ */
+
+/**
  * Storage Cleanup Tests
  * 
  * Tests for localStorage cleanup utilities
  */
 
-// Mock localStorage
-const localStorageMock = (() => {
-  let store: Record<string, string> = {};
+// Note: localStorage is now provided by jsdom test environment
 
-  return {
-    getItem: (key: string) => store[key] || null,
-    setItem: (key: string, value: string) => {
-      // Simulate quota exceeded for large values
-      const size = new Blob([value]).size;
-      if (size > 1024 * 1024) { // 1MB limit for testing
-        const error = new DOMException('QuotaExceededError');
-        error.name = 'QuotaExceededError';
-        throw error;
-      }
-      store[key] = value;
-    },
-    removeItem: (key: string) => {
-      delete store[key];
-    },
-    clear: () => {
-      store = {};
-    },
-  };
-})();
-
-Object.defineProperty(global, 'window', {
-  value: { localStorage: localStorageMock },
-  writable: true,
-});
-
-Object.defineProperty(global, 'localStorage', {
-  value: localStorageMock,
-  writable: true,
+// Clear localStorage before each test
+beforeEach(() => {
+  localStorage.clear();
 });
 
 // Mock Blob for size calculation
@@ -71,7 +47,7 @@ import {
 
 describe('Storage Cleanup Utilities', () => {
   beforeEach(() => {
-    localStorageMock.clear();
+    localStorage.clear();
   });
 
   describe('getStorageUsage', () => {

@@ -1,38 +1,18 @@
 /**
+ * @jest-environment jsdom
+ */
+
+/**
  * Storage utilities tests
  * 
  * Tests for session and artifact persistence in localStorage
  */
 
-// Mock localStorage for Node environment
-const localStorageMock = (() => {
-  let store: Record<string, string> = {};
+// Note: localStorage is now provided by jsdom test environment
 
-  return {
-    getItem: (key: string) => store[key] || null,
-    setItem: (key: string, value: string) => {
-      store[key] = value;
-    },
-    removeItem: (key: string) => {
-      delete store[key];
-    },
-    clear: () => {
-      store = {};
-    },
-  };
-})();
-
-// Mock window and localStorage globally before importing storage
-Object.defineProperty(global, 'window', {
-  value: {
-    localStorage: localStorageMock,
-  },
-  writable: true,
-});
-
-Object.defineProperty(global, 'localStorage', {
-  value: localStorageMock,
-  writable: true,
+// Clear localStorage before each test
+beforeEach(() => {
+  localStorage.clear();
 });
 
 // Mock crypto.randomUUID for Node < 19
