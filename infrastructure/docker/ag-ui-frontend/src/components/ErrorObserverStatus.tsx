@@ -83,6 +83,8 @@ export default function ErrorObserverStatus() {
   const [expanded, setExpanded] = useState(false);
   const [dispatching, setDispatching] = useState(false);
   const [dispatchResult, setDispatchResult] = useState<{ success: boolean; message: string } | null>(null);
+  const [webhookDispatching, setWebhookDispatching] = useState(false);
+  const [webhookResult, setWebhookResult] = useState<{ success: boolean; message: string } | null>(null);
 
   const fetchStatus = useCallback(async () => {
     try {
@@ -162,6 +164,60 @@ export default function ErrorObserverStatus() {
       // Clear result after 5 seconds
       setTimeout(() => {
         setDispatchResult(null);
+      }, 5000);
+    }
+  }, [fetchStatus]);
+
+  const handleTestWebhook = useCallback(async () => {
+    setWebhookDispatching(true);
+    setWebhookResult(null);
+
+    try {
+      // Send a test webhook to GitHub via error observer
+      const response = await fetch("/api/test-github-webhook", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          test_type: "full", // Send full test with stack trace
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+
+      const data = await response.json();
+      
+      if (data.success) {
+        setWebhookResult({
+          success: true,
+          message: `Test webhook dispatched! Check GitHub Actions for workflow run.`,
+        });
+        
+        // Refresh status after webhook
+        setTimeout(() => {
+          fetchStatus();
+        }, 1000);
+      } else {
+        setWebhookResult({
+          success: false,
+          message: data.message || "Test webhook failed",
+        });
+      }
+    } catch (err) {
+      console.error("[ErrorObserverStatus] Test webhook error:", err);
+      setWebhookResult({
+        success: false,
+        message: err instanceof Error ? err.message : "Test webhook failed",
+      });
+    } finally {
+      setWebhookDispatching(false);
+      
+      // Clear result after 5 seconds
+      setTimeout(() => {
+        setWebhookResult(null);
       }, 5000);
     }
   }, [fetchStatus]);
@@ -268,6 +324,54 @@ export default function ErrorObserverStatus() {
           >
             🔍 View environment debug info
           </a>
+        </div>
+        
+        {/* Test GitHub Webhook Section */}
+        <div className="border-t border-slate-700/50 pt-3">
+          <p className="text-xs text-slate-400 mb-2">
+            Test GitHub webhook for cloud run errors pipeline:
+          </p>
+          <button
+            onClick={handleTestWebhook}
+            disabled={webhookDispatching}
+            className={`w-full px-3 py-2 rounded-lg text-sm font-medium transition-all ${
+              webhookDispatching
+                ? "bg-slate-700 text-slate-500 cursor-not-allowed"
+                : "bg-purple-600/20 text-purple-400 hover:bg-purple-600/30 border border-purple-500/30"
+            }`}
+          >
+            {webhookDispatching ? (
+              <span className="flex items-center justify-center gap-2">
+                <span className="animate-spin">⏳</span>
+                Dispatching to GitHub...
+              </span>
+            ) : (
+              <span className="flex items-center justify-center gap-2">
+                <span>🎯</span>
+                Test GitHub Webhook
+              </span>
+            )}
+          </button>
+          
+          {/* Webhook Result */}
+          {webhookResult && (
+            <div
+              className={`mt-2 p-2 rounded text-xs ${
+                webhookResult.success
+                  ? "bg-green-500/10 border border-green-500/30 text-green-400"
+                  : "bg-red-500/10 border border-red-500/30 text-red-400"
+              }`}
+            >
+              <div className="flex items-start gap-2">
+                <span>{webhookResult.success ? "✓" : "✗"}</span>
+                <span className="flex-1">{webhookResult.message}</span>
+              </div>
+            </div>
+          )}
+          
+          <p className="text-xs text-slate-600 mt-2">
+            This fires a repository_dispatch webhook to GitHub to test the handle-cloudrun-errors workflow.
+          </p>
         </div>
       </div>
     );
@@ -538,6 +642,57 @@ export default function ErrorObserverStatus() {
             
             <p className="text-xs text-slate-600 mt-2">
               Sends a placeholder error to verify dispatch functionality.
+            </p>
+          </div>
+          
+          {/* Test GitHub Webhook Button */}
+          <div className="bg-slate-900/50 rounded-lg p-3">
+            <div className="text-xs font-medium text-slate-400 mb-2">
+              Test GitHub Webhook
+            </div>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                handleTestWebhook();
+              }}
+              disabled={webhookDispatching}
+              className={`w-full px-3 py-2 rounded-lg text-sm font-medium transition-all ${
+                webhookDispatching
+                  ? "bg-slate-700 text-slate-500 cursor-not-allowed"
+                  : "bg-purple-600/20 text-purple-400 hover:bg-purple-600/30 border border-purple-500/30"
+              }`}
+            >
+              {webhookDispatching ? (
+                <span className="flex items-center justify-center gap-2">
+                  <span className="animate-spin">⏳</span>
+                  Dispatching to GitHub...
+                </span>
+              ) : (
+                <span className="flex items-center justify-center gap-2">
+                  <span>🎯</span>
+                  Test GitHub Webhook
+                </span>
+              )}
+            </button>
+            
+            {/* Webhook Result */}
+            {webhookResult && (
+              <div
+                className={`mt-2 p-2 rounded text-xs ${
+                  webhookResult.success
+                    ? "bg-green-500/10 border border-green-500/30 text-green-400"
+                    : "bg-red-500/10 border border-red-500/30 text-red-400"
+                }`}
+              >
+                <div className="flex items-start gap-2">
+                  <span>{webhookResult.success ? "✓" : "✗"}</span>
+                  <span className="flex-1">{webhookResult.message}</span>
+                </div>
+              </div>
+            )}
+            
+            <p className="text-xs text-slate-600 mt-2">
+              Fires repository_dispatch to test handle-cloudrun-errors workflow.
             </p>
           </div>
         </div>
