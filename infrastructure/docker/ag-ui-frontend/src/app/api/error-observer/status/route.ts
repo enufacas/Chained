@@ -7,6 +7,9 @@
 
 import { NextResponse } from "next/server";
 
+// Force dynamic rendering - environment variables must be read at runtime
+export const dynamic = 'force-dynamic';
+
 // =============================================================================
 // API Route Handler
 // =============================================================================

@@ -678,21 +678,75 @@ jobs:
             exit 1
           fi
           
-          # Check runtime availability via debug endpoint
+          # Wait for new revision to be ready and serving traffic
           echo ""
-          echo "Checking runtime availability..."
+          echo "Waiting for latest revision to be ready..."
           AG_UI_URL=$(gcloud run services describe chained-ag-ui-frontend \
             --region ${{ env.GCP_REGION }} \
             --format 'value(status.url)')
           
-          RUNTIME_CHECK=$(curl -s "$AG_UI_URL/api/debug/env" | jq -r '.envStatus.ERROR_OBSERVER_URL.set')
+          # Get the latest revision name
+          LATEST_REVISION=$(gcloud run services describe chained-ag-ui-frontend \
+            --region ${{ env.GCP_REGION }} \
+            --format 'value(status.latestReadyRevisionName)')
+          echo "Latest revision: $LATEST_REVISION"
           
-          if [[ "$RUNTIME_CHECK" == "true" ]]; then
-            echo "✅ ERROR_OBSERVER_URL is available at runtime"
-          else
-            echo "⚠️ ERROR_OBSERVER_URL is set in Cloud Run but not available at runtime"
-            echo "   This may indicate the container image needs to be rebuilt"
-            echo "   The new revision should pick up the environment variable"
+          # Wait up to 2 minutes for revision to be ready
+          MAX_WAIT=120
+          WAIT_INTERVAL=10
+          ELAPSED=0
+          
+          while [[ $ELAPSED -lt $MAX_WAIT ]]; do
+            REVISION_STATUS=$(gcloud run revisions describe "$LATEST_REVISION" \
+              --region ${{ env.GCP_REGION }} \
+              --format 'value(status.conditions[0].status)' 2>/dev/null || echo "Unknown")
+            
+            if [[ "$REVISION_STATUS" == "True" ]]; then
+              echo "✅ Revision is ready and serving traffic"
+              break
+            fi
+            
+            echo "Waiting for revision to be ready... ($ELAPSED/$MAX_WAIT seconds)"
+            sleep $WAIT_INTERVAL
+            ELAPSED=$((ELAPSED + WAIT_INTERVAL))
+          done
+          
+          if [[ $ELAPSED -ge $MAX_WAIT ]]; then
+            echo "⚠️ Timeout waiting for revision to be ready"
+          fi
+          
+          # Check runtime availability via debug endpoint
+          echo ""
+          echo "Checking runtime availability..."
+          
+          # Retry up to 3 times with 10 second delays to handle cold starts
+          MAX_RETRIES=3
+          RETRY_COUNT=0
+          
+          while [[ $RETRY_COUNT -lt $MAX_RETRIES ]]; do
+            RUNTIME_CHECK=$(curl -s "$AG_UI_URL/api/debug/env" | jq -r '.envStatus.ERROR_OBSERVER_URL.set')
+            
+            if [[ "$RUNTIME_CHECK" == "true" ]]; then
+              echo "✅ ERROR_OBSERVER_URL is available at runtime"
+              break
+            fi
+            
+            RETRY_COUNT=$((RETRY_COUNT + 1))
+            if [[ $RETRY_COUNT -lt $MAX_RETRIES ]]; then
+              echo "Attempt $RETRY_COUNT/$MAX_RETRIES: ERROR_OBSERVER_URL not yet available, retrying in 10 seconds..."
+              sleep 10
+            fi
+          done
+          
+          if [[ "$RUNTIME_CHECK" != "true" ]]; then
+            echo "❌ ERROR_OBSERVER_URL is set in Cloud Run config but not available at runtime after $MAX_RETRIES attempts"
+            echo "   This indicates the new revision is not picking up the environment variable"
+            echo "   Debugging info:"
+            echo "   - Latest revision: $LATEST_REVISION"
+            echo "   - Service URL: $AG_UI_URL"
+            echo "   - Debug endpoint response:"
+            curl -s "$AG_UI_URL/api/debug/env" | jq '.'
+            exit 1
           fi
           
           # Verify error observer service exists
