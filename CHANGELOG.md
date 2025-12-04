@@ -35,11 +35,12 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🐛 Bug Fixes
 
+- 👤 Fix ERROR_OBSERVER_URL not set: remove fallback, add diagnostics, verify deployment [#3587](https://github.com/enufacas/Chained/pull/3587)
 - 👤 Add dual test buttons for Error Observer: internal dispatch + GitHub webhook pipeline [#3582](https://github.com/enufacas/Chained/pull/3582)
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x3) [#3583](https://github.com/enufacas/Chained/pull/3583)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x4) [#3584](https://github.com/enufacas/Chained/pull/3584)
 - 👤 📚 Docs **Documentation**: Add dedicated Demo & Deep Dive documentation page [#3579](https://github.com/enufacas/Chained/pull/3579)
 
 ---
@@ -265,7 +266,6 @@ This changelog excludes automated data syncs and routine maintenance commits.
 - 👤 ⚙️ Workflows prevent anomalous "Plan of Action" comments in a2a-parallel-agents workflow [#3245](https://github.com/enufacas/Chained/pull/3245)
 - 👤 🔧 Agents remove add_issue_comment from agent jobs and add autonomous mode instructions [#3244](https://github.com/enufacas/Chained/pull/3244)
 - 👤 Expand allowed shell commands in A2A implement step [#3243](https://github.com/enufacas/Chained/pull/3243)
-- 👤 🔧 Agents Fix: Use A2A taskId for unique artifact names in parallel agent jobs [#3233](https://github.com/enufacas/Chained/pull/3233)
 
 ### 🧹 Chores & Maintenance
 
@@ -274,7 +274,6 @@ This changelog excludes automated data syncs and routine maintenance commits.
 - 👤 🔧 Agents **Documentation**: Add ADK Dev UI guide explaining agent web interface [#3265](https://github.com/enufacas/Chained/pull/3265)
 - 🤖 **Chore**: 🤖 Update pattern repetition analysis [#3287](https://github.com/enufacas/Chained/pull/3287)
 - 🤖 **Chore**: update prompt generator performance data [#3291](https://github.com/enufacas/Chained/pull/3291)
-- 👤 ⚙️ Workflows **Chore**: Refactor A2A workflow: Parallel agent execution with GitHub Artifacts [#3231](https://github.com/enufacas/Chained/pull/3231)
 - 👤 🧠 Learning **Test**: Enhance daily learning reflection with deduplicated topics and security-specific insights [#3301](https://github.com/enufacas/Chained/pull/3301)
 - 👤 🧠 Learning **Test**: 🧠 GitHub Copilot Learning Summary - 2025-11-27 (@construct-specialist) [#3296](https://github.com/enufacas/Chained/pull/3296)
 
