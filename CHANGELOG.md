@@ -28,9 +28,15 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ## 2025-12-04
 
+### ✨ Features
+
+- 👤 Restructure Copilot section for demo/presentation format [#3218](https://github.com/enufacas/Chained/pull/3218)
+- 👤 Streamline A2A section and remove production-ready language [#3520](https://github.com/enufacas/Chained/pull/3520)
+
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge [#3578](https://github.com/enufacas/Chained/pull/3578)
+- 👤 📚 Docs **Documentation**: Add dedicated Demo & Deep Dive documentation page [#3579](https://github.com/enufacas/Chained/pull/3579)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x2) [#3581](https://github.com/enufacas/Chained/pull/3581)
 
 ---
 
@@ -256,7 +262,6 @@ This changelog excludes automated data syncs and routine maintenance commits.
 - 👤 🔧 Agents remove add_issue_comment from agent jobs and add autonomous mode instructions [#3244](https://github.com/enufacas/Chained/pull/3244)
 - 👤 Expand allowed shell commands in A2A implement step [#3243](https://github.com/enufacas/Chained/pull/3243)
 - 👤 🔧 Agents Fix: Use A2A taskId for unique artifact names in parallel agent jobs [#3233](https://github.com/enufacas/Chained/pull/3233)
-- 👤 ⚙️ Workflows Fix A2A workflow: Capture analysis artifacts and pass to execution step [#3227](https://github.com/enufacas/Chained/pull/3227)
 
 ### 🧹 Chores & Maintenance
 
