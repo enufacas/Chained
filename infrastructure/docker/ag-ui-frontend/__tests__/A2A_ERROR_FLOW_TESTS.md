@@ -15,7 +15,6 @@ This document describes the test suite for validating the A2A (Agent-to-Agent) e
 1. **Configuration Detection**
    - ✅ Returns `configured: false` when `ERROR_OBSERVER_URL` not set
    - ✅ Returns `configured: true` when URL is set
-   - ✅ Fallback to `AGENT_ERROR_OBSERVER_URL` if primary not set
 
 2. **Error Handling**
    - ✅ Handles fetch timeout gracefully

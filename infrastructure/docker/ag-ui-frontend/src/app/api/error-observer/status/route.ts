@@ -14,10 +14,7 @@ import { NextResponse } from "next/server";
 export async function GET() {
   // Read environment variable at runtime (not at build time)
   // This ensures Cloud Run environment variables are available
-  const ERROR_OBSERVER_URL = 
-    process.env.ERROR_OBSERVER_URL || 
-    process.env.AGENT_ERROR_OBSERVER_URL ||
-    "";
+  const ERROR_OBSERVER_URL = process.env.ERROR_OBSERVER_URL || "";
   
   // Log for debugging (will appear in Cloud Run logs)
   console.log("[Error Observer Status] ERROR_OBSERVER_URL:", ERROR_OBSERVER_URL ? "configured" : "not configured");

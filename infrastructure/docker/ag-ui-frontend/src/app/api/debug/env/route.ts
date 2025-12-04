@@ -6,6 +6,8 @@
  * 
  * SECURITY NOTE: Only returns boolean status, not actual values, to avoid
  * exposing sensitive information.
+ * 
+ * Updated: 2025-12-04 - Force rebuild to pick up ERROR_OBSERVER_URL from Terraform
  */
 
 import { NextResponse } from "next/server";
@@ -17,11 +19,6 @@ export async function GET() {
       set: !!process.env.ERROR_OBSERVER_URL,
       value: process.env.ERROR_OBSERVER_URL ? "configured" : "not set",
       length: process.env.ERROR_OBSERVER_URL?.length || 0,
-    },
-    AGENT_ERROR_OBSERVER_URL: {
-      set: !!process.env.AGENT_ERROR_OBSERVER_URL,
-      value: process.env.AGENT_ERROR_OBSERVER_URL ? "configured" : "not set",
-      length: process.env.AGENT_ERROR_OBSERVER_URL?.length || 0,
     },
     // Other related environment variables
     ENVIRONMENT: process.env.ENVIRONMENT || "not set",
