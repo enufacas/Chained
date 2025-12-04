@@ -8,9 +8,15 @@
  * exposing sensitive information.
  * 
  * Updated: 2025-12-04 - Force rebuild to pick up ERROR_OBSERVER_URL from Terraform
+ * Updated: 2025-12-04 - Added dynamic export to prevent Next.js caching
  */
 
 import { NextResponse } from "next/server";
+
+// Force dynamic rendering - this endpoint should never be cached
+// because environment variables can change between deployments
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export async function GET() {
   // Check all error observer related environment variables
