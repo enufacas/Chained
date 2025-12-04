@@ -6,6 +6,8 @@
  * 
  * SECURITY NOTE: Only returns boolean status, not actual values, to avoid
  * exposing sensitive information.
+ * 
+ * Updated: 2025-12-04 - Force rebuild to pick up ERROR_OBSERVER_URL from Terraform
  */
 
 import { NextResponse } from "next/server";
