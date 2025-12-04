@@ -37,8 +37,9 @@ class MockNextRequest {
 // Mock fetch for API tests
 (global as Record<string, unknown>).fetch = jest.fn();
 
-// Note: window, navigator, and localStorage are now provided by jsdom test environment
-// No need to mock them manually
+// Note: window, navigator, and localStorage are provided by jsdom test environment
+// when tests use the @jest-environment jsdom directive at the top of the file.
+// Tests without this directive run in Node environment and don't have these globals.
 
 // Suppress console output during tests (optional)
 // Uncomment to hide console logs during test runs

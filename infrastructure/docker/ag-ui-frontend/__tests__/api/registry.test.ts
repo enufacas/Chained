@@ -16,6 +16,10 @@ describe('Registry API (/api/registry)', () => {
     POST = module.POST;
   });
 
+  // Helper to create a mock NextRequest
+  // Note: This uses type assertion as NextRequest has many internal properties
+  // that are not relevant for testing. In production code, consider using a
+  // proper mock library or testing utility for better type safety.
   const createMockRequest = (method: string, body?: object, searchParams?: URLSearchParams): NextRequest => {
     const url = searchParams 
       ? `http://localhost:3000/api/registry?${searchParams.toString()}`

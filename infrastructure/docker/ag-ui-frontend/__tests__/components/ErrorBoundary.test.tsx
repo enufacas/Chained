@@ -197,17 +197,18 @@ describe('ErrorBoundary Component', () => {
     });
 
     it('should attempt to send error to backend', async () => {
+      const { waitFor } = await import('@testing-library/react');
+      
       render(
         <ErrorBoundary>
           <ThrowError shouldThrow={true} />
         </ErrorBoundary>
       );
 
-      // Wait for async error logging
-      await new Promise(resolve => setTimeout(resolve, 100));
-
-      // Should have called fetch to send error to backend
-      expect(global.fetch).toHaveBeenCalled();
+      // Wait for async error logging with waitFor for better reliability
+      await waitFor(() => {
+        expect(global.fetch).toHaveBeenCalled();
+      }, { timeout: 1000 });
     });
   });
 });
