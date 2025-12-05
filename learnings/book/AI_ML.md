@@ -2,9 +2,9 @@
 
 > Artificial intelligence, machine learning, LLMs, and neural networks
 
-**Total Insights:** 4059
+**Total Insights:** 4068
 
-**Last Updated:** 2025-12-04
+**Last Updated:** 2025-12-05
 
 ---
 
@@ -100,25 +100,6 @@ If you ...
 ---
 
 
-### GitHub Copilot Docs: About Copilot auto model selection
-
-**Link:** https://docs.github.com/en/copilot/concepts/auto-model-selection
-
-
-**Content Summary:**
-
-About Copilot auto model selection
-Automatically select models for Copilot Chat.
-Who can use this feature?
-Auto model selection is in  public preview for supported IDEs with all GitHub Copilot plans.
-In this article
-Overview
-Experience less rate limiting and reduce the mental load of choosing a model by letting Copilot auto model selection automatically choose the best available model on your behalf.
-Copilot auto model selection is currently optimized for model availability, choosing from a list...
-
----
-
-
 ### GitHub Copilot Docs: About customizing GitHub Copilot responses
 
 **Link:** https://docs.github.com/en/copilot/concepts/prompting/response-customization
@@ -397,6 +378,28 @@ I really wish it were possible to sync copilot chat histories across devices, ex
 
 Creating a placeholder as I know this is a [popular request](https://github.com/orgs/community/discussions/50939). I am exploring options here, but it is not officially on the roadmap at this time. If/when it does happen, it will almost certainly happen in tandem with [support in the Copilot Language Server SDK](https://github.com/github/copilot-language-server-release/issues/1).
 
+
+---
+
+
+### GitHub Copilot Docs: About billing for GitHub Copilot in organizations and enterprises
+
+**Link:** https://docs.github.com/en/copilot/concepts/billing/organizations-and-enterprises
+
+
+**Content Summary:**
+
+About billing for GitHub Copilot in organizations and enterprises
+Learn about pricing and billing cycles for Copilot.
+Who can use this feature?
+Organizations on a GitHub Free or GitHub Team plan, or organizations and enterprises on GitHub Enterprise Cloud
+In this article
+Available plans
+GitHub offers the following plans for organization accounts:
+Copilot Business
+at $19 USD per user per month (Purchase additional premium requests at $0.04 USD per request)
+Copilot Enterprise
+at $39 USD per user p...
 
 ---
 
