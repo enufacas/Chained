@@ -6,6 +6,7 @@
 # Services Deployed:
 # - adk-api-server: API server for google/adk-web (bridges ADK API to A2A)
 # - ag-ui-frontend: CopilotKit-powered A2A Pipeline Visualization UI
+# - ag-organism-frontend: 3D visualization of A2A agent coordination
 # - academic-research: Discovers research topics for blog content
 # - blog-writer: Writes and publishes blog posts
 # - google-trends: Analyzes Google Trends for SEO optimization
@@ -32,6 +33,7 @@ on:
       - 'infrastructure/docker/adk-agents/**'
       - 'infrastructure/docker/adk-api-server/**'
       - 'infrastructure/docker/ag-ui-frontend/**'
+      - 'infrastructure/docker/ag-organism-frontend/**'
       - 'infrastructure/terraform/adk-agents.tf'
       - '.github/workflows/deploy-adk-agents.yml'
 
@@ -314,14 +316,66 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "The AG-UI Frontend provides CopilotKit-powered A2A Pipeline Visualization." >> $GITHUB_STEP_SUMMARY
 
+  build-ag-organism-frontend:
+    name: "Build AG-Organism Frontend"
+    runs-on: ubuntu-latest
+    needs: validate
+    if: needs.validate.outputs.deploy_agents == 'true'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Setup gcloud CLI
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          project_id: ${{ env.GCP_PROJECT_ID }}
+
+      - name: Configure Docker for Artifact Registry
+        run: |
+          gcloud auth configure-docker ${{ env.GCP_REGION }}-docker.pkg.dev --quiet
+
+      - name: Build and push AG-Organism Frontend
+        run: |
+          IMAGE="${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/chained/ag-organism-frontend:${{ github.sha }}"
+          IMAGE_LATEST="${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/chained/ag-organism-frontend:latest"
+
+          echo "🔨 Building AG-Organism Frontend..."
+
+          cd infrastructure/docker/ag-organism-frontend
+
+          docker build \
+            -t $IMAGE \
+            -t $IMAGE_LATEST \
+            .
+
+          echo "📤 Pushing to Artifact Registry..."
+          docker push $IMAGE
+          docker push $IMAGE_LATEST
+
+          echo "✅ AG-Organism Frontend built and pushed"
+
+      - name: Summary
+        run: |
+          echo "## 🐳 Container Built: AG-Organism Frontend" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Image**: \`${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/chained/ag-organism-frontend:${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "The AG-Organism Frontend provides 3D visualization of A2A agent coordination." >> $GITHUB_STEP_SUMMARY
+
   # ===========================================================================
   # Deploy with Terraform
   # ===========================================================================
   terraform:
     name: "Deploy Terraform"
     runs-on: ubuntu-latest
-    needs: [validate, build, build-api-server, build-ag-ui-frontend]
-    if: always() && needs.validate.outputs.deploy_terraform == 'true' && (needs.build.result == 'success' || needs.build.result == 'skipped') && (needs.build-api-server.result == 'success' || needs.build-api-server.result == 'skipped') && (needs.build-ag-ui-frontend.result == 'success' || needs.build-ag-ui-frontend.result == 'skipped')
+    needs: [validate, build, build-api-server, build-ag-ui-frontend, build-ag-organism-frontend]
+    if: always() && needs.validate.outputs.deploy_terraform == 'true' && (needs.build.result == 'success' || needs.build.result == 'skipped') && (needs.build-api-server.result == 'success' || needs.build-api-server.result == 'skipped') && (needs.build-ag-ui-frontend.result == 'success' || needs.build-ag-ui-frontend.result == 'skipped') && (needs.build-ag-organism-frontend.result == 'success' || needs.build-ag-organism-frontend.result == 'skipped')
 
     defaults:
       run:
