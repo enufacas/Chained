@@ -30,6 +30,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### ✨ Features
 
+- 👤 🏗️ Infrastructure Implement GCP SDK integration for AI-NATIVE control plane (Phase 6 Step 4) [#3675](https://github.com/enufacas/Chained/pull/3675)
 - 👤 🔧 Agents UI: Add per-agent completion status to multi-agent session display [#3676](https://github.com/enufacas/Chained/pull/3676)
 - 👤 Implement Phase 6 Step 3 - Vector Database Integration for AI-Native Control Plane [#3671](https://github.com/enufacas/Chained/pull/3671)
 - 👤 AI-Native Control Plane Phase 6: Production database schemas and LLM integration [#3669](https://github.com/enufacas/Chained/pull/3669)
@@ -50,7 +51,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x18) [#3674](https://github.com/enufacas/Chained/pull/3674)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x19) [#3677](https://github.com/enufacas/Chained/pull/3677)
 - 👤 **Documentation**: AI-Native Control Plane Phase 1 (Foundations) [#3645](https://github.com/enufacas/Chained/pull/3645)
 - 👤 **Test**: Phase 2: AI-Native Control Plane service architecture and API specifications (x2) [#3656](https://github.com/enufacas/Chained/pull/3656)
 - 👤 **Test**: Bootstrap AI-Native Control Plane: Create master control specification [#3643](https://github.com/enufacas/Chained/pull/3643)
