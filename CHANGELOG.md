@@ -38,6 +38,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🐛 Bug Fixes
 
+- 👤 Use heredoc syntax for error_message in handle-cloudrun-errors.yml [#3664](https://github.com/enufacas/Chained/pull/3664)
 - 👤 🏗️ Infrastructure Fix ag-organism-frontend deployment: add missing Terraform targets [#3655](https://github.com/enufacas/Chained/pull/3655)
 - 👤 Add CORS headers to AG-UI Frontend API endpoints (x2) [#3642](https://github.com/enufacas/Chained/pull/3642)
 - 👤 ⚙️ Workflows Fix: ag-organism-frontend not deployed by Terraform workflow [#3638](https://github.com/enufacas/Chained/pull/3638)
@@ -45,7 +46,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x13) [#3661](https://github.com/enufacas/Chained/pull/3661)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x14) [#3665](https://github.com/enufacas/Chained/pull/3665)
 - 👤 **Documentation**: AI-Native Control Plane Phase 1 (Foundations) [#3645](https://github.com/enufacas/Chained/pull/3645)
 - 👤 **Test**: Phase 2: AI-Native Control Plane service architecture and API specifications (x2) [#3656](https://github.com/enufacas/Chained/pull/3656)
 - 👤 **Test**: Bootstrap AI-Native Control Plane: Create master control specification [#3643](https://github.com/enufacas/Chained/pull/3643)
@@ -235,13 +236,9 @@ This changelog excludes automated data syncs and routine maintenance commits.
 - 👤 Simplify AG-UI Frontend with enhanced API key debugging [#3393](https://github.com/enufacas/Chained/pull/3393)
 - 👤 Fix chat not displaying on interactive page and simplify A2A integration [#3387](https://github.com/enufacas/Chained/pull/3387)
 - 👤 ⚙️ Workflows Fix bash arithmetic causing workflow failure in a2a-parallel-agents.yml [#3390](https://github.com/enufacas/Chained/pull/3390)
-- 👤 Replace /gemini-issue-fixer with A2A protocol-compliant implementation prompt [#3386](https://github.com/enufacas/Chained/pull/3386)
-- 👤 Investigate AG-UI Frontend chat functionality issues [#3384](https://github.com/enufacas/Chained/pull/3384)
 
 ### 🧹 Chores & Maintenance
 
 - 👤 📚 Docs **Documentation**: Add AG-UI Frontend troubleshooting guide with root cause discovery [#3408](https://github.com/enufacas/Chained/pull/3408)
-- 👤 🏗️ Infrastructure **Documentation**: add Secret Manager permission to GCP setup guide [#3370](https://github.com/enufacas/Chained/pull/3370)
-- 👤 **Chore**: Update AG-UI Frontend to accept GOOGLE_API_KEY directly [#3370](https://github.com/enufacas/Chained/pull/3370)
 
 ---
