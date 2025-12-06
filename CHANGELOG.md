@@ -33,9 +33,13 @@ This changelog excludes automated data syncs and routine maintenance commits.
 - 👤 🏗️ Infrastructure Host AG-Organism visualization on Cloud Run with dynamic environment injection [#3634](https://github.com/enufacas/Chained/pull/3634)
 - 👤 🔧 Agents Add AG-Organism: 3D cyberpunk visualization frontend for A2A agent coordination [#3632](https://github.com/enufacas/Chained/pull/3632)
 
+### 🐛 Bug Fixes
+
+- 👤 Fix AG-Organism frontend: bundle Three.js locally and add error logging [#3636](https://github.com/enufacas/Chained/pull/3636)
+
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x2) [#3633](https://github.com/enufacas/Chained/pull/3633)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x3) [#3635](https://github.com/enufacas/Chained/pull/3635)
 
 ---
 
@@ -229,8 +233,6 @@ This changelog excludes automated data syncs and routine maintenance commits.
 - 👤 ⚙️ Workflows Fix invalid workflow: secrets context not accessible in step if condition [#3368](https://github.com/enufacas/Chained/pull/3368)
 - 👤 🏗️ Infrastructure Fix Terraform deployment and configure GOOGLE_API_KEY securely for CopilotKit chat [#3366](https://github.com/enufacas/Chained/pull/3366)
 - 👤 Fix GitHub Models nonsense output with quality validation [#3362](https://github.com/enufacas/Chained/pull/3362)
-- 👤 GitHub Models API - use 'token' auth format and budget-friendly default model [#3358](https://github.com/enufacas/Chained/pull/3358)
-- 👤 🏗️ Infrastructure AG-UI Frontend 403 error by adding IAM member resources to Terraform plan targets [#3359](https://github.com/enufacas/Chained/pull/3359)
 
 ### 🧹 Chores & Maintenance
 
