@@ -414,10 +414,31 @@ python main.py
 ## 📈 Metrics
 
 ### Implementation Progress
-- **Completed**: 3.5/6 steps (58%)
-- **Lines of Code Added**: ~10,500 (schemas, LLM, vector, memory, GCP client, tests)
-- **Files Created**: 21 new files
-- **Documentation**: 7 README files updated
+- **Completed**: 4/6 steps (67%) + Infrastructure + CI/CD
+- **Lines of Code Added**: ~15,000+ (schemas, LLM, vector, memory, GCP client, tests, Terraform, workflows)
+- **Files Created**: 35+ new files
+- **Documentation**: 12+ README files updated
+
+### Infrastructure as Code (NEW)
+- **Terraform Files**: 3 files (~1,400 lines)
+  - ai-native-control-plane.tf (550 lines)
+  - Updated variables.tf (40 lines)
+  - Updated outputs.tf (70 lines)
+- **Deployment Script**: bootstrap-deploy.sh (280 lines)
+- **Comprehensive Guide**: AI_NATIVE_README.md (450 lines)
+- **Deployed Resources**: 15+ GCP resources (Cloud SQL, VPC, Cloud Run, Secret Manager, IAM)
+
+### CI/CD Pipelines (NEW)
+- **Build & Test Workflow**: ai-native-build-test.yml (320 lines)
+  - Python tests for all services
+  - PostgreSQL integration tests
+  - Docker image building
+- **Deploy Workflow**: ai-native-deploy.yml (380 lines)
+  - Automated container builds and pushes
+  - Terraform deployment
+  - Health validation
+  - Environment selection (dev/staging/prod)
+- **Total Automation**: 700+ lines of CI/CD code
 
 ### Database Schema
 - **Tables**: 8 production tables (7 initial + 1 patterns)
@@ -437,10 +458,10 @@ python main.py
 ### GCP Integration
 - **GCP Clients**: 2 (GCS, Cloud Run)
 - **GCS Operations**: 3 (create_bucket, upload_file, bucket_exists)
-- **Cloud Run Operations**: 3 (deploy_service, get_service_health, service_exists)
+- **Cloud Run Operations**: 5 (deploy_service, get_service_health, service_exists, scale_service, attach_domain)
 - **Retry Logic**: Exponential backoff with 3 attempts
 - **Custom Exceptions**: 3 (BucketCreationError, BucketUploadError, ServiceDeploymentError)
-- **Endpoints Updated**: 3 (deploy_static_site, check_service_health, check_bucket_health)
+- **Endpoints Implemented**: 7 fully functional endpoints
 
 ## 🎓 Key Learnings
 
