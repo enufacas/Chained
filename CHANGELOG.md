@@ -26,6 +26,18 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ---
 
+## 2025-12-05
+
+### ✨ Features
+
+- 🤖 🧠 Learning 🧠 Learn from GitHub Copilot sources - 2025-12-05 [#3617](https://github.com/enufacas/Chained/pull/3617)
+
+### 🐛 Bug Fixes
+
+- 👤 Fix AG-UI pipeline state updates and error observer configuration [#3629](https://github.com/enufacas/Chained/pull/3629)
+
+---
+
 ## 2025-12-04
 
 ### ✨ Features
@@ -43,7 +55,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x6) [#3594](https://github.com/enufacas/Chained/pull/3594)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x7) [#3604](https://github.com/enufacas/Chained/pull/3604)
 - 👤 📚 Docs **Documentation**: Add dedicated Demo & Deep Dive documentation page [#3579](https://github.com/enufacas/Chained/pull/3579)
 
 ---
@@ -225,52 +237,9 @@ This changelog excludes automated data syncs and routine maintenance commits.
 - 👤 🔧 Agents Add AG-UI Frontend to deploy-adk-agents.yml pipeline [#3353](https://github.com/enufacas/Chained/pull/3353)
 - 👤 🔧 Agents Add A2A Pipeline Visualization with CopilotKit Agentic Generative UI [#3350](https://github.com/enufacas/Chained/pull/3350)
 - 👤 🔧 Agents Add GitHub Models API as A2A-compliant provider for parallel agent orchestration [#3349](https://github.com/enufacas/Chained/pull/3349)
-- 🤖 🎯 Daily goal for 2025-11-28 [#3310](https://github.com/enufacas/Chained/pull/3310)
-- 👤 ⚙️ Workflows Reduce goal-and-idea-system workflow frequency from every 4h to daily [#3341](https://github.com/enufacas/Chained/pull/3341)
 
 ### 🐛 Bug Fixes
 
 - 👤 ⚙️ Workflows Fix bash arithmetic exit code failure in a2a-parallel-agents workflow [#3352](https://github.com/enufacas/Chained/pull/3352)
-- 👤 🏗️ Infrastructure Fix GCP deploy: blog_posts_dir content error and missing Cloud Run imports [#3342](https://github.com/enufacas/Chained/pull/3342)
-- 👤 🏗️ Infrastructure Add missing Terraform resource imports for blog bucket and ADK Cloud Run services [#3339](https://github.com/enufacas/Chained/pull/3339)
-- 👤 🏗️ Infrastructure Terraform heredoc JavaScript template literal escaping in blog.tf [#3338](https://github.com/enufacas/Chained/pull/3338)
-
-### 🧹 Chores & Maintenance
-
-- 👤 📚 Docs **Documentation**: Test Method 2: Copilot CLI headless authentication - comprehensive investigation + GitHub Platform Documentation [#3343](https://github.com/enufacas/Chained/pull/3343)
-- 👤 📚 Docs **Documentation**: add chained knowledge architecture guide [#3346](https://github.com/enufacas/Chained/pull/3346)
-- 👤 🔧 Agents **Chore**: reduce AgentOps dashboard sync frequency to 6h and cleanup stale PRs [#3340](https://github.com/enufacas/Chained/pull/3340)
-
----
-
-## 2025-11-27
-
-### ✨ Features
-
-- 👤 [WIP] Implement meta-coordination based on system actions [#3294](https://github.com/enufacas/Chained/pull/3294)
-- 👤 ⚙️ Workflows add workflow anomaly detection system for AI orchestrator [#3212](https://github.com/enufacas/Chained/pull/3212)
-- 🤖 🎯 Daily goal for 2025-11-27 [#3239](https://github.com/enufacas/Chained/pull/3239)
-- 🤖 🧠 Learning 🧠 Learn from GitHub Copilot sources - 2025-11-27 [#3280](https://github.com/enufacas/Chained/pull/3280)
-- 👤 🔧 Agents Add Agent Console GUI to ADK API Server [#3274](https://github.com/enufacas/Chained/pull/3274)
-- 👤 Add ADK API Server for google/adk-web integration [#3269](https://github.com/enufacas/Chained/pull/3269)
-
-### 🐛 Bug Fixes
-
-- 🤖 📊 GitHub Pages Standardize GitHub Pages footer [#3226](https://github.com/enufacas/Chained/pull/3226)
-- 👤 ADK A2A Blog Pipeline failures and add Cloud Storage blog publishing [#3289](https://github.com/enufacas/Chained/pull/3289)
-- 👤 ⚙️ Workflows Standardize workflow names with logical category prefixes [#3290](https://github.com/enufacas/Chained/pull/3290)
-- 👤 🔧 Agents Fix Terraform import for adk_agents service account; add A2A URLs to README [#3278](https://github.com/enufacas/Chained/pull/3278)
-- 👤 🏗️ Infrastructure Fix Terraform 409 error by importing existing Cloud Run services [#3263](https://github.com/enufacas/Chained/pull/3263)
-- 👤 🔧 Agents Fix Terraform 409 error for existing service account in deploy-adk-agents [#3251](https://github.com/enufacas/Chained/pull/3251)
-
-### 🧹 Chores & Maintenance
-
-- 👤 🔧 Agents **Documentation**: Document live Agent Console GUI URL and fix Cloud Run deployment [#3282](https://github.com/enufacas/Chained/pull/3282)
-- 👤 📚 Docs **Documentation**: Add separate A2A section to README [#3273](https://github.com/enufacas/Chained/pull/3273)
-- 👤 🔧 Agents **Documentation**: Add ADK Dev UI guide explaining agent web interface [#3265](https://github.com/enufacas/Chained/pull/3265)
-- 🤖 **Chore**: 🤖 Update pattern repetition analysis [#3287](https://github.com/enufacas/Chained/pull/3287)
-- 🤖 **Chore**: update prompt generator performance data [#3291](https://github.com/enufacas/Chained/pull/3291)
-- 👤 🧠 Learning **Test**: Enhance daily learning reflection with deduplicated topics and security-specific insights [#3301](https://github.com/enufacas/Chained/pull/3301)
-- 👤 🧠 Learning **Test**: 🧠 GitHub Copilot Learning Summary - 2025-11-27 (@construct-specialist) [#3296](https://github.com/enufacas/Chained/pull/3296)
 
 ---
