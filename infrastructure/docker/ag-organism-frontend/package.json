@@ -1,14 +1,26 @@
 {
   "name": "ag-organism-frontend",
-  "version": "1.0.0",
-  "description": "AG-Organism 3D Visualization Frontend on Cloud Run",
-  "main": "server.js",
+  "version": "2.0.0",
+  "description": "AG-Organism 3D Visualization Frontend with React Three Fiber",
+  "type": "module",
   "scripts": {
-    "start": "node server.js"
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "serve": "node server.js"
   },
   "dependencies": {
-    "express": "^4.18.2",
-    "three": "^0.160.0"
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "three": "^0.160.0",
+    "@react-three/fiber": "^8.15.16",
+    "@react-three/drei": "^9.96.1",
+    "@react-three/postprocessing": "^2.16.0",
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.2.1",
+    "vite": "^5.0.12"
   },
   "engines": {
     "node": ">=18.0.0"
