@@ -41,8 +41,9 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x7) [#3654](https://github.com/enufacas/Chained/pull/3654)
 - 👤 **Documentation**: AI-Native Control Plane Phase 1 (Foundations) [#3645](https://github.com/enufacas/Chained/pull/3645)
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x6) [#3644](https://github.com/enufacas/Chained/pull/3644)
+- 👤 **Test**: Phase 2: AI-Native Control Plane service architecture and API specifications [#3656](https://github.com/enufacas/Chained/pull/3656)
 - 👤 **Test**: Bootstrap AI-Native Control Plane: Create master control specification [#3643](https://github.com/enufacas/Chained/pull/3643)
 
 ---
