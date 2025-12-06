@@ -1,0 +1,22 @@
+# AI-Native Control Plane - Infrastructure Runner Dependencies
+
+# FastAPI and web server
+fastapi==0.109.0
+uvicorn[standard]==0.27.0
+pydantic==2.5.3
+python-multipart==0.0.6
+
+# GCP Client Libraries (for future integration)
+google-cloud-storage==2.14.0
+google-cloud-run==0.10.0
+google-cloud-secret-manager==2.18.0
+
+# Observability
+opentelemetry-api==1.22.0
+opentelemetry-sdk==1.22.0
+opentelemetry-instrumentation-fastapi==0.43b0
+
+# Utilities
+httpx==0.26.0
+tenacity==8.2.3
+structlog==24.1.0
