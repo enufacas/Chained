@@ -6,7 +6,17 @@ This service provides deterministic infrastructure operations for AI-driven clou
 
 ## ⚠️ Implementation Status
 
-**This is a SKELETON IMPLEMENTATION** demonstrating the architecture. All GCP API integrations are stubbed with TODO markers for future implementation.
+**Phase 6 Step 4: GCP SDK Integration** ✅ **IN PROGRESS**
+
+- ✅ **GCP Client Module**: Production-ready GCS and Cloud Run operations
+- ✅ **Real API Integration**: deploy_static_site uses real GCP SDK calls
+- ✅ **Error Handling**: Comprehensive exception handling with retries
+- ✅ **Health Checks**: GCP client status verification
+- 🚧 **deploy_dynamic_service**: Stub implementation (next to implement)
+- 🚧 **scale_service**: Stub implementation
+- 🚧 **attach_domain**: Stub implementation
+
+**Stub Mode**: Service falls back to stub responses when GCP_PROJECT_ID is not configured, allowing development without GCP credentials.
 
 ## 🎯 Purpose
 
@@ -129,6 +139,62 @@ GET /check_service_health?service_name=app-api-2025-prod&region=us-central1
 
 ### 7. GET /check_bucket_health
 Check the health status of a GCS bucket.
+
+## 🔧 GCP Configuration
+
+### Environment Variables
+
+**Required for Production:**
+- `GCP_PROJECT_ID`: Your GCP project ID (required for real GCP operations)
+
+**Optional:**
+- `PORT`: Server port (default: 8080)
+- `LOG_LEVEL`: Logging level (default: INFO)
+
+### Authentication
+
+The service uses **Application Default Credentials** (ADC) for GCP authentication:
+
+**Local Development:**
+```bash
+# Login with your user account
+gcloud auth application-default login
+
+# Set project
+gcloud config set project YOUR_PROJECT_ID
+
+# Set environment variable
+export GCP_PROJECT_ID=YOUR_PROJECT_ID
+```
+
+**Cloud Run Deployment:**
+The service automatically uses the Cloud Run service account. Ensure the service account has:
+- `roles/storage.admin` - For GCS bucket operations
+- `roles/run.admin` - For Cloud Run service operations
+
+### Stub Mode
+
+If `GCP_PROJECT_ID` is not set, the service operates in **stub mode**:
+- All endpoints return mock responses
+- No actual GCP API calls are made
+- Useful for development and testing without GCP credentials
+- Health checks will indicate stub mode status
+
+### Testing GCP Integration
+
+```bash
+# Run test suite
+cd services/infra-runner
+python test_gcp_client.py
+
+# Expected output (stub mode):
+# ✅ GCP client initialized
+# ⚠️  GCP_PROJECT_ID not set, skipping bucket tests
+
+# With GCP_PROJECT_ID set:
+# ✅ Bucket existence check
+# ✅ Service existence check
+```
 
 ## 🚀 Running Locally
 
