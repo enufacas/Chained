@@ -13,6 +13,7 @@ import AgentHumanoid from './AgentHumanoid';
 import AgentLabel from './AgentLabel';
 import ConnectionLines from './ConnectionLines';
 import PostProcessing from './PostProcessing';
+import { ProceduralFactoryEnvironment } from './ProceduralFactoryEnvironment';
 
 // Factory Platform Component with optimized reflective surface
 function FactoryPlatform() {
@@ -303,6 +304,11 @@ function Scene3D({ agents, selectedAgents, agentStates, enableBloom, showConnect
 
       {/* Enhanced particle effects */}
       <EnhancedParticles />
+      
+      {/* Procedural Factory Environment (robotic arms, conveyors, drones, data pods) */}
+      <ProceduralFactoryEnvironment 
+        activePipeline={Array.from(agentStates.values()).some(state => state === 'processing')}
+      />
 
       {/* Contact shadows for better depth */}
       <ContactShadows

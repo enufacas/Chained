@@ -16,7 +16,8 @@ This service provides a modern React-based 3D visualization for the AG-Organism 
 ## Documentation
 
 📚 **Quick Links:**
-- **[ANIMATED_MODELS_GUIDE.md](./ANIMATED_MODELS_GUIDE.md)** - Complete guide for incorporating animated 3D models (NEW)
+- **[PROCEDURAL_MODELS_IMPLEMENTATION.md](./PROCEDURAL_MODELS_IMPLEMENTATION.md)** - Procedurally generated robot models and factory environment (NEW)
+- **[ANIMATED_MODELS_GUIDE.md](./ANIMATED_MODELS_GUIDE.md)** - Guide for incorporating animated 3D models (reference)
 - **[DREI_COMPONENTS.md](./DREI_COMPONENTS.md)** - Drei components usage guide
 - **[FACTORY_THEME.md](./FACTORY_THEME.md)** - Factory theme specifications and color palette
 - **[R3F_REFERENCE.md](./R3F_REFERENCE.md)** - Comprehensive React Three Fiber patterns and examples
@@ -77,6 +78,7 @@ ag-organism-frontend/
 ├── index.html             # HTML entry point
 ├── server.js              # Express server serving React build
 ├── MIGRATION.md           # Migration documentation
+├── PROCEDURAL_MODELS_IMPLEMENTATION.md  # Procedural models docs (NEW)
 └── src/
     ├── main.jsx           # React entry point
     ├── App.jsx            # Main application
@@ -85,16 +87,18 @@ ag-organism-frontend/
     ├── api/
     │   └── agentApi.js   # Backend API integration
     └── components/
-        ├── Scene3D.jsx            # Main 3D scene
-        ├── AgentHumanoid.jsx      # 3D agent representation (R3F)
-        ├── AgentLabel.jsx         # CSS3D labels (drei/Html)
-        ├── ConnectionLines.jsx    # Connection visualization
-        ├── PostProcessing.jsx     # Bloom effect (R3F postprocessing)
-        ├── AgentPanel.jsx         # Left sidebar
-        ├── PromptPanel.jsx        # Right sidebar
-        ├── ControlPanel.jsx       # Bottom controls
-        ├── Header.jsx             # Top header
-        └── LoadingScreen.jsx      # Loading screen
+        ├── Scene3D.jsx                      # Main 3D scene
+        ├── AgentHumanoid.jsx                # Agent wrapper (uses ProceduralRobotModel)
+        ├── ProceduralRobotModel.jsx         # Procedural robot models (NEW)
+        ├── ProceduralFactoryEnvironment.jsx # Factory environment (NEW)
+        ├── AgentLabel.jsx                   # CSS3D labels (drei/Html)
+        ├── ConnectionLines.jsx              # Connection visualization
+        ├── PostProcessing.jsx               # Bloom effect (R3F postprocessing)
+        ├── AgentPanel.jsx                   # Left sidebar
+        ├── PromptPanel.jsx                  # Right sidebar
+        ├── ControlPanel.jsx                 # Bottom controls
+        ├── Header.jsx                       # Top header
+        └── LoadingScreen.jsx                # Loading screen
 ```
 
 ## Environment Variables
@@ -195,7 +199,9 @@ The frontend integrates with the AG-UI backend:
 ## Features
 
 ### 3D Visualization (react-three-fiber)
-- ✅ Agent humanoid models with capsule geometries
+- ✅ **Procedural robot models** with 6 variants (scientist, analyst, writer, engineer, artist, worker)
+- ✅ State-driven animations (idle, processing, completed, failed)
+- ✅ **Animated factory environment**: Robotic arms, conveyor belts, drones, data pods
 - ✅ Floating animation with sine waves
 - ✅ Color-coded agent states (idle, processing, completed, failed)
 - ✅ CSS3D labels with @react-three/drei Html
