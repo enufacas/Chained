@@ -40,18 +40,21 @@ Build a **fully AI-native cloud operating system** where AI agents operate infra
    - Health checks, retry logic, and error handling
    - Idempotency and safe-mode behavior
 
-### 🧩 Phase 3 — Agent Design (Planned)
+### ✅ Phase 3 — Agent Design (Complete)
 
-5. **05_langchain_tools.md** — LangChain Tool Definitions (Coming Soon)
-   - Tool schemas and I/O specifications
-   - Error escalation patterns
-   - Versioning and logging
+5. **[05_langchain_tools.md](05_langchain_tools.md)** — LangChain Tool Definitions
+   - 10 production-ready tools with complete schemas
+   - Deterministic JSON I/O patterns
+   - Safe error escalation and retry logic
+   - OpenTelemetry observability integration
+   - Semantic versioning and compatibility matrix
 
-6. **06_agent_graph.md** — Agent Graph (LangGraph) (Coming Soon)
-   - Multi-agent architecture
-   - State modes and transitions
-   - Planning mechanics
-   - Failure handling
+6. **[06_agent_graph.md](06_agent_graph.md)** — Agent Graph (LangGraph)
+   - 7 specialized agents with clear responsibilities
+   - 4 operation modes (Normal, Repair, Migration, Self-Upgrade)
+   - Sophisticated planning with vector retrieval and scoring
+   - Comprehensive failure handling and circuit breakers
+   - Complete LangGraph implementation
 
 ### 🧱 Phase 4 — Execution Layer (Planned)
 
@@ -71,11 +74,11 @@ Build a **fully AI-native cloud operating system** where AI agents operate infra
 |-------|-------|--------|-----------------|
 | Phase 1: Foundations | Steps 1-2 | ✅ Complete | 2025-12-06 |
 | Phase 2: Service Design | Steps 3-4 | ✅ Complete | 2025-12-06 |
-| Phase 3: Agent Design | Steps 5-6 | 📋 Planned | - |
+| Phase 3: Agent Design | Steps 5-6 | ✅ Complete | 2025-12-06 |
 | Phase 4: Execution Layer | Steps 7-8 | 📋 Planned | - |
 | Phase 5: MVP | Steps 9-10 | 📋 Planned | - |
 
-**Current Status**: Phase 2 complete (4/10 steps) — 40% progress
+**Current Status**: Phase 3 complete (6/10 steps) — 60% progress
 
 ## 🎓 Key Concepts
 
@@ -118,7 +121,9 @@ For newcomers to the project:
 2. Read **02_state_and_memory.md** to understand the data model
 3. Read **03_services_layout.md** to understand service design and networking
 4. Read **04_infra_runner_api.md** to understand the infrastructure API
-5. Continue with subsequent documents as they become available
+5. Read **05_langchain_tools.md** to understand the AI tool interface
+6. Read **06_agent_graph.md** to understand multi-agent orchestration
+7. Continue with subsequent documents as they become available
 
 ## 🔗 Related Files
 
@@ -131,11 +136,14 @@ For newcomers to the project:
 ## 📊 Key Statistics
 
 **Documentation Complete**:
-- **35,000+ words** of production-ready specifications
+- **120,000+ words** of production-ready specifications
 - **7 core services** fully designed
+- **10 LangChain tools** with complete schemas
+- **7 AI agents** with specialized responsibilities
 - **7 API endpoints** with complete contracts
 - **10 database tables** with field-level schemas
 - **6 pattern types** for semantic memory
+- **4 operation modes** (Normal, Repair, Migration, Self-Upgrade)
 - **100+ validation rules** for plan checking
 
 **Architecture Highlights**:
@@ -145,7 +153,9 @@ For newcomers to the project:
 - 100K+ operation events supported
 - 500K+ vector embeddings for learning
 - 1000+ managed apps (future scale)
+- Exponential backoff and circuit breaker patterns
+- OpenTelemetry observability throughout
 
 ---
 
-*Last updated: 2025-12-06 (Phase 2 complete — 40% progress)*
+*Last updated: 2025-12-06 (Phase 3 complete — 60% progress)*
