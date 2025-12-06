@@ -30,6 +30,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### ✨ Features
 
+- 👤 🔧 Agents Phase 3: AI-Native Control Plane agent design (LangChain tools + LangGraph orchestration) [#3658](https://github.com/enufacas/Chained/pull/3658)
 - 🤖 🧠 Learning 🧠 Learn from GitHub Copilot sources - 2025-12-06 [#3647](https://github.com/enufacas/Chained/pull/3647)
 - 👤 🏗️ Infrastructure Host AG-Organism visualization on Cloud Run with dynamic environment injection [#3634](https://github.com/enufacas/Chained/pull/3634)
 - 👤 🔧 Agents Add AG-Organism: 3D cyberpunk visualization frontend for A2A agent coordination [#3632](https://github.com/enufacas/Chained/pull/3632)
@@ -43,7 +44,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x11) [#3659](https://github.com/enufacas/Chained/pull/3659)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x12) [#3660](https://github.com/enufacas/Chained/pull/3660)
 - 👤 **Documentation**: AI-Native Control Plane Phase 1 (Foundations) [#3645](https://github.com/enufacas/Chained/pull/3645)
 - 👤 **Test**: Phase 2: AI-Native Control Plane service architecture and API specifications (x2) [#3656](https://github.com/enufacas/Chained/pull/3656)
 - 👤 **Test**: Bootstrap AI-Native Control Plane: Create master control specification [#3643](https://github.com/enufacas/Chained/pull/3643)
