@@ -30,6 +30,12 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### ✨ Features
 
+- 👤 🏗️ Infrastructure **AI-Native Control Plane Phase 6**: Production database schemas and LLM integration (Steps 1-2)
+  - Add PostgreSQL production schema with 7 tables and migration system
+  - Implement LLM integration with OpenAI and Google Gemini support
+  - Add intent classification and plan generation with LangChain
+  - Create database connection module with Cloud SQL support
+  - Add comprehensive testing and documentation
 - 👤 Complete AI-Native Control Plane Phase 5 MVP with end-to-end examples [#3666](https://github.com/enufacas/Chained/pull/3666)
 - 👤 AI-Native Control Plane Phase 4: Execution layer skeleton services [#3662](https://github.com/enufacas/Chained/pull/3662)
 - 👤 🔧 Agents Phase 3: AI-Native Control Plane agent design (LangChain tools + LangGraph orchestration) [#3658](https://github.com/enufacas/Chained/pull/3658)

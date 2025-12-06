@@ -9,6 +9,7 @@ python-multipart==0.0.18  # Security fix: CVE for DoS via multipart/form-data bo
 # LangChain and AI
 langchain==0.1.0
 langchain-openai==0.0.5
+langchain-google-genai==0.0.11  # Google Gemini integration
 langgraph==0.0.20
 openai==1.10.0
 
