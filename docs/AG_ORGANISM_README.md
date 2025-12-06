@@ -1,5 +1,15 @@
 # AG-Organism: Interactive Agent Coordination Visualizer
 
+## ⚠️ Deployment Notice
+
+**AG-Organism is now deployed on Cloud Run!**
+
+- **Cloud Run URL**: Available via Terraform output `ag_organism_frontend_url`
+- **Static Version**: The static HTML version at `docs/ag-organism.html` is deprecated
+- **Why Cloud Run**: Cloud Run deployment enables dynamic environment variable configuration, proper CORS handling, and integration with the full AG-UI infrastructure
+
+See [Deployment](#deployment) section for details.
+
 ## Overview
 
 AG-Organism is an alternate frontend for the AG-UI system that combines the cyberpunk visual style of the organism.html visualization with the full A2A protocol capabilities of the AG-UI backend.
@@ -208,9 +218,53 @@ Potential improvements:
 - Check backend logs for errors
 - Confirm agent URLs are configured
 
-## Development
+## Deployment
 
-### Local Testing
+### Cloud Run Deployment (Production)
+
+AG-Organism is deployed as a Cloud Run service with dynamic environment variable injection.
+
+**Architecture:**
+```
+AG-Organism Frontend (Cloud Run)
+├── Express Server (Node.js)
+├── Environment Variable Injection
+└── Static HTML with Three.js
+
+Environment Variables:
+- NEXT_PUBLIC_ADK_API_URL: ADK API Server URL
+- AG_UI_FRONTEND_URL: AG-UI Frontend URL (for /api endpoints)
+```
+
+**Deployment Process:**
+
+1. **Automatic**: Triggered by GitHub Actions workflow `deploy-adk-agents.yml`
+   - Builds Docker image
+   - Pushes to Google Artifact Registry
+   - Deploys via Terraform
+
+2. **Manual**:
+   ```bash
+   # Build and push
+   cd infrastructure/docker/ag-organism-frontend
+   docker build -t us-central1-docker.pkg.dev/PROJECT_ID/chained/ag-organism-frontend:latest .
+   gcloud docker -- push us-central1-docker.pkg.dev/PROJECT_ID/chained/ag-organism-frontend:latest
+
+   # Deploy via Terraform
+   cd infrastructure/terraform
+   terraform apply -var="image_tag=latest"
+   ```
+
+**Get Service URL:**
+```bash
+terraform output ag_organism_frontend_url
+# Or
+gcloud run services describe chained-ag-organism-frontend --region us-central1 --format='value(status.url)'
+```
+
+### Local Development
+
+#### Option 1: Serve Static HTML (Deprecated)
 ```bash
 # Serve from docs directory
 cd docs
@@ -220,11 +274,63 @@ python3 -m http.server 8000
 open http://localhost:8000/ag-organism.html
 ```
 
+**Note**: Static version uses hardcoded API URLs and is deprecated. Use Cloud Run deployment for production.
+
+#### Option 2: Run Docker Container Locally
+```bash
+cd infrastructure/docker/ag-organism-frontend
+
+# Build
+docker build -t ag-organism-frontend .
+
+# Run with environment variables
+docker run -p 8080:8080 \
+  -e AG_UI_FRONTEND_URL=https://chained-ag-ui-frontend-xxx.run.app \
+  -e NEXT_PUBLIC_ADK_API_URL=https://chained-adk-api-server-xxx.run.app \
+  ag-organism-frontend
+
+# Open in browser
+open http://localhost:8080
+```
+
 ### Modification
-The file is self-contained HTML. Edit directly to:
+
+#### Updating the Visualization
+1. Edit `infrastructure/docker/ag-organism-frontend/public/ag-organism.html`
+2. Commit changes
+3. Push to trigger automatic deployment via GitHub Actions
+
+#### Local Testing After Changes
+```bash
+cd infrastructure/docker/ag-organism-frontend
+docker build -t ag-organism-frontend:test .
+docker run -p 8080:8080 \
+  -e AG_UI_FRONTEND_URL=http://localhost:3000 \
+  -e NEXT_PUBLIC_ADK_API_URL=http://localhost:8080 \
+  ag-organism-frontend:test
+```
+
+### Files and Locations
+
+| Purpose | Location |
+|---------|----------|
+| **Production Service** | `infrastructure/docker/ag-organism-frontend/` |
+| - Dockerfile | `infrastructure/docker/ag-organism-frontend/Dockerfile` |
+| - Express Server | `infrastructure/docker/ag-organism-frontend/server.js` |
+| - HTML File | `infrastructure/docker/ag-organism-frontend/public/ag-organism.html` |
+| **Deprecated Static** | `docs/ag-organism.html` (for GitHub Pages) |
+| **Terraform Config** | `infrastructure/terraform/adk-agents.tf` |
+| **Deployment Workflow** | `.github/workflows/deploy-adk-agents.yml` |
+
+## Development
+
+### Modification (Legacy)
+The static file `docs/ag-organism.html` is self-contained HTML. Edit directly to:
 - Adjust visual style (CSS section)
 - Modify 3D rendering (Three.js code)
 - Change API integration (fetch calls)
+
+**Note**: For production changes, update the Cloud Run version instead.
 
 ## Credits
 

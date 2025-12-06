@@ -6,6 +6,7 @@
 # - blog-writer: Writes blog posts
 # - google-trends: Analyzes Google Trends
 # - ag-ui-frontend: CopilotKit-powered A2A Pipeline Visualization UI
+# - ag-organism-frontend: 3D visualization of A2A agent coordination
 #
 # Reference:
 # - ADK Cloud Run Deployment: https://google.github.io/adk-docs/deploy/cloud-run/
@@ -228,7 +229,7 @@ resource "google_cloud_run_v2_service" "academic_research" {
       max_instance_count = 3
     }
 
-    max_instance_request_concurrency = 1 # Required when CPU < 1
+    max_instance_request_concurrency = 1 # Required when CPU < 1 vCPU - ensures proper request handling with limited CPU resources
 
     service_account = google_service_account.adk_agents.email
     timeout         = "300s"
@@ -374,7 +375,7 @@ resource "google_cloud_run_v2_service" "blog_writer" {
       max_instance_count = 3
     }
 
-    max_instance_request_concurrency = 1 # Required when CPU < 1
+    max_instance_request_concurrency = 1 # Required when CPU < 1 vCPU - ensures proper request handling with limited CPU resources
 
     service_account = google_service_account.adk_agents.email
     timeout         = "300s"
@@ -512,7 +513,7 @@ resource "google_cloud_run_v2_service" "google_trends" {
       max_instance_count = 3
     }
 
-    max_instance_request_concurrency = 1 # Required when CPU < 1
+    max_instance_request_concurrency = 1 # Required when CPU < 1 vCPU - ensures proper request handling with limited CPU resources
 
     service_account = google_service_account.adk_agents.email
     timeout         = "300s"
@@ -635,7 +636,7 @@ resource "google_cloud_run_v2_service" "code_reviewer" {
       max_instance_count = 3
     }
 
-    max_instance_request_concurrency = 1 # Required when CPU < 1
+    max_instance_request_concurrency = 1 # Required when CPU < 1 vCPU - ensures proper request handling with limited CPU resources
 
     service_account = google_service_account.adk_agents.email
     timeout         = "300s"
@@ -758,7 +759,7 @@ resource "google_cloud_run_v2_service" "data_analyst" {
       max_instance_count = 3
     }
 
-    max_instance_request_concurrency = 1 # Required when CPU < 1
+    max_instance_request_concurrency = 1 # Required when CPU < 1 vCPU - ensures proper request handling with limited CPU resources
 
     service_account = google_service_account.adk_agents.email
     timeout         = "300s"
@@ -881,7 +882,7 @@ resource "google_cloud_run_v2_service" "image_generator" {
       max_instance_count = 3
     }
 
-    max_instance_request_concurrency = 1 # Required when CPU < 1
+    max_instance_request_concurrency = 1 # Required when CPU < 1 vCPU - ensures proper request handling with limited CPU resources
 
     service_account = google_service_account.adk_agents.email
     timeout         = "300s"
@@ -1042,7 +1043,7 @@ resource "google_cloud_run_v2_service" "adk_api_server" {
       max_instance_count = 3
     }
 
-    max_instance_request_concurrency = 1 # Required when CPU < 1
+    max_instance_request_concurrency = 1 # Required when CPU < 1 vCPU - ensures proper request handling with limited CPU resources
 
     service_account = google_service_account.adk_agents.email
     timeout         = "300s"
@@ -1277,7 +1278,7 @@ resource "google_cloud_run_v2_service" "ag_ui_frontend" {
       max_instance_count = 3
     }
 
-    max_instance_request_concurrency = 1 # Required when CPU < 1
+    max_instance_request_concurrency = 1 # Required when CPU < 1 vCPU - ensures proper request handling with limited CPU resources
 
     service_account = google_service_account.adk_agents.email
     timeout         = "300s"
@@ -1396,7 +1397,7 @@ resource "google_cloud_run_v2_service" "error_observer" {
       max_instance_count = 3
     }
 
-    max_instance_request_concurrency = 1 # Required when CPU < 1
+    max_instance_request_concurrency = 1 # Required when CPU < 1 vCPU - ensures proper request handling with limited CPU resources
 
     service_account = google_service_account.adk_agents.email
     timeout         = "300s"
@@ -1486,7 +1487,7 @@ resource "google_cloud_run_v2_service" "log_consumer" {
       max_instance_count = 3
     }
 
-    max_instance_request_concurrency = 1 # Required when CPU < 1
+    max_instance_request_concurrency = 1 # Required when CPU < 1 vCPU - ensures proper request handling with limited CPU resources
 
     service_account = google_service_account.adk_agents.email
     timeout         = "300s"
@@ -1507,6 +1508,106 @@ resource "google_cloud_run_v2_service_iam_member" "log_consumer_public" {
   project  = var.project_id
   location = var.region
   name     = google_cloud_run_v2_service.log_consumer.name
+  role     = "roles/run.invoker"
+  member   = "allUsers"
+}
+
+# =============================================================================
+# Cloud Run: AG-Organism Frontend (3D Visualization)
+# =============================================================================
+
+resource "google_cloud_run_v2_service" "ag_organism_frontend" {
+  name     = "chained-ag-organism-frontend"
+  location = var.region
+
+  template {
+    # Add label to track deployment version - forces new revision when image_tag changes
+    labels = {
+      "deployment-version" = substr(replace(var.image_tag, ".", "-"), 0, 63)
+    }
+
+    containers {
+      image = "${var.region}-docker.pkg.dev/${var.project_id}/chained/ag-organism-frontend:${var.image_tag}"
+
+      resources {
+        limits = {
+          cpu    = "0.5"
+          memory = "512Mi"
+        }
+        cpu_idle          = true
+        startup_cpu_boost = true
+      }
+
+      env {
+        name  = "ENVIRONMENT"
+        value = var.environment
+      }
+
+      # ADK API Server URL for agent registry
+      env {
+        name  = "NEXT_PUBLIC_ADK_API_URL"
+        value = google_cloud_run_v2_service.adk_api_server.uri
+      }
+
+      # AG-UI Frontend URL for API calls (/api/pipeline, /api/registry)
+      env {
+        name  = "AG_UI_FRONTEND_URL"
+        value = google_cloud_run_v2_service.ag_ui_frontend.uri
+      }
+
+      ports {
+        container_port = 8080
+      }
+
+      startup_probe {
+        http_get {
+          path = "/health"
+          port = 8080
+        }
+        initial_delay_seconds = 5
+        timeout_seconds       = 3
+        period_seconds        = 5
+        failure_threshold     = 3
+      }
+
+      liveness_probe {
+        http_get {
+          path = "/health"
+          port = 8080
+        }
+        period_seconds    = 30
+        timeout_seconds   = 3
+        failure_threshold = 3
+      }
+    }
+
+    scaling {
+      min_instance_count = 0
+      max_instance_count = 3
+    }
+
+    max_instance_request_concurrency = 1 # Required when CPU < 1 vCPU - ensures proper request handling with limited CPU resources
+
+    service_account = google_service_account.adk_agents.email
+    timeout         = "300s"
+  }
+
+  traffic {
+    type    = "TRAFFIC_TARGET_ALLOCATION_TYPE_LATEST"
+    percent = 100
+  }
+
+  depends_on = [
+    google_project_service.required_apis,
+    google_cloud_run_v2_service.adk_api_server,
+    google_cloud_run_v2_service.ag_ui_frontend,
+  ]
+}
+
+resource "google_cloud_run_v2_service_iam_member" "ag_organism_frontend_public" {
+  project  = var.project_id
+  location = var.region
+  name     = google_cloud_run_v2_service.ag_organism_frontend.name
   role     = "roles/run.invoker"
   member   = "allUsers"
 }
@@ -1565,12 +1666,20 @@ output "log_consumer_url" {
   value       = google_cloud_run_v2_service.log_consumer.uri
 }
 
+output "ag_organism_frontend_url" {
+  description = "URL of the AG-Organism Frontend (3D Visualization)"
+  value       = google_cloud_run_v2_service.ag_organism_frontend.uri
+}
+
 output "adk_dev_ui_info" {
   description = "ADK Dev UI access information"
   value       = <<-EOT
     AG-UI Frontend (CopilotKit Visualization):
     - URL: ${google_cloud_run_v2_service.ag_ui_frontend.uri}
     - CopilotKit API: ${google_cloud_run_v2_service.ag_ui_frontend.uri}/api/copilotkit
+
+    AG-Organism Frontend (3D Visualization):
+    - URL: ${google_cloud_run_v2_service.ag_organism_frontend.uri}
 
     ADK API Server (for google/adk-web):
     - API Server: ${google_cloud_run_v2_service.adk_api_server.uri}
