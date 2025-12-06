@@ -442,6 +442,17 @@ const PHASE_ICONS: { [key: string]: { icon: string; color: string } } = {
   complete: { icon: "🎉", color: "emerald" },
 };
 
+// Helper function to calculate agent statistics from turn results
+function calculateAgentStats(turnResults: Array<{ agentId: string; status: string }>) {
+  const uniqueAgents = Array.from(new Set(turnResults.map(t => t.agentId)));
+  return uniqueAgents.map(agentId => {
+    const agentTurns = turnResults.filter(t => t.agentId === agentId);
+    const completedTurns = agentTurns.filter(t => t.status === "completed").length;
+    const failedTurns = agentTurns.filter(t => t.status === "failed").length;
+    return { agentId, completed: completedTurns, failed: failedTurns, total: agentTurns.length };
+  });
+}
+
 function UnifiedOutcomes({ 
   activeSession, 
   completedSessions,
@@ -539,21 +550,14 @@ function UnifiedOutcomes({
               <div className="font-medium text-white text-sm truncate">{activeSession.recipeName}</div>
               <div className="text-xs text-slate-400 truncate">{activeSession.goal}</div>
               {(() => {
-                // Calculate unique agents and their completion status
-                const uniqueAgents = Array.from(new Set(activeSession.turnResults.map(t => t.agentId)));
-                const agentCompletionCount = uniqueAgents.map(agentId => {
-                  const agentTurns = activeSession.turnResults.filter(t => t.agentId === agentId);
-                  const completedTurns = agentTurns.filter(t => t.status === "completed").length;
-                  return { agentId, completed: completedTurns, total: agentTurns.length };
-                });
-                const allAgentsComplete = agentCompletionCount.every(a => a.completed === a.total);
+                const agentStats = calculateAgentStats(activeSession.turnResults);
                 
                 return (
                   <div className="text-[10px] text-slate-500 mt-0.5">
-                    {uniqueAgents.length} agents: {agentCompletionCount.map((a, i) => (
+                    {agentStats.length} agents: {agentStats.map((a, i) => (
                       <span key={a.agentId} className={a.completed === a.total ? "text-green-400" : "text-yellow-400"}>
                         {agentIcons[a.agentId] || "🤖"}{a.completed}/{a.total}
-                        {i < uniqueAgents.length - 1 ? ", " : ""}
+                        {i < agentStats.length - 1 ? ", " : ""}
                       </span>
                     ))}
                   </div>
@@ -582,13 +586,7 @@ function UnifiedOutcomes({
             <div className="px-3 pb-3 space-y-2">
               {/* Agent Summary Header */}
               {(() => {
-                const uniqueAgents = Array.from(new Set(activeSession.turnResults.map(t => t.agentId)));
-                const agentStats = uniqueAgents.map(agentId => {
-                  const agentTurns = activeSession.turnResults.filter(t => t.agentId === agentId);
-                  const completedTurns = agentTurns.filter(t => t.status === "completed").length;
-                  const failedTurns = agentTurns.filter(t => t.status === "failed").length;
-                  return { agentId, completed: completedTurns, failed: failedTurns, total: agentTurns.length };
-                });
+                const agentStats = calculateAgentStats(activeSession.turnResults);
                 
                 return (
                   <div className="p-2 rounded bg-gradient-to-r from-slate-700/30 to-slate-800/30 border border-slate-600/30">
