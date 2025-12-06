@@ -36,15 +36,16 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🐛 Bug Fixes
 
-- 👤 Add CORS headers to AG-UI Frontend API endpoints [#3642](https://github.com/enufacas/Chained/pull/3642)
+- 👤 🏗️ Infrastructure Fix ag-organism-frontend deployment: add missing Terraform targets [#3655](https://github.com/enufacas/Chained/pull/3655)
+- 👤 Add CORS headers to AG-UI Frontend API endpoints (x2) [#3642](https://github.com/enufacas/Chained/pull/3642)
 - 👤 ⚙️ Workflows Fix: ag-organism-frontend not deployed by Terraform workflow [#3638](https://github.com/enufacas/Chained/pull/3638)
 - 👤 Fix AG-Organism frontend: bundle Three.js locally and add error logging [#3636](https://github.com/enufacas/Chained/pull/3636)
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x8) [#3657](https://github.com/enufacas/Chained/pull/3657)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x11) [#3659](https://github.com/enufacas/Chained/pull/3659)
 - 👤 **Documentation**: AI-Native Control Plane Phase 1 (Foundations) [#3645](https://github.com/enufacas/Chained/pull/3645)
-- 👤 **Test**: Phase 2: AI-Native Control Plane service architecture and API specifications [#3656](https://github.com/enufacas/Chained/pull/3656)
+- 👤 **Test**: Phase 2: AI-Native Control Plane service architecture and API specifications (x2) [#3656](https://github.com/enufacas/Chained/pull/3656)
 - 👤 **Test**: Bootstrap AI-Native Control Plane: Create master control specification [#3643](https://github.com/enufacas/Chained/pull/3643)
 
 ---
