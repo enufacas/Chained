@@ -14,6 +14,7 @@ This directory contains all documentation related to the Agent2Agent (A2A) Proto
 
 ### Quick Start
 - **[A2A_ORCHESTRATION_QUICK_START.md](./A2A_ORCHESTRATION_QUICK_START.md)** - ⚡ **START HERE: 30-second guide to N-agent orchestration**
+- **[A2A_PATTERN_DIAGRAMS.md](./A2A_PATTERN_DIAGRAMS.md)** - 📈 **VISUAL DIAGRAMS: Mermaid flowcharts for all patterns**
 - **[A2A_PATTERN_COMPARISON.md](./A2A_PATTERN_COMPARISON.md)** - 📊 **PATTERN COMPARISON: Visual side-by-side of all 3 patterns**
 - **[A2A_COPILOT_ORCHESTRATION_GUIDE.md](./A2A_COPILOT_ORCHESTRATION_GUIDE.md)** - 📘 **COMPLETE GUIDE: Native Copilot agent orchestration patterns**
 - **[A2A_SUCCESS_HISTORY.md](./A2A_SUCCESS_HISTORY.md)** - 🎉 **SUCCESS! First working chat conversation and expansion ideas**
