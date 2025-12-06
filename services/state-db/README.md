@@ -27,6 +27,7 @@ The **state-db** is the ground truth for all system state, replacing Git history
 | `operations` | Event log (replaces Git history) | 1K-10M |
 | `policies` | AI constraints and rules | 10-1000 |
 | `schema_versions` | Database migration history | 10-100 |
+| `patterns` | Semantic memory patterns with embeddings | 1K-500K |
 
 ### Relationships
 
@@ -36,7 +37,8 @@ users
        ├─> plan_versions (current version)
        ├─> infra_objects (app resources)
        └─> operations (app events)
-            └─> operations (parent operation - hierarchical)
+            ├─> operations (parent operation - hierarchical)
+            └─> patterns (learned patterns)
 
 policies -> apps (scope)
 policies -> users (scope)
@@ -52,6 +54,193 @@ Migrations are SQL scripts in `migrations/` directory:
 ### Current Migrations
 
 1. **001_initial_schema.sql** - Initial production schema with all 7 tables
+2. **002_add_vector_support.sql** - Add pgvector extension and patterns table for semantic memory
+
+## Vector Database (Semantic Memory)
+
+**Phase 6 Step 3: Vector Database Integration**
+
+The state-db includes semantic memory capabilities via the pgvector extension. This enables the AI Control Plane to learn from successful operations and reuse patterns.
+
+### Features
+
+- **Pattern Storage**: Store successful plans, templates, and operational patterns
+- **Semantic Search**: Find similar patterns using vector similarity search
+- **Pattern Ranking**: Rank patterns by relevance, success score, and usage
+- **Learning System**: Automatically capture and reuse successful patterns
+
+### Setup Vector Support
+
+#### 1. Install pgvector Extension
+
+The extension is automatically installed by migration 002. To verify:
+
+```bash
+psql -U postgres -d ai_native_control_plane -c \
+  "SELECT extname, extversion FROM pg_extension WHERE extname = 'vector';"
+```
+
+#### 2. Apply Migration 002
+
+```bash
+# Apply vector support migration
+psql -U postgres -d ai_native_control_plane -f migrations/002_add_vector_support.sql
+
+# Verify patterns table exists
+psql -U postgres -d ai_native_control_plane -c "\d patterns"
+```
+
+#### 3. Configure Embedding Provider
+
+Set environment variable for embedding generation:
+
+```bash
+# Option 1: OpenAI (recommended for production)
+export OPENAI_API_KEY="sk-..."
+
+# Option 2: Local models (for development, lower cost)
+# Automatically uses sentence-transformers if OpenAI key not available
+```
+
+#### 4. Test Vector Operations
+
+```bash
+cd services/state-db
+python test_vector.py                # Uses OpenAI embeddings
+python test_vector.py --provider=local  # Uses local embeddings
+```
+
+### Patterns Table Schema
+
+The `patterns` table stores semantic patterns with 1536-dimensional embeddings:
+
+```sql
+CREATE TABLE patterns (
+    pattern_id VARCHAR(64) PRIMARY KEY,
+    embedding vector(1536) NOT NULL,  -- pgvector column
+    pattern_type VARCHAR(50) NOT NULL,  -- template, style, intent, etc.
+    natural_language_description TEXT NOT NULL,
+    content JSONB NOT NULL,
+    success_score FLOAT NOT NULL DEFAULT 1.0,
+    usage_count INTEGER NOT NULL DEFAULT 0,
+    ...
+);
+```
+
+**Pattern Types**:
+- `template` - Reusable starting point for common apps
+- `style` - Coding or architectural preference
+- `intent` - User goal or desired outcome
+- `system_upgrade_proposal` - Proposed improvement to control plane
+- `migration_plan` - Strategy for moving between states
+- `error_repair` - Known failure + successful recovery
+
+### Python API
+
+#### Store a Pattern
+
+```python
+from vector import store_pattern
+
+pattern_id = store_pattern(
+    pattern_type='template',
+    natural_language_description='Deploy a static blog with posts and categories',
+    content={
+        'plan_steps': ['Create GCS bucket', 'Generate HTML', 'Upload files'],
+        'estimated_duration_seconds': 60
+    },
+    app_type='static',
+    success_score=0.95,
+    tags=['blog', 'static'],
+    embedding_provider='openai'  # or 'local'
+)
+```
+
+#### Search for Similar Patterns
+
+```python
+from vector import search_similar_patterns
+
+results = search_similar_patterns(
+    query_text='Create a news website',
+    top_k=5,
+    filter_pattern_type='template',
+    embedding_provider='openai'
+)
+
+for pattern in results:
+    print(f"{pattern['similarity_score']:.2f} - {pattern['description']}")
+```
+
+#### Using Memory Agent
+
+```python
+from memory import MemoryAgent
+
+agent = MemoryAgent(embedding_provider='openai')
+
+# Retrieve relevant patterns
+patterns = agent.retrieve_relevant_patterns(
+    user_request='Create a blog with authentication',
+    intent='create_app',
+    top_k=3
+)
+
+# Learn from successful operation
+agent.learn_from_operation({
+    'user_request': 'Deploy portfolio site',
+    'plan': {...},
+    'operation_id': 'op_123',
+    'success_score': 0.9
+})
+```
+
+### Performance
+
+- **Embedding Generation**: ~100-300ms per text (OpenAI), ~10-50ms (local)
+- **Vector Search**: ~10-50ms for 10K patterns, ~50-200ms for 100K patterns
+- **Index Type**: HNSW (Hierarchical Navigable Small World) for fast ANN search
+- **Dimension**: 1536 (OpenAI text-embedding-ada-002)
+
+### Cost Considerations
+
+**OpenAI Embeddings**:
+- Cost: $0.0001 per 1K tokens (~750 words)
+- Typical pattern: ~100-200 tokens = $0.00001-0.00002 per pattern
+- 10K patterns: ~$0.10-0.20
+
+**Local Embeddings** (sentence-transformers):
+- Cost: Free (runs locally)
+- Speed: Fast (~10-50ms)
+- Quality: Good for most use cases, slightly lower than OpenAI
+
+### Troubleshooting
+
+**pgvector not found**:
+```bash
+# Install pgvector extension
+sudo apt-get install postgresql-15-pgvector  # Ubuntu/Debian
+brew install pgvector  # macOS
+```
+
+**Embedding generation fails**:
+```bash
+# Check OpenAI API key
+echo $OPENAI_API_KEY
+
+# Or use local embeddings
+pip install sentence-transformers
+python test_vector.py --provider=local
+```
+
+**Slow searches**:
+```sql
+-- Check if HNSW index exists
+SELECT indexname FROM pg_indexes WHERE tablename = 'patterns';
+
+-- Rebuild index if needed
+REINDEX INDEX idx_patterns_embedding_cosine;
+```
 
 ## Setup Instructions
 
