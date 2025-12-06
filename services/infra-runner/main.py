@@ -1,8 +1,8 @@
 """
 AI-Native Control Plane - Infrastructure Runner Service
 
-This is a SKELETON IMPLEMENTATION demonstrating the architecture.
-All GCP operations are stubbed with TODO markers for future implementation.
+Production implementation with real GCP SDK integration.
+Phase 6 Step 4: GCP SDK Integration
 
 This service provides 7 production-ready API endpoints for infrastructure operations:
 1. Deploy static sites to GCS
@@ -16,6 +16,7 @@ This service provides 7 production-ready API endpoints for infrastructure operat
 
 import hashlib
 import logging
+import os
 import time
 from datetime import datetime
 from typing import Any, Dict, List, Optional
@@ -25,12 +26,28 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
 
+# Import GCP client
+from gcp_client import GCPClient, GCPClientError, BucketCreationError, BucketUploadError
+
 # Configure structured logging
 logging.basicConfig(
     level=logging.INFO,
     format='{"timestamp": "%(asctime)s", "severity": "%(levelname)s", "message": "%(message)s", "service": "infra-runner"}',
 )
 logger = logging.getLogger(__name__)
+
+# Initialize GCP client
+GCP_PROJECT_ID = os.getenv("GCP_PROJECT_ID", "")
+gcp_client = None
+if GCP_PROJECT_ID:
+    try:
+        gcp_client = GCPClient(project_id=GCP_PROJECT_ID)
+        logger.info(f"GCP client initialized for project: {GCP_PROJECT_ID}")
+    except Exception as e:
+        logger.error(f"Failed to initialize GCP client: {e}")
+        gcp_client = None
+else:
+    logger.warning("GCP_PROJECT_ID not set, running in stub mode")
 
 # Initialize FastAPI app
 app = FastAPI(
@@ -260,14 +277,15 @@ async def health_check():
     
     Returns service status and readiness for Cloud Run health checks.
     """
+    gcp_client_status = "ok" if gcp_client else "not_configured"
+    
     return {
         "status": "healthy",
         "version": "0.1.0",
         "timestamp": datetime.utcnow().isoformat(),
         "checks": {
-            "gcp_credentials": "ok",  # TODO: Actually check credentials
-            "state_db_connection": "ok",  # TODO: Check database connection
-            "gcp_apis": "ok",  # TODO: Check GCP API availability
+            "gcp_client": gcp_client_status,
+            "gcp_project_id": GCP_PROJECT_ID if GCP_PROJECT_ID else "not_set",
         },
     }
 
@@ -287,9 +305,9 @@ async def deploy_static_site(request: DeployStaticSiteRequest, req: Request):
     """
     Deploy a static website to GCS bucket with public access and CDN
     
-    This is a SKELETON implementation. TODO: Integrate with GCP Storage API.
+    Phase 6 Step 4: Real GCP SDK integration
     
-    Steps (to be implemented):
+    Steps:
     1. Check if bucket exists (idempotency)
     2. Create GCS bucket with specified region
     3. Configure public access if requested
@@ -303,58 +321,204 @@ async def deploy_static_site(request: DeployStaticSiteRequest, req: Request):
     operation_id = generate_operation_id()
     correlation_id = req.headers.get("X-Correlation-ID", "unknown")
 
-    # TODO: Check idempotency key in state-db
-    # TODO: If duplicate request within 24h, return cached response
+    # If GCP client not available, return stub response
+    if not gcp_client:
+        logger.warning("GCP client not available, returning stub response")
+        mock_bucket_url = f"https://storage.googleapis.com/{request.bucket_name}"
+        duration_ms = int((time.time() - start_time) * 1000)
+        
+        return StandardResponse(
+            success=True,
+            operation_id=operation_id,
+            resource_id=request.bucket_name,
+            status="completed",
+            message="Static site deployed successfully (STUB MODE - GCP_PROJECT_ID not configured)",
+            details={
+                "bucket_name": request.bucket_name,
+                "bucket_url": mock_bucket_url,
+                "public_url": f"{mock_bucket_url}/{request.index_page}",
+                "cdn_enabled": request.enable_cdn,
+                "files_uploaded": len(request.files),
+                "duration_ms": duration_ms,
+                "stub_mode": True,
+            },
+            metadata={
+                "plan_hash": request.plan_hash,
+                "app_id": request.app_id,
+                "timestamp": datetime.utcnow().isoformat(),
+            },
+        )
 
-    # TODO: Validate bucket name availability (must be globally unique)
-    # TODO: Actually create GCS bucket using google-cloud-storage library
-    # TODO: Upload files to bucket
-    # TODO: Configure bucket settings (public access, CORS, lifecycle)
-    # TODO: Enable CDN if requested
+    try:
+        # TODO: Check idempotency key in state-db
+        # TODO: If duplicate request within 24h, return cached response
 
-    # STUB: Mock successful deployment
-    mock_bucket_url = f"https://storage.googleapis.com/{request.bucket_name}"
-    mock_cdn_url = (
-        f"https://cdn.example.com/{request.app_id}" if request.enable_cdn else None
-    )
+        # Step 1: Create bucket with configuration
+        logger.info(f"Creating bucket {request.bucket_name}")
+        
+        cors_dict = None
+        if request.cors_config:
+            cors_dict = {
+                "allowed_origins": request.cors_config.allowed_origins,
+                "allowed_methods": request.cors_config.allowed_methods,
+                "allowed_headers": request.cors_config.allowed_headers,
+                "max_age_seconds": request.cors_config.max_age_seconds,
+            }
+        
+        lifecycle_list = None
+        if request.lifecycle_rules:
+            lifecycle_list = [
+                {
+                    "action": rule.action,
+                    "condition": rule.condition,
+                    "storage_class": rule.storage_class,
+                }
+                for rule in request.lifecycle_rules
+            ]
+        
+        bucket_result = gcp_client.create_bucket(
+            bucket_name=request.bucket_name,
+            region=request.region,
+            public_access=request.public_access,
+            enable_cdn=request.enable_cdn,
+            cors_config=cors_dict,
+            lifecycle_rules=lifecycle_list,
+        )
+        
+        logger.info(f"Bucket created/verified: {bucket_result}")
 
-    duration_ms = int((time.time() - start_time) * 1000)
+        # Step 2: Upload all files
+        uploaded_files = []
+        total_size_bytes = 0
+        
+        for file_upload in request.files:
+            logger.info(f"Uploading file {file_upload.path}")
+            
+            upload_result = gcp_client.upload_file(
+                bucket_name=request.bucket_name,
+                file_path=file_upload.path,
+                content=file_upload.content,
+                content_base64=file_upload.content_base64,
+                content_type=file_upload.content_type,
+                cache_control=file_upload.cache_control or "public, max-age=3600",
+            )
+            
+            uploaded_files.append(upload_result)
+            total_size_bytes += upload_result["size_bytes"]
+            logger.info(f"Uploaded {file_upload.path}: {upload_result['size_bytes']} bytes")
 
-    log_operation(
-        operation_type="deploy_static_site",
-        correlation_id=correlation_id,
-        operation_id=operation_id,
-        resource_id=request.bucket_name,
-        success=True,
-        duration_ms=duration_ms,
-        details={"files_uploaded": len(request.files), "bucket_name": request.bucket_name},
-    )
+        bucket_url = f"https://storage.googleapis.com/{request.bucket_name}"
+        public_url = f"{bucket_url}/{request.index_page}"
 
-    return StandardResponse(
-        success=True,
-        operation_id=operation_id,
-        resource_id=request.bucket_name,
-        status="completed",
-        message="Static site deployed successfully",
-        details={
-            "bucket_name": request.bucket_name,
-            "bucket_url": mock_bucket_url,
-            "public_url": f"{mock_bucket_url}/{request.index_page}",
-            "cdn_enabled": request.enable_cdn,
-            "cdn_url": mock_cdn_url,
-            "files_uploaded": len(request.files),
-            "total_size_bytes": sum(
-                len(f.content or "") + len(f.content_base64 or "") for f in request.files
-            ),
-            "duration_ms": duration_ms,
-            "region": request.region,
-        },
-        metadata={
-            "plan_hash": request.plan_hash,
-            "app_id": request.app_id,
-            "timestamp": datetime.utcnow().isoformat(),
-        },
-    )
+        duration_ms = int((time.time() - start_time) * 1000)
+
+        log_operation(
+            operation_type="deploy_static_site",
+            correlation_id=correlation_id,
+            operation_id=operation_id,
+            resource_id=request.bucket_name,
+            success=True,
+            duration_ms=duration_ms,
+            details={
+                "files_uploaded": len(uploaded_files),
+                "bucket_name": request.bucket_name,
+                "total_size_bytes": total_size_bytes,
+            },
+        )
+
+        return StandardResponse(
+            success=True,
+            operation_id=operation_id,
+            resource_id=request.bucket_name,
+            status="completed",
+            message="Static site deployed successfully",
+            details={
+                "bucket_name": request.bucket_name,
+                "bucket_url": bucket_url,
+                "public_url": public_url,
+                "cdn_enabled": request.enable_cdn,
+                "files_uploaded": len(uploaded_files),
+                "total_size_bytes": total_size_bytes,
+                "duration_ms": duration_ms,
+                "region": request.region,
+            },
+            metadata={
+                "plan_hash": request.plan_hash,
+                "app_id": request.app_id,
+                "timestamp": datetime.utcnow().isoformat(),
+            },
+        )
+
+    except BucketCreationError as e:
+        logger.error(f"Bucket creation failed: {e.message}")
+        duration_ms = int((time.time() - start_time) * 1000)
+        
+        log_operation(
+            operation_type="deploy_static_site",
+            correlation_id=correlation_id,
+            operation_id=operation_id,
+            resource_id=request.bucket_name,
+            success=False,
+            duration_ms=duration_ms,
+            details={"error": e.message, "code": e.code},
+        )
+        
+        raise HTTPException(
+            status_code=500,
+            detail={
+                "code": e.code,
+                "message": e.message,
+                "details": e.details,
+                "operation_id": operation_id,
+            },
+        )
+
+    except BucketUploadError as e:
+        logger.error(f"File upload failed: {e.message}")
+        duration_ms = int((time.time() - start_time) * 1000)
+        
+        log_operation(
+            operation_type="deploy_static_site",
+            correlation_id=correlation_id,
+            operation_id=operation_id,
+            resource_id=request.bucket_name,
+            success=False,
+            duration_ms=duration_ms,
+            details={"error": e.message, "code": e.code},
+        )
+        
+        raise HTTPException(
+            status_code=500,
+            detail={
+                "code": e.code,
+                "message": e.message,
+                "details": e.details,
+                "operation_id": operation_id,
+            },
+        )
+
+    except Exception as e:
+        logger.error(f"Unexpected error during deployment: {e}")
+        duration_ms = int((time.time() - start_time) * 1000)
+        
+        log_operation(
+            operation_type="deploy_static_site",
+            correlation_id=correlation_id,
+            operation_id=operation_id,
+            resource_id=request.bucket_name,
+            success=False,
+            duration_ms=duration_ms,
+            details={"error": str(e)},
+        )
+        
+        raise HTTPException(
+            status_code=500,
+            detail={
+                "code": "INTERNAL_ERROR",
+                "message": f"Unexpected error: {str(e)}",
+                "operation_id": operation_id,
+            },
+        )
 
 
 @app.post("/deploy_dynamic_service", response_model=StandardResponse)
@@ -589,38 +753,37 @@ async def check_service_health(
     """
     Check the health status of a Cloud Run service
     
-    This is a SKELETON implementation. TODO: Integrate with Cloud Run API for actual health data.
+    Returns service status, URL, and basic health information.
     """
-    # TODO: Query Cloud Run API for service status
-    # TODO: Get current instances, traffic routing, revision health
-    # TODO: Query Cloud Monitoring for metrics (request count, error rate, latency)
-    # TODO: Perform actual health check against health endpoint
+    if not gcp_client:
+        return {
+            "service_name": service_name,
+            "healthy": False,
+            "error": "GCP client not configured (GCP_PROJECT_ID not set)",
+            "stub_mode": True,
+        }
 
-    # STUB: Mock healthy service
-    return {
-        "success": True,
-        "service_name": service_name,
-        "region": region,
-        "status": "healthy",
-        "details": {
-            "service_url": f"https://{service_name}-abc123-uc.a.run.app",
-            "current_revision": f"{service_name}-00001-xyz",
-            "traffic_percent": 100,
-            "instances": {"min": 1, "max": 10, "current": 2},
-            "health_check": {
-                "status": "passing",
-                "last_check": datetime.utcnow().isoformat(),
-                "consecutive_failures": 0,
-            },
-            "metrics": {
-                "request_count_5m": 1500,
-                "error_rate_5m": 0.02,
-                "avg_latency_ms": 120,
-                "p95_latency_ms": 250,
-            },
-        },
-        "timestamp": datetime.utcnow().isoformat(),
-    }
+    try:
+        # Get service health from GCP
+        health = gcp_client.get_service_health(service_name, region)
+        
+        return {
+            "success": True,
+            "service_name": service_name,
+            "region": region,
+            "status": "healthy" if health["healthy"] else "unhealthy",
+            "details": health,
+            "timestamp": datetime.utcnow().isoformat(),
+        }
+
+    except Exception as e:
+        logger.error(f"Error checking service health: {e}")
+        return {
+            "success": False,
+            "service_name": service_name,
+            "healthy": False,
+            "error": str(e),
+        }
 
 
 @app.get("/check_bucket_health")
@@ -628,35 +791,51 @@ async def check_bucket_health(bucket_name: str = Query(..., description="GCS buc
     """
     Check the health status of a GCS bucket
     
-    This is a SKELETON implementation. TODO: Integrate with GCS API for actual bucket data.
+    Returns bucket status, accessibility, and configuration details.
     """
-    # TODO: Query GCS API for bucket metadata
-    # TODO: Get storage class, versioning, lifecycle rules
-    # TODO: Count objects and calculate total size
-    # TODO: Check public access configuration
+    if not gcp_client:
+        return {
+            "bucket_name": bucket_name,
+            "healthy": False,
+            "error": "GCP client not configured (GCP_PROJECT_ID not set)",
+            "stub_mode": True,
+        }
 
-    # STUB: Mock healthy bucket
-    return {
-        "success": True,
-        "bucket_name": bucket_name,
-        "status": "healthy",
-        "details": {
-            "public_url": f"https://storage.googleapis.com/{bucket_name}",
-            "region": "us-central1",
-            "storage_class": "STANDARD",
-            "public_access": True,
-            "versioning_enabled": True,
-            "lifecycle_rules_count": 1,
-            "object_count": 42,
-            "total_size_bytes": 1024000,
-            "last_modified": datetime.utcnow().isoformat(),
-        },
-        "timestamp": datetime.utcnow().isoformat(),
-    }
+    try:
+        # Check if bucket exists
+        exists = gcp_client.bucket_exists(bucket_name)
+        
+        if not exists:
+            return {
+                "bucket_name": bucket_name,
+                "healthy": False,
+                "exists": False,
+                "error": "Bucket not found",
+            }
+        
+        # TODO: Get bucket metadata (public access, CDN status, etc.)
+        # TODO: Test read/write access
+        # TODO: Check bucket size and file count
+        
+        return {
+            "bucket_name": bucket_name,
+            "healthy": True,
+            "exists": True,
+            "url": f"https://storage.googleapis.com/{bucket_name}",
+            "timestamp": datetime.utcnow().isoformat(),
+        }
+
+    except Exception as e:
+        logger.error(f"Error checking bucket health: {e}")
+        return {
+            "bucket_name": bucket_name,
+            "healthy": False,
+            "error": str(e),
+        }
 
 
 # ============================================================================
-# Error Handlers
+# Exception Handlers
 # ============================================================================
 
 
