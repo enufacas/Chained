@@ -35,11 +35,12 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🐛 Bug Fixes
 
+- 👤 ⚙️ Workflows Fix: ag-organism-frontend not deployed by Terraform workflow [#3638](https://github.com/enufacas/Chained/pull/3638)
 - 👤 Fix AG-Organism frontend: bundle Three.js locally and add error logging [#3636](https://github.com/enufacas/Chained/pull/3636)
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x3) [#3635](https://github.com/enufacas/Chained/pull/3635)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x4) [#3637](https://github.com/enufacas/Chained/pull/3637)
 
 ---
 
@@ -213,7 +214,6 @@ This changelog excludes automated data syncs and routine maintenance commits.
 - 👤 Add Claude/Anthropic A2A provider with Vertex AI support [#3407](https://github.com/enufacas/Chained/pull/3407)
 - 👤 🔧 Agents Select unique implementing agent that hasn't participated in upstream analysis [#3400](https://github.com/enufacas/Chained/pull/3400)
 - 👤 🔧 Agents Assign implementing agent to implement job and increase maxSessionTurns [#3394](https://github.com/enufacas/Chained/pull/3394)
-- 👤 Add Gemini API support and Interactive A2A Pipeline to AG-UI frontend [#3360](https://github.com/enufacas/Chained/pull/3360)
 
 ### 🐛 Bug Fixes
 
