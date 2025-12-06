@@ -26,16 +26,10 @@ function AgentHumanoid({ agent, position, isSelected, state }) {
 
   const emissiveIntensity = state === 'processing' ? 0.8 : 0.6;
 
-  // Animation
-  useFrame(({ clock }) => {
-    if (groupRef.current) {
-      // Float animation
-      groupRef.current.position.y = position[1] + Math.sin(clock.elapsedTime * 2 + floatOffset) * 1;
-      
-      // Rotate when processing
-      if (state === 'processing') {
-        groupRef.current.rotation.y += 0.02;
-      }
+  // Animation - only rotation, Float component handles floating
+  useFrame(() => {
+    if (groupRef.current && state === 'processing') {
+      groupRef.current.rotation.y += 0.02;
     }
   });
 
