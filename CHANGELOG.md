@@ -30,11 +30,12 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### ✨ Features
 
+- 👤 🏗️ Infrastructure Host AG-Organism visualization on Cloud Run with dynamic environment injection [#3634](https://github.com/enufacas/Chained/pull/3634)
 - 👤 🔧 Agents Add AG-Organism: 3D cyberpunk visualization frontend for A2A agent coordination [#3632](https://github.com/enufacas/Chained/pull/3632)
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge [#3631](https://github.com/enufacas/Chained/pull/3631)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x2) [#3633](https://github.com/enufacas/Chained/pull/3633)
 
 ---
 
