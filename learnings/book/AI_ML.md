@@ -2,9 +2,9 @@
 
 > Artificial intelligence, machine learning, LLMs, and neural networks
 
-**Total Insights:** 4068
+**Total Insights:** 4077
 
-**Last Updated:** 2025-12-05
+**Last Updated:** 2025-12-06
 
 ---
 
@@ -254,25 +254,6 @@ If you ...
 ---
 
 
-### GitHub Copilot Docs: About Copilot auto model selection
-
-**Link:** https://docs.github.com/en/copilot/concepts/auto-model-selection
-
-
-**Content Summary:**
-
-About Copilot auto model selection
-Automatically select models for Copilot Chat.
-Who can use this feature?
-Auto model selection is in  public preview for supported IDEs with all GitHub Copilot plans.
-In this article
-Overview
-Experience less rate limiting and reduce the mental load of choosing a model by letting Copilot auto model selection automatically choose the best available model on your behalf.
-Copilot auto model selection is currently optimized for model availability, choosing from a list...
-
----
-
-
 ### GitHub Copilot Docs: About customizing GitHub Copilot responses
 
 **Link:** https://docs.github.com/en/copilot/concepts/prompting/response-customization
@@ -400,6 +381,29 @@ Copilot Business
 at $19 USD per user per month (Purchase additional premium requests at $0.04 USD per request)
 Copilot Enterprise
 at $39 USD per user p...
+
+---
+
+
+### GitHub Copilot Docs: About billing for individual GitHub Copilot plans
+
+**Link:** https://docs.github.com/en/copilot/concepts/billing/billing-for-individuals
+
+
+**Content Summary:**
+
+About billing for individual GitHub Copilot plans
+Learn how billing works for Copilot Pro and Copilot Pro+.
+In this article
+Pricing for Copilot Pro and Copilot Pro+
+GitHub offers two paid plans for individuals: Copilot Pro and Copilot Pro+. Both plans are available on a monthly or yearly billing cycle.
+Copilot Pro
+If you choose a monthly billing cycle
+, you will be billed $10 USD per calendar month.
+If you choose a yearly billing cycle
+, you will be billed $100 USD per year.
+Copilot Pro+
+If you ...
 
 ---
 
