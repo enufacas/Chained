@@ -30,6 +30,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### ✨ Features
 
+- 👤 📚 Docs AI-Native Control Plane Phase 5: Complete MVP with end-to-end examples and release notes
 - 👤 AI-Native Control Plane Phase 4: Execution layer skeleton services [#3662](https://github.com/enufacas/Chained/pull/3662)
 - 👤 🔧 Agents Phase 3: AI-Native Control Plane agent design (LangChain tools + LangGraph orchestration) [#3658](https://github.com/enufacas/Chained/pull/3658)
 - 🤖 🧠 Learning 🧠 Learn from GitHub Copilot sources - 2025-12-06 [#3647](https://github.com/enufacas/Chained/pull/3647)
