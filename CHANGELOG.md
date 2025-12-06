@@ -30,12 +30,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### ✨ Features
 
-- 👤 🏗️ Infrastructure **AI-Native Control Plane Phase 6**: Production database schemas and LLM integration (Steps 1-2)
-  - Add PostgreSQL production schema with 7 tables and migration system
-  - Implement LLM integration with OpenAI and Google Gemini support
-  - Add intent classification and plan generation with LangChain
-  - Create database connection module with Cloud SQL support
-  - Add comprehensive testing and documentation
+- 👤 AI-Native Control Plane Phase 6: Production database schemas and LLM integration [#3669](https://github.com/enufacas/Chained/pull/3669)
 - 👤 Complete AI-Native Control Plane Phase 5 MVP with end-to-end examples [#3666](https://github.com/enufacas/Chained/pull/3666)
 - 👤 AI-Native Control Plane Phase 4: Execution layer skeleton services [#3662](https://github.com/enufacas/Chained/pull/3662)
 - 👤 🔧 Agents Phase 3: AI-Native Control Plane agent design (LangChain tools + LangGraph orchestration) [#3658](https://github.com/enufacas/Chained/pull/3658)
@@ -53,7 +48,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x15) [#3667](https://github.com/enufacas/Chained/pull/3667)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x16) [#3668](https://github.com/enufacas/Chained/pull/3668)
 - 👤 **Documentation**: AI-Native Control Plane Phase 1 (Foundations) [#3645](https://github.com/enufacas/Chained/pull/3645)
 - 👤 **Test**: Phase 2: AI-Native Control Plane service architecture and API specifications (x2) [#3656](https://github.com/enufacas/Chained/pull/3656)
 - 👤 **Test**: Bootstrap AI-Native Control Plane: Create master control specification [#3643](https://github.com/enufacas/Chained/pull/3643)
@@ -241,8 +236,6 @@ This changelog excludes automated data syncs and routine maintenance commits.
 - 👤 🏗️ Infrastructure Fix: Pass google_api_key_secret to Terraform for AG-UI Frontend [#3401](https://github.com/enufacas/Chained/pull/3401)
 - 👤 🏗️ Infrastructure Fix: Pass GOOGLE_API_KEY to AG-UI Frontend Cloud Run service [#3396](https://github.com/enufacas/Chained/pull/3396)
 - 👤 Simplify AG-UI Frontend with enhanced API key debugging [#3393](https://github.com/enufacas/Chained/pull/3393)
-- 👤 Fix chat not displaying on interactive page and simplify A2A integration [#3387](https://github.com/enufacas/Chained/pull/3387)
-- 👤 ⚙️ Workflows Fix bash arithmetic causing workflow failure in a2a-parallel-agents.yml [#3390](https://github.com/enufacas/Chained/pull/3390)
 
 ### 🧹 Chores & Maintenance
 
