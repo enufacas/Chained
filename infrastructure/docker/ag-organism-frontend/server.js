@@ -14,21 +14,16 @@ const htmlTemplate = fs.readFileSync(path.join(__dirname, 'public', 'ag-organism
 
 // Inject environment variables into HTML
 function injectEnvVars(html) {
-  return html
-    .replace(
-      /const API_BASE_URL = window\.location\.hostname === 'localhost'.*?\n.*?:\s*'[^']+';/s,
-      `const API_BASE_URL = '${AG_UI_FRONTEND_URL}/api';`
-    )
-    .replace(
-      '<!-- ENV_INJECTED -->',
-      `<script>
+  // Simple string replacement for the env injection placeholder
+  const envScript = `<script>
         // Environment variables injected by server
         window.ENV = {
           ADK_API_URL: '${ADK_API_URL}',
           AG_UI_FRONTEND_URL: '${AG_UI_FRONTEND_URL}'
         };
-      </script>`
-    );
+      </script>`;
+  
+  return html.replace('<!-- ENV_INJECTED -->', envScript);
 }
 
 // Serve static files

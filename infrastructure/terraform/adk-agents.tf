@@ -229,7 +229,7 @@ resource "google_cloud_run_v2_service" "academic_research" {
       max_instance_count = 3
     }
 
-    max_instance_request_concurrency = 1 # Required when CPU < 1
+    max_instance_request_concurrency = 1 # Required when CPU < 1 vCPU - ensures proper request handling with limited CPU resources
 
     service_account = google_service_account.adk_agents.email
     timeout         = "300s"
@@ -375,7 +375,7 @@ resource "google_cloud_run_v2_service" "blog_writer" {
       max_instance_count = 3
     }
 
-    max_instance_request_concurrency = 1 # Required when CPU < 1
+    max_instance_request_concurrency = 1 # Required when CPU < 1 vCPU - ensures proper request handling with limited CPU resources
 
     service_account = google_service_account.adk_agents.email
     timeout         = "300s"
@@ -513,7 +513,7 @@ resource "google_cloud_run_v2_service" "google_trends" {
       max_instance_count = 3
     }
 
-    max_instance_request_concurrency = 1 # Required when CPU < 1
+    max_instance_request_concurrency = 1 # Required when CPU < 1 vCPU - ensures proper request handling with limited CPU resources
 
     service_account = google_service_account.adk_agents.email
     timeout         = "300s"
@@ -636,7 +636,7 @@ resource "google_cloud_run_v2_service" "code_reviewer" {
       max_instance_count = 3
     }
 
-    max_instance_request_concurrency = 1 # Required when CPU < 1
+    max_instance_request_concurrency = 1 # Required when CPU < 1 vCPU - ensures proper request handling with limited CPU resources
 
     service_account = google_service_account.adk_agents.email
     timeout         = "300s"
@@ -759,7 +759,7 @@ resource "google_cloud_run_v2_service" "data_analyst" {
       max_instance_count = 3
     }
 
-    max_instance_request_concurrency = 1 # Required when CPU < 1
+    max_instance_request_concurrency = 1 # Required when CPU < 1 vCPU - ensures proper request handling with limited CPU resources
 
     service_account = google_service_account.adk_agents.email
     timeout         = "300s"
@@ -882,7 +882,7 @@ resource "google_cloud_run_v2_service" "image_generator" {
       max_instance_count = 3
     }
 
-    max_instance_request_concurrency = 1 # Required when CPU < 1
+    max_instance_request_concurrency = 1 # Required when CPU < 1 vCPU - ensures proper request handling with limited CPU resources
 
     service_account = google_service_account.adk_agents.email
     timeout         = "300s"
@@ -1043,7 +1043,7 @@ resource "google_cloud_run_v2_service" "adk_api_server" {
       max_instance_count = 3
     }
 
-    max_instance_request_concurrency = 1 # Required when CPU < 1
+    max_instance_request_concurrency = 1 # Required when CPU < 1 vCPU - ensures proper request handling with limited CPU resources
 
     service_account = google_service_account.adk_agents.email
     timeout         = "300s"
@@ -1278,7 +1278,7 @@ resource "google_cloud_run_v2_service" "ag_ui_frontend" {
       max_instance_count = 3
     }
 
-    max_instance_request_concurrency = 1 # Required when CPU < 1
+    max_instance_request_concurrency = 1 # Required when CPU < 1 vCPU - ensures proper request handling with limited CPU resources
 
     service_account = google_service_account.adk_agents.email
     timeout         = "300s"
@@ -1397,7 +1397,7 @@ resource "google_cloud_run_v2_service" "error_observer" {
       max_instance_count = 3
     }
 
-    max_instance_request_concurrency = 1 # Required when CPU < 1
+    max_instance_request_concurrency = 1 # Required when CPU < 1 vCPU - ensures proper request handling with limited CPU resources
 
     service_account = google_service_account.adk_agents.email
     timeout         = "300s"
@@ -1487,7 +1487,7 @@ resource "google_cloud_run_v2_service" "log_consumer" {
       max_instance_count = 3
     }
 
-    max_instance_request_concurrency = 1 # Required when CPU < 1
+    max_instance_request_concurrency = 1 # Required when CPU < 1 vCPU - ensures proper request handling with limited CPU resources
 
     service_account = google_service_account.adk_agents.email
     timeout         = "300s"
@@ -1586,7 +1586,7 @@ resource "google_cloud_run_v2_service" "ag_organism_frontend" {
       max_instance_count = 3
     }
 
-    max_instance_request_concurrency = 1 # Required when CPU < 1
+    max_instance_request_concurrency = 1 # Required when CPU < 1 vCPU - ensures proper request handling with limited CPU resources
 
     service_account = google_service_account.adk_agents.email
     timeout         = "300s"

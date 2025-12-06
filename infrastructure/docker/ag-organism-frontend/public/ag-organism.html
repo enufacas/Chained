@@ -572,6 +572,8 @@
         // =============================================================================
 
         // AG-UI Backend API URL (use injected env var if available, otherwise fallback)
+        // Note: Fallback URL is for static GitHub Pages deployment only
+        // Cloud Run deployment uses window.ENV.AG_UI_FRONTEND_URL set by server
         const API_BASE_URL = window.ENV?.AG_UI_FRONTEND_URL 
             ? `${window.ENV.AG_UI_FRONTEND_URL}/api`
             : (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
