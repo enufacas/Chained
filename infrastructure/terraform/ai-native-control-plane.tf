@@ -165,7 +165,7 @@ resource "google_secret_manager_secret" "db_connection_string" {
     auto {}
   }
 
-  depends_on = [google_project_service.required_apis]
+  depends_on = [google_project_service.ai_native_apis]
 }
 
 resource "google_secret_manager_secret_version" "db_connection_string" {
@@ -185,7 +185,7 @@ resource "google_secret_manager_secret" "openai_api_key" {
     auto {}
   }
 
-  depends_on = [google_project_service.required_apis]
+  depends_on = [google_project_service.ai_native_apis]
 }
 
 # Gemini API Key
@@ -196,7 +196,7 @@ resource "google_secret_manager_secret" "gemini_api_key" {
     auto {}
   }
 
-  depends_on = [google_project_service.required_apis]
+  depends_on = [google_project_service.ai_native_apis]
 }
 
 # Note: Actual secret values must be added manually via:

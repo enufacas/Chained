@@ -675,7 +675,7 @@ async def deploy_dynamic_service(request: DeployDynamicServiceRequest, req: Requ
                 },
             )
 
-    except (BucketCreationError, BucketUploadError, GCPClientError) as e:
+    except (ServiceDeploymentError, GCPClientError) as e:
         duration_ms = int((time.time() - start_time) * 1000)
         logger.error(
             f"GCP error deploying service: {e.message}",
@@ -842,7 +842,7 @@ async def scale_service(request: ScaleServiceRequest, req: Request):
                 },
             )
 
-    except (BucketCreationError, BucketUploadError, GCPClientError) as e:
+    except (ServiceDeploymentError, GCPClientError) as e:
         duration_ms = int((time.time() - start_time) * 1000)
         logger.error(
             f"GCP error scaling service: {e.message}",
@@ -1008,7 +1008,7 @@ async def attach_domain(request: AttachDomainRequest, req: Request):
                 },
             )
 
-    except (BucketCreationError, BucketUploadError, GCPClientError) as e:
+    except (ServiceDeploymentError, GCPClientError) as e:
         duration_ms = int((time.time() - start_time) * 1000)
         logger.error(
             f"GCP error attaching domain: {e.message}",

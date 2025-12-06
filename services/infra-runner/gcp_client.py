@@ -578,14 +578,27 @@ class CloudRunClient:
             # Get current service configuration
             service = self.client.get_service(name=service_path)
 
-            # Update scaling configuration
-            service.template.scaling = run_v2.RevisionScaling(
+            # Update scaling configuration - create update request with update_mask
+            from google.protobuf import field_mask_pb2
+            
+            update_mask = field_mask_pb2.FieldMask(
+                paths=["template.scaling.min_instance_count", "template.scaling.max_instance_count"]
+            )
+            
+            # Create updated service with just the scaling changes
+            updated_service = run_v2.Service()
+            updated_service.name = service.name
+            updated_service.template = run_v2.RevisionTemplate()
+            updated_service.template.scaling = run_v2.RevisionScaling(
                 min_instance_count=min_instances,
                 max_instance_count=max_instances,
             )
 
-            # Update service
-            operation = self.client.update_service(service=service)
+            # Update service with mask
+            operation = self.client.update_service(
+                service=updated_service,
+                update_mask=update_mask
+            )
             result = operation.result(timeout=300)  # 5 minute timeout
 
             logger.info(f"Successfully scaled service {service_name}")
