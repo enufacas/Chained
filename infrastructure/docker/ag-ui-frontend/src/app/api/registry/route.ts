@@ -199,8 +199,29 @@ async function getRegisteredAgent(config: AgentConfig, includeHealth: boolean = 
 }
 
 // =============================================================================
+// CORS Headers
+// =============================================================================
+
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type",
+};
+
+// =============================================================================
 // API Routes
 // =============================================================================
+
+/**
+ * OPTIONS /api/registry
+ * Handle CORS preflight requests
+ */
+export async function OPTIONS() {
+  return new Response(null, {
+    status: 204,
+    headers: corsHeaders,
+  });
+}
 
 /**
  * GET /api/registry
@@ -222,14 +243,14 @@ export async function GET(request: NextRequest) {
     if (!config) {
       return new Response(JSON.stringify({ error: "Agent not found" }), {
         status: 404,
-        headers: { "Content-Type": "application/json" },
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
     
     const agent = await getRegisteredAgent(config, includeHealth);
     return new Response(JSON.stringify(agent), {
       status: 200,
-      headers: { "Content-Type": "application/json" },
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
   
@@ -265,7 +286,7 @@ export async function GET(request: NextRequest) {
     }),
     {
       status: 200,
-      headers: { "Content-Type": "application/json" },
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
     }
   );
 }
@@ -325,14 +346,14 @@ export async function POST(request: NextRequest) {
       }),
       {
         status: 200,
-        headers: { "Content-Type": "application/json" },
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
       }
     );
   } catch (error) {
     console.error("[Registry API] Error:", error);
     return new Response(JSON.stringify({ error: "Failed to check agent health" }), {
       status: 500,
-      headers: { "Content-Type": "application/json" },
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
 }
