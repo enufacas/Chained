@@ -541,6 +541,9 @@ Be specific and detailed - avoid generic placeholders. Include real data where p
         researchTask
       ));
       
+      // CRITICAL: Update activePipelines after adding step details
+      activePipelines.set(pipelineId, pipeline);
+      
       logWithTimestamp("INFO", `Pipeline ${pipelineId}: Research complete`, { researchData });
     } else {
       // Agent not available - use intelligent defaults
@@ -561,6 +564,9 @@ Be specific and detailed - avoid generic placeholders. Include real data where p
         null,
         "Research agent unavailable, using intelligent defaults based on topic analysis"
       ));
+      
+      // CRITICAL: Update activePipelines after adding step details
+      activePipelines.set(pipelineId, pipeline);
       
       logWithTimestamp("WARN", `Pipeline ${pipelineId}: Research agent unavailable, using defaults`);
     }
@@ -637,6 +643,9 @@ Base keywords from research: ${pipeline.results?.research?.keywords?.join(", ") 
         trendsTask
       ));
       
+      // CRITICAL: Update activePipelines after adding step details
+      activePipelines.set(pipelineId, pipeline);
+      
       logWithTimestamp("INFO", `Pipeline ${pipelineId}: Trends analysis complete`, { trendsData });
     } else {
       // Agent not available - use intelligent defaults
@@ -657,6 +666,9 @@ Base keywords from research: ${pipeline.results?.research?.keywords?.join(", ") 
         null,
         "Trends agent unavailable, using intelligent defaults based on research keywords"
       ));
+      
+      // CRITICAL: Update activePipelines after adding step details
+      activePipelines.set(pipelineId, pipeline);
       
       logWithTimestamp("WARN", `Pipeline ${pipelineId}: Trends agent unavailable, using defaults`);
     }
@@ -832,6 +844,9 @@ Domain: ${domain}`,
         writerTask
       ));
       
+      // CRITICAL: Update activePipelines after adding step details
+      activePipelines.set(pipelineId, pipeline);
+      
       logWithTimestamp("INFO", `Pipeline ${pipelineId}: Blog writing complete`, {
         title: blogTitle,
         url: blogUrl,
@@ -858,6 +873,9 @@ Domain: ${domain}`,
         null,
         "Writer agent unavailable, blog not created - URL is placeholder"
       ));
+      
+      // CRITICAL: Update activePipelines after adding step details
+      activePipelines.set(pipelineId, pipeline);
       
       logWithTimestamp("WARN", `Pipeline ${pipelineId}: Writer agent unavailable, blog not created`);
     }
