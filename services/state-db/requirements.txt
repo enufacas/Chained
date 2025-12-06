@@ -1,0 +1,17 @@
+# AI-Native Control Plane - State Database Requirements
+# Python dependencies for database connection and migrations
+
+# Core database driver
+psycopg2-binary==2.9.9  # PostgreSQL adapter for Python
+
+# SQLAlchemy ORM
+sqlalchemy==2.0.23  # SQL toolkit and ORM
+
+# Cloud SQL Proxy (for GCP deployment)
+google-cloud-sql-python-connector==1.4.3  # Cloud SQL Python Connector
+
+# Migration tools
+alembic==1.13.0  # Database migration tool
+
+# Utilities
+python-dotenv==1.0.0  # Environment variable management
