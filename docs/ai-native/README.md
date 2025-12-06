@@ -75,11 +75,28 @@ Build a **fully AI-native cloud operating system** where AI agents operate infra
    - State tracking and operation logging
    - Docker deployment configuration
 
-### 🚀 Phase 5 — End-to-End MVP (Planned)
+### 🚀 Phase 5 — End-to-End MVP (Complete)
 
-8. **Examples and Release Notes** (Coming Soon)
-   - `/examples/dynamic_site_flow.md`
-   - `10_release_notes_v0.1.0.md`
+9. **Dynamic Site Flow Example** (`/examples/dynamic_site_flow.md`)
+   - Complete end-to-end workflow demonstration
+   - User request processing and intent classification
+   - Multi-agent planning phase with policy validation
+   - Pattern retrieval from semantic memory
+   - Application building with generated HTML/CSS files
+   - Infrastructure deployment to GCS bucket
+   - State management and vector database updates
+   - Output generation with user-friendly response
+   - Complete execution timeline (9 seconds)
+   - Future extensions roadmap
+
+10. **Release Notes v0.1.0** (`10_release_notes_v0.1.0.md`)
+    - Comprehensive feature summary
+    - Known limitations and TODO items
+    - How to run locally (development mode)
+    - How to deploy to GCP (production)
+    - Usage examples with curl commands
+    - Detailed roadmap for Phases 6-10
+    - Testing strategy and support information
 
 ## 🔄 Progress Tracking
 
@@ -89,9 +106,9 @@ Build a **fully AI-native cloud operating system** where AI agents operate infra
 | Phase 2: Service Design | Steps 3-4 | ✅ Complete | 2025-12-06 |
 | Phase 3: Agent Design | Steps 5-6 | ✅ Complete | 2025-12-06 |
 | Phase 4: Execution Layer | Steps 7-8 | ✅ Complete | 2025-12-06 |
-| Phase 5: MVP | Steps 9-10 | 📋 Planned | - |
+| Phase 5: MVP | Steps 9-10 | ✅ Complete | 2025-12-06 |
 
-**Current Status**: Phase 4 complete (8/10 steps) — 80% progress
+**Current Status**: Phase 5 complete (10/10 steps) — 🎉 100% MVP progress
 
 ## 🎓 Key Concepts
 
@@ -159,13 +176,17 @@ For newcomers to the project:
 - **4 operation modes** (Normal, Repair, Migration, Self-Upgrade)
 - **100+ validation rules** for plan checking
 
-**Implementation Complete (Phase 4)**:
+**Implementation Complete (Phase 4-5)**:
 - **2 microservices** with skeleton implementations
+- **1 complete end-to-end example** with workflow demonstration
 - **1,300+ lines** of Python code (infra-runner)
 - **1,200+ lines** of Python code (ai-control-plane)
 - **7 REST API endpoints** in infra-runner
 - **10 LangChain tool stubs** in ai-control-plane
 - **Multi-agent state machine** with LangGraph structure
+- **Docker multi-stage builds** for both services
+- **Comprehensive README files** with API documentation
+- **Complete release notes** with deployment guide
 - **Docker multi-stage builds** for both services
 - **Comprehensive README files** with API documentation
 
@@ -181,4 +202,4 @@ For newcomers to the project:
 
 ---
 
-*Last updated: 2025-12-06 (Phase 4 complete — 80% progress)*
+*Last updated: 2025-12-06 (Phase 5 complete — 🎉 100% MVP progress)*
