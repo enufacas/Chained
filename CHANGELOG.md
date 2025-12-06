@@ -30,6 +30,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### ✨ Features
 
+- 👤 🔧 Agents UI: Add per-agent completion status to multi-agent session display [#3676](https://github.com/enufacas/Chained/pull/3676)
 - 👤 Implement Phase 6 Step 3 - Vector Database Integration for AI-Native Control Plane [#3671](https://github.com/enufacas/Chained/pull/3671)
 - 👤 AI-Native Control Plane Phase 6: Production database schemas and LLM integration [#3669](https://github.com/enufacas/Chained/pull/3669)
 - 👤 Complete AI-Native Control Plane Phase 5 MVP with end-to-end examples [#3666](https://github.com/enufacas/Chained/pull/3666)
@@ -49,7 +50,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x17) [#3670](https://github.com/enufacas/Chained/pull/3670)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x18) [#3674](https://github.com/enufacas/Chained/pull/3674)
 - 👤 **Documentation**: AI-Native Control Plane Phase 1 (Foundations) [#3645](https://github.com/enufacas/Chained/pull/3645)
 - 👤 **Test**: Phase 2: AI-Native Control Plane service architecture and API specifications (x2) [#3656](https://github.com/enufacas/Chained/pull/3656)
 - 👤 **Test**: Bootstrap AI-Native Control Plane: Create master control specification [#3643](https://github.com/enufacas/Chained/pull/3643)
@@ -224,8 +225,6 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 - 👤 Add gcloud-mcp server integration for Copilot [#3413](https://github.com/enufacas/Chained/pull/3413)
 - 👤 Add Claude/Anthropic A2A provider with Vertex AI support [#3407](https://github.com/enufacas/Chained/pull/3407)
-- 👤 🔧 Agents Select unique implementing agent that hasn't participated in upstream analysis [#3400](https://github.com/enufacas/Chained/pull/3400)
-- 👤 🔧 Agents Assign implementing agent to implement job and increase maxSessionTurns [#3394](https://github.com/enufacas/Chained/pull/3394)
 
 ### 🐛 Bug Fixes
 
@@ -234,8 +233,6 @@ This changelog excludes automated data syncs and routine maintenance commits.
 - 👤 🏗️ Infrastructure Fix GCP MCP setup: Node.js version and JSON parsing issues [#3417](https://github.com/enufacas/Chained/pull/3417)
 - 👤 Fix AG-UI chat: Support Vertex AI authentication with ADC [#3403](https://github.com/enufacas/Chained/pull/3403)
 - 👤 Add retry logic for Gemini API transient errors in A2A implement step [#3404](https://github.com/enufacas/Chained/pull/3404)
-- 👤 🏗️ Infrastructure Fix: Pass google_api_key_secret to Terraform for AG-UI Frontend [#3401](https://github.com/enufacas/Chained/pull/3401)
-- 👤 🏗️ Infrastructure Fix: Pass GOOGLE_API_KEY to AG-UI Frontend Cloud Run service [#3396](https://github.com/enufacas/Chained/pull/3396)
 
 ### 🧹 Chores & Maintenance
 
