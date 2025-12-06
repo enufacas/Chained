@@ -1,10 +1,10 @@
 # AI-Native Control Plane - Infrastructure Runner Dependencies
 
 # FastAPI and web server
-fastapi==0.109.0
+fastapi==0.109.1  # Security fix: CVE for Content-Type Header ReDoS
 uvicorn[standard]==0.27.0
 pydantic==2.5.3
-python-multipart==0.0.6
+python-multipart==0.0.18  # Security fix: CVE for DoS via multipart/form-data boundary and Content-Type ReDoS
 
 # GCP Client Libraries (for future integration)
 google-cloud-storage==2.14.0
