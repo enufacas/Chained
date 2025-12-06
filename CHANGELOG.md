@@ -40,7 +40,8 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x4) [#3637](https://github.com/enufacas/Chained/pull/3637)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x5) [#3641](https://github.com/enufacas/Chained/pull/3641)
+- 👤 **Test**: Bootstrap AI-Native Control Plane: Create master control specification [#3643](https://github.com/enufacas/Chained/pull/3643)
 
 ---
 
@@ -232,7 +233,6 @@ This changelog excludes automated data syncs and routine maintenance commits.
 - 👤 ⚙️ Workflows Fix A2A workflow PR creation: explicit tool guidance and fallback mechanism [#3369](https://github.com/enufacas/Chained/pull/3369)
 - 👤 ⚙️ Workflows Fix invalid workflow: secrets context not accessible in step if condition [#3368](https://github.com/enufacas/Chained/pull/3368)
 - 👤 🏗️ Infrastructure Fix Terraform deployment and configure GOOGLE_API_KEY securely for CopilotKit chat [#3366](https://github.com/enufacas/Chained/pull/3366)
-- 👤 Fix GitHub Models nonsense output with quality validation [#3362](https://github.com/enufacas/Chained/pull/3362)
 
 ### 🧹 Chores & Maintenance
 
