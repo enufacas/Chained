@@ -15,6 +15,7 @@ This service provides natural language interface to infrastructure operations th
 import hashlib
 import json
 import logging
+import os
 import time
 from datetime import datetime
 from enum import Enum
@@ -172,25 +173,56 @@ def log_with_trace(
 
 
 # ============================================================================
-# Intent Classification (Stub)
+# Intent Classification
 # ============================================================================
 
 
-def classify_intent(user_request: str) -> tuple[IntentType, float]:
+def classify_intent(user_request: str, use_llm: bool = True) -> tuple[IntentType, float]:
     """
-    Classify user intent from natural language request
+    Classify user intent from natural language request.
     
-    TODO: Replace with actual LLM-based classification
+    Args:
+        user_request: Natural language command from user
+        use_llm: If True, use LLM for classification (default). If False, use keyword matching.
     
-    This stub uses simple keyword matching. In production, this would:
-    1. Use LangChain with OpenAI/Claude for classification
-    2. Fine-tune on example requests
-    3. Return confidence score
-    4. Handle ambiguous intents with clarifying questions
+    Returns:
+        Tuple of (intent_type, confidence_score)
+    
+    This function now supports both:
+    1. LLM-based classification (OpenAI/Gemini) - Production mode
+    2. Keyword-based classification - Fallback mode
     """
+    if use_llm:
+        try:
+            # Import LLM client (lazy import to avoid startup failures if API keys not configured)
+            from llm import LLMClient
+            
+            client = LLMClient()
+            result = client.classify_intent(user_request)
+            
+            # Map LLM intent string to IntentType enum
+            intent_map = {
+                "create_app": IntentType.CREATE_APP,
+                "update_app": IntentType.UPDATE_APP,
+                "deploy": IntentType.DEPLOY,
+                "scale": IntentType.SCALE,
+                "delete": IntentType.DELETE,
+                "system_upgrade": IntentType.SYSTEM_UPGRADE,
+                "query_status": IntentType.QUERY_STATUS,
+                "unknown": IntentType.UNKNOWN,
+            }
+            
+            intent_type = intent_map.get(result.intent, IntentType.UNKNOWN)
+            logger.info(f"LLM classification: {intent_type.value} (confidence: {result.confidence})")
+            return intent_type, result.confidence
+            
+        except Exception as e:
+            logger.warning(f"LLM classification failed, falling back to keyword matching: {e}")
+            # Fall through to keyword matching
+    
+    # Keyword-based classification (Fallback)
     request_lower = user_request.lower()
 
-    # Simple keyword-based classification (STUB)
     if any(
         word in request_lower
         for word in ["create", "build", "make", "new", "generate"]
@@ -701,17 +733,34 @@ def execute_agent_graph(state: AgentGraphState) -> AgentGraphState:
 
 @app.get("/health")
 async def health_check():
-    """Service health check"""
+    """
+    Service health check
+    
+    Returns service status, readiness, and configuration status.
+    """
+    # Check LLM configuration
+    llm_status = "not_configured"
+    llm_provider = os.getenv("LLM_PROVIDER", "gemini")
+    
+    if llm_provider == "openai" and os.getenv("OPENAI_API_KEY"):
+        llm_status = "configured (openai)"
+    elif llm_provider == "gemini" and os.getenv("GEMINI_API_KEY"):
+        llm_status = "configured (gemini)"
+    
     return {
         "status": "healthy",
         "version": "0.1.0",
         "timestamp": datetime.utcnow().isoformat(),
         "checks": {
-            "llm_connection": "ok",  # TODO: Check LLM API
-            "state_db": "ok",  # TODO: Check database
+            "llm_connection": llm_status,
+            "state_db": "ok",  # TODO: Check database connection
             "vector_db": "ok",  # TODO: Check vector store
             "infra_runner": "ok",  # TODO: Check infra-runner service
         },
+        "configuration": {
+            "llm_provider": llm_provider,
+            "llm_enabled": llm_status.startswith("configured"),
+        }
     }
 
 

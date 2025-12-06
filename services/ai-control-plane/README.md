@@ -6,7 +6,14 @@ This service provides a natural language interface to autonomous AI-driven infra
 
 ## ⚠️ Implementation Status
 
-**This is a SKELETON IMPLEMENTATION** demonstrating the architecture. All LangChain tool implementations, LLM integrations, and vector database operations are stubbed with TODO markers for future implementation.
+**Phase 6 (Production Integration): IN PROGRESS**
+
+- ✅ **Intent Classification**: LLM-based classification implemented (OpenAI/Gemini)
+- ✅ **Fallback Mode**: Keyword-based classification for development without API keys
+- 🚧 **Plan Generation**: Stub implementation (LLM integration in progress)
+- 🚧 **Tool Implementations**: Stubs with TODO markers
+- 🚧 **Vector Database**: Not yet integrated
+- 🚧 **State Database**: Schema ready, integration in progress
 
 ## 🎯 Purpose
 
@@ -205,24 +212,65 @@ gcloud run deploy ai-control-plane \
 
 ### Environment Variables
 
-**Required (for production):**
-- `OPENAI_API_KEY`: OpenAI API key for LLM integration
-- `STATE_DB_URL`: PostgreSQL connection string
-- `VECTOR_DB_URL`: Vector database connection string
-- `INFRA_RUNNER_URL`: Infra Runner service URL
+**LLM Configuration (Phase 6):**
+- `LLM_PROVIDER`: LLM provider to use (`openai` or `gemini`, default: `gemini`)
+- `OPENAI_API_KEY`: OpenAI API key (required if provider=openai)
+- `OPENAI_MODEL`: OpenAI model name (default: `gpt-4-turbo-preview`)
+- `GEMINI_API_KEY`: Google Gemini API key (required if provider=gemini)
+- `GEMINI_MODEL`: Gemini model name (default: `gemini-1.5-flash`)
+- `LLM_MAX_RETRIES`: Max retries for LLM calls (default: 3)
+- `LLM_TIMEOUT`: LLM request timeout in seconds (default: 30)
 
-**Optional:**
+**Database Configuration:**
+- `STATE_DB_URL`: PostgreSQL connection string (default: `postgresql://postgres:@localhost/ai_native_control_plane`)
+- `VECTOR_DB_URL`: Vector database connection string (TODO)
+- `INFRA_RUNNER_URL`: Infra Runner service URL (TODO)
+
+**Service Configuration:**
 - `PORT`: Server port (default: 8081)
 - `LOG_LEVEL`: Logging level (default: INFO)
-- `MODEL_NAME`: LLM model to use (default: gpt-4)
+
+### LLM Provider Setup
+
+#### Option 1: OpenAI
+```bash
+export LLM_PROVIDER=openai
+export OPENAI_API_KEY=sk-...
+export OPENAI_MODEL=gpt-4-turbo-preview  # Optional
+```
+
+#### Option 2: Google Gemini (Default)
+```bash
+export LLM_PROVIDER=gemini
+export GEMINI_API_KEY=...  # Get from https://aistudio.google.com/app/apikey
+export GEMINI_MODEL=gemini-1.5-flash  # Optional
+```
+
+#### Fallback Mode (No API Key)
+If no API key is configured, the service falls back to keyword-based intent classification. This is suitable for development and testing but not recommended for production.
+
+### Getting API Keys
+
+**OpenAI:**
+1. Create account at https://platform.openai.com/
+2. Go to API Keys section
+3. Create new secret key
+4. Copy and set as `OPENAI_API_KEY`
+
+**Google Gemini:**
+1. Go to https://aistudio.google.com/app/apikey
+2. Click "Get API Key"
+3. Copy and set as `GEMINI_API_KEY`
+4. **Note**: This is different from GCP service account keys
 
 ## 📋 TODO: Production Implementation
 
 ### Critical Path
-- [ ] Integrate LangChain with OpenAI/Claude for intent classification
+- [x] Integrate LangChain with OpenAI/Gemini for intent classification ✅ **COMPLETED (Phase 6)**
+- [ ] Implement plan generation with LLM
 - [ ] Implement LangGraph StateGraph with conditional routing
-- [ ] Build actual vector database integration (ChromaDB/Pinecone)
-- [ ] Connect to PostgreSQL state-db
+- [ ] Build actual vector database integration (ChromaDB/Pinecone/pgvector)
+- [ ] Connect to PostgreSQL state-db (schema ready, integration pending)
 - [ ] Implement all 10 LangChain tools with proper schemas
 - [ ] Add HTTP client for calling infra-runner service
 - [ ] Implement retry logic with exponential backoff
