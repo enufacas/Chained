@@ -242,6 +242,27 @@ const activePipelines: Map<string, Pipeline> = new Map();
 // Pipelines persist in memory during the server session
 // For production, consider using a database or Cloud Storage for persistence
 
+// =============================================================================
+// CORS Headers
+// =============================================================================
+
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type",
+};
+
+/**
+ * OPTIONS /api/pipeline
+ * Handle CORS preflight requests
+ */
+export async function OPTIONS() {
+  return new Response(null, {
+    status: 204,
+    headers: corsHeaders,
+  });
+}
+
 /**
  * GET /api/pipeline
  *
@@ -273,7 +294,7 @@ export async function GET(request: NextRequest) {
       logWithTimestamp("WARN", `Pipeline not found: ${pipelineId}`);
       return new Response(JSON.stringify({ error: "Pipeline not found" }), {
         status: 404,
-        headers: { "Content-Type": "application/json" },
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
@@ -284,7 +305,7 @@ export async function GET(request: NextRequest) {
     
     return new Response(JSON.stringify(pipeline), {
       status: 200,
-      headers: { "Content-Type": "application/json" },
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
 
@@ -318,7 +339,7 @@ export async function GET(request: NextRequest) {
     }),
     {
       status: 200,
-      headers: { "Content-Type": "application/json" },
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
     }
   );
 }
@@ -340,7 +361,7 @@ export async function POST(request: NextRequest) {
       logWithTimestamp("WARN", "Pipeline creation failed: Topic is required");
       return new Response(JSON.stringify({ error: "Topic is required" }), {
         status: 400,
-        headers: { "Content-Type": "application/json" },
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
@@ -375,14 +396,14 @@ export async function POST(request: NextRequest) {
 
     return new Response(JSON.stringify({ success: true, pipeline }), {
       status: 201,
-      headers: { "Content-Type": "application/json" },
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
     logWithTimestamp("ERROR", "Pipeline creation failed", { error: errorMessage });
     return new Response(JSON.stringify({ error: "Failed to create pipeline" }), {
       status: 500,
-      headers: { "Content-Type": "application/json" },
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
 }
