@@ -30,6 +30,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### ✨ Features
 
+- 🤖 🧠 Learning 🧠 Learn from GitHub Copilot sources - 2025-12-06 [#3647](https://github.com/enufacas/Chained/pull/3647)
 - 👤 🏗️ Infrastructure Host AG-Organism visualization on Cloud Run with dynamic environment injection [#3634](https://github.com/enufacas/Chained/pull/3634)
 - 👤 🔧 Agents Add AG-Organism: 3D cyberpunk visualization frontend for A2A agent coordination [#3632](https://github.com/enufacas/Chained/pull/3632)
 
@@ -40,7 +41,8 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x5) [#3641](https://github.com/enufacas/Chained/pull/3641)
+- 👤 **Documentation**: AI-Native Control Plane Phase 1 (Foundations) [#3645](https://github.com/enufacas/Chained/pull/3645)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x6) [#3644](https://github.com/enufacas/Chained/pull/3644)
 - 👤 **Test**: Bootstrap AI-Native Control Plane: Create master control specification [#3643](https://github.com/enufacas/Chained/pull/3643)
 
 ---
@@ -230,9 +232,6 @@ This changelog excludes automated data syncs and routine maintenance commits.
 - 👤 ⚙️ Workflows Fix bash arithmetic causing workflow failure in a2a-parallel-agents.yml [#3390](https://github.com/enufacas/Chained/pull/3390)
 - 👤 Replace /gemini-issue-fixer with A2A protocol-compliant implementation prompt [#3386](https://github.com/enufacas/Chained/pull/3386)
 - 👤 Investigate AG-UI Frontend chat functionality issues [#3384](https://github.com/enufacas/Chained/pull/3384)
-- 👤 ⚙️ Workflows Fix A2A workflow PR creation: explicit tool guidance and fallback mechanism [#3369](https://github.com/enufacas/Chained/pull/3369)
-- 👤 ⚙️ Workflows Fix invalid workflow: secrets context not accessible in step if condition [#3368](https://github.com/enufacas/Chained/pull/3368)
-- 👤 🏗️ Infrastructure Fix Terraform deployment and configure GOOGLE_API_KEY securely for CopilotKit chat [#3366](https://github.com/enufacas/Chained/pull/3366)
 
 ### 🧹 Chores & Maintenance
 
