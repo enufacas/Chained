@@ -26,6 +26,18 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ---
 
+## 2025-12-06
+
+### ✨ Features
+
+- 👤 🔧 Agents Add AG-Organism: 3D cyberpunk visualization frontend for A2A agent coordination [#3632](https://github.com/enufacas/Chained/pull/3632)
+
+### 🧹 Chores & Maintenance
+
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge [#3631](https://github.com/enufacas/Chained/pull/3631)
+
+---
+
 ## 2025-12-05
 
 ### ✨ Features
@@ -218,28 +230,11 @@ This changelog excludes automated data syncs and routine maintenance commits.
 - 👤 Fix GitHub Models nonsense output with quality validation [#3362](https://github.com/enufacas/Chained/pull/3362)
 - 👤 GitHub Models API - use 'token' auth format and budget-friendly default model [#3358](https://github.com/enufacas/Chained/pull/3358)
 - 👤 🏗️ Infrastructure AG-UI Frontend 403 error by adding IAM member resources to Terraform plan targets [#3359](https://github.com/enufacas/Chained/pull/3359)
-- 👤 🏗️ Infrastructure Fix AG-UI Frontend Docker build: include devDependencies for compilation [#3356](https://github.com/enufacas/Chained/pull/3356)
-- 👤 ⚙️ Workflows Fix A2A workflow: use gpt-4o-mini default, increase Gemini session turns [#3355](https://github.com/enufacas/Chained/pull/3355)
-- 👤 ⚙️ Workflows Fix A2A workflow: change GitHub Models default to gpt-4o-mini, increase Gemini turns to 30 [#19779084538](https://github.com/enufacas/Chained/pull/19779084538)
 
 ### 🧹 Chores & Maintenance
 
 - 👤 📚 Docs **Documentation**: Add AG-UI Frontend troubleshooting guide with root cause discovery [#3408](https://github.com/enufacas/Chained/pull/3408)
 - 👤 🏗️ Infrastructure **Documentation**: add Secret Manager permission to GCP setup guide [#3370](https://github.com/enufacas/Chained/pull/3370)
 - 👤 **Chore**: Update AG-UI Frontend to accept GOOGLE_API_KEY directly [#3370](https://github.com/enufacas/Chained/pull/3370)
-
----
-
-## 2025-11-28
-
-### ✨ Features
-
-- 👤 🔧 Agents Add AG-UI Frontend to deploy-adk-agents.yml pipeline [#3353](https://github.com/enufacas/Chained/pull/3353)
-- 👤 🔧 Agents Add A2A Pipeline Visualization with CopilotKit Agentic Generative UI [#3350](https://github.com/enufacas/Chained/pull/3350)
-- 👤 🔧 Agents Add GitHub Models API as A2A-compliant provider for parallel agent orchestration [#3349](https://github.com/enufacas/Chained/pull/3349)
-
-### 🐛 Bug Fixes
-
-- 👤 ⚙️ Workflows Fix bash arithmetic exit code failure in a2a-parallel-agents workflow [#3352](https://github.com/enufacas/Chained/pull/3352)
 
 ---
