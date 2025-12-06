@@ -545,6 +545,7 @@ jobs:
             -target=google_cloud_run_v2_service.image_generator \
             -target=google_cloud_run_v2_service.adk_api_server \
             -target=google_cloud_run_v2_service.ag_ui_frontend \
+            -target=google_cloud_run_v2_service.ag_organism_frontend \
             -target=google_cloud_run_v2_service.error_observer \
             -target=google_cloud_run_v2_service.log_consumer \
             -target=google_service_account.adk_agents \
@@ -556,6 +557,7 @@ jobs:
             -target=google_cloud_run_v2_service_iam_member.image_generator_public \
             -target=google_cloud_run_v2_service_iam_member.adk_api_server_public \
             -target=google_cloud_run_v2_service_iam_member.ag_ui_frontend_public \
+            -target=google_cloud_run_v2_service_iam_member.ag_organism_frontend_public \
             -target=google_cloud_run_v2_service_iam_member.error_observer_public \
             -target=google_cloud_run_v2_service_iam_member.log_consumer_public \
             -out=tfplan
@@ -574,6 +576,7 @@ jobs:
           echo "image_generator_url=$(terraform output -raw image_generator_url 2>/dev/null || echo '')" >> $GITHUB_OUTPUT
           echo "adk_api_server_url=$(terraform output -raw adk_api_server_url 2>/dev/null || echo '')" >> $GITHUB_OUTPUT
           echo "ag_ui_frontend_url=$(terraform output -raw ag_ui_frontend_url 2>/dev/null || echo '')" >> $GITHUB_OUTPUT
+          echo "ag_organism_frontend_url=$(terraform output -raw ag_organism_frontend_url 2>/dev/null || echo '')" >> $GITHUB_OUTPUT
           echo "error_observer_url=$(terraform output -raw error_observer_url 2>/dev/null || echo '')" >> $GITHUB_OUTPUT
           echo "log_consumer_url=$(terraform output -raw log_consumer_url 2>/dev/null || echo '')" >> $GITHUB_OUTPUT
 
