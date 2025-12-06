@@ -88,9 +88,11 @@ async def dispatch_to_github(error_event: ErrorEvent) -> Dict[str, Any]:
         HTTPException: If GitHub API call fails
     """
     if not GITHUB_TOKEN:
+        error_msg = "GitHub token not configured (GITHUB_PAT or GITHUB_TOKEN required)"
+        print(f"❌ {error_msg}")
         raise HTTPException(
             status_code=500,
-            detail="GitHub token not configured (GITHUB_PAT or GITHUB_TOKEN required)"
+            detail=error_msg
         )
     
     url = f"{GITHUB_API_URL}/repos/{GITHUB_REPO}/dispatches"
@@ -105,6 +107,11 @@ async def dispatch_to_github(error_event: ErrorEvent) -> Dict[str, Any]:
         "Authorization": f"Bearer {GITHUB_TOKEN}",
         "User-Agent": f"error-observer-agent/{AGENT_VERSION}",
     }
+    
+    print(f"📤 Dispatching error to GitHub: {url}")
+    print(f"   Event type: cloudrun-error")
+    print(f"   Service: {error_event.service}")
+    print(f"   Error hash: {error_event.error_hash}")
     
     try:
         async with httpx.AsyncClient(timeout=30.0) as client:
@@ -122,6 +129,7 @@ async def dispatch_to_github(error_event: ErrorEvent) -> Dict[str, Any]:
             else:
                 error_msg = f"GitHub API returned {response.status_code}: {response.text}"
                 print(f"❌ Failed to dispatch to GitHub: {error_msg}")
+                print(f"   Response headers: {dict(response.headers)}")
                 return {
                     "success": False,
                     "message": error_msg,
@@ -142,6 +150,8 @@ async def dispatch_to_github(error_event: ErrorEvent) -> Dict[str, Any]:
     except Exception as e:
         error_msg = f"GitHub dispatch error: {str(e)}"
         print(f"❌ {error_msg}")
+        import traceback
+        traceback.print_exc()
         return {
             "success": False,
             "message": error_msg,
@@ -226,6 +236,8 @@ async def lifespan(app: FastAPI):
     """Application lifespan manager."""
     print(f"🚀 Error Observer Agent starting on port {PORT}")
     print(f"   GitHub integration: {'✅ Configured' if GITHUB_TOKEN else '❌ Not configured'}")
+    print(f"   GitHub repository: {GITHUB_REPO}")
+    print(f"   Agent URL: {os.getenv('SERVICE_URL', f'http://localhost:{PORT}')}")
     yield
     print("🛑 Error Observer Agent shutting down")
 

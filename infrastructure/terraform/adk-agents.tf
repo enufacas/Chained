@@ -1355,7 +1355,7 @@ resource "google_cloud_run_v2_service" "error_observer" {
 
       # GitHub repository for repository_dispatch
       env {
-        name  = "GIT_REPO"
+        name  = "GITHUB_REPO"
         value = var.git_repo != "" ? var.git_repo : "enufacas/Chained"
       }
 
