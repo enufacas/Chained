@@ -30,7 +30,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### ✨ Features
 
-- 👤 📚 Docs AI-Native Control Plane Phase 5: Complete MVP with end-to-end examples and release notes
+- 👤 Complete AI-Native Control Plane Phase 5 MVP with end-to-end examples [#3666](https://github.com/enufacas/Chained/pull/3666)
 - 👤 AI-Native Control Plane Phase 4: Execution layer skeleton services [#3662](https://github.com/enufacas/Chained/pull/3662)
 - 👤 🔧 Agents Phase 3: AI-Native Control Plane agent design (LangChain tools + LangGraph orchestration) [#3658](https://github.com/enufacas/Chained/pull/3658)
 - 🤖 🧠 Learning 🧠 Learn from GitHub Copilot sources - 2025-12-06 [#3647](https://github.com/enufacas/Chained/pull/3647)
@@ -47,7 +47,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x14) [#3665](https://github.com/enufacas/Chained/pull/3665)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x15) [#3667](https://github.com/enufacas/Chained/pull/3667)
 - 👤 **Documentation**: AI-Native Control Plane Phase 1 (Foundations) [#3645](https://github.com/enufacas/Chained/pull/3645)
 - 👤 **Test**: Phase 2: AI-Native Control Plane service architecture and API specifications (x2) [#3656](https://github.com/enufacas/Chained/pull/3656)
 - 👤 **Test**: Bootstrap AI-Native Control Plane: Create master control specification [#3643](https://github.com/enufacas/Chained/pull/3643)
