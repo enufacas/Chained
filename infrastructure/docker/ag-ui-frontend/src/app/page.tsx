@@ -538,6 +538,27 @@ function UnifiedOutcomes({
             <div className="flex-1 min-w-0 text-left">
               <div className="font-medium text-white text-sm truncate">{activeSession.recipeName}</div>
               <div className="text-xs text-slate-400 truncate">{activeSession.goal}</div>
+              {(() => {
+                // Calculate unique agents and their completion status
+                const uniqueAgents = Array.from(new Set(activeSession.turnResults.map(t => t.agentId)));
+                const agentCompletionCount = uniqueAgents.map(agentId => {
+                  const agentTurns = activeSession.turnResults.filter(t => t.agentId === agentId);
+                  const completedTurns = agentTurns.filter(t => t.status === "completed").length;
+                  return { agentId, completed: completedTurns, total: agentTurns.length };
+                });
+                const allAgentsComplete = agentCompletionCount.every(a => a.completed === a.total);
+                
+                return (
+                  <div className="text-[10px] text-slate-500 mt-0.5">
+                    {uniqueAgents.length} agents: {agentCompletionCount.map((a, i) => (
+                      <span key={a.agentId} className={a.completed === a.total ? "text-green-400" : "text-yellow-400"}>
+                        {agentIcons[a.agentId] || "🤖"}{a.completed}/{a.total}
+                        {i < uniqueAgents.length - 1 ? ", " : ""}
+                      </span>
+                    ))}
+                  </div>
+                );
+              })()}
             </div>
             <div className="text-right">
               <div className="text-xs text-slate-400">
@@ -559,6 +580,39 @@ function UnifiedOutcomes({
           {/* Expanded Session Details with Artifact Selection */}
           {expandedItem === `session-${activeSession.id}` && (
             <div className="px-3 pb-3 space-y-2">
+              {/* Agent Summary Header */}
+              {(() => {
+                const uniqueAgents = Array.from(new Set(activeSession.turnResults.map(t => t.agentId)));
+                const agentStats = uniqueAgents.map(agentId => {
+                  const agentTurns = activeSession.turnResults.filter(t => t.agentId === agentId);
+                  const completedTurns = agentTurns.filter(t => t.status === "completed").length;
+                  const failedTurns = agentTurns.filter(t => t.status === "failed").length;
+                  return { agentId, completed: completedTurns, failed: failedTurns, total: agentTurns.length };
+                });
+                
+                return (
+                  <div className="p-2 rounded bg-gradient-to-r from-slate-700/30 to-slate-800/30 border border-slate-600/30">
+                    <div className="text-[10px] text-slate-500 uppercase tracking-wider mb-1">Agents Executing</div>
+                    <div className="grid grid-cols-2 gap-1">
+                      {agentStats.map((stat) => (
+                        <div key={stat.agentId} className="flex items-center gap-1 text-xs">
+                          <span className="text-sm">{agentIcons[stat.agentId] || "🤖"}</span>
+                          <span className="flex-1 truncate text-slate-300">{stat.agentId}</span>
+                          <span className={stat.completed === stat.total ? "text-green-400 font-bold" : stat.failed > 0 ? "text-red-400" : "text-yellow-400"}>
+                            {stat.completed}/{stat.total}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="text-[10px] text-slate-500 mt-1">
+                      {activeSession.config?.maxTurnsPerAgent ? `${activeSession.config.maxTurnsPerAgent} turns per agent, ` : ""}
+                      {activeSession.config?.executionMode === "parallel" ? "parallel execution" : "sequential execution"}
+                    </div>
+                  </div>
+                );
+              })()}
+              
+              {/* Individual Turn Results */}
               {activeSession.turnResults.map((turn, idx) => {
                 const icon = agentIcons[turn.agentId] || "🤖";
                 const isStepExpanded = expandedStepIndex === idx;
@@ -586,7 +640,10 @@ function UnifiedOutcomes({
                         {idx + 1}
                       </span>
                       <span>{icon}</span>
-                      <span className="flex-1 truncate text-slate-300 text-left">{turn.agentName}</span>
+                      <span className="flex-1 truncate text-slate-300 text-left">
+                        {turn.agentName}
+                        {turn.turnNumber && <span className="text-slate-500 ml-1 text-[10px]">(turn {turn.turnNumber})</span>}
+                      </span>
                       {turn.status === "running" && <span className="text-blue-400 animate-pulse">Working...</span>}
                       {turn.status === "completed" && <span className="text-green-400">✓</span>}
                       {turn.status === "failed" && <span className="text-red-400">✗</span>}
