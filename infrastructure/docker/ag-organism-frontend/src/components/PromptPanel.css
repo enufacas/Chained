@@ -4,7 +4,7 @@
   top: 60px;
   width: 350px;
   background: rgba(10, 14, 26, 0.95);
-  border-left: 2px solid #00ffff;
+  border-left: 2px solid #4a9eff;
   z-index: 100;
   padding: 20px;
   transition: transform 0.3s;
@@ -22,7 +22,7 @@
 
 .prompt-section h3 {
   font-size: 14px;
-  color: #ff00ff;
+  color: #818cf8;
   text-transform: uppercase;
   margin-bottom: 10px;
 }
@@ -32,9 +32,9 @@
   min-height: 150px;
   padding: 12px;
   background: rgba(0, 0, 0, 0.7);
-  border: 1px solid #00ffff;
+  border: 1px solid #4a9eff;
   border-radius: 4px;
-  color: #00ffff;
+  color: #4a9eff;
   font-family: 'Courier New', monospace;
   font-size: 12px;
   resize: vertical;
@@ -54,17 +54,17 @@
   display: inline-block;
   padding: 4px 8px;
   background: rgba(255, 0, 255, 0.2);
-  border: 1px solid #ff00ff;
+  border: 1px solid #818cf8;
   border-radius: 3px;
   margin-right: 5px;
   margin-bottom: 5px;
-  color: #ff00ff;
+  color: #818cf8;
 }
 
 .execute-btn {
   width: 100%;
   padding: 12px;
-  background: linear-gradient(135deg, #ff00ff, #00ffff);
+  background: linear-gradient(135deg, #818cf8, #4a9eff);
   border: none;
   border-radius: 4px;
   color: #fff;
@@ -93,19 +93,19 @@
   margin-top: 15px;
   padding: 10px;
   background: rgba(0, 0, 0, 0.5);
-  border: 1px solid #00ffff;
+  border: 1px solid #4a9eff;
   border-radius: 4px;
 }
 
 .log-entry {
   margin-bottom: 8px;
   padding: 5px;
-  border-left: 2px solid #00ffff;
+  border-left: 2px solid #4a9eff;
   padding-left: 8px;
 }
 
 .log-entry.agent {
-  border-left-color: #ff00ff;
+  border-left-color: #818cf8;
 }
 
 .log-entry.artifact {
@@ -122,5 +122,5 @@
 }
 
 .log-message {
-  color: #00ffff;
+  color: #4a9eff;
 }

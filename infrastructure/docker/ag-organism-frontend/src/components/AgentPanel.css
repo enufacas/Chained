@@ -5,7 +5,7 @@
   bottom: 0;
   width: 320px;
   background: rgba(10, 14, 26, 0.95);
-  border-right: 2px solid #00ffff;
+  border-right: 2px solid #4a9eff;
   overflow-y: auto;
   z-index: 100;
   transition: transform 0.3s;
@@ -18,7 +18,7 @@
 .panel-header {
   padding: 15px;
   background: rgba(0, 255, 255, 0.1);
-  border-bottom: 1px solid #00ffff;
+  border-bottom: 1px solid #4a9eff;
   position: sticky;
   top: 0;
   z-index: 10;
@@ -26,7 +26,7 @@
 
 .panel-header h2 {
   font-size: 16px;
-  color: #00ffff;
+  color: #4a9eff;
   text-transform: uppercase;
   letter-spacing: 2px;
   margin-bottom: 10px;
@@ -40,7 +40,7 @@
   padding: 12px;
   margin-bottom: 10px;
   background: rgba(0, 255, 255, 0.05);
-  border-left: 3px solid #00ffff;
+  border-left: 3px solid #4a9eff;
   cursor: pointer;
   transition: all 0.3s;
   border-radius: 4px;
@@ -54,7 +54,7 @@
 
 .agent-card.selected {
   background: rgba(255, 0, 255, 0.2);
-  border-left-color: #ff00ff;
+  border-left-color: #818cf8;
 }
 
 .agent-card.working {
@@ -63,7 +63,7 @@
 }
 
 .agent-card.completed {
-  border-left-color: #00ffff;
+  border-left-color: #4a9eff;
 }
 
 .agent-icon {
@@ -76,7 +76,7 @@
   font-size: 14px;
   font-weight: bold;
   margin-bottom: 4px;
-  color: #00ffff;
+  color: #4a9eff;
 }
 
 .agent-description {
@@ -107,7 +107,7 @@
 
 .agent-status.completed {
   background: rgba(0, 255, 255, 0.2);
-  color: #00ffff;
+  color: #4a9eff;
 }
 
 .agent-status.failed {
@@ -122,8 +122,8 @@
   width: 24px;
   height: 60px;
   background: rgba(10, 14, 26, 0.95);
-  border: 1px solid #00ffff;
-  color: #00ffff;
+  border: 1px solid #4a9eff;
+  color: #4a9eff;
   cursor: pointer;
   display: flex;
   align-items: center;

@@ -39,7 +39,25 @@ function App() {
         logActivity('system', `Loaded ${agents.length} available agents`);
       } catch (error) {
         console.error('Failed to load agents:', error);
-        logActivity('error', `Failed to load agents: ${error.message}`);
+        
+        // Fallback to mock agents for demo purposes
+        const mockAgents = [
+          { id: 'academic-research', displayName: 'Academic Research', icon: '🔬', description: 'Researches academic papers and trends' },
+          { id: 'google-trends', displayName: 'Google Trends', icon: '📊', description: 'Analyzes trending topics' },
+          { id: 'blog-writer', displayName: 'Blog Writer', icon: '✍️', description: 'Creates blog content' },
+          { id: 'code-reviewer', displayName: 'Code Reviewer', icon: '👁️', description: 'Reviews code quality' },
+          { id: 'data-analyst', displayName: 'Data Analyst', icon: '📈', description: 'Analyzes data patterns' },
+          { id: 'image-generator', displayName: 'Image Generator', icon: '🎨', description: 'Generates images' },
+        ];
+        setAvailableAgents(mockAgents);
+        
+        const states = new Map();
+        mockAgents.forEach(agent => {
+          states.set(agent.id, 'idle');
+        });
+        setAgentStates(states);
+        
+        logActivity('system', 'Using demo agents (backend not available)');
       } finally {
         setTimeout(() => setLoading(false), 1000);
       }
