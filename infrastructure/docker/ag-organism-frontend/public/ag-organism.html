@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AG-Organism - Agent Coordination Visualizer</title>
-    <link rel="icon" href="favicon.ico">
+    <!-- Simple robot emoji favicon as data URI (URL-encoded for browser compatibility) -->
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='0.9em' font-size='90'%3E🤖%3C/text%3E%3C/svg%3E">
     <!-- ENV_INJECTED -->
     <style>
         * {
@@ -483,7 +484,7 @@
     <!-- Header -->
     <div id="header">
         <div class="header-left">
-            <a href="index.html" class="home-btn">🏠 Home</a>
+            <a href="#" id="home-btn" class="home-btn">🏠 Home</a>
             <h1>🤖 AG-ORGANISM - AGENT COORDINATION</h1>
         </div>
         <div id="system-status">STATUS: IDLE</div>
@@ -1310,6 +1311,21 @@
         }
 
         function setupEventListeners() {
+            // Home button - link to AG-UI frontend
+            const homeBtn = document.getElementById('home-btn');
+            if (homeBtn) {
+                if (window.ENV?.AG_UI_FRONTEND_URL) {
+                    homeBtn.href = window.ENV.AG_UI_FRONTEND_URL;
+                } else {
+                    // Fallback: disable button and show tooltip if no URL configured
+                    homeBtn.style.opacity = '0.5';
+                    homeBtn.style.cursor = 'not-allowed';
+                    homeBtn.title = 'Home URL not configured';
+                    homeBtn.addEventListener('click', (e) => e.preventDefault());
+                    console.warn('[AG-Organism] AG_UI_FRONTEND_URL not configured - home button disabled');
+                }
+            }
+            
             // Execute button
             document.getElementById('execute-btn').addEventListener('click', executePipeline);
             
