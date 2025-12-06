@@ -16,7 +16,10 @@ This service provides a modern React-based 3D visualization for the AG-Organism 
 ## Documentation
 
 📚 **Quick Links:**
-- **[R3F_REFERENCE.md](./R3F_REFERENCE.md)** - Comprehensive React Three Fiber patterns and examples reference
+- **[ANIMATED_MODELS_GUIDE.md](./ANIMATED_MODELS_GUIDE.md)** - Complete guide for incorporating animated 3D models (NEW)
+- **[DREI_COMPONENTS.md](./DREI_COMPONENTS.md)** - Drei components usage guide
+- **[FACTORY_THEME.md](./FACTORY_THEME.md)** - Factory theme specifications and color palette
+- **[R3F_REFERENCE.md](./R3F_REFERENCE.md)** - Comprehensive React Three Fiber patterns and examples
 - **[ITERATION_GUIDE.md](./ITERATION_GUIDE.md)** - Quick guide for iterating on features
 - **[MIGRATION.md](./MIGRATION.md)** - Details on vanilla Three.js → R3F migration
 - **[IMPLEMENTATION_SUMMARY.md](./IMPLEMENTATION_SUMMARY.md)** - Complete implementation details
