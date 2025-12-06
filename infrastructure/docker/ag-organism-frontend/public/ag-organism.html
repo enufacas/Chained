@@ -548,12 +548,12 @@
         <button class="control-btn active" id="btn-toggle-connections">Connections: ON</button>
     </div>
 
-    <!-- Three.js from CDN -->
+    <!-- Three.js from local node_modules (CDN blocked by ad blockers) -->
     <script type="importmap">
     {
         "imports": {
-            "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
-            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+            "three": "/vendor/three/build/three.module.js",
+            "three/addons/": "/vendor/three/examples/jsm/"
         }
     }
     </script>
@@ -579,6 +579,81 @@
             : (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
                 ? 'http://localhost:3000/api'
                 : 'https://chained-ag-ui-frontend-sguacxy5gq-uc.a.run.app/api');
+
+        // =============================================================================
+        // Error Logging Utilities
+        // =============================================================================
+        
+        /**
+         * Send error to backend for persistent logging in GCP Cloud Run
+         */
+        async function logErrorToBackend(error, type, context = {}) {
+            const errorData = {
+                type: type || 'generic',
+                timestamp: new Date().toISOString(),
+                error: {
+                    name: error.name || 'Error',
+                    message: error.message || String(error),
+                    stack: error.stack || ''
+                },
+                url: window.location.href,
+                userAgent: navigator.userAgent,
+                context: context
+            };
+            
+            // Always log to console
+            console.error(`[${errorData.timestamp}] [Frontend Error] [${errorData.type}]`, errorData);
+            
+            // Send to backend for persistent logging
+            try {
+                await fetch('/api/log-error', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(errorData)
+                });
+            } catch (err) {
+                console.warn('[Frontend Error] Failed to send error to backend:', err);
+            }
+        }
+        
+        /**
+         * Setup global error handlers
+         */
+        function setupGlobalErrorHandlers() {
+            // Catch unhandled promise rejections
+            window.addEventListener('unhandledrejection', (event) => {
+                logErrorToBackend(
+                    event.reason || new Error('Unhandled promise rejection'),
+                    'unhandled-promise-rejection',
+                    { promise: String(event.promise) }
+                );
+            });
+            
+            // Catch global errors
+            window.addEventListener('error', (event) => {
+                logErrorToBackend(
+                    event.error || new Error(event.message),
+                    'global-error',
+                    {
+                        filename: event.filename,
+                        lineno: event.lineno,
+                        colno: event.colno
+                    }
+                );
+            });
+            
+            // Log when Three.js fails to load
+            if (typeof THREE === 'undefined') {
+                logErrorToBackend(
+                    new Error('Three.js failed to load from CDN or local source'),
+                    'dependency-load-error',
+                    { dependency: 'three.js' }
+                );
+            }
+        }
+        
+        // Setup error handlers immediately
+        setupGlobalErrorHandlers();
 
         // =============================================================================
         // Global State
@@ -845,6 +920,12 @@
             } catch (error) {
                 console.error('Failed to load agents:', error);
                 logActivity('error', `Failed to load agents: ${error.message}`);
+                
+                // Send detailed error to backend for persistent logging
+                logErrorToBackend(error, 'agent-load-error', {
+                    api_url: API_BASE_URL,
+                    endpoint: '/registry'
+                });
             }
         }
 
