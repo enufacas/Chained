@@ -13,6 +13,8 @@ This directory contains all documentation related to the Agent2Agent (A2A) Proto
 ## 📚 Documentation Index
 
 ### Quick Start
+- **[A2A_ORCHESTRATION_QUICK_START.md](./A2A_ORCHESTRATION_QUICK_START.md)** - ⚡ **START HERE: 30-second guide to N-agent orchestration**
+- **[A2A_COPILOT_ORCHESTRATION_GUIDE.md](./A2A_COPILOT_ORCHESTRATION_GUIDE.md)** - 📘 **COMPLETE GUIDE: Native Copilot agent orchestration patterns**
 - **[A2A_SUCCESS_HISTORY.md](./A2A_SUCCESS_HISTORY.md)** - 🎉 **SUCCESS! First working chat conversation and expansion ideas**
 - **[A2A_INTEGRATION_README.md](./A2A_INTEGRATION_README.md)** - Quick start guide, examples, and basic usage
 - **[A2A_DEMO_APPROVAL_WORKFLOW.md](./A2A_DEMO_APPROVAL_WORKFLOW.md)** - 🆕 **Fully autonomous A2A pipeline - auto-implements and creates PR**
@@ -192,10 +194,12 @@ Different communication mechanisms for different contexts:
 
 If you're new to the A2A implementation, read in this order:
 
-1. **A2A_STATUS.md** - ⭐ Start here for current status and roadmap
-2. **A2A_INTEGRATION_README.md** - Quick start guide and examples
-3. **A2A_GITHUB_RUNNERS_ARCHITECTURE.md** - Understand the architecture
-4. **A2A_INTEGRATION_DESIGN.md** - Detailed component design
+1. **A2A_ORCHESTRATION_QUICK_START.md** - ⚡ **START HERE: 30-second guide to get running**
+2. **A2A_COPILOT_ORCHESTRATION_GUIDE.md** - 📘 **Complete orchestration patterns guide**
+3. **A2A_STATUS.md** - ⭐ Current status and roadmap
+4. **A2A_INTEGRATION_README.md** - Quick start guide and examples
+5. **A2A_GITHUB_RUNNERS_ARCHITECTURE.md** - Understand the architecture
+6. **A2A_INTEGRATION_DESIGN.md** - Detailed component design
 
 **For Gemini AI Implementation (NEW - PRIMARY):**
 5. **A2A_GEMINI_IMPLEMENTATION.md** - 🚀 Gemini A2A orchestration design
