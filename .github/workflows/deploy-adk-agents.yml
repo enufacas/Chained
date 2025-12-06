@@ -487,6 +487,7 @@ jobs:
             ["chained-log-consumer"]="google_cloud_run_v2_service.log_consumer"
             ["chained-adk-api-server"]="google_cloud_run_v2_service.adk_api_server"
             ["chained-ag-ui-frontend"]="google_cloud_run_v2_service.ag_ui_frontend"
+            ["chained-ag-organism-frontend"]="google_cloud_run_v2_service.ag_organism_frontend"
           )
 
           for SERVICE_NAME in "${!SERVICES[@]}"; do
