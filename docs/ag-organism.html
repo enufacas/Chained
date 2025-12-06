@@ -1,0 +1,1291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AG-Organism - Agent Coordination Visualizer</title>
+    <link rel="icon" href="favicon.ico">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0e1a;
+            color: #00ffff;
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        /* Header */
+        #header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: linear-gradient(135deg, #0a0e1a 0%, #1a1f3a 100%);
+            border-bottom: 2px solid #00ffff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            z-index: 1000;
+            box-shadow: 0 2px 20px rgba(0, 255, 255, 0.3);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .home-btn {
+            background: none;
+            border: 1px solid #00ffff;
+            color: #00ffff;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .home-btn:hover {
+            background: rgba(0, 255, 255, 0.2);
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+        }
+
+        #header h1 {
+            font-size: 24px;
+            color: #00ffff;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+        }
+
+        #system-status {
+            font-size: 14px;
+            color: #ff00ff;
+            font-family: 'Courier New', monospace;
+        }
+
+        /* Main Container */
+        #container {
+            position: fixed;
+            top: 60px;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+        }
+
+        /* Canvas Container */
+        #canvas-container {
+            flex: 1;
+            position: relative;
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Agent Selection Panel */
+        #agent-panel {
+            position: fixed;
+            left: 0;
+            top: 60px;
+            bottom: 0;
+            width: 320px;
+            background: rgba(10, 14, 26, 0.95);
+            border-right: 2px solid #00ffff;
+            overflow-y: auto;
+            z-index: 100;
+            transition: transform 0.3s;
+        }
+
+        #agent-panel.collapsed {
+            transform: translateX(-300px);
+        }
+
+        .panel-header {
+            padding: 15px;
+            background: rgba(0, 255, 255, 0.1);
+            border-bottom: 1px solid #00ffff;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .panel-header h2 {
+            font-size: 16px;
+            color: #00ffff;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+
+        .agent-selector {
+            padding: 10px;
+        }
+
+        .agent-card {
+            padding: 12px;
+            margin-bottom: 10px;
+            background: rgba(0, 255, 255, 0.05);
+            border-left: 3px solid #00ffff;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-radius: 4px;
+            position: relative;
+        }
+
+        .agent-card:hover {
+            background: rgba(0, 255, 255, 0.15);
+            transform: translateX(5px);
+        }
+
+        .agent-card.selected {
+            background: rgba(255, 0, 255, 0.2);
+            border-left-color: #ff00ff;
+        }
+
+        .agent-card.working {
+            border-left-color: #00ff00;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        .agent-icon {
+            font-size: 24px;
+            float: left;
+            margin-right: 10px;
+        }
+
+        .agent-name {
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 4px;
+            color: #00ffff;
+        }
+
+        .agent-description {
+            font-size: 11px;
+            color: #888;
+            margin-bottom: 4px;
+            clear: both;
+        }
+
+        .agent-status {
+            font-size: 10px;
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 3px;
+            text-transform: uppercase;
+            margin-top: 5px;
+        }
+
+        .agent-status.idle {
+            background: rgba(128, 128, 128, 0.2);
+            color: #888;
+        }
+
+        .agent-status.working {
+            background: rgba(0, 255, 0, 0.2);
+            color: #00ff00;
+        }
+
+        .agent-status.completed {
+            background: rgba(0, 255, 255, 0.2);
+            color: #00ffff;
+        }
+
+        /* Prompt Input Panel */
+        #prompt-panel {
+            position: fixed;
+            right: 0;
+            top: 60px;
+            width: 350px;
+            background: rgba(10, 14, 26, 0.95);
+            border-left: 2px solid #00ffff;
+            z-index: 100;
+            padding: 20px;
+            transition: transform 0.3s;
+        }
+
+        #prompt-panel.collapsed {
+            transform: translateX(330px);
+        }
+
+        .prompt-section {
+            margin-bottom: 20px;
+        }
+
+        .prompt-section h3 {
+            font-size: 14px;
+            color: #ff00ff;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        #prompt-input {
+            width: 100%;
+            min-height: 150px;
+            padding: 12px;
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid #00ffff;
+            border-radius: 4px;
+            color: #00ffff;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            resize: vertical;
+        }
+
+        #prompt-input::placeholder {
+            color: #666;
+        }
+
+        .selected-agents-list {
+            font-size: 11px;
+            color: #888;
+            margin-bottom: 10px;
+        }
+
+        .selected-agent-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            background: rgba(255, 0, 255, 0.2);
+            border: 1px solid #ff00ff;
+            border-radius: 3px;
+            margin-right: 5px;
+            margin-bottom: 5px;
+            color: #ff00ff;
+        }
+
+        .execute-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #ff00ff, #00ffff);
+            border: none;
+            border-radius: 4px;
+            color: #fff;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: all 0.3s;
+        }
+
+        .execute-btn:hover {
+            box-shadow: 0 0 20px rgba(255, 0, 255, 0.8);
+            transform: scale(1.05);
+        }
+
+        .execute-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Activity Log */
+        .activity-log {
+            max-height: 300px;
+            overflow-y: auto;
+            font-size: 11px;
+            font-family: 'Courier New', monospace;
+            margin-top: 15px;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid #00ffff;
+            border-radius: 4px;
+        }
+
+        .log-entry {
+            margin-bottom: 8px;
+            padding: 5px;
+            border-left: 2px solid #00ffff;
+            padding-left: 8px;
+        }
+
+        .log-entry.agent {
+            border-left-color: #ff00ff;
+        }
+
+        .log-entry.artifact {
+            border-left-color: #00ff00;
+        }
+
+        .log-entry.error {
+            border-left-color: #ff0000;
+        }
+
+        .log-timestamp {
+            color: #666;
+            margin-right: 8px;
+        }
+
+        .log-message {
+            color: #00ffff;
+        }
+
+        /* Toggle Buttons */
+        .toggle-sidebar {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 24px;
+            height: 60px;
+            background: rgba(10, 14, 26, 0.95);
+            border: 1px solid #00ffff;
+            color: #00ffff;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            z-index: 101;
+            transition: all 0.3s;
+        }
+
+        .toggle-sidebar:hover {
+            background: rgba(0, 255, 255, 0.2);
+        }
+
+        #toggle-agents {
+            left: 320px;
+            border-radius: 0 4px 4px 0;
+        }
+
+        #toggle-prompt {
+            right: 350px;
+            border-radius: 4px 0 0 4px;
+        }
+
+        /* Loading Screen */
+        #loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: #0a0e1a;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.5s;
+        }
+
+        #loading.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(0, 255, 255, 0.2);
+            border-top-color: #00ffff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            margin-top: 20px;
+            font-size: 16px;
+            color: #00ffff;
+            font-family: 'Courier New', monospace;
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(0, 255, 255, 0.5);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 255, 255, 0.8);
+        }
+
+        /* Control Panel */
+        #control-panel {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(10, 14, 26, 0.95);
+            border: 2px solid #00ffff;
+            border-radius: 8px;
+            padding: 15px 20px;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            z-index: 100;
+            box-shadow: 0 4px 20px rgba(0, 255, 255, 0.3);
+        }
+
+        .control-btn {
+            background: rgba(0, 255, 255, 0.1);
+            border: 1px solid #00ffff;
+            color: #00ffff;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            text-transform: uppercase;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+
+        .control-btn:hover {
+            background: rgba(0, 255, 255, 0.3);
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+        }
+
+        .control-btn.active {
+            background: rgba(255, 0, 255, 0.3);
+            border-color: #ff00ff;
+            color: #ff00ff;
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loading">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">INITIALIZING AG-ORGANISM...</div>
+    </div>
+
+    <!-- Header -->
+    <div id="header">
+        <div class="header-left">
+            <a href="index.html" class="home-btn">🏠 Home</a>
+            <h1>🤖 AG-ORGANISM - AGENT COORDINATION</h1>
+        </div>
+        <div id="system-status">STATUS: IDLE</div>
+    </div>
+
+    <!-- Main Container -->
+    <div id="container">
+        <!-- Agent Selection Panel -->
+        <div id="agent-panel">
+            <div class="panel-header">
+                <h2>Available Agents</h2>
+                <p style="font-size: 11px; color: #888; margin-top: 5px;">Click to select agents for execution</p>
+            </div>
+            <div class="agent-selector" id="agent-list">
+                <!-- Agents will be populated here -->
+            </div>
+        </div>
+
+        <!-- Toggle Agents Button -->
+        <button class="toggle-sidebar" id="toggle-agents">◀</button>
+
+        <!-- Canvas Container -->
+        <div id="canvas-container"></div>
+
+        <!-- Toggle Prompt Button -->
+        <button class="toggle-sidebar" id="toggle-prompt">▶</button>
+
+        <!-- Prompt Input Panel -->
+        <div id="prompt-panel">
+            <div class="prompt-section">
+                <h3>Selected Agents</h3>
+                <div class="selected-agents-list" id="selected-agents-display">
+                    <em style="color: #666;">No agents selected</em>
+                </div>
+            </div>
+
+            <div class="prompt-section">
+                <h3>Execution Prompt</h3>
+                <textarea 
+                    id="prompt-input" 
+                    placeholder="Enter your prompt for the selected agents...&#10;&#10;Example: Research the latest trends in AI and create a blog post about them."></textarea>
+            </div>
+
+            <button class="execute-btn" id="execute-btn" disabled>Execute Pipeline</button>
+
+            <div class="prompt-section">
+                <h3>Activity Log</h3>
+                <div class="activity-log" id="activity-log">
+                    <div class="log-entry">
+                        <span class="log-timestamp">[READY]</span>
+                        <span class="log-message">System initialized. Select agents and enter a prompt to begin.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Control Panel -->
+    <div id="control-panel">
+        <button class="control-btn active" id="btn-reset-camera">Reset View</button>
+        <button class="control-btn active" id="btn-toggle-bloom">Bloom: ON</button>
+        <button class="control-btn active" id="btn-toggle-connections">Connections: ON</button>
+    </div>
+
+    <!-- Three.js from CDN -->
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+        }
+    }
+    </script>
+
+    <script type="module">
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+        import { CSS3DRenderer, CSS3DObject } from 'three/addons/renderers/CSS3DRenderer.js';
+        import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+        import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+        import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+        import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
+
+        // =============================================================================
+        // Configuration
+        // =============================================================================
+
+        // AG-UI Backend API URL (adjust if running locally)
+        const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+            ? 'http://localhost:3000/api'
+            : 'https://chained-ag-ui-frontend-sguacxy5gq-uc.a.run.app/api';
+
+        // =============================================================================
+        // Global State
+        // =============================================================================
+
+        let scene, camera, renderer, controls;
+        let labelRenderer, labelScene;
+        let composer, bloomPass;
+        let agentHumanoids = [];
+        let agentLabels = [];
+        let connectionLines = [];
+        let messageObjects = []; // For A2A messages visualization
+        let artifactObjects = []; // For artifact visualization
+        let enableBloom = true;
+        let showConnections = true;
+
+        // Agent state tracking
+        const availableAgents = [];
+        const selectedAgents = new Set();
+        const agentStates = new Map(); // agentId -> status
+
+        // Pipeline execution state
+        let activePipeline = null;
+        let pipelineInterval = null;
+
+        // =============================================================================
+        // Three.js Scene Setup
+        // =============================================================================
+
+        function initScene() {
+            // Scene setup
+            scene = new THREE.Scene();
+            scene.fog = new THREE.FogExp2(0x0a0e1a, 0.012);
+
+            // Label scene for CSS3D labels
+            labelScene = new THREE.Scene();
+
+            // Camera setup
+            camera = new THREE.PerspectiveCamera(
+                75,
+                window.innerWidth / window.innerHeight,
+                0.1,
+                1000
+            );
+            camera.position.set(0, 15, 40);
+
+            // Renderer setup
+            const canvas = document.createElement('canvas');
+            renderer = new THREE.WebGLRenderer({ 
+                canvas: canvas,
+                antialias: true,
+                alpha: true,
+                powerPreference: "high-performance"
+            });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+            renderer.toneMapping = THREE.ACESFilmicToneMapping;
+            renderer.toneMappingExposure = 1.0;
+            document.getElementById('canvas-container').appendChild(renderer.domElement);
+
+            // Post-processing setup
+            composer = new EffectComposer(renderer);
+            const renderPass = new RenderPass(scene, camera);
+            composer.addPass(renderPass);
+
+            // Bloom effect
+            bloomPass = new UnrealBloomPass(
+                new THREE.Vector2(window.innerWidth, window.innerHeight),
+                1.2, 0.4, 0.85
+            );
+            composer.addPass(bloomPass);
+
+            const outputPass = new OutputPass();
+            composer.addPass(outputPass);
+
+            // CSS3D Label Renderer
+            labelRenderer = new CSS3DRenderer();
+            labelRenderer.setSize(window.innerWidth, window.innerHeight);
+            labelRenderer.domElement.style.position = 'absolute';
+            labelRenderer.domElement.style.top = '0';
+            labelRenderer.domElement.style.pointerEvents = 'none';
+            document.getElementById('canvas-container').appendChild(labelRenderer.domElement);
+
+            // Orbit controls
+            controls = new OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.05;
+            controls.minDistance = 20;
+            controls.maxDistance = 100;
+
+            // Lighting
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
+            scene.add(ambientLight);
+
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 1.5);
+            directionalLight.position.set(30, 40, 20);
+            directionalLight.castShadow = true;
+            scene.add(directionalLight);
+
+            const pointLight1 = new THREE.PointLight(0x00ffff, 2, 100);
+            pointLight1.position.set(25, 20, 25);
+            scene.add(pointLight1);
+
+            const pointLight2 = new THREE.PointLight(0xff00ff, 2, 100);
+            pointLight2.position.set(-25, -10, -25);
+            scene.add(pointLight2);
+
+            // Window resize handler
+            window.addEventListener('resize', onWindowResize, false);
+        }
+
+        // =============================================================================
+        // Agent Humanoid Creation (from organism.html)
+        // =============================================================================
+
+        function createHumanoidShape(size, color) {
+            const humanoid = new THREE.Group();
+            
+            const material = new THREE.MeshStandardMaterial({
+                color: color,
+                emissive: color,
+                emissiveIntensity: 0.6,
+                metalness: 0.9,
+                roughness: 0.1
+            });
+            
+            // Head
+            const headGeometry = new THREE.SphereGeometry(size * 0.4, 16, 16);
+            const head = new THREE.Mesh(headGeometry, material);
+            head.position.y = size * 1.5;
+            head.castShadow = true;
+            humanoid.add(head);
+            
+            // Visor
+            const visorGeometry = new THREE.PlaneGeometry(size * 0.6, size * 0.15);
+            const visorMaterial = new THREE.MeshBasicMaterial({
+                color: 0x00ffff,
+                transparent: true,
+                opacity: 0.8
+            });
+            const visor = new THREE.Mesh(visorGeometry, visorMaterial);
+            visor.position.set(0, size * 1.5, size * 0.4);
+            humanoid.add(visor);
+            
+            // Torso
+            const torsoGeometry = new THREE.CapsuleGeometry(size * 0.35, size * 0.8, 8, 16);
+            const torso = new THREE.Mesh(torsoGeometry, material);
+            torso.position.y = size * 0.6;
+            torso.castShadow = true;
+            humanoid.add(torso);
+            
+            // Arms and legs
+            const armGeometry = new THREE.CapsuleGeometry(size * 0.15, size * 0.7, 4, 8);
+            const leftArm = new THREE.Mesh(armGeometry, material);
+            leftArm.position.set(-size * 0.55, size * 0.7, 0);
+            leftArm.rotation.z = Math.PI * 0.15;
+            leftArm.castShadow = true;
+            humanoid.add(leftArm);
+            
+            const rightArm = new THREE.Mesh(armGeometry, material);
+            rightArm.position.set(size * 0.55, size * 0.7, 0);
+            rightArm.rotation.z = -Math.PI * 0.15;
+            rightArm.castShadow = true;
+            humanoid.add(rightArm);
+            
+            const legGeometry = new THREE.CapsuleGeometry(size * 0.18, size * 0.8, 4, 8);
+            const leftLeg = new THREE.Mesh(legGeometry, material);
+            leftLeg.position.set(-size * 0.2, size * -0.4, 0);
+            leftLeg.castShadow = true;
+            humanoid.add(leftLeg);
+            
+            const rightLeg = new THREE.Mesh(legGeometry, material);
+            rightLeg.position.set(size * 0.2, size * -0.4, 0);
+            rightLeg.castShadow = true;
+            humanoid.add(rightLeg);
+            
+            // Glow effect
+            const glowGeometry = new THREE.SphereGeometry(size * 1.3, 16, 16);
+            const glowMaterial = new THREE.MeshBasicMaterial({
+                color: color,
+                transparent: true,
+                opacity: 0.3,
+                side: THREE.BackSide
+            });
+            const glow = new THREE.Mesh(glowGeometry, glowMaterial);
+            glow.position.y = size * 0.5;
+            humanoid.add(glow);
+            
+            return humanoid;
+        }
+
+        // Create CSS3D label
+        function createAgentLabel(text, position) {
+            const labelDiv = document.createElement('div');
+            labelDiv.textContent = text;
+            labelDiv.style.cssText = `
+                color: #00ffff;
+                font-size: 12px;
+                font-family: 'Segoe UI', sans-serif;
+                background: rgba(10, 14, 26, 0.8);
+                padding: 4px 8px;
+                border-radius: 4px;
+                border: 1px solid #00ffff;
+                white-space: nowrap;
+                pointer-events: none;
+                text-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
+            `;
+
+            const label = new CSS3DObject(labelDiv);
+            label.position.copy(position);
+            label.position.y += 4;
+            label.scale.set(0.05, 0.05, 0.05);
+            
+            labelScene.add(label);
+            return label;
+        }
+
+        // =============================================================================
+        // Agent Management
+        // =============================================================================
+
+        async function loadAvailableAgents() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/registry`);
+                if (!response.ok) {
+                    throw new Error(`Failed to load agents: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                const agents = data.agents || [];
+                
+                // Populate available agents
+                availableAgents.length = 0;
+                availableAgents.push(...agents);
+                
+                // Display agents in panel
+                const agentList = document.getElementById('agent-list');
+                agentList.innerHTML = '';
+                
+                agents.forEach(agent => {
+                    const card = document.createElement('div');
+                    card.className = 'agent-card';
+                    card.dataset.agentId = agent.id;
+                    card.innerHTML = `
+                        <div class="agent-icon">${agent.icon || '🤖'}</div>
+                        <div class="agent-name">${agent.displayName}</div>
+                        <div class="agent-description">${agent.description}</div>
+                        <span class="agent-status idle">Idle</span>
+                    `;
+                    
+                    card.addEventListener('click', () => toggleAgentSelection(agent.id));
+                    agentList.appendChild(card);
+                    
+                    // Initialize agent state
+                    agentStates.set(agent.id, 'idle');
+                });
+                
+                // Create 3D visualizations for agents
+                createAgentHumanoids();
+                
+                logActivity('system', `Loaded ${agents.length} available agents`);
+            } catch (error) {
+                console.error('Failed to load agents:', error);
+                logActivity('error', `Failed to load agents: ${error.message}`);
+            }
+        }
+
+        function toggleAgentSelection(agentId) {
+            const card = document.querySelector(`[data-agent-id="${agentId}"]`);
+            if (!card) return;
+            
+            if (selectedAgents.has(agentId)) {
+                selectedAgents.delete(agentId);
+                card.classList.remove('selected');
+            } else {
+                selectedAgents.add(agentId);
+                card.classList.add('selected');
+            }
+            
+            updateSelectedAgentsDisplay();
+            updateExecuteButton();
+        }
+
+        function updateSelectedAgentsDisplay() {
+            const display = document.getElementById('selected-agents-display');
+            
+            if (selectedAgents.size === 0) {
+                display.innerHTML = '<em style="color: #666;">No agents selected</em>';
+                return;
+            }
+            
+            display.innerHTML = '';
+            selectedAgents.forEach(agentId => {
+                const agent = availableAgents.find(a => a.id === agentId);
+                if (agent) {
+                    const badge = document.createElement('span');
+                    badge.className = 'selected-agent-badge';
+                    badge.textContent = `${agent.icon} ${agent.displayName}`;
+                    display.appendChild(badge);
+                }
+            });
+        }
+
+        function updateExecuteButton() {
+            const btn = document.getElementById('execute-btn');
+            const prompt = document.getElementById('prompt-input').value.trim();
+            
+            btn.disabled = selectedAgents.size === 0 || prompt === '' || activePipeline !== null;
+        }
+
+        // =============================================================================
+        // 3D Visualization
+        // =============================================================================
+
+        function createAgentHumanoids() {
+            // Clear existing humanoids
+            agentHumanoids.forEach(h => scene.remove(h));
+            agentHumanoids = [];
+            agentLabels.forEach(l => labelScene.remove(l));
+            agentLabels = [];
+            
+            // Arrange agents in a circle
+            const radius = 20;
+            availableAgents.forEach((agent, index) => {
+                const angle = (index / availableAgents.length) * Math.PI * 2;
+                const x = Math.cos(angle) * radius;
+                const z = Math.sin(angle) * radius;
+                
+                // Get color based on agent type
+                const color = getAgentColor(agent.id);
+                const size = 1.2;
+                
+                const humanoid = createHumanoidShape(size, color);
+                humanoid.position.set(x, 0, z);
+                humanoid.lookAt(0, 0, 0);
+                humanoid.userData = { agentId: agent.id, originalY: 0, floatOffset: Math.random() * Math.PI * 2 };
+                
+                scene.add(humanoid);
+                agentHumanoids.push(humanoid);
+                
+                // Create label
+                const label = createAgentLabel(agent.displayName, humanoid.position);
+                agentLabels.push(label);
+            });
+            
+            // Create connection lines between agents
+            createConnectionLines();
+        }
+
+        function getAgentColor(agentId) {
+            const colors = {
+                'academic-research': 0x00ffff,
+                'google-trends': 0xff00ff,
+                'blog-writer': 0x00ff00,
+                'code-reviewer': 0xffaa00,
+                'data-analyst': 0x9900ff,
+                'image-generator': 0xff0099,
+            };
+            return colors[agentId] || 0x00ffff;
+        }
+
+        function createConnectionLines() {
+            // Clear existing lines
+            connectionLines.forEach(l => scene.remove(l));
+            connectionLines = [];
+            
+            // Create lines between selected agents
+            const selected = Array.from(selectedAgents);
+            for (let i = 0; i < selected.length - 1; i++) {
+                const agent1 = agentHumanoids.find(h => h.userData.agentId === selected[i]);
+                const agent2 = agentHumanoids.find(h => h.userData.agentId === selected[i + 1]);
+                
+                if (agent1 && agent2) {
+                    const points = [agent1.position.clone(), agent2.position.clone()];
+                    const geometry = new THREE.BufferGeometry().setFromPoints(points);
+                    const material = new THREE.LineBasicMaterial({ 
+                        color: 0xff00ff,
+                        transparent: true,
+                        opacity: 0.6
+                    });
+                    const line = new THREE.Line(geometry, material);
+                    scene.add(line);
+                    connectionLines.push(line);
+                }
+            }
+        }
+
+        // =============================================================================
+        // Pipeline Execution
+        // =============================================================================
+
+        async function executePipeline() {
+            const prompt = document.getElementById('prompt-input').value.trim();
+            if (selectedAgents.size === 0 || !prompt) return;
+            
+            // Update UI
+            document.getElementById('execute-btn').disabled = true;
+            document.getElementById('system-status').textContent = 'STATUS: EXECUTING';
+            logActivity('system', `Starting pipeline with ${selectedAgents.size} agents`);
+            
+            // Reset connection lines
+            createConnectionLines();
+            
+            try {
+                // Call the pipeline API
+                const response = await fetch(`${API_BASE_URL}/pipeline`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        topic: prompt,
+                        agents: Array.from(selectedAgents)
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`Pipeline failed: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                activePipeline = data.pipeline;
+                
+                logActivity('system', `Pipeline created: ${activePipeline.id}`);
+                
+                // Start polling for updates
+                startPipelinePolling(activePipeline.id);
+                
+            } catch (error) {
+                console.error('Pipeline execution failed:', error);
+                logActivity('error', `Pipeline failed: ${error.message}`);
+                document.getElementById('system-status').textContent = 'STATUS: ERROR';
+                document.getElementById('execute-btn').disabled = false;
+            }
+        }
+
+        function startPipelinePolling(pipelineId) {
+            if (pipelineInterval) clearInterval(pipelineInterval);
+            
+            pipelineInterval = setInterval(async () => {
+                try {
+                    const response = await fetch(`${API_BASE_URL}/pipeline?id=${pipelineId}`);
+                    if (!response.ok) return;
+                    
+                    const data = await response.json();
+                    updatePipelineVisualization(data.pipeline);
+                    
+                    // Check if pipeline is complete
+                    if (data.pipeline.status === 'completed' || data.pipeline.status === 'failed') {
+                        stopPipelinePolling();
+                        document.getElementById('system-status').textContent = `STATUS: ${data.pipeline.status.toUpperCase()}`;
+                        document.getElementById('execute-btn').disabled = false;
+                        activePipeline = null;
+                    }
+                } catch (error) {
+                    console.error('Pipeline polling failed:', error);
+                }
+            }, 2000); // Poll every 2 seconds
+        }
+
+        function stopPipelinePolling() {
+            if (pipelineInterval) {
+                clearInterval(pipelineInterval);
+                pipelineInterval = null;
+            }
+        }
+
+        function updatePipelineVisualization(pipeline) {
+            if (!pipeline || !pipeline.a2aSteps) return;
+            
+            pipeline.a2aSteps.forEach((step, index) => {
+                const agentId = step.agentName;
+                const status = step.status?.state || 'pending';
+                
+                // Update agent state
+                agentStates.set(agentId, status);
+                
+                // Update UI card
+                const card = document.querySelector(`[data-agent-id="${agentId}"]`);
+                if (card) {
+                    const statusEl = card.querySelector('.agent-status');
+                    statusEl.className = `agent-status ${status}`;
+                    statusEl.textContent = status;
+                    card.className = `agent-card ${status === 'completed' ? 'completed' : status === 'failed' ? 'error' : 'working'}`;
+                }
+                
+                // Update 3D visualization
+                const humanoid = agentHumanoids.find(h => h.userData.agentId === agentId);
+                if (humanoid) {
+                    humanoid.traverse(child => {
+                        if (child.isMesh && child.material.emissive) {
+                            const color = status === 'completed' ? 0x00ff00 : 
+                                         status === 'failed' ? 0xff0000 :
+                                         status === 'processing' ? 0xffff00 : 0x00ffff;
+                            child.material.emissive.setHex(color);
+                            child.material.emissiveIntensity = status === 'processing' ? 0.8 : 0.6;
+                        }
+                    });
+                }
+                
+                // Log artifacts
+                if (step.artifacts && step.artifacts.length > 0) {
+                    step.artifacts.forEach(artifact => {
+                        logActivity('artifact', `${step.agentName} created: ${artifact.name} (${artifact.type})`);
+                        
+                        // Create artifact visualization
+                        visualizeArtifact(artifact, humanoid);
+                    });
+                }
+                
+                // Log messages
+                if (step.status?.message) {
+                    const messageText = step.status.message.parts?.[0]?.text || '';
+                    if (messageText) {
+                        logActivity('agent', `${step.agentName}: ${messageText.substring(0, 100)}...`);
+                    }
+                }
+            });
+        }
+
+        function visualizeArtifact(artifact, humanoid) {
+            if (!humanoid) return;
+            
+            // Create a floating artifact gem
+            const geometry = new THREE.OctahedronGeometry(0.5);
+            const color = artifact.type === 'text' ? 0x00ffff :
+                         artifact.type === 'json' ? 0xff00ff :
+                         0x00ff00;
+            const material = new THREE.MeshPhongMaterial({
+                color: color,
+                emissive: color,
+                emissiveIntensity: 0.6,
+                transparent: true,
+                opacity: 0.8
+            });
+            const artifactMesh = new THREE.Mesh(geometry, material);
+            
+            // Position near the agent
+            const offset = new THREE.Vector3(
+                (Math.random() - 0.5) * 4,
+                Math.random() * 3 + 2,
+                (Math.random() - 0.5) * 4
+            );
+            artifactMesh.position.copy(humanoid.position).add(offset);
+            artifactMesh.userData = {
+                type: 'artifact',
+                createdAt: Date.now(),
+                rotationSpeed: Math.random() * 0.02 + 0.01
+            };
+            
+            scene.add(artifactMesh);
+            artifactObjects.push(artifactMesh);
+            
+            // Remove after 10 seconds
+            setTimeout(() => {
+                scene.remove(artifactMesh);
+                const index = artifactObjects.indexOf(artifactMesh);
+                if (index > -1) artifactObjects.splice(index, 1);
+            }, 10000);
+        }
+
+        // =============================================================================
+        // Activity Log
+        // =============================================================================
+
+        function logActivity(type, message) {
+            const log = document.getElementById('activity-log');
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${type}`;
+            
+            const timestamp = new Date().toLocaleTimeString();
+            entry.innerHTML = `
+                <span class="log-timestamp">[${timestamp}]</span>
+                <span class="log-message">${message}</span>
+            `;
+            
+            log.insertBefore(entry, log.firstChild);
+            
+            // Keep only last 50 entries
+            while (log.children.length > 50) {
+                log.removeChild(log.lastChild);
+            }
+        }
+
+        // =============================================================================
+        // Animation Loop
+        // =============================================================================
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            // Animate agent humanoids
+            agentHumanoids.forEach((humanoid, index) => {
+                if (humanoid.userData.originalY !== undefined) {
+                    humanoid.userData.floatOffset += 0.02;
+                    humanoid.position.y = humanoid.userData.originalY + 
+                        Math.sin(humanoid.userData.floatOffset) * 1;
+                }
+
+                // Animate working agents
+                const state = agentStates.get(humanoid.userData.agentId);
+                if (state === 'processing') {
+                    humanoid.rotation.y += 0.02;
+                }
+
+                // Update label position
+                if (agentLabels[index]) {
+                    agentLabels[index].position.copy(humanoid.position);
+                    agentLabels[index].position.y += 4;
+                }
+            });
+
+            // Animate artifacts
+            artifactObjects.forEach(obj => {
+                if (obj.userData.rotationSpeed) {
+                    obj.rotation.x += obj.userData.rotationSpeed;
+                    obj.rotation.y += obj.userData.rotationSpeed * 0.7;
+                }
+                
+                // Float up
+                obj.position.y += 0.01;
+            });
+
+            controls.update();
+            
+            if (enableBloom && composer) {
+                composer.render();
+            } else {
+                renderer.render(scene, camera);
+            }
+            
+            labelRenderer.render(labelScene, camera);
+        }
+
+        // =============================================================================
+        // Event Handlers
+        // =============================================================================
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            labelRenderer.setSize(window.innerWidth, window.innerHeight);
+            
+            if (composer) {
+                composer.setSize(window.innerWidth, window.innerHeight);
+            }
+        }
+
+        function setupEventListeners() {
+            // Execute button
+            document.getElementById('execute-btn').addEventListener('click', executePipeline);
+            
+            // Prompt input
+            document.getElementById('prompt-input').addEventListener('input', updateExecuteButton);
+            
+            // Toggle buttons
+            document.getElementById('toggle-agents').addEventListener('click', () => {
+                const panel = document.getElementById('agent-panel');
+                panel.classList.toggle('collapsed');
+                const btn = document.getElementById('toggle-agents');
+                btn.textContent = panel.classList.contains('collapsed') ? '▶' : '◀';
+                btn.style.left = panel.classList.contains('collapsed') ? '20px' : '320px';
+            });
+
+            document.getElementById('toggle-prompt').addEventListener('click', () => {
+                const panel = document.getElementById('prompt-panel');
+                panel.classList.toggle('collapsed');
+                const btn = document.getElementById('toggle-prompt');
+                btn.textContent = panel.classList.contains('collapsed') ? '◀' : '▶';
+                btn.style.right = panel.classList.contains('collapsed') ? '20px' : '350px';
+            });
+
+            // Control buttons
+            document.getElementById('btn-reset-camera').addEventListener('click', () => {
+                camera.position.set(0, 15, 40);
+                controls.target.set(0, 0, 0);
+                controls.update();
+            });
+
+            document.getElementById('btn-toggle-bloom').addEventListener('click', (e) => {
+                enableBloom = !enableBloom;
+                e.target.textContent = `Bloom: ${enableBloom ? 'ON' : 'OFF'}`;
+                e.target.classList.toggle('active');
+            });
+
+            document.getElementById('btn-toggle-connections').addEventListener('click', (e) => {
+                showConnections = !showConnections;
+                connectionLines.forEach(line => line.visible = showConnections);
+                e.target.textContent = `Connections: ${showConnections ? 'ON' : 'OFF'}`;
+                e.target.classList.toggle('active');
+            });
+        }
+
+        // =============================================================================
+        // Initialization
+        // =============================================================================
+
+        async function init() {
+            initScene();
+            await loadAvailableAgents();
+            setupEventListeners();
+            animate();
+
+            // Hide loading screen
+            setTimeout(() => {
+                document.getElementById('loading').classList.add('hidden');
+            }, 1000);
+        }
+
+        // Start the application
+        init();
+    </script>
+</body>
+</html>
