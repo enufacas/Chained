@@ -18,7 +18,11 @@ jobs:
         run: |
           echo "service=${{ github.event.client_payload.service }}" >> $GITHUB_OUTPUT
           echo "error_hash=${{ github.event.client_payload.error_hash }}" >> $GITHUB_OUTPUT
-          echo "error_message=${{ github.event.client_payload.error_message }}" >> $GITHUB_OUTPUT
+          {
+            echo "error_message<<EOF"
+            echo "${{ github.event.client_payload.error_message }}"
+            echo "EOF"
+          } >> $GITHUB_OUTPUT
           echo "severity=${{ github.event.client_payload.severity || 'ERROR' }}" >> $GITHUB_OUTPUT
       
       - name: Create issue for error
