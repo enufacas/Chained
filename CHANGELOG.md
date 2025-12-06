@@ -30,6 +30,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### ✨ Features
 
+- 👤 Implement Phase 6 Step 3 - Vector Database Integration for AI-Native Control Plane [#3671](https://github.com/enufacas/Chained/pull/3671)
 - 👤 AI-Native Control Plane Phase 6: Production database schemas and LLM integration [#3669](https://github.com/enufacas/Chained/pull/3669)
 - 👤 Complete AI-Native Control Plane Phase 5 MVP with end-to-end examples [#3666](https://github.com/enufacas/Chained/pull/3666)
 - 👤 AI-Native Control Plane Phase 4: Execution layer skeleton services [#3662](https://github.com/enufacas/Chained/pull/3662)
@@ -48,7 +49,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x16) [#3668](https://github.com/enufacas/Chained/pull/3668)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x17) [#3670](https://github.com/enufacas/Chained/pull/3670)
 - 👤 **Documentation**: AI-Native Control Plane Phase 1 (Foundations) [#3645](https://github.com/enufacas/Chained/pull/3645)
 - 👤 **Test**: Phase 2: AI-Native Control Plane service architecture and API specifications (x2) [#3656](https://github.com/enufacas/Chained/pull/3656)
 - 👤 **Test**: Bootstrap AI-Native Control Plane: Create master control specification [#3643](https://github.com/enufacas/Chained/pull/3643)
@@ -235,7 +236,6 @@ This changelog excludes automated data syncs and routine maintenance commits.
 - 👤 Add retry logic for Gemini API transient errors in A2A implement step [#3404](https://github.com/enufacas/Chained/pull/3404)
 - 👤 🏗️ Infrastructure Fix: Pass google_api_key_secret to Terraform for AG-UI Frontend [#3401](https://github.com/enufacas/Chained/pull/3401)
 - 👤 🏗️ Infrastructure Fix: Pass GOOGLE_API_KEY to AG-UI Frontend Cloud Run service [#3396](https://github.com/enufacas/Chained/pull/3396)
-- 👤 Simplify AG-UI Frontend with enhanced API key debugging [#3393](https://github.com/enufacas/Chained/pull/3393)
 
 ### 🧹 Chores & Maintenance
 
