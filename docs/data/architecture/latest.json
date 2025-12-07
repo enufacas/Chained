@@ -1,11 +1,11 @@
 {
-  "timestamp": "2025-12-01T12:57:00.898028",
-  "commit": "976b02ae01fb148937922c9bb0f1e1b4bfd37bc6",
+  "timestamp": "2025-12-07T02:19:34.760978",
+  "commit": "b00974594ea0b754c98ac337165ea18197d8024b",
   "structure": {
     "directories": {
       "tools": {
-        "file_count": 414,
-        "line_count": 165204,
+        "file_count": 418,
+        "line_count": 166966,
         "files": [
           ".context.md",
           "AB_TESTING_README.md",
@@ -60,11 +60,19 @@
         ]
       },
       "docs": {
-        "file_count": 941,
-        "line_count": 275271,
+        "file_count": 992,
+        "line_count": 298335,
         "files": [
           ".nojekyll",
+          "01_overview.md",
+          "02_state_and_memory.md",
+          "03_services_layout.md",
+          "04_infra_runner_api.md",
+          "05_langchain_tools.md",
+          "06_agent_graph.md",
+          "10_release_notes_v0.1.0.md",
           "A2A_BRANCH_BASED_COORDINATION.md",
+          "A2A_COMPLIANCE_AND_DEPENDENCIES.md",
           "A2A_COPILOT_CLI_INVESTIGATION.md",
           "A2A_COPILOT_REALITY_CHECK.md",
           "A2A_COPILOT_SESSIONS_EXPLAINED.md",
@@ -104,15 +112,7 @@
           "AGENT_ASSIGNMENT_FIX_SUMMARY.md",
           "AGENT_AS_CODE_INFRASTRUCTURE.md",
           "AGENT_ATTRIBUTION_IMPLEMENTATION_SUMMARY.md",
-          "AGENT_COMMIT_QUALITY_INTEGRATION.md",
-          "AGENT_DELETION_FIX_DIAGRAM.md",
-          "AGENT_DELETION_FIX_SUMMARY.md",
-          "AGENT_EVALUATION_COACHING_2025-11-13.md",
-          "AGENT_EVALUATION_COACHING_2025-11-14.md",
-          "AGENT_EVALUATION_COACHING_2025-11-18.md",
-          "AGENT_EVALUATION_COACHING_COMPLETE.md",
-          "AGENT_EVALUATION_DATA_FLOW_ANALYSIS.md",
-          "AGENT_EVALUATOR_PIPELINE_IMPLEMENTATION.md"
+          "AGENT_COMMIT_QUALITY_INTEGRATION.md"
         ]
       },
       ".github/workflows": {
@@ -126,8 +126,8 @@
         "files": []
       },
       "analysis": {
-        "file_count": 113,
-        "line_count": 4715655,
+        "file_count": 114,
+        "line_count": 4716333,
         "files": [
           "2025-11-14-04-00-27.json",
           "2025-11-14-04-00-36.json",
@@ -182,8 +182,8 @@
         ]
       },
       "learnings": {
-        "file_count": 384,
-        "line_count": 230458,
+        "file_count": 397,
+        "line_count": 234438,
         "files": [
           "AI_ML.md",
           "CLAUDE_AI_INVESTIGATION.md",
@@ -239,8 +239,8 @@
       }
     },
     "files_by_type": {},
-    "total_files": 1852,
-    "total_lines": 5386588
+    "total_files": 1921,
+    "total_lines": 5416072
   },
   "dependencies": {
     "internal_imports": {
@@ -269,6 +269,7 @@
       "parse-refactoring-report.py": [],
       "workflow_harmonizer.py": [],
       "api_monitoring_bridge.py": [],
+      "ask_gemini.py": [],
       "demo_meta_coordination.py": [],
       "workflow_execution_tracker.py": [],
       "dependency-flow-analyzer.py": [],
@@ -280,6 +281,7 @@
       "pr-content-analyzer.py": [],
       "dynamic-agent-spawner.py": [],
       "meta_learning_scheduler.py": [],
+      "generate-changelog.py": [],
       "workflow_anomaly_detector.py": [],
       "subagent_performance_learner.py": [],
       "autonomous-code-reviewer.py": [],
@@ -358,6 +360,7 @@
       "code-smell-fixer.py": [],
       "copilot-usage-tracker.py": [],
       "github_integration.py": [],
+      "generate-instruction-diagram.py": [],
       "subagent_spawning_api.py": [],
       "creativity-leaderboard.py": [],
       "ab_testing_integration.py": [],
@@ -368,6 +371,7 @@
       "multi_cloud_ai_service.py": [],
       "generate-context-summaries.py": [],
       "match-issue-to-agent.py": [],
+      "ask_gemini_mcp.py": [],
       "lazy_evaluation_integration_example.py": [],
       "github_actions_data_collector.py": [],
       "get-agent-info.py": [],
@@ -440,17 +444,17 @@
       "validation_utils.py": []
     },
     "external_imports": {
-      "os": 113,
-      "sys": 149,
-      "json": 169,
-      "re": 74,
+      "os": 116,
+      "sys": 154,
+      "json": 170,
+      "re": 76,
       "ast": 18,
-      "datetime": 133,
-      "pathlib": 158,
-      "typing": 144,
-      "collections": 75,
+      "datetime": 134,
+      "pathlib": 160,
+      "typing": 147,
+      "collections": 77,
       "functools": 9,
-      "argparse": 131,
+      "argparse": 135,
       "math": 12,
       "random": 27,
       "time": 31,
@@ -464,14 +468,16 @@
       "ab_testing_engine": 6,
       "ab_testing_advanced": 2,
       "yaml": 20,
-      "subprocess": 26,
+      "subprocess": 29,
       "hashlib": 17,
       "traceback": 13,
       "importlib": 24,
       "csv": 1,
+      "google": 1,
+      "vertexai": 2,
       "meta_agent_coordinator": 3,
       "ai_workflow_predictor": 5,
-      "tempfile": 6,
+      "tempfile": 7,
       "shutil": 8,
       "workflow_execution_tracker": 2,
       "registry_manager": 13,
@@ -503,11 +509,13 @@
       "api_monitoring_bridge": 2,
       "asyncio": 3,
       "aiohttp": 2,
+      "fnmatch": 1,
       "http": 3,
       "ab_testing_api": 1,
       "autonomous_experiment_creator": 1,
       "openai": 1,
       "anthropic": 1,
+      "ask_gemini": 1,
       "lazy_evaluation_system": 1,
       "unicodedata": 1,
       "queue": 1,
@@ -538,17 +546,17 @@
   },
   "metrics": {
     "total_components": 6,
-    "total_files": 1852,
-    "total_lines": 5386588,
+    "total_files": 1921,
+    "total_lines": 5416072,
     "total_dependencies": 2,
-    "external_libraries": 82,
-    "coupling_score": 5.56947925368978e-05,
+    "external_libraries": 86,
+    "coupling_score": 5.34159500026708e-05,
     "complexity_score": 1.0
   },
   "components": {
     "learning_system": {
       "file_count": 46,
-      "line_count": 230458,
+      "line_count": 234438,
       "files": [
         "AI_ML.md",
         "CLAUDE_AI_INVESTIGATION.md",
@@ -574,7 +582,7 @@
     },
     "agent_system": {
       "file_count": 2,
-      "line_count": 83462,
+      "line_count": 82742,
       "files": [
         "agent-ecosystem-investigation.md",
         "agent-ecosystem-metrics.json"
@@ -582,7 +590,7 @@
     },
     "analysis_tools": {
       "file_count": 49,
-      "line_count": 4715655,
+      "line_count": 4716333,
       "files": [
         "2025-11-14-04-00-27.json",
         "2025-11-14-04-00-36.json",
@@ -608,10 +616,18 @@
     },
     "documentation": {
       "file_count": 50,
-      "line_count": 275271,
+      "line_count": 298335,
       "files": [
         ".nojekyll",
+        "01_overview.md",
+        "02_state_and_memory.md",
+        "03_services_layout.md",
+        "04_infra_runner_api.md",
+        "05_langchain_tools.md",
+        "06_agent_graph.md",
+        "10_release_notes_v0.1.0.md",
         "A2A_BRANCH_BASED_COORDINATION.md",
+        "A2A_COMPLIANCE_AND_DEPENDENCIES.md",
         "A2A_COPILOT_CLI_INVESTIGATION.md",
         "A2A_COPILOT_REALITY_CHECK.md",
         "A2A_COPILOT_SESSIONS_EXPLAINED.md",
@@ -621,20 +637,12 @@
         "A2A_GITHUB_RUNNERS_ARCHITECTURE.md",
         "A2A_GITHUB_RUNNERS_COMPLIANCE.md",
         "A2A_IMPLEMENTATION_SUMMARY.md",
-        "A2A_INTEGRATION_DESIGN.md",
-        "A2A_INTEGRATION_README.md",
-        "A2A_MCP_TRANSPORT_DESIGN.md",
-        "A2A_PHASE_2B_TESTING_SUMMARY.md",
-        "A2A_PHASE_3_DESIGN.md",
-        "A2A_STATUS.md",
-        "A2A_SUCCESS_HISTORY.md",
-        "A2A_TRANSPORT_COMPARISON.md",
-        "A2A_VIABLE_PATH_FORWARD.md"
+        "A2A_INTEGRATION_DESIGN.md"
       ]
     },
     "tools": {
       "file_count": 50,
-      "line_count": 165204,
+      "line_count": 166966,
       "files": [
         ".context.md",
         "AB_TESTING_README.md",
