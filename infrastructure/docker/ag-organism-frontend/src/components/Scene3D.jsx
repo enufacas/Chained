@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { 
   OrbitControls as DreiOrbitControls, 
   Grid, 
@@ -14,6 +14,7 @@ import AgentLabel from './AgentLabel';
 import ConnectionLines from './ConnectionLines';
 import PostProcessing from './PostProcessing';
 import { ProceduralFactoryEnvironment } from './ProceduralFactoryEnvironment';
+import { A2AMessageVisualizer, A2ATaskIndicator } from './A2AMessageVisualizer';
 
 // Factory Platform Component with optimized reflective surface
 function FactoryPlatform() {
@@ -215,9 +216,18 @@ function EnhancedParticles() {
   );
 }
 
-function Scene3D({ agents, selectedAgents, agentStates, enableBloom, showConnections }) {
+function Scene3D({ 
+  agents, 
+  selectedAgents, 
+  agentStates, 
+  enableBloom, 
+  showConnections,
+  a2aMessages = [],
+  pipelineSteps = []
+}) {
   const { camera, gl } = useThree();
   const controlsRef = useRef();
+  const [agentPositionsMap, setAgentPositionsMap] = useState(new Map());
 
   // Handle camera reset event
   useEffect(() => {
@@ -233,14 +243,25 @@ function Scene3D({ agents, selectedAgents, agentStates, enableBloom, showConnect
     return () => window.removeEventListener('reset-camera', handleResetCamera);
   }, [camera]);
 
-  // Arrange agents in a circle
+  // Arrange agents in a circle - IMPROVED SCALING for better visibility
   const agentPositions = agents.map((agent, index) => {
-    const radius = 20;
+    const radius = 18; // Slightly smaller radius for better visibility
     const angle = (index / agents.length) * Math.PI * 2;
     const x = Math.cos(angle) * radius;
     const z = Math.sin(angle) * radius;
     return [x, 0, z];
   });
+  
+  // Update agent positions map for A2A visualization
+  useEffect(() => {
+    const posMap = new Map();
+    agents.forEach((agent, index) => {
+      posMap.set(agent.id, {
+        position: new THREE.Vector3(...agentPositions[index])
+      });
+    });
+    setAgentPositionsMap(posMap);
+  }, [agents, agentPositions]);
 
   return (
     <>
@@ -321,11 +342,14 @@ function Scene3D({ agents, selectedAgents, agentStates, enableBloom, showConnect
         color="#4a9eff"
       />
 
-      {/* Agent Humanoids with Float animation */}
+      {/* Agent Humanoids with Float animation - IMPROVED SCALE for visibility */}
       {agents.map((agent, index) => {
         const position = agentPositions[index];
         const isSelected = selectedAgents.has(agent.id);
         const state = agentStates.get(agent.id) || 'idle';
+        
+        // Find if this agent has an active pipeline step
+        const pipelineStep = pipelineSteps.find(step => step.agentId === agent.id);
 
         return (
           <Float
@@ -335,7 +359,7 @@ function Scene3D({ agents, selectedAgents, agentStates, enableBloom, showConnect
             floatIntensity={0.5}
             floatingRange={[-0.5, 0.5]}
           >
-            <group>
+            <group scale={1.5}> {/* INCREASED SCALE: 1.0 -> 1.5 for better visibility */}
               <AgentHumanoid
                 agent={agent}
                 position={position}
@@ -343,10 +367,28 @@ function Scene3D({ agents, selectedAgents, agentStates, enableBloom, showConnect
                 state={state}
               />
               <AgentLabel text={agent.displayName} position={position} />
+              
+              {/* A2A Task Indicator above processing agents */}
+              {pipelineStep && state === 'processing' && (
+                <A2ATaskIndicator
+                  agentId={agent.id}
+                  taskStatus={pipelineStep.status || 'processing'}
+                  position={{x: position[0], y: position[1], z: position[2]}}
+                />
+              )}
             </group>
           </Float>
         );
       })}
+      
+      {/* A2A Message Visualization */}
+      <A2AMessageVisualizer 
+        messages={a2aMessages}
+        agents={agents.map((agent, index) => ({
+          ...agent,
+          position: agentPositionsMap.get(agent.id)?.position || new THREE.Vector3(...agentPositions[index])
+        }))}
+      />
 
       {/* Connection Lines */}
       <ConnectionLines

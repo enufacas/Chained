@@ -21,6 +21,8 @@ function App() {
   const [showConnections, setShowConnections] = useState(true);
   const [agentPanelCollapsed, setAgentPanelCollapsed] = useState(false);
   const [promptPanelCollapsed, setPromptPanelCollapsed] = useState(false);
+  const [a2aMessages, setA2aMessages] = useState([]);
+  const [pipelineSteps, setPipelineSteps] = useState([]);
 
   // Load agents on mount
   useEffect(() => {
@@ -93,6 +95,14 @@ function App() {
       return newStates;
     });
   };
+  
+  const addA2AMessage = (message) => {
+    setA2aMessages(prev => [...prev, { ...message, id: Date.now() + Math.random() }]);
+  };
+  
+  const updatePipelineSteps = (steps) => {
+    setPipelineSteps(steps || []);
+  };
 
   return (
     <div className="app">
@@ -125,6 +135,8 @@ function App() {
               agentStates={agentStates}
               enableBloom={enableBloom}
               showConnections={showConnections}
+              a2aMessages={a2aMessages}
+              pipelineSteps={pipelineSteps}
             />
           </Canvas>
         </div>
@@ -140,11 +152,22 @@ function App() {
             setActivePipeline({ id: 'temp', status: 'running' });
             setSystemStatus('EXECUTING');
             logActivity('system', `Starting pipeline with ${selectedAgents.size} agents`);
+            
+            // Add initial A2A message for pipeline start
+            addA2AMessage({
+              type: 'task',
+              from: 'system',
+              to: Array.from(selectedAgents)[0],
+              label: 'Start',
+              timestamp: Date.now()
+            });
           }}
           onLogActivity={logActivity}
           onUpdateAgentState={updateAgentState}
           onSetSystemStatus={setSystemStatus}
           onSetActivePipeline={setActivePipeline}
+          onAddA2AMessage={addA2AMessage}
+          onUpdatePipelineSteps={updatePipelineSteps}
         />
       </div>
 

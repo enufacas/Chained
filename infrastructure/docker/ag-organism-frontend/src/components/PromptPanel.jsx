@@ -12,7 +12,9 @@ function PromptPanel({
   onLogActivity,
   onUpdateAgentState,
   onSetSystemStatus,
-  onSetActivePipeline
+  onSetActivePipeline,
+  onAddA2AMessage,
+  onUpdatePipelineSteps
 }) {
   const [prompt, setPrompt] = useState('');
   const pollingIntervalRef = useRef(null);
@@ -57,16 +59,49 @@ function PromptPanel({
   const updatePipelineVisualization = (pipeline) => {
     if (!pipeline || !pipeline.a2aSteps) return;
 
-    pipeline.a2aSteps.forEach(step => {
+    // Update pipeline steps for A2A visualization
+    if (onUpdatePipelineSteps) {
+      const steps = pipeline.a2aSteps.map(step => ({
+        agentId: step.agentName,
+        status: step.status?.state || 'pending',
+        taskId: step.taskId
+      }));
+      onUpdatePipelineSteps(steps);
+    }
+
+    pipeline.a2aSteps.forEach((step, index) => {
       const agentId = step.agentName;
       const status = step.status?.state || 'pending';
 
       onUpdateAgentState(agentId, status);
+      
+      // Create A2A message visualization for task handoffs
+      if (index > 0 && onAddA2AMessage) {
+        const prevStep = pipeline.a2aSteps[index - 1];
+        onAddA2AMessage({
+          type: 'task',
+          from: prevStep.agentName,
+          to: agentId,
+          label: 'Handoff',
+          timestamp: Date.now()
+        });
+      }
 
       // Log artifacts
       if (step.artifacts && step.artifacts.length > 0) {
         step.artifacts.forEach(artifact => {
           onLogActivity('artifact', `${step.agentName} created: ${artifact.name} (${artifact.type})`);
+          
+          // Visualize artifact creation as message
+          if (onAddA2AMessage) {
+            onAddA2AMessage({
+              type: 'artifact',
+              from: agentId,
+              to: agentId,
+              label: artifact.type,
+              timestamp: Date.now()
+            });
+          }
         });
       }
 

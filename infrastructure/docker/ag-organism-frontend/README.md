@@ -16,7 +16,8 @@ This service provides a modern React-based 3D visualization for the AG-Organism 
 ## Documentation
 
 📚 **Quick Links:**
-- **[PROCEDURAL_MODELS_IMPLEMENTATION.md](./PROCEDURAL_MODELS_IMPLEMENTATION.md)** - Procedurally generated robot models and factory environment (NEW)
+- **[A2A_VISUALIZATION_GUIDE.md](./A2A_VISUALIZATION_GUIDE.md)** - Complete A2A protocol visualization guide (NEW) 🎯
+- **[PROCEDURAL_MODELS_IMPLEMENTATION.md](./PROCEDURAL_MODELS_IMPLEMENTATION.md)** - Procedurally generated robot models and factory environment
 - **[ANIMATED_MODELS_GUIDE.md](./ANIMATED_MODELS_GUIDE.md)** - Guide for incorporating animated 3D models (reference)
 - **[DREI_COMPONENTS.md](./DREI_COMPONENTS.md)** - Drei components usage guide
 - **[FACTORY_THEME.md](./FACTORY_THEME.md)** - Factory theme specifications and color palette
@@ -89,8 +90,9 @@ ag-organism-frontend/
     └── components/
         ├── Scene3D.jsx                      # Main 3D scene
         ├── AgentHumanoid.jsx                # Agent wrapper (uses ProceduralRobotModel)
-        ├── ProceduralRobotModel.jsx         # Procedural robot models (NEW)
-        ├── ProceduralFactoryEnvironment.jsx # Factory environment (NEW)
+        ├── ProceduralRobotModel.jsx         # Procedural robot models
+        ├── ProceduralFactoryEnvironment.jsx # Factory environment
+        ├── A2AMessageVisualizer.jsx         # A2A protocol visualization (NEW)
         ├── AgentLabel.jsx                   # CSS3D labels (drei/Html)
         ├── ConnectionLines.jsx              # Connection visualization
         ├── PostProcessing.jsx               # Bloom effect (R3F postprocessing)
@@ -200,8 +202,10 @@ The frontend integrates with the AG-UI backend:
 
 ### 3D Visualization (react-three-fiber)
 - ✅ **Procedural robot models** with 6 variants (scientist, analyst, writer, engineer, artist, worker)
+- ✅ **Improved robot scale** (1.5x) for better visibility 🔍
 - ✅ State-driven animations (idle, processing, completed, failed)
 - ✅ **Animated factory environment**: Robotic arms, conveyor belts, drones, data pods
+- ✅ **A2A protocol visualization**: Animated message particles, task indicators, handoff animations 🎯
 - ✅ Floating animation with sine waves
 - ✅ Color-coded agent states (idle, processing, completed, failed)
 - ✅ CSS3D labels with @react-three/drei Html
@@ -225,6 +229,9 @@ The frontend integrates with the AG-UI backend:
 - ✅ Execute pipeline via API
 - ✅ Real-time status polling (2s interval)
 - ✅ Agent state updates (idle → processing → completed/failed)
+- ✅ **A2A message visualization** during execution 🎯
+- ✅ **Task handoff animations** between agents
+- ✅ **Floating task indicators** above processing agents
 - ✅ Artifact logging
 - ✅ Error handling and logging
 
