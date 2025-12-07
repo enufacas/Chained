@@ -26,6 +26,15 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ---
 
+## 2025-12-07
+
+### ✨ Features
+
+- 👤 Migrate AG-Organism to React Three Fiber with futuristic factory theme, Drei components, procedurally-generated animated robot models, and A2A protocol visualization [#3672](https://github.com/enufacas/Chained/pull/3672)
+- 🤖 🧠 Learning 🧠 Learn from GitHub Copilot sources - 2025-12-07 [#3686](https://github.com/enufacas/Chained/pull/3686)
+
+---
+
 ## 2025-12-06
 
 ### ✨ Features
@@ -51,7 +60,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x19) [#3677](https://github.com/enufacas/Chained/pull/3677)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x20) [#3678](https://github.com/enufacas/Chained/pull/3678)
 - 👤 **Documentation**: AI-Native Control Plane Phase 1 (Foundations) [#3645](https://github.com/enufacas/Chained/pull/3645)
 - 👤 **Test**: Phase 2: AI-Native Control Plane service architecture and API specifications (x2) [#3656](https://github.com/enufacas/Chained/pull/3656)
 - 👤 **Test**: Bootstrap AI-Native Control Plane: Create master control specification [#3643](https://github.com/enufacas/Chained/pull/3643)
@@ -192,9 +201,6 @@ This changelog excludes automated data syncs and routine maintenance commits.
 - 👤 🔧 Agents Enhanced A2A UI with detailed agent prompts, step tracking, and docs [#3447](https://github.com/enufacas/Chained/pull/3447)
 - 👤 🔧 Agents Enhanced A2A UI with real agent integration, pipeline analysis, faster polling, and detailed views [#3445](https://github.com/enufacas/Chained/pull/3445)
 - 👤 🔧 Agents Side-by-side A2A UI with GCP Cloud Run agent activity and pipeline outcomes [#3444](https://github.com/enufacas/Chained/pull/3444)
-- 👤 🔧 Agents Implement A2A Pipeline features - creation, agent interaction, and real-time status [#3438](https://github.com/enufacas/Chained/pull/3438)
-- 👤 ⚙️ Workflows [WIP] Troubleshoot workflow failure in CI/CD pipeline [#3433](https://github.com/enufacas/Chained/pull/3433)
-- 👤 🏗️ Infrastructure Add GCP infrastructure and A2A visualization to world model [#3424](https://github.com/enufacas/Chained/pull/3424)
 
 ### 🐛 Bug Fixes
 
@@ -205,38 +211,10 @@ This changelog excludes automated data syncs and routine maintenance commits.
 - 👤 ⚙️ Workflows [WIP] Fix issue in the action step of the workflow [#3453](https://github.com/enufacas/Chained/pull/3453)
 - 👤 🏗️ Infrastructure Fix Terraform dynamic for_each invalid value error [#3450](https://github.com/enufacas/Chained/pull/3450)
 - 👤 🔧 Agents Fix A2A agents to require Gemini AI - remove silent fallback to templates [#3449](https://github.com/enufacas/Chained/pull/3449)
-- 👤 Change Vertex AI API from v1beta to v1 to resolve chat 404 errors [#3432](https://github.com/enufacas/Chained/pull/3432)
-- 👤 Update Vertex AI model to gemini-2.0-flash (1.5 deprecated) [#3430](https://github.com/enufacas/Chained/pull/3430)
-- 👤 Revert invalid Gemini model name causing 404 errors in AG-UI chat [#3428](https://github.com/enufacas/Chained/pull/3428)
-- 👤 Update Gemini model from 1.5-flash to 2.0-flash-001 (1.5 deprecated) [#3425](https://github.com/enufacas/Chained/pull/3425)
-- 👤 Add custom VertexAIAdapter for CopilotKit Vertex AI support [#3423](https://github.com/enufacas/Chained/pull/3423)
-- 👤 Resolve ESLint unused variable errors blocking AG-UI Frontend deployment [#3422](https://github.com/enufacas/Chained/pull/3422)
 
 ### 🧹 Chores & Maintenance
 
 - 👤 ⚙️ Workflows **Documentation**: Restructure README around three themes: Copilot conventions, A2A workflows, GCP experiments [#3462](https://github.com/enufacas/Chained/pull/3462)
 - 👤 🔧 Agents **Documentation**: Complete GitHub MCP server tool reference and remove redundant tool restrictions from agents [#3421](https://github.com/enufacas/Chained/pull/3421)
-- 👤 **Documentation**: Document gcloud-mcp server configuration requirement for Copilot [#3420](https://github.com/enufacas/Chained/pull/3420)
-
----
-
-## 2025-11-29
-
-### ✨ Features
-
-- 👤 Add gcloud-mcp server integration for Copilot [#3413](https://github.com/enufacas/Chained/pull/3413)
-- 👤 Add Claude/Anthropic A2A provider with Vertex AI support [#3407](https://github.com/enufacas/Chained/pull/3407)
-
-### 🐛 Bug Fixes
-
-- 👤 Fix chat failure: Add missing Vertex AI IAM role for service account [#3419](https://github.com/enufacas/Chained/pull/3419)
-- 👤 Add gcloud-mcp server pre-install and verification to Copilot setup [#3418](https://github.com/enufacas/Chained/pull/3418)
-- 👤 🏗️ Infrastructure Fix GCP MCP setup: Node.js version and JSON parsing issues [#3417](https://github.com/enufacas/Chained/pull/3417)
-- 👤 Fix AG-UI chat: Support Vertex AI authentication with ADC [#3403](https://github.com/enufacas/Chained/pull/3403)
-- 👤 Add retry logic for Gemini API transient errors in A2A implement step [#3404](https://github.com/enufacas/Chained/pull/3404)
-
-### 🧹 Chores & Maintenance
-
-- 👤 📚 Docs **Documentation**: Add AG-UI Frontend troubleshooting guide with root cause discovery [#3408](https://github.com/enufacas/Chained/pull/3408)
 
 ---
