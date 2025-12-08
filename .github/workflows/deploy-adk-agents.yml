@@ -6,7 +6,7 @@
 # Services Deployed:
 # - adk-api-server: API server for google/adk-web (bridges ADK API to A2A)
 # - ag-ui-frontend: CopilotKit-powered A2A Pipeline Visualization UI
-# - ag-organism-frontend: 3D visualization of A2A agent coordination
+# - ag-organism-frontend: 2D Canvas visualization of A2A agent coordination
 # - academic-research: Discovers research topics for blog content
 # - blog-writer: Writes and publishes blog posts
 # - google-trends: Analyzes Google Trends for SEO optimization
