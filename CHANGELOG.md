@@ -26,10 +26,19 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ---
 
+## 2025-12-08
+
+### 🧹 Chores & Maintenance
+
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge [#3701](https://github.com/enufacas/Chained/pull/3701)
+
+---
+
 ## 2025-12-07
 
 ### ✨ Features
 
+- 👤 🏗️ Infrastructure Complete AI-Native Control Plane with Terraform, CI/CD, and production GCP integration [#3679](https://github.com/enufacas/Chained/pull/3679)
 - 👤 Migrate AG-Organism to React Three Fiber with futuristic factory theme, Drei components, procedurally-generated animated robot models, and A2A protocol visualization [#3672](https://github.com/enufacas/Chained/pull/3672)
 - 🤖 🧠 Learning 🧠 Learn from GitHub Copilot sources - 2025-12-07 [#3686](https://github.com/enufacas/Chained/pull/3686)
 
