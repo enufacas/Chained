@@ -1,43 +1,23 @@
-# AG-Organism Frontend - React Three Fiber
+# AG-Organism Frontend - 2D Canvas Visualization
 
-A Cloud Run service that serves the AG-Organism 3D visualization built with **React** and **react-three-fiber**.
+A Cloud Run service that serves the AG-Organism **2D canvas visualization** with lightweight HTML and JavaScript.
 
 ## Overview
 
-This service provides a modern React-based 3D visualization for the AG-Organism agent coordination system, featuring:
-- **React** UI with component-based architecture
-- **react-three-fiber** for declarative 3D rendering
-- **@react-three/drei** for helpers (OrbitControls, Html labels)
-- **@react-three/postprocessing** for bloom effects
-- Dynamic environment variable injection
-- Real-time pipeline execution monitoring
-- Integration with AG-UI backend
+This service provides a fast, lightweight 2D visualization for the AG-Organism agent coordination system, featuring:
+- **Pure HTML/CSS/JavaScript** - No framework overhead
+- **2D Canvas rendering** - Stable and performant
+- **Dynamic environment variable injection** via Express server
+- Real-time agent status monitoring
+- Integration with AG-UI backend and ADK API
 
-## Documentation
+## Why 2D?
 
-📚 **Quick Links:**
-- **[A2A_VISUALIZATION_GUIDE.md](./A2A_VISUALIZATION_GUIDE.md)** - Complete A2A protocol visualization guide (NEW) 🎯
-- **[PROCEDURAL_MODELS_IMPLEMENTATION.md](./PROCEDURAL_MODELS_IMPLEMENTATION.md)** - Procedurally generated robot models and factory environment
-- **[ANIMATED_MODELS_GUIDE.md](./ANIMATED_MODELS_GUIDE.md)** - Guide for incorporating animated 3D models (reference)
-- **[DREI_COMPONENTS.md](./DREI_COMPONENTS.md)** - Drei components usage guide
-- **[FACTORY_THEME.md](./FACTORY_THEME.md)** - Factory theme specifications and color palette
-- **[R3F_REFERENCE.md](./R3F_REFERENCE.md)** - Comprehensive React Three Fiber patterns and examples
-- **[ITERATION_GUIDE.md](./ITERATION_GUIDE.md)** - Quick guide for iterating on features
-- **[MIGRATION.md](./MIGRATION.md)** - Details on vanilla Three.js → R3F migration
-- **[IMPLEMENTATION_SUMMARY.md](./IMPLEMENTATION_SUMMARY.md)** - Complete implementation details
-
-## Migration from Vanilla Three.js
-
-This service was migrated from vanilla Three.js to react-three-fiber. See [MIGRATION.md](./MIGRATION.md) for details.
-
-**Key improvements:**
-- Declarative 3D scene composition
-- Component-based architecture for better maintainability
-- React hooks for animation and state management
-- Easier testing and debugging with React DevTools
-- Modern development experience with Vite
-
-**For development**: Always refer to [R3F_REFERENCE.md](./R3F_REFERENCE.md) when adding new features or effects.
+The service was converted from 3D (React Three Fiber) to 2D (Canvas) to address camera stability issues and reduce resource usage. The 2D version provides:
+- **Better stability** - No 3D camera crashes
+- **Faster load times** - No heavy JavaScript frameworks
+- **Lower resource usage** - Reduced memory and CPU consumption
+- **Simpler maintenance** - Plain HTML/CSS/JavaScript
 
 ## Architecture
 
@@ -47,7 +27,7 @@ This service was migrated from vanilla Three.js to react-three-fiber. See [MIGRA
 │                                         │
 │  ┌───────────────────────────────────┐ │
 │  │  Express Server (Node.js)         │ │
-│  │  - Serves built React app         │ │
+│  │  - Serves static HTML             │ │
 │  │  - Injects environment vars       │ │
 │  │  - Health check endpoint          │ │
 │  │  - Error logging endpoint         │ │
@@ -73,41 +53,20 @@ This service was migrated from vanilla Three.js to react-three-fiber. See [MIGRA
 
 ```
 ag-organism-frontend/
-├── Dockerfile              # Multi-stage build (React build + Express)
-├── package.json           # Dependencies (React, R3F, Express, Vite)
-├── vite.config.js         # Vite configuration
-├── index.html             # HTML entry point
-├── server.js              # Express server serving React build
-├── MIGRATION.md           # Migration documentation
-├── PROCEDURAL_MODELS_IMPLEMENTATION.md  # Procedural models docs (NEW)
-└── src/
-    ├── main.jsx           # React entry point
-    ├── App.jsx            # Main application
-    ├── App.css
-    ├── index.css          # Global styles
-    ├── api/
-    │   └── agentApi.js   # Backend API integration
-    └── components/
-        ├── Scene3D.jsx                      # Main 3D scene
-        ├── AgentHumanoid.jsx                # Agent wrapper (uses ProceduralRobotModel)
-        ├── ProceduralRobotModel.jsx         # Procedural robot models
-        ├── ProceduralFactoryEnvironment.jsx # Factory environment
-        ├── A2AMessageVisualizer.jsx         # A2A protocol visualization (NEW)
-        ├── AgentLabel.jsx                   # CSS3D labels (drei/Html)
-        ├── ConnectionLines.jsx              # Connection visualization
-        ├── PostProcessing.jsx               # Bloom effect (R3F postprocessing)
-        ├── AgentPanel.jsx                   # Left sidebar
-        ├── PromptPanel.jsx                  # Right sidebar
-        ├── ControlPanel.jsx                 # Bottom controls
-        ├── Header.jsx                       # Top header
-        └── LoadingScreen.jsx                # Loading screen
+├── Dockerfile              # Single-stage lightweight build
+├── package.json           # Dependencies (Express only)
+├── server.js              # Express server serving static HTML
+├── README.md              # This file
+└── public/
+    ├── ag-organism.html   # Main 2D visualization
+    └── assets/            # Static assets (if any)
 ```
 
 ## Environment Variables
 
 ### Required
-- `NEXT_PUBLIC_ADK_API_URL` - ADK API Server URL (for future use)
-- `AG_UI_FRONTEND_URL` - AG-UI Frontend URL (for API calls)
+- `NEXT_PUBLIC_ADK_API_URL` - ADK API Server URL
+- `AG_UI_FRONTEND_URL` - AG-UI Frontend URL
 
 ### Optional
 - `PORT` - Server port (default: 8080)
@@ -120,39 +79,21 @@ ag-organism-frontend/
 npm install
 ```
 
-### Run Development Server (Vite)
-```bash
-npm run dev
-```
-This starts Vite dev server with hot reload at http://localhost:5173
-
-### Build for Production
-```bash
-npm run build
-```
-Builds React app to `dist/` folder using Vite.
-
 ### Run Production Server
 ```bash
 npm run serve
 ```
-Starts Express server serving the built React app at http://localhost:8080
+Starts Express server serving the 2D HTML at http://localhost:8080
 
 ## Deployment
 
 ### Docker Build
 
-The Dockerfile uses a **multi-stage build**:
+The Dockerfile uses a **single-stage build** for simplicity:
 
-**Stage 1 (Builder):**
-- Installs all dependencies (including dev)
-- Builds React app with Vite
-- Outputs to `dist/`
-
-**Stage 2 (Production):**
-- Copies built `dist/` folder
-- Installs only production dependencies (Express)
-- Runs Express server
+- Installs production dependencies (Express only)
+- Copies `public/` directory with HTML
+- Runs Express server with environment injection
 
 ```bash
 # Build image
