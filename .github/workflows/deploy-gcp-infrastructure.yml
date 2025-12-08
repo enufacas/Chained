@@ -304,6 +304,9 @@ jobs:
           import_if_exists "google_cloud_run_v2_service" "ag_ui_frontend" \
             "projects/$PROJECT_ID/locations/$REGION/services/chained-ag-ui-frontend"
           
+          import_if_exists "google_cloud_run_v2_service" "ag_organism_frontend" \
+            "projects/$PROJECT_ID/locations/$REGION/services/chained-ag-organism-frontend"
+          
           import_if_exists "google_cloud_run_v2_service" "error_observer" \
             "projects/$PROJECT_ID/locations/$REGION/services/chained-error-observer"
           
