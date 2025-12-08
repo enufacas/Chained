@@ -28,13 +28,18 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ## 2025-12-08
 
+### ✨ Features
+
+- 🤖 🧠 Learning 🧠 Learn from GitHub Copilot sources - 2025-12-08 [#3714](https://github.com/enufacas/Chained/pull/3714)
+
 ### 🐛 Bug Fixes
 
+- 👤 Fix ag-organism-frontend: Deploy 2D Canvas instead of crashing 3D React app [#3709](https://github.com/enufacas/Chained/pull/3709)
 - 👤 ⚙️ Workflows Fix deployment separation: correct workflow paths and clean up deprecated terraform files [#3707](https://github.com/enufacas/Chained/pull/3707)
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x4) [#3706](https://github.com/enufacas/Chained/pull/3706)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x5) [#3708](https://github.com/enufacas/Chained/pull/3708)
 
 ---
 
@@ -181,9 +186,6 @@ This changelog excludes automated data syncs and routine maintenance commits.
 - 🤖 🧠 Learning 🧠 Learn from GitHub Copilot sources - 2025-12-01 [#3499](https://github.com/enufacas/Chained/pull/3499)
 - 👤 ⚙️ Workflows Add auto-merge to agentops-data-sync workflow [#3496](https://github.com/enufacas/Chained/pull/3496)
 - 👤 ⚙️ Workflows Add A2A protocol artifacts to AG-UI and improve workflow UX [#3487](https://github.com/enufacas/Chained/pull/3487)
-- 👤 🔧 Agents Design proposal: Agent as Code infrastructure management [#3475](https://github.com/enufacas/Chained/pull/3475)
-- 👤 AG-UI: Artifact preview overlay, localStorage persistence, expandable steps [#3470](https://github.com/enufacas/Chained/pull/3470)
-- 👤 mobile-friendly AG-UI redesign with combined progress/outcomes [#3469](https://github.com/enufacas/Chained/pull/3469)
 
 ### 🐛 Bug Fixes
 
