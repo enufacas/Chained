@@ -41,6 +41,27 @@ app.post('/api/log-error', (req, res) => {
   res.status(200).json({ status: 'logged' });
 });
 
+// Helper function to inject environment variables into HTML
+function injectEnvVariables(html) {
+  const envScript = `
+    <script>
+      window.ENV = {
+        ADK_API_URL: '${ADK_API_URL}',
+        AG_UI_FRONTEND_URL: '${AG_UI_FRONTEND_URL}'
+      };
+    </script>
+  `;
+  
+  // Check if ENV_INJECTED marker exists
+  if (!html.includes('<!-- ENV_INJECTED -->')) {
+    console.warn('[WARNING] ENV_INJECTED marker not found in HTML - environment variables may not be injected correctly');
+    // Fallback: inject before </head> tag
+    return html.replace('</head>', `${envScript}</head>`);
+  }
+  
+  return html.replace('<!-- ENV_INJECTED -->', envScript);
+}
+
 // Serve static files from public directory
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -53,19 +74,7 @@ app.get('/', (req, res) => {
   }
 
   let html = fs.readFileSync(htmlPath, 'utf8');
-  
-  // Inject environment variables as a script tag at the ENV_INJECTED marker
-  const envScript = `
-    <script>
-      window.ENV = {
-        ADK_API_URL: '${ADK_API_URL}',
-        AG_UI_FRONTEND_URL: '${AG_UI_FRONTEND_URL}'
-      };
-    </script>
-  `;
-  
-  // Replace the ENV_INJECTED comment with the actual environment script
-  html = html.replace('<!-- ENV_INJECTED -->', envScript);
+  html = injectEnvVariables(html);
   
   res.setHeader('Content-Type', 'text/html');
   res.send(html);
@@ -77,17 +86,8 @@ app.get('*', (req, res) => {
   
   if (fs.existsSync(htmlPath)) {
     let html = fs.readFileSync(htmlPath, 'utf8');
+    html = injectEnvVariables(html);
     
-    const envScript = `
-      <script>
-        window.ENV = {
-          ADK_API_URL: '${ADK_API_URL}',
-          AG_UI_FRONTEND_URL: '${AG_UI_FRONTEND_URL}'
-        };
-      </script>
-    `;
-    
-    html = html.replace('<!-- ENV_INJECTED -->', envScript);
     res.setHeader('Content-Type', 'text/html');
     res.send(html);
   } else {
