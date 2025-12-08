@@ -28,9 +28,13 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ## 2025-12-08
 
+### 🐛 Bug Fixes
+
+- 👤 ⚙️ Workflows Fix deployment separation: correct workflow paths and clean up deprecated terraform files [#3707](https://github.com/enufacas/Chained/pull/3707)
+
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x3) [#3705](https://github.com/enufacas/Chained/pull/3705)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x4) [#3706](https://github.com/enufacas/Chained/pull/3706)
 
 ---
 
