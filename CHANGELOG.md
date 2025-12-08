@@ -33,6 +33,14 @@ This changelog excludes automated data syncs and routine maintenance commits.
 - 👤 Migrate AG-Organism to React Three Fiber with futuristic factory theme, Drei components, procedurally-generated animated robot models, and A2A protocol visualization [#3672](https://github.com/enufacas/Chained/pull/3672)
 - 🤖 🧠 Learning 🧠 Learn from GitHub Copilot sources - 2025-12-07 [#3686](https://github.com/enufacas/Chained/pull/3686)
 
+### 🐛 Bug Fixes
+
+- 👤 Replace Three.js 3D rendering with Canvas 2D to fix camera crash [#3700](https://github.com/enufacas/Chained/pull/3700)
+
+### 🧹 Chores & Maintenance
+
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge [#3694](https://github.com/enufacas/Chained/pull/3694)
+
 ---
 
 ## 2025-12-06
@@ -194,27 +202,5 @@ This changelog excludes automated data syncs and routine maintenance commits.
 ### ✨ Features
 
 - 👤 Unified single page with progressive disclosure for Team Mode [#3468](https://github.com/enufacas/Chained/pull/3468)
-- 👤 ⚙️ Workflows Configure data-analyst & image-generator agents, add Agent Canvas workflow execution with turn-based config [#3460](https://github.com/enufacas/Chained/pull/3460)
-- 👤 🔧 Agents Add dynamic multi-agent team system with turn-based orchestration [#3459](https://github.com/enufacas/Chained/pull/3459)
-- 🤖 🧠 Learning 🧠 Learn from GitHub Copilot sources - 2025-11-30 [#3435](https://github.com/enufacas/Chained/pull/3435)
-- 👤 🔧 Agents Enable Vertex AI model calls in A2A agents with interaction logging [#3448](https://github.com/enufacas/Chained/pull/3448)
-- 👤 🔧 Agents Enhanced A2A UI with detailed agent prompts, step tracking, and docs [#3447](https://github.com/enufacas/Chained/pull/3447)
-- 👤 🔧 Agents Enhanced A2A UI with real agent integration, pipeline analysis, faster polling, and detailed views [#3445](https://github.com/enufacas/Chained/pull/3445)
-- 👤 🔧 Agents Side-by-side A2A UI with GCP Cloud Run agent activity and pipeline outcomes [#3444](https://github.com/enufacas/Chained/pull/3444)
-
-### 🐛 Bug Fixes
-
-- 👤 🔧 Agents [WIP] Fix failure in action runs and add separate jobs for agents [#3465](https://github.com/enufacas/Chained/pull/3465)
-- 👤 [WIP] Fix Vertex AI generation failed error for model access [#3457](https://github.com/enufacas/Chained/pull/3457)
-- 👤 🔧 Agents use gemini-3-pro-preview for ADK agents Vertex AI [#3456](https://github.com/enufacas/Chained/pull/3456)
-- 👤 Fix Gemini API 401 error: Add unified client supporting Vertex AI mode [#3455](https://github.com/enufacas/Chained/pull/3455)
-- 👤 ⚙️ Workflows [WIP] Fix issue in the action step of the workflow [#3453](https://github.com/enufacas/Chained/pull/3453)
-- 👤 🏗️ Infrastructure Fix Terraform dynamic for_each invalid value error [#3450](https://github.com/enufacas/Chained/pull/3450)
-- 👤 🔧 Agents Fix A2A agents to require Gemini AI - remove silent fallback to templates [#3449](https://github.com/enufacas/Chained/pull/3449)
-
-### 🧹 Chores & Maintenance
-
-- 👤 ⚙️ Workflows **Documentation**: Restructure README around three themes: Copilot conventions, A2A workflows, GCP experiments [#3462](https://github.com/enufacas/Chained/pull/3462)
-- 👤 🔧 Agents **Documentation**: Complete GitHub MCP server tool reference and remove redundant tool restrictions from agents [#3421](https://github.com/enufacas/Chained/pull/3421)
 
 ---
