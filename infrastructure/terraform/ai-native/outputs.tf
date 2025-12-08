@@ -35,7 +35,8 @@ output "ai_native_vpc_connector" {
 
 output "ai_native_deployment_summary" {
   description = "Summary of AI-Native Control Plane deployment"
-  value = var.deploy_ai_native_control_plane ? <<-EOT
+  value = (var.deploy_ai_native_control_plane
+    ? <<-EOT
     
     ╔════════════════════════════════════════════════════════════════════════════╗
     ║              AI-NATIVE CONTROL PLANE INFRASTRUCTURE DEPLOYED                ║
@@ -73,5 +74,6 @@ output "ai_native_deployment_summary" {
          -d '{"user_request": "Create a simple blog website", "user_id": "test-user"}'
     
   EOT
-  : "AI-Native Control Plane deployment is disabled (deploy_ai_native_control_plane = false)"
+    : "AI-Native Control Plane deployment is disabled (deploy_ai_native_control_plane = false)"
+  )
 }
