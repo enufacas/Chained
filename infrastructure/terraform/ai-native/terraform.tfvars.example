@@ -1,0 +1,24 @@
+# =============================================================================
+# AI-Native Control Plane - Terraform Variables Example
+# =============================================================================
+# Copy this file to terraform.tfvars and fill in your values
+# =============================================================================
+
+# GCP Project Configuration
+project_id  = "your-gcp-project-id"
+region      = "us-central1"
+environment = "dev"
+
+# Container Images
+ai_native_control_plane_image = "us-central1-docker.pkg.dev/YOUR_PROJECT/chained/ai-control-plane:latest"
+ai_native_infra_runner_image  = "us-central1-docker.pkg.dev/YOUR_PROJECT/chained/infra-runner:latest"
+
+# Database Configuration
+ai_native_db_tier      = "db-f1-micro"      # Use db-custom-2-7680 for production
+ai_native_db_disk_size = 10                  # GB, increase for production
+
+# LLM Provider
+ai_native_llm_provider = "gemini"  # or "openai"
+
+# Alerting (optional)
+alert_email = ""

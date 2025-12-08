@@ -43,7 +43,8 @@ on:
       - main
     paths:
       - 'services/**'
-      - 'infrastructure/terraform/**'
+      - 'infrastructure/terraform/ai-native/**'
+      - '.github/workflows/ai-native-deploy.yml'
 
 env:
   GCP_REGION: us-central1
@@ -170,7 +171,7 @@ jobs:
     
     defaults:
       run:
-        working-directory: infrastructure/terraform
+        working-directory: infrastructure/terraform/ai-native
     
     steps:
       - name: Checkout code
@@ -210,6 +211,8 @@ jobs:
           # Alert email
           alert_email = "${{ secrets.TF_VAR_alert_email || '' }}"
           EOF
+          
+          echo "📋 Terraform variables configured for AI-Native Control Plane deployment"
       
       - name: Terraform Init
         run: terraform init

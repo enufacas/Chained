@@ -20,7 +20,11 @@ on:
     branches:
       - main
     paths:
-      - 'infrastructure/**'
+      - 'infrastructure/terraform/base/**'
+      - 'infrastructure/docker/website/**'
+      - 'infrastructure/docker/agent-gateway/**'
+      - 'infrastructure/docker/agent-worker/**'
+      - 'infrastructure/docker/adk-agents/**'
       - '.github/workflows/deploy-gcp-infrastructure.yml'
   
   workflow_dispatch:
@@ -110,7 +114,7 @@ jobs:
     
     defaults:
       run:
-        working-directory: infrastructure/terraform
+        working-directory: infrastructure/terraform/base
     
     steps:
       - name: Checkout code
@@ -329,6 +333,7 @@ jobs:
             PLAN_VARS+=(-var="google_api_key_secret=${{ steps.setup_secret.outputs.secret_ref }}")
           fi
           
+          echo "🚀 Deploying base infrastructure (excluding AI-Native Control Plane)"
           terraform plan "${PLAN_VARS[@]}" -out=tfplan
       
       - name: Terraform Apply
