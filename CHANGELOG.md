@@ -30,7 +30,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge [#3701](https://github.com/enufacas/Chained/pull/3701)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x2) [#3702](https://github.com/enufacas/Chained/pull/3702)
 
 ---
 
@@ -38,6 +38,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### ✨ Features
 
+- 👤 🏗️ Infrastructure Separate AI control plane from base infrastructure deployment [#3704](https://github.com/enufacas/Chained/pull/3704)
 - 👤 🏗️ Infrastructure Complete AI-Native Control Plane with Terraform, CI/CD, and production GCP integration [#3679](https://github.com/enufacas/Chained/pull/3679)
 - 👤 Migrate AG-Organism to React Three Fiber with futuristic factory theme, Drei components, procedurally-generated animated robot models, and A2A protocol visualization [#3672](https://github.com/enufacas/Chained/pull/3672)
 - 🤖 🧠 Learning 🧠 Learn from GitHub Copilot sources - 2025-12-07 [#3686](https://github.com/enufacas/Chained/pull/3686)
@@ -203,13 +204,5 @@ This changelog excludes automated data syncs and routine maintenance commits.
 - 👤 ⚙️ Workflows **Documentation**: Remove goal-and-idea-system workflow and cleanup related documentation [#3504](https://github.com/enufacas/Chained/pull/3504)
 - 👤 ⚙️ Workflows **Documentation**: Add disabled workflows report documenting purpose, triggers, and artifacts [#3431](https://github.com/enufacas/Chained/pull/3431)
 - 👤 🔧 Agents **Documentation**: streamline README and document Agent Canvas features [#3489](https://github.com/enufacas/Chained/pull/3489)
-
----
-
-## 2025-11-30
-
-### ✨ Features
-
-- 👤 Unified single page with progressive disclosure for Team Mode [#3468](https://github.com/enufacas/Chained/pull/3468)
 
 ---
