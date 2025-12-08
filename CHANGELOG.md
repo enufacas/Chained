@@ -30,7 +30,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x2) [#3702](https://github.com/enufacas/Chained/pull/3702)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x3) [#3705](https://github.com/enufacas/Chained/pull/3705)
 
 ---
 
@@ -49,6 +49,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
+- 👤 🏗️ Infrastructure **Documentation**: Add deployed AG-UI URLs reference + fix Terraform state import [#3703](https://github.com/enufacas/Chained/pull/3703)
 - 🤖 **Documentation**: Update CHANGELOG.md after PR merge [#3694](https://github.com/enufacas/Chained/pull/3694)
 
 ---
