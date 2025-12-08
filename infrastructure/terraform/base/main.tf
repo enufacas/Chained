@@ -49,56 +49,6 @@ provider "google-beta" {
 data "google_project" "current" {
   project_id = var.project_id
 }
-# =============================================================================
-# Chained GCP Infrastructure - Main Terraform Configuration
-# =============================================================================
-# This Terraform configuration deploys the recommended Cloud Run architecture
-# for the Chained autonomous AI ecosystem.
-#
-# Architecture:
-# - Cloud Run services for website and agent gateway
-# - Cloud Pub/Sub for agent messaging
-# - Firestore for agent state/memory
-# - Cloud Monitoring for observability
-#
-# Estimated Monthly Cost: $10-25 (well under $300 budget)
-# =============================================================================
-
-terraform {
-  required_version = ">= 1.0.0"
-
-  required_providers {
-    google = {
-      source  = "hashicorp/google"
-      version = "~> 5.0"
-    }
-    google-beta = {
-      source  = "hashicorp/google-beta"
-      version = "~> 5.0"
-    }
-  }
-
-  # Backend configuration for state storage
-  # Uncomment and configure for production use
-  # backend "gcs" {
-  #   bucket = "chained-terraform-state"
-  #   prefix = "terraform/state"
-  # }
-}
-
-# =============================================================================
-# Provider Configuration
-# =============================================================================
-
-provider "google" {
-  project = var.project_id
-  region  = var.region
-}
-
-provider "google-beta" {
-  project = var.project_id
-  region  = var.region
-}
 
 # =============================================================================
 # Enable Required APIs
@@ -535,12 +485,4 @@ resource "google_monitoring_alert_policy" "high_latency" {
   alert_strategy {
     auto_close = "1800s"
   }
-}
-
-# =============================================================================
-# Data Sources
-# =============================================================================
-
-data "google_project" "current" {
-  project_id = var.project_id
 }

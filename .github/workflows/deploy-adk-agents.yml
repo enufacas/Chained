@@ -379,7 +379,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: infrastructure/terraform
+        working-directory: infrastructure/terraform/base
 
     steps:
       - name: Checkout code
