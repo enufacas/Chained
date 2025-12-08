@@ -11,6 +11,9 @@
 # - Cloud Monitoring and logging
 #
 # Architecture: Autonomous AI-driven infrastructure operations
+#
+# IMPORTANT: This file is controlled by the deploy_ai_native_control_plane variable.
+# Set to true to deploy these resources, false to skip them.
 # =============================================================================
 
 # =============================================================================
@@ -18,12 +21,12 @@
 # =============================================================================
 
 resource "google_project_service" "ai_native_apis" {
-  for_each = toset([
+  for_each = var.deploy_ai_native_control_plane ? toset([
     "sqladmin.googleapis.com",       # Cloud SQL
     "servicenetworking.googleapis.com", # VPC Peering for Cloud SQL
     "vpcaccess.googleapis.com",      # VPC Access Connector for Cloud Run
     "compute.googleapis.com",         # Compute for VPC
-  ])
+  ]) : toset([])
 
   project            = var.project_id
   service            = each.value
@@ -35,6 +38,8 @@ resource "google_project_service" "ai_native_apis" {
 # =============================================================================
 
 resource "google_compute_network" "ai_native_vpc" {
+  count = var.deploy_ai_native_control_plane ? 1 : 0
+  
   name                    = "ai-native-control-plane-vpc"
   auto_create_subnetworks = false
   
@@ -42,39 +47,47 @@ resource "google_compute_network" "ai_native_vpc" {
 }
 
 resource "google_compute_subnetwork" "ai_native_subnet" {
+  count = var.deploy_ai_native_control_plane ? 1 : 0
+  
   name          = "ai-native-subnet"
   ip_cidr_range = "10.8.0.0/28"
   region        = var.region
-  network       = google_compute_network.ai_native_vpc.id
+  network       = google_compute_network.ai_native_vpc[0].id
 
   private_ip_google_access = true
 }
 
 # Private IP allocation for Cloud SQL
 resource "google_compute_global_address" "private_ip_address" {
+  count = var.deploy_ai_native_control_plane ? 1 : 0
+  
   name          = "ai-native-private-ip"
   purpose       = "VPC_PEERING"
   address_type  = "INTERNAL"
   prefix_length = 16
-  network       = google_compute_network.ai_native_vpc.id
+  network       = google_compute_network.ai_native_vpc[0].id
 }
 
 resource "google_service_networking_connection" "private_vpc_connection" {
-  network                 = google_compute_network.ai_native_vpc.id
+  count = var.deploy_ai_native_control_plane ? 1 : 0
+  
+  network                 = google_compute_network.ai_native_vpc[0].id
   service                 = "servicenetworking.googleapis.com"
-  reserved_peering_ranges = [google_compute_global_address.private_ip_address.name]
+  reserved_peering_ranges = [google_compute_global_address.private_ip_address[0].name]
 }
 
 # VPC Access Connector for Cloud Run to Cloud SQL
 resource "google_vpc_access_connector" "ai_native_connector" {
+  count = var.deploy_ai_native_control_plane ? 1 : 0
+  
   name          = "ai-native-vpc-connector"
   region        = var.region
-  network       = google_compute_network.ai_native_vpc.name
+  network       = google_compute_network.ai_native_vpc[0].name
   ip_cidr_range = "10.8.0.0/28"
   
   depends_on = [
     google_project_service.ai_native_apis,
-    google_compute_subnetwork.ai_native_subnet
+    google_compute_subnetwork.ai_native_subnet[0]
   ]
 }
 
@@ -83,11 +96,15 @@ resource "google_vpc_access_connector" "ai_native_connector" {
 # =============================================================================
 
 resource "random_id" "db_name_suffix" {
+  count = var.deploy_ai_native_control_plane ? 1 : 0
+  
   byte_length = 4
 }
 
 resource "google_sql_database_instance" "ai_native_db" {
-  name             = "ai-native-control-plane-${random_id.db_name_suffix.hex}"
+  count = var.deploy_ai_native_control_plane ? 1 : 0
+  
+  name             = "ai-native-control-plane-${random_id.db_name_suffix[0].hex}"
   database_version = "POSTGRES_15"
   region           = var.region
   
@@ -114,7 +131,7 @@ resource "google_sql_database_instance" "ai_native_db" {
 
     ip_configuration {
       ipv4_enabled    = false
-      private_network = google_compute_network.ai_native_vpc.id
+      private_network = google_compute_network.ai_native_vpc[0].id
       require_ssl     = true
     }
 
@@ -141,24 +158,32 @@ resource "google_sql_database_instance" "ai_native_db" {
 
 # Database
 resource "google_sql_database" "ai_native_database" {
+  count = var.deploy_ai_native_control_plane ? 1 : 0
+  
   name     = "ai_native_control_plane"
-  instance = google_sql_database_instance.ai_native_db.name
+  instance = google_sql_database_instance.ai_native_db[0].name
 }
 
 # Database user
 resource "random_password" "db_password" {
+  count = var.deploy_ai_native_control_plane ? 1 : 0
+  
   length  = 32
   special = true
 }
 
 resource "google_sql_user" "ai_native_user" {
+  count = var.deploy_ai_native_control_plane ? 1 : 0
+  
   name     = "ai_native_admin"
-  instance = google_sql_database_instance.ai_native_db.name
-  password = random_password.db_password.result
+  instance = google_sql_database_instance.ai_native_db[0].name
+  password = random_password.db_password[0].result
 }
 
 # Store database credentials in Secret Manager
 resource "google_secret_manager_secret" "db_connection_string" {
+  count = var.deploy_ai_native_control_plane ? 1 : 0
+
   secret_id = "ai-native-db-connection-string"
 
   replication {
@@ -169,8 +194,10 @@ resource "google_secret_manager_secret" "db_connection_string" {
 }
 
 resource "google_secret_manager_secret_version" "db_connection_string" {
-  secret = google_secret_manager_secret.db_connection_string.id
-  secret_data = "postgresql://${google_sql_user.ai_native_user.name}:${random_password.db_password.result}@${google_sql_database_instance.ai_native_db.private_ip_address}/${google_sql_database.ai_native_database.name}"
+  count = var.deploy_ai_native_control_plane ? 1 : 0
+
+  secret = google_secret_manager_secret.db_connection_string[0].id
+  secret_data = "postgresql://${google_sql_user.ai_native_user[0].name}:${random_password.db_password[0].result}@${google_sql_database_instance.ai_native_db[0].private_ip_address}/${google_sql_database.ai_native_database[0].name}"
 }
 
 # =============================================================================
@@ -179,6 +206,8 @@ resource "google_secret_manager_secret_version" "db_connection_string" {
 
 # OpenAI API Key
 resource "google_secret_manager_secret" "openai_api_key" {
+  count = var.deploy_ai_native_control_plane ? 1 : 0
+
   secret_id = "ai-native-openai-api-key"
 
   replication {
@@ -190,6 +219,8 @@ resource "google_secret_manager_secret" "openai_api_key" {
 
 # Gemini API Key
 resource "google_secret_manager_secret" "gemini_api_key" {
+  count = var.deploy_ai_native_control_plane ? 1 : 0
+
   secret_id = "ai-native-gemini-api-key"
 
   replication {
@@ -209,6 +240,8 @@ resource "google_secret_manager_secret" "gemini_api_key" {
 
 # AI Control Plane Service Account
 resource "google_service_account" "ai_control_plane" {
+  count = var.deploy_ai_native_control_plane ? 1 : 0
+
   account_id   = "ai-control-plane-sa"
   display_name = "AI Control Plane Service Account"
   description  = "Service account for AI Control Plane Cloud Run service"
@@ -216,6 +249,8 @@ resource "google_service_account" "ai_control_plane" {
 
 # Infra Runner Service Account
 resource "google_service_account" "infra_runner" {
+  count = var.deploy_ai_native_control_plane ? 1 : 0
+
   account_id   = "infra-runner-sa"
   display_name = "Infra Runner Service Account"
   description  = "Service account for Infra Runner Cloud Run service"
@@ -223,6 +258,8 @@ resource "google_service_account" "infra_runner" {
 
 # State DB API Service Account
 resource "google_service_account" "state_db_api" {
+  count = var.deploy_ai_native_control_plane ? 1 : 0
+
   account_id   = "state-db-api-sa"
   display_name = "State DB API Service Account"
   description  = "Service account for State DB API Cloud Run service"
@@ -234,65 +271,85 @@ resource "google_service_account" "state_db_api" {
 
 # AI Control Plane permissions
 resource "google_project_iam_member" "ai_control_plane_invoker" {
+  count = var.deploy_ai_native_control_plane ? 1 : 0
+
   project = var.project_id
   role    = "roles/run.invoker"
-  member  = "serviceAccount:${google_service_account.ai_control_plane.email}"
+  member  = "serviceAccount:${google_service_account.ai_control_plane[0].email}"
 }
 
 resource "google_secret_manager_secret_iam_member" "ai_control_plane_openai" {
-  secret_id = google_secret_manager_secret.openai_api_key.secret_id
+  count = var.deploy_ai_native_control_plane ? 1 : 0
+
+  secret_id = google_secret_manager_secret.openai_api_key[0].secret_id
   role      = "roles/secretmanager.secretAccessor"
-  member    = "serviceAccount:${google_service_account.ai_control_plane.email}"
+  member    = "serviceAccount:${google_service_account.ai_control_plane[0].email}"
 }
 
 resource "google_secret_manager_secret_iam_member" "ai_control_plane_gemini" {
-  secret_id = google_secret_manager_secret.gemini_api_key.secret_id
+  count = var.deploy_ai_native_control_plane ? 1 : 0
+
+  secret_id = google_secret_manager_secret.gemini_api_key[0].secret_id
   role      = "roles/secretmanager.secretAccessor"
-  member    = "serviceAccount:${google_service_account.ai_control_plane.email}"
+  member    = "serviceAccount:${google_service_account.ai_control_plane[0].email}"
 }
 
 resource "google_secret_manager_secret_iam_member" "ai_control_plane_db" {
-  secret_id = google_secret_manager_secret.db_connection_string.secret_id
+  count = var.deploy_ai_native_control_plane ? 1 : 0
+
+  secret_id = google_secret_manager_secret.db_connection_string[0].secret_id
   role      = "roles/secretmanager.secretAccessor"
-  member    = "serviceAccount:${google_service_account.ai_control_plane.email}"
+  member    = "serviceAccount:${google_service_account.ai_control_plane[0].email}"
 }
 
 # Infra Runner permissions
 resource "google_project_iam_member" "infra_runner_storage_admin" {
+  count = var.deploy_ai_native_control_plane ? 1 : 0
+
   project = var.project_id
   role    = "roles/storage.admin"
-  member  = "serviceAccount:${google_service_account.infra_runner.email}"
+  member  = "serviceAccount:${google_service_account.infra_runner[0].email}"
 }
 
 resource "google_project_iam_member" "infra_runner_run_admin" {
+  count = var.deploy_ai_native_control_plane ? 1 : 0
+
   project = var.project_id
   role    = "roles/run.admin"
-  member  = "serviceAccount:${google_service_account.infra_runner.email}"
+  member  = "serviceAccount:${google_service_account.infra_runner[0].email}"
 }
 
 resource "google_project_iam_member" "infra_runner_compute_viewer" {
+  count = var.deploy_ai_native_control_plane ? 1 : 0
+
   project = var.project_id
   role    = "roles/compute.viewer"
-  member  = "serviceAccount:${google_service_account.infra_runner.email}"
+  member  = "serviceAccount:${google_service_account.infra_runner[0].email}"
 }
 
 resource "google_secret_manager_secret_iam_member" "infra_runner_db" {
-  secret_id = google_secret_manager_secret.db_connection_string.secret_id
+  count = var.deploy_ai_native_control_plane ? 1 : 0
+
+  secret_id = google_secret_manager_secret.db_connection_string[0].secret_id
   role      = "roles/secretmanager.secretAccessor"
-  member    = "serviceAccount:${google_service_account.infra_runner.email}"
+  member    = "serviceAccount:${google_service_account.infra_runner[0].email}"
 }
 
 # State DB API permissions
 resource "google_project_iam_member" "state_db_api_sql_client" {
+  count = var.deploy_ai_native_control_plane ? 1 : 0
+
   project = var.project_id
   role    = "roles/cloudsql.client"
-  member  = "serviceAccount:${google_service_account.state_db_api.email}"
+  member  = "serviceAccount:${google_service_account.state_db_api[0].email}"
 }
 
 resource "google_secret_manager_secret_iam_member" "state_db_api_db" {
-  secret_id = google_secret_manager_secret.db_connection_string.secret_id
+  count = var.deploy_ai_native_control_plane ? 1 : 0
+
+  secret_id = google_secret_manager_secret.db_connection_string[0].secret_id
   role      = "roles/secretmanager.secretAccessor"
-  member    = "serviceAccount:${google_service_account.state_db_api.email}"
+  member    = "serviceAccount:${google_service_account.state_db_api[0].email}"
 }
 
 # =============================================================================
@@ -301,6 +358,8 @@ resource "google_secret_manager_secret_iam_member" "state_db_api_db" {
 
 # Infra Runner Service
 resource "google_cloud_run_v2_service" "infra_runner" {
+  count = var.deploy_ai_native_control_plane ? 1 : 0
+
   name     = "ai-native-infra-runner"
   location = var.region
 
@@ -343,10 +402,10 @@ resource "google_cloud_run_v2_service" "infra_runner" {
 
     max_instance_request_concurrency = 80
     timeout                          = "300s"
-    service_account                  = google_service_account.infra_runner.email
+    service_account                  = google_service_account.infra_runner[0].email
 
     vpc_access {
-      connector = google_vpc_access_connector.ai_native_connector.id
+      connector = google_vpc_access_connector.ai_native_connector[0].id
       egress    = "PRIVATE_RANGES_ONLY"
     }
   }
@@ -358,12 +417,14 @@ resource "google_cloud_run_v2_service" "infra_runner" {
 
   depends_on = [
     google_project_service.required_apis,
-    google_vpc_access_connector.ai_native_connector
+    google_vpc_access_connector.ai_native_connector[0]
   ]
 }
 
 # AI Control Plane Service
 resource "google_cloud_run_v2_service" "ai_control_plane" {
+  count = var.deploy_ai_native_control_plane ? 1 : 0
+
   name     = "ai-native-control-plane"
   location = var.region
 
@@ -381,14 +442,14 @@ resource "google_cloud_run_v2_service" "ai_control_plane" {
 
       env {
         name  = "INFRA_RUNNER_URL"
-        value = google_cloud_run_v2_service.infra_runner.uri
+        value = google_cloud_run_v2_service.infra_runner[0].uri
       }
 
       env {
         name = "STATE_DB_URL"
         value_source {
           secret_key_ref {
-            secret  = google_secret_manager_secret.db_connection_string.secret_id
+            secret  = google_secret_manager_secret.db_connection_string[0].secret_id
             version = "latest"
           }
         }
@@ -398,7 +459,7 @@ resource "google_cloud_run_v2_service" "ai_control_plane" {
         name = "OPENAI_API_KEY"
         value_source {
           secret_key_ref {
-            secret  = google_secret_manager_secret.openai_api_key.secret_id
+            secret  = google_secret_manager_secret.openai_api_key[0].secret_id
             version = "latest"
           }
         }
@@ -408,7 +469,7 @@ resource "google_cloud_run_v2_service" "ai_control_plane" {
         name = "GEMINI_API_KEY"
         value_source {
           secret_key_ref {
-            secret  = google_secret_manager_secret.gemini_api_key.secret_id
+            secret  = google_secret_manager_secret.gemini_api_key[0].secret_id
             version = "latest"
           }
         }
@@ -441,10 +502,10 @@ resource "google_cloud_run_v2_service" "ai_control_plane" {
 
     max_instance_request_concurrency = 80
     timeout                          = "600s"
-    service_account                  = google_service_account.ai_control_plane.email
+    service_account                  = google_service_account.ai_control_plane[0].email
 
     vpc_access {
-      connector = google_vpc_access_connector.ai_native_connector.id
+      connector = google_vpc_access_connector.ai_native_connector[0].id
       egress    = "PRIVATE_RANGES_ONLY"
     }
   }
@@ -456,27 +517,31 @@ resource "google_cloud_run_v2_service" "ai_control_plane" {
 
   depends_on = [
     google_project_service.required_apis,
-    google_cloud_run_v2_service.infra_runner,
-    google_vpc_access_connector.ai_native_connector
+    google_cloud_run_v2_service.infra_runner[0],
+    google_vpc_access_connector.ai_native_connector[0]
   ]
 }
 
 # Allow public access to AI Control Plane (API endpoint)
 resource "google_cloud_run_v2_service_iam_member" "ai_control_plane_public" {
+  count = var.deploy_ai_native_control_plane ? 1 : 0
+
   project  = var.project_id
   location = var.region
-  name     = google_cloud_run_v2_service.ai_control_plane.name
+  name     = google_cloud_run_v2_service.ai_control_plane[0].name
   role     = "roles/run.invoker"
   member   = "allUsers"
 }
 
 # Allow AI Control Plane to invoke Infra Runner
 resource "google_cloud_run_v2_service_iam_member" "infra_runner_invoker" {
+  count = var.deploy_ai_native_control_plane ? 1 : 0
+
   project  = var.project_id
   location = var.region
-  name     = google_cloud_run_v2_service.infra_runner.name
+  name     = google_cloud_run_v2_service.infra_runner[0].name
   role     = "roles/run.invoker"
-  member   = "serviceAccount:${google_service_account.ai_control_plane.email}"
+  member   = "serviceAccount:${google_service_account.ai_control_plane[0].email}"
 }
 
 # =============================================================================
@@ -484,6 +549,8 @@ resource "google_cloud_run_v2_service_iam_member" "infra_runner_invoker" {
 # =============================================================================
 
 resource "google_monitoring_alert_policy" "ai_native_high_error_rate" {
+  count = var.deploy_ai_native_control_plane ? 1 : 0
+
   count        = var.alert_email != "" ? 1 : 0
   display_name = "AI-Native Control Plane - High Error Rate"
   combiner     = "OR"
@@ -512,6 +579,8 @@ resource "google_monitoring_alert_policy" "ai_native_high_error_rate" {
 }
 
 resource "google_monitoring_alert_policy" "ai_native_db_connections" {
+  count = var.deploy_ai_native_control_plane ? 1 : 0
+
   count        = var.alert_email != "" ? 1 : 0
   display_name = "AI-Native Control Plane - High DB Connections"
   combiner     = "OR"
@@ -520,7 +589,7 @@ resource "google_monitoring_alert_policy" "ai_native_db_connections" {
     display_name = "Cloud SQL Connections > 80%"
 
     condition_threshold {
-      filter          = "resource.type = \"cloudsql_database\" AND resource.labels.database_id = \"${var.project_id}:${google_sql_database_instance.ai_native_db.name}\" AND metric.type = \"cloudsql.googleapis.com/database/postgresql/num_backends\""
+      filter          = "resource.type = \"cloudsql_database\" AND resource.labels.database_id = \"${var.project_id}:${google_sql_database_instance.ai_native_db[0].name}\" AND metric.type = \"cloudsql.googleapis.com/database/postgresql/num_backends\""
       duration        = "300s"
       comparison      = "COMPARISON_GT"
       threshold_value = 80

@@ -81,6 +81,12 @@ variable "git_repo" {
 # AI-Native Control Plane Configuration
 # =============================================================================
 
+variable "deploy_ai_native_control_plane" {
+  description = "Whether to deploy the AI-Native Control Plane infrastructure (Cloud SQL, VPC, AI Control Plane services)"
+  type        = bool
+  default     = false
+}
+
 variable "ai_native_control_plane_image" {
   description = "Container image for AI Control Plane service"
   type        = string

@@ -320,6 +320,7 @@ jobs:
             -var="project_id=${{ env.GCP_PROJECT_ID }}"
             -var="region=${{ env.GCP_REGION }}"
             -var="environment=${{ needs.validate.outputs.environment }}"
+            -var="deploy_ai_native_control_plane=false"
           )
           
           # Add API key secret reference if available
@@ -329,6 +330,7 @@ jobs:
             PLAN_VARS+=(-var="google_api_key_secret=${{ steps.setup_secret.outputs.secret_ref }}")
           fi
           
+          echo "🚀 Deploying base infrastructure (excluding AI-Native Control Plane)"
           terraform plan "${PLAN_VARS[@]}" -out=tfplan
       
       - name: Terraform Apply

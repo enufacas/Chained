@@ -43,7 +43,8 @@ on:
       - main
     paths:
       - 'services/**'
-      - 'infrastructure/terraform/**'
+      - 'infrastructure/terraform/ai-native-control-plane.tf'
+      - '.github/workflows/ai-native-deploy.yml'
 
 env:
   GCP_REGION: us-central1
@@ -195,6 +196,9 @@ jobs:
           project_id  = "${{ secrets.GCP_PROJECT_ID }}"
           region      = "${{ env.GCP_REGION }}"
           environment = "${{ needs.setup.outputs.environment }}"
+          
+          # Enable AI-Native Control Plane deployment
+          deploy_ai_native_control_plane = true
           
           # Container images
           ai_native_control_plane_image = "${{ env.GCP_REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/chained/ai-control-plane:${{ needs.setup.outputs.image-tag }}"
