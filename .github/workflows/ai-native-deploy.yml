@@ -43,7 +43,7 @@ on:
       - main
     paths:
       - 'services/**'
-      - 'infrastructure/terraform/ai-native-control-plane.tf'
+      - 'infrastructure/terraform/ai-native/**'
       - '.github/workflows/ai-native-deploy.yml'
 
 env:
@@ -171,7 +171,7 @@ jobs:
     
     defaults:
       run:
-        working-directory: infrastructure/terraform
+        working-directory: infrastructure/terraform/ai-native
     
     steps:
       - name: Checkout code
@@ -197,9 +197,6 @@ jobs:
           region      = "${{ env.GCP_REGION }}"
           environment = "${{ needs.setup.outputs.environment }}"
           
-          # Enable AI-Native Control Plane deployment
-          deploy_ai_native_control_plane = true
-          
           # Container images
           ai_native_control_plane_image = "${{ env.GCP_REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/chained/ai-control-plane:${{ needs.setup.outputs.image-tag }}"
           ai_native_infra_runner_image  = "${{ env.GCP_REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/chained/infra-runner:${{ needs.setup.outputs.image-tag }}"
@@ -214,6 +211,8 @@ jobs:
           # Alert email
           alert_email = "${{ secrets.TF_VAR_alert_email || '' }}"
           EOF
+          
+          echo "📋 Terraform variables configured for AI-Native Control Plane deployment"
       
       - name: Terraform Init
         run: terraform init

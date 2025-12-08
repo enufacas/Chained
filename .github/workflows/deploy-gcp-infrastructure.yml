@@ -20,7 +20,11 @@ on:
     branches:
       - main
     paths:
-      - 'infrastructure/**'
+      - 'infrastructure/terraform/base/**'
+      - 'infrastructure/docker/website/**'
+      - 'infrastructure/docker/agent-gateway/**'
+      - 'infrastructure/docker/agent-worker/**'
+      - 'infrastructure/docker/adk-agents/**'
       - '.github/workflows/deploy-gcp-infrastructure.yml'
   
   workflow_dispatch:
@@ -110,7 +114,7 @@ jobs:
     
     defaults:
       run:
-        working-directory: infrastructure/terraform
+        working-directory: infrastructure/terraform/base
     
     steps:
       - name: Checkout code
@@ -320,7 +324,6 @@ jobs:
             -var="project_id=${{ env.GCP_PROJECT_ID }}"
             -var="region=${{ env.GCP_REGION }}"
             -var="environment=${{ needs.validate.outputs.environment }}"
-            -var="deploy_ai_native_control_plane=false"
           )
           
           # Add API key secret reference if available

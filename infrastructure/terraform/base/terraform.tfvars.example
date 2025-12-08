@@ -1,0 +1,38 @@
+# =============================================================================
+# Base Infrastructure - Terraform Variables Example
+# =============================================================================
+# Copy this file to terraform.tfvars and fill in your values
+# =============================================================================
+
+# GCP Project Configuration
+project_id = "your-gcp-project-id"
+region     = "us-central1"
+environment = "dev"
+
+# Firestore Location (must be multi-region or single region)
+firestore_location = "nam5"  # US multi-region (free tier eligible)
+
+# Container Images (optional - leave empty for placeholder images)
+website_image       = ""
+agent_gateway_image = ""
+agent_worker_image  = ""
+
+# ADK Agents Image Tag (use commit SHA to force updates)
+image_tag = "latest"
+
+# API Keys (pass as direct values from GitHub secrets)
+# google_api_key = ""  # Set via GitHub secrets
+# gemini_api_key = ""  # Set via GitHub secrets
+
+# Secret Manager References (alternative to direct values)
+# gemini_api_key_secret = "projects/PROJECT_ID/secrets/chained-gemini-api-key"
+# google_api_key_secret = "projects/PROJECT_ID/secrets/chained-google-api-key"
+
+# GitHub Configuration for error-observer
+git_repo = "enufacas/Chained"
+
+# Alerting (optional)
+alert_email = ""
+
+# Budget (optional)
+monthly_budget = 50
