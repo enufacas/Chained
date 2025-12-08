@@ -1,24 +1,6 @@
-# AG-Organism Frontend - React with react-three-fiber
-# Multi-stage build for optimized production image
+# AG-Organism Frontend - 2D Canvas Visualization
+# Lightweight build serving static HTML with environment injection
 
-# Stage 1: Build React application
-FROM node:20-alpine AS builder
-
-WORKDIR /app
-
-# Copy package files
-COPY package.json package-lock.json* ./
-
-# Install all dependencies (including dev dependencies for build)
-RUN npm install
-
-# Copy application source
-COPY . .
-
-# Build React application with Vite
-RUN npm run build
-
-# Stage 2: Production server
 FROM node:20-alpine
 
 WORKDIR /app
@@ -26,14 +8,12 @@ WORKDIR /app
 # Copy package files
 COPY package.json ./
 
-# Install only production dependencies
+# Install only production dependencies (express only)
 RUN npm install --production
 
-# Copy built React app from builder stage
-COPY --from=builder /app/dist ./dist
-
-# Copy server file
+# Copy server file and public directory
 COPY server.js ./
+COPY public ./public
 
 # Create non-root user
 RUN addgroup --system --gid 1001 nodejs && \

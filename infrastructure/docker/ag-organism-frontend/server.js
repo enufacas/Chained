@@ -41,20 +41,20 @@ app.post('/api/log-error', (req, res) => {
   res.status(200).json({ status: 'logged' });
 });
 
-// Serve static files from React build
-app.use(express.static(path.join(__dirname, 'dist')));
+// Serve static files from public directory
+app.use(express.static(path.join(__dirname, 'public')));
 
-// Inject environment variables into index.html
+// Inject environment variables into ag-organism.html (2D version)
 app.get('/', (req, res) => {
-  const indexPath = path.join(__dirname, 'dist', 'index.html');
+  const htmlPath = path.join(__dirname, 'public', 'ag-organism.html');
   
-  if (!fs.existsSync(indexPath)) {
-    return res.status(500).send('Build not found. Please run npm run build first.');
+  if (!fs.existsSync(htmlPath)) {
+    return res.status(500).send('ag-organism.html not found');
   }
 
-  let html = fs.readFileSync(indexPath, 'utf8');
+  let html = fs.readFileSync(htmlPath, 'utf8');
   
-  // Inject environment variables as a script tag before the closing head
+  // Inject environment variables as a script tag at the ENV_INJECTED marker
   const envScript = `
     <script>
       window.ENV = {
@@ -64,18 +64,19 @@ app.get('/', (req, res) => {
     </script>
   `;
   
-  html = html.replace('</head>', `${envScript}</head>`);
+  // Replace the ENV_INJECTED comment with the actual environment script
+  html = html.replace('<!-- ENV_INJECTED -->', envScript);
   
   res.setHeader('Content-Type', 'text/html');
   res.send(html);
 });
 
-// Fallback to index.html for SPA routing
+// Fallback to ag-organism.html for any other routes
 app.get('*', (req, res) => {
-  const indexPath = path.join(__dirname, 'dist', 'index.html');
+  const htmlPath = path.join(__dirname, 'public', 'ag-organism.html');
   
-  if (fs.existsSync(indexPath)) {
-    let html = fs.readFileSync(indexPath, 'utf8');
+  if (fs.existsSync(htmlPath)) {
+    let html = fs.readFileSync(htmlPath, 'utf8');
     
     const envScript = `
       <script>
@@ -86,7 +87,7 @@ app.get('*', (req, res) => {
       </script>
     `;
     
-    html = html.replace('</head>', `${envScript}</head>`);
+    html = html.replace('<!-- ENV_INJECTED -->', envScript);
     res.setHeader('Content-Type', 'text/html');
     res.send(html);
   } else {
