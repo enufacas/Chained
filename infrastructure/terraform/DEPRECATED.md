@@ -1,10 +1,10 @@
-# ⚠️ DEPRECATED: Root Terraform Directory
+# Root Terraform Directory - Migration Complete
 
-**This directory is DEPRECATED as of PR #3704.**
+**The root Terraform files have been removed as of this PR.**
 
 ## New Structure
 
-The Terraform configuration has been split into two separate directories for better separation of concerns:
+The Terraform configuration is now split into two separate directories:
 
 ### 1. Base Infrastructure (`base/`)
 Location: `infrastructure/terraform/base/`
@@ -39,9 +39,7 @@ Contains:
 
 **Cost:** ~$15-50/month (always-on database)
 
-## Migration Guide
-
-**DO NOT** use the files in this root directory. They are kept temporarily for reference but will be removed.
+## Usage
 
 ### For Base Infrastructure
 ```bash
@@ -59,15 +57,16 @@ terraform plan
 terraform apply
 ```
 
-## Files to be Removed
+## Removed Files
 
-The following files in this directory are deprecated and should not be used:
-- `main.tf` - Split between `base/main.tf` and `ai-native/main.tf`
-- `adk-agents.tf` - Moved to `base/adk-agents.tf`
-- `ai-native-control-plane.tf` - Moved to `ai-native/ai-native-control-plane.tf`
-- `blog.tf` - Moved to `base/blog.tf`
-- `outputs.tf` - Split between `base/outputs.tf` and `ai-native/outputs.tf`
-- `variables.tf` - Split between `base/variables.tf` and `ai-native/variables.tf`
+The following files were removed from this directory (originally from PR #3704 separation):
+- ~~`main.tf`~~ - Split between `base/main.tf` and `ai-native/main.tf`
+- ~~`adk-agents.tf`~~ - Moved to `base/adk-agents.tf`
+- ~~`ai-native-control-plane.tf`~~ - Moved to `ai-native/ai-native-control-plane.tf`
+- ~~`blog.tf`~~ - Moved to `base/blog.tf`
+- ~~`outputs.tf`~~ - Split between `base/outputs.tf` and `ai-native/outputs.tf`
+- ~~`variables.tf`~~ - Split between `base/variables.tf` and `ai-native/variables.tf`
+- ~~`terraform.tfvars.example`~~ - Copied to both subdirectories
 
 ## Why the Split?
 
@@ -81,6 +80,15 @@ The following files in this directory are deprecated and should not be used:
 - Base: $10-25/month, scales to zero
 - AI-Native: $15-50/month, always-on database
 - Can disable AI-Native to save ~$20-30/month when not needed
+
+## Remaining Files in Root
+
+- `README.md` - Overview of infrastructure
+- `AI_NATIVE_README.md` - AI-Native specific documentation
+- `DEPRECATED.md` - This file
+- `bootstrap-deploy.sh` - Initial setup script (will be updated)
+- `base/` - Base infrastructure directory
+- `ai-native/` - AI-Native control plane directory
 
 ## Questions?
 

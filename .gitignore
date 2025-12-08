@@ -48,14 +48,15 @@ Thumbs.db
 gha-creds-*.json
 
 # Terraform
-infrastructure/terraform/.terraform/
-infrastructure/terraform/.terraform.lock.hcl
-infrastructure/terraform/*.tfstate
-infrastructure/terraform/*.tfstate.backup
-infrastructure/terraform/*.tfplan
-infrastructure/terraform/tfplan
-infrastructure/terraform/terraform.tfvars
-infrastructure/terraform/crash.log
+**/.terraform/
+**/.terraform.lock.hcl
+*.tfstate
+*.tfstate.backup
+*.tfplan
+**/tfplan
+terraform.tfvars
+**/crash.log
+**/crash.*.log
 
 # GCP credentials
 *-sa-key.json
