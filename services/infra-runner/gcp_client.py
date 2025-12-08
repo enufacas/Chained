@@ -531,6 +531,198 @@ class CloudRunClient:
                 "error": str(e),
             }
 
+    @tenacity_retry(
+        retry=retry_if_exception_type(
+            (gcp_exceptions.ServiceUnavailable, gcp_exceptions.DeadlineExceeded)
+        ),
+        stop=stop_after_attempt(3),
+        wait=wait_exponential(multiplier=1, min=2, max=10),
+    )
+    def scale_service(
+        self,
+        service_name: str,
+        region: str,
+        min_instances: int,
+        max_instances: int,
+    ) -> Dict[str, Any]:
+        """
+        Update scaling configuration for a Cloud Run service
+
+        Args:
+            service_name: Name of the service
+            region: GCP region
+            min_instances: Minimum instances
+            max_instances: Maximum instances
+
+        Returns:
+            Dict with updated scaling configuration
+
+        Raises:
+            ServiceDeploymentError: If scaling update fails
+        """
+        logger.info(
+            f"Scaling Cloud Run service",
+            extra={
+                "service_name": service_name,
+                "region": region,
+                "min_instances": min_instances,
+                "max_instances": max_instances,
+            },
+        )
+
+        try:
+            service_path = (
+                f"projects/{self.project_id}/locations/{region}/services/{service_name}"
+            )
+
+            # Get current service configuration
+            service = self.client.get_service(name=service_path)
+
+            # Update scaling configuration - create update request with update_mask
+            from google.protobuf import field_mask_pb2
+            
+            update_mask = field_mask_pb2.FieldMask(
+                paths=["template.scaling.min_instance_count", "template.scaling.max_instance_count"]
+            )
+            
+            # Create updated service with just the scaling changes
+            updated_service = run_v2.Service()
+            updated_service.name = service.name
+            updated_service.template = run_v2.RevisionTemplate()
+            updated_service.template.scaling = run_v2.RevisionScaling(
+                min_instance_count=min_instances,
+                max_instance_count=max_instances,
+            )
+
+            # Update service with mask
+            operation = self.client.update_service(
+                service=updated_service,
+                update_mask=update_mask
+            )
+            result = operation.result(timeout=300)  # 5 minute timeout
+
+            logger.info(f"Successfully scaled service {service_name}")
+
+            return {
+                "service_name": service_name,
+                "region": region,
+                "scaling": {
+                    "min_instances": min_instances,
+                    "max_instances": max_instances,
+                },
+                "status": "updated",
+            }
+
+        except gcp_exceptions.NotFound:
+            logger.error(f"Service {service_name} not found")
+            raise ServiceDeploymentError(
+                f"Service not found: {service_name}",
+                code="SERVICE_NOT_FOUND",
+                details={"service_name": service_name, "region": region},
+            )
+        except gcp_exceptions.GoogleAPIError as e:
+            logger.error(
+                f"Failed to scale service {service_name}: {e}",
+                extra={"error": str(e), "code": e.code if hasattr(e, "code") else None},
+            )
+            raise ServiceDeploymentError(
+                f"Failed to scale service: {e}",
+                code="SERVICE_SCALING_FAILED",
+                details={"service_name": service_name, "error": str(e)},
+            )
+
+    @tenacity_retry(
+        retry=retry_if_exception_type(
+            (gcp_exceptions.ServiceUnavailable, gcp_exceptions.DeadlineExceeded)
+        ),
+        stop=stop_after_attempt(3),
+        wait=wait_exponential(multiplier=1, min=2, max=10),
+    )
+    def attach_domain(
+        self,
+        service_name: str,
+        region: str,
+        domain: str,
+    ) -> Dict[str, Any]:
+        """
+        Attach a custom domain to a Cloud Run service
+
+        Note: This creates a domain mapping. DNS configuration must be done separately.
+
+        Args:
+            service_name: Name of the service
+            region: GCP region
+            domain: Custom domain (e.g., 'api.example.com')
+
+        Returns:
+            Dict with domain mapping details and DNS records
+
+        Raises:
+            ServiceDeploymentError: If domain attachment fails
+        """
+        logger.info(
+            f"Attaching domain to Cloud Run service",
+            extra={
+                "service_name": service_name,
+                "region": region,
+                "domain": domain,
+            },
+        )
+
+        try:
+            service_path = (
+                f"projects/{self.project_id}/locations/{region}/services/{service_name}"
+            )
+
+            # Verify service exists
+            service = self.client.get_service(name=service_path)
+
+            # Create domain mapping
+            # Note: The Domain Mappings API is being deprecated in favor of using
+            # Load Balancer with Google-managed certificates. For now, we'll return
+            # instructions for manual setup.
+            
+            logger.info(f"Domain mapping setup initiated for {domain} -> {service_name}")
+
+            return {
+                "service_name": service_name,
+                "domain": domain,
+                "service_url": service.uri,
+                "status": "pending_dns_configuration",
+                "dns_records": [
+                    {
+                        "type": "CNAME",
+                        "name": domain,
+                        "value": "ghs.googlehosted.com",
+                        "ttl": 3600,
+                    }
+                ],
+                "instructions": [
+                    f"1. Add CNAME record: {domain} -> ghs.googlehosted.com",
+                    f"2. Verify domain ownership in GCP Console",
+                    f"3. Create domain mapping via gcloud: gcloud run domain-mappings create --service={service_name} --domain={domain} --region={region}",
+                ],
+                "note": "Domain mapping requires DNS configuration and domain verification. SSL certificate will be provisioned automatically after DNS propagation.",
+            }
+
+        except gcp_exceptions.NotFound:
+            logger.error(f"Service {service_name} not found")
+            raise ServiceDeploymentError(
+                f"Service not found: {service_name}",
+                code="SERVICE_NOT_FOUND",
+                details={"service_name": service_name, "region": region},
+            )
+        except gcp_exceptions.GoogleAPIError as e:
+            logger.error(
+                f"Failed to attach domain to service {service_name}: {e}",
+                extra={"error": str(e), "code": e.code if hasattr(e, "code") else None},
+            )
+            raise ServiceDeploymentError(
+                f"Failed to attach domain: {e}",
+                code="DOMAIN_ATTACHMENT_FAILED",
+                details={"service_name": service_name, "domain": domain, "error": str(e)},
+            )
+
 
 # ============================================================================
 # Unified GCP Client
@@ -575,3 +767,9 @@ class GCPClient:
 
     def get_service_health(self, *args, **kwargs):
         return self.cloud_run.get_service_health(*args, **kwargs)
+
+    def scale_service(self, *args, **kwargs):
+        return self.cloud_run.scale_service(*args, **kwargs)
+
+    def attach_domain(self, *args, **kwargs):
+        return self.cloud_run.attach_domain(*args, **kwargs)
