@@ -393,11 +393,12 @@ async def health():
     
     # Try to check if already initialized (won't trigger initialization)
     try:
-        from shared.gemini_client import _initialized, _initialization_failed, _initialization_error
-        if _initialized:
+        from shared.gemini_client import get_initialization_status
+        status = get_initialization_status()
+        if status["initialized"]:
             ai_status = "initialized"
-        elif _initialization_failed:
-            ai_status = f"initialization_failed: {_initialization_error}"
+        elif status["failed"]:
+            ai_status = f"initialization_failed: {status['error']}"
     except Exception:
         pass  # Ignore errors during health check
     

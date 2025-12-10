@@ -47,6 +47,10 @@ USE_VERTEX_AI = os.getenv("USE_VERTEX_AI", "false").lower() in ("true", "1", "ye
 DEFAULT_GENAI_MODEL = "gemini-1.5-flash"  # Google AI Studio model name
 DEFAULT_VERTEX_MODEL = "gemini-2.0-flash"  # Vertex AI model name (stable, widely available)
 
+# Retry configuration for initialization
+MAX_INIT_RETRIES = 3
+RETRY_BASE_DELAY = 1  # Base delay in seconds for exponential backoff (1s, 2s, 4s)
+
 # =============================================================================
 # Availability Flags
 # =============================================================================
@@ -134,17 +138,16 @@ def _ensure_initialized():
             location = os.getenv("GOOGLE_CLOUD_LOCATION", "us-central1")
             
             # Retry logic for Cloud Run startup issues
-            max_retries = 3
-            for attempt in range(max_retries):
+            for attempt in range(MAX_INIT_RETRIES):
                 try:
                     vertexai.init(project=GOOGLE_CLOUD_PROJECT, location=location)
                     print(f"✅ Vertex AI initialized (project={GOOGLE_CLOUD_PROJECT}, location={location}, attempt={attempt+1})")
                     _initialized = True
                     return
                 except Exception as e:
-                    if attempt < max_retries - 1:
+                    if attempt < MAX_INIT_RETRIES - 1:
                         import time
-                        wait_time = 2 ** attempt  # Exponential backoff: 1s, 2s, 4s
+                        wait_time = RETRY_BASE_DELAY * (2 ** attempt)  # Exponential backoff
                         print(f"⚠️ Vertex AI init attempt {attempt+1} failed: {e}. Retrying in {wait_time}s...")
                         time.sleep(wait_time)
                     else:
@@ -374,4 +377,21 @@ def get_config_info() -> Dict[str, Any]:
         "has_project_id": bool(GOOGLE_CLOUD_PROJECT),
         "default_vertex_model": DEFAULT_VERTEX_MODEL,
         "default_genai_model": DEFAULT_GENAI_MODEL,
+    }
+
+
+def get_initialization_status() -> Dict[str, Any]:
+    """
+    Get the current initialization status.
+    
+    Returns:
+        Dict with:
+            - initialized: bool - Whether successfully initialized
+            - failed: bool - Whether initialization failed
+            - error: str or None - Error message if initialization failed
+    """
+    return {
+        "initialized": _initialized,
+        "failed": _initialization_failed,
+        "error": _initialization_error,
     }
