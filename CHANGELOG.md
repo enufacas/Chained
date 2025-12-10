@@ -34,7 +34,8 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x37) [#3811](https://github.com/enufacas/Chained/pull/3811)
+- 👤 **Documentation**: Document deployed URL for PR 3D organism implementation [#3816](https://github.com/enufacas/Chained/pull/3816)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x38) [#3813](https://github.com/enufacas/Chained/pull/3813)
 
 ---
 
@@ -192,12 +193,9 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 - 👤 🔧 Tools Fix TypeScript build error: use shared Pipeline interface in PipelineOutcomes [#3580](https://github.com/enufacas/Chained/pull/3580)
 - 👤 Fix AG-UI frontend: ERROR_OBSERVER_URL runtime config, localStorage quota, and pipeline detail persistence [#3558](https://github.com/enufacas/Chained/pull/3558)
-- 👤 Fix session timestamp preservation in work history page [#3555](https://github.com/enufacas/Chained/pull/3555)
-- 👤 Fix AG-UI Error Observer config race condition and session persistence data loss [#3554](https://github.com/enufacas/Chained/pull/3554)
-- 👤 Fix localStorage quota exceeded in AG-UI team runs and add E2E tests [#3552](https://github.com/enufacas/Chained/pull/3552)
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x4) [#3569](https://github.com/enufacas/Chained/pull/3569)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge [#3569](https://github.com/enufacas/Chained/pull/3569)
 
 ---
