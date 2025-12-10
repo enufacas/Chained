@@ -6,6 +6,76 @@ Format: `## [Date] PR #XXX - Title`
 
 ---
 
+## [2025-12-10] PR #TBD - Fix Real-Time Updates and Unify UI Display Styles
+
+### Problem
+Production AG-UI at https://chained-ag-ui-frontend-sguacxy5gq-uc.a.run.app/ had two critical issues:
+1. **Real-time updates unreliable**: Progress not updating during agent execution without page refresh
+2. **Inconsistent UI styles**: Historical runs showed minimal "summary" styles while live runs showed full detail
+
+### Root Causes
+1. **Polling too slow**: 5s for pipelines, 2s for sessions - not fast enough for user perception
+2. **Different display components**: Completed items used minimal summaries while active items used full details
+3. **Max-height restrictions**: Historical displays limited to 48px/264px while needing much more space
+
+### Fixed
+- **Unified Display Styles**:
+  - Completed team sessions now use SAME detailed view as active sessions
+    * Full agent statistics grid showing all agents
+    * Turn-by-turn progress with expandable steps
+    * Individual artifact displays with preview functionality
+    * Session configuration details (turns, execution mode)
+    * Increased max-height from 48px to 600px (12.5x more space)
+  
+  - Completed pipelines now use SAME detailed view as active pipelines
+    * Full phase visualization showing all 5 phases
+    * Detailed research/trends/blog result cards
+    * All keywords visible, not just first 3
+    * Increased max-height from 264px to 600px (2.3x more space)
+  
+  - **Removed ALL "smaller summary styles"** as requested
+    * No more truncated displays
+    * No more minimal artifact lists  
+    * Consistent component structure throughout
+    * Historical data now as useful as live data
+
+- **Improved Polling Frequency**:
+  - Pipeline polling: 5s → 2s interval (2.5x faster)
+  - Session polling: 2s → 1s interval (2x faster)
+  - Initial poll delay: 1s → 0.5s (2x faster first update)
+
+### Technical Details
+**Files Modified:**
+- `src/app/page.tsx` - Unified display components, improved polling intervals
+
+**Key Changes:**
+1. Completed sessions now render full detail with agent stats, turn results, and artifacts
+2. Completed pipelines now render full detail with phase visualization and result cards
+3. All polling intervals reduced for more responsive updates
+4. Max-height restrictions increased from 48px/264px to 600px
+
+**What Gets Displayed Now:**
+- Agent stats grid (all agents, not just summary count)
+- Turn-by-turn results with expandable artifact inspection
+- All artifacts (not just first 4)
+- Full configuration details (turns per agent, execution mode)
+- Complete phase visualization for pipelines
+- Full research/trends/blog data with proper cards
+
+### Benefits
+1. **Real-time updates work reliably** - Users see progress within 0.5-2 seconds
+2. **No page refresh needed** - Polling continues throughout execution
+3. **Consistent UX** - Active and completed items look identical
+4. **Better information density** - All data visible, not truncated
+5. **Historical data useful** - Past runs show same detail as live runs
+
+### Testing
+- ✅ Build: Compiled successfully with no errors
+- ✅ Type checking: All TypeScript types valid
+- ✅ UI consistency: Active and completed displays use same components
+
+---
+
 ## [2025-12-02] PR #TBD - Enhanced Frontend Error Logging and Monitoring
 
 ### Problem
