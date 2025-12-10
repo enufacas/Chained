@@ -104,6 +104,39 @@ Both services are automatically deployed via GitHub Actions workflow:
 - **Trigger**: Push to main branch or manual workflow_dispatch
 - **Process**: Build Docker image → Push to Artifact Registry → Deploy via Terraform
 
+## Testing & Verification
+
+### E2E Test Suite
+
+Comprehensive Playwright tests validate the live deployment:
+
+**Location**: `tests/e2e/`
+**Target**: https://chained-ag-ui-frontend-sguacxy5gq-uc.a.run.app
+
+**Test Coverage**:
+- ✅ Homepage load and UI rendering
+- ✅ Agent canvas and selection
+- ✅ Multi-agent blog writing workflow
+- ✅ UI polling and status updates
+- ✅ Pipeline history
+- ✅ Multi-agent coordination (A2A protocol)
+- ✅ Error handling
+- ✅ Real-time agent activity
+
+**Latest Test Results** (2025-12-10):
+- **Status**: All tests passing (8/8) ✅
+- **Duration**: 2.8 minutes
+- **System Health**: 9/9 agents healthy
+- **See**: `docs/E2E_TEST_EXECUTION_SUMMARY.md`
+
+**Run Tests**:
+```bash
+cd tests/e2e
+npm install
+npx playwright install chromium
+npm test
+```
+
 ## Summary
 
 **Your question**: "What is the url of my deployed ag-ui with the organism style to gcp?"

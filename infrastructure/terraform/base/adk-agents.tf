@@ -116,6 +116,14 @@ resource "google_project_iam_member" "adk_agents_vertex_ai" {
   member  = "serviceAccount:${google_service_account.adk_agents.email}"
 }
 
+# Grant access to Firestore/Datastore (for AG-UI persistent storage)
+# Required for AG-UI Frontend to store pipeline sessions and artifacts in Firestore
+resource "google_project_iam_member" "adk_agents_datastore" {
+  project = var.project_id
+  role    = "roles/datastore.user"
+  member  = "serviceAccount:${google_service_account.adk_agents.email}"
+}
+
 # =============================================================================
 # Cloud Run: Academic Research Agent
 # =============================================================================

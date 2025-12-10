@@ -1,0 +1,19 @@
+{
+  "name": "chained-e2e-tests",
+  "version": "1.0.0",
+  "description": "End-to-end tests for Chained AG-UI using Playwright",
+  "private": true,
+  "scripts": {
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:debug": "playwright test --debug",
+    "test:ui": "playwright test --ui",
+    "test:live": "playwright test --grep @live",
+    "test:quick": "playwright test --grep @quick"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.48.0",
+    "@types/node": "^22.9.3",
+    "typescript": "^5.7.2"
+  }
+}
