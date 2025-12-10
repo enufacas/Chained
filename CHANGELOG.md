@@ -44,7 +44,8 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x46) [#3834](https://github.com/enufacas/Chained/pull/3834)
+- 🤖 **Documentation**: 📚 Sync World State to Docs - Pipeline [#3841](https://github.com/enufacas/Chained/pull/3841)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x47) [#3842](https://github.com/enufacas/Chained/pull/3842)
 - 👤 **Documentation**: Document deployed URL for PR 3D organism implementation [#3816](https://github.com/enufacas/Chained/pull/3816)
 - 🤖 **Chore**: 🌍 World Model Update - Pipeline [#3833](https://github.com/enufacas/Chained/pull/3833)
 
