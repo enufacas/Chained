@@ -155,6 +155,25 @@ Technical documentation for developers:
 - **[CODE_REVIEW_GUIDE_TESTING.md](./CODE_REVIEW_GUIDE_TESTING.md)** - Python testing best practices
 - **[VALIDATION_BEST_PRACTICES.md](./VALIDATION_BEST_PRACTICES.md)** - Input validation guide
 
+### ADK A2A Blog Pipeline
+
+**⭐ New! Production A2A-compatible agents on Google Cloud Run (@create-botter):**
+
+- **[ADK_A2A_PIPELINE_IMPLEMENTATION.md](./ADK_A2A_PIPELINE_IMPLEMENTATION.md)** - Main implementation documentation
+- **[ADK_PIPELINE_TRACKING_GUIDE.md](./ADK_PIPELINE_TRACKING_GUIDE.md)** - ⭐ **NEW!** Complete tracking system guide
+- **[ADK_PIPELINE_QUICK_REF.md](./ADK_PIPELINE_QUICK_REF.md)** - ⭐ **NEW!** Quick reference and commands
+- **[tools/adk-pipeline-status.sh](../tools/adk-pipeline-status.sh)** - ⭐ **NEW!** Interactive CLI helper tool
+- **[Tracking Issue #3894](https://github.com/enufacas/Chained/issues/3894)** - Live pipeline run history
+
+**Quick Start:**
+```bash
+# View tracking issue
+./tools/adk-pipeline-status.sh view
+
+# Trigger pipeline run
+./tools/adk-pipeline-status.sh trigger
+```
+
 ## 🤝 Copilot Integration
 
 How GitHub Copilot powers the system:

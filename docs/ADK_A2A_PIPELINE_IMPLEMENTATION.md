@@ -256,7 +256,14 @@ gcloud run services logs read chained-academic-research --region=us-central1
 
 ## References
 
+### External Documentation
 - [Google ADK Samples](https://github.com/google/adk-samples)
 - [A2A Protocol Specification](https://a2a-protocol.org/)
 - [ADK Cloud Run Deployment](https://google.github.io/adk-docs/deploy/cloud-run/)
 - [ADK Documentation](https://google.github.io/adk-docs/)
+
+### Internal Documentation
+- **Tracking Guide:** [`docs/ADK_PIPELINE_TRACKING_GUIDE.md`](./ADK_PIPELINE_TRACKING_GUIDE.md) - Complete guide to the tracking system
+- **Quick Reference:** [`docs/ADK_PIPELINE_QUICK_REF.md`](./ADK_PIPELINE_QUICK_REF.md) - Quick commands and tips
+- **Helper Script:** [`tools/adk-pipeline-status.sh`](../tools/adk-pipeline-status.sh) - CLI tool for managing tracking issue
+- **Tracking Issue Fix:** [`docs/implementation-summaries/ADK_PIPELINE_TRACKING_ISSUE_FIX.md`](./implementation-summaries/ADK_PIPELINE_TRACKING_ISSUE_FIX.md) - Implementation details
