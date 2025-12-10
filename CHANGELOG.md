@@ -30,7 +30,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x29) [#3756](https://github.com/enufacas/Chained/pull/3756)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x30) [#3798](https://github.com/enufacas/Chained/pull/3798)
 
 ---
 
@@ -59,6 +59,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
+- 👤 📚 Docs **Documentation**: Elevate changelog visibility in README and refresh documentation index [#3790](https://github.com/enufacas/Chained/pull/3790)
 - 🤖 **Documentation**: 📚 Sync World State to Docs - Pipeline [#3776](https://github.com/enufacas/Chained/pull/3776)
 - 👤 🔧 Agents **Documentation**: Document existing A2A multi-agent orchestration patterns [#3630](https://github.com/enufacas/Chained/pull/3630)
 - 🤖 **Chore**: 🌍 World Model Update - Pipeline [#3767](https://github.com/enufacas/Chained/pull/3767)
