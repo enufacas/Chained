@@ -263,7 +263,8 @@ test.describe('AG-UI Live Deployment Tests', () => {
     console.log('Testing multi-agent coordination...');
     
     // Create a pipeline that will use multiple agents
-    const testTopic = `Multi-Agent Test - AI trends in 2024`;
+    const currentYear = new Date().getFullYear();
+    const testTopic = `Multi-Agent Test - AI trends in ${currentYear}`;
     const createResponse = await page.request.post('/api/pipeline', {
       data: { topic: testTopic },
     });
