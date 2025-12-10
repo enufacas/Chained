@@ -30,7 +30,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x32) [#3801](https://github.com/enufacas/Chained/pull/3801)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x33) [#3804](https://github.com/enufacas/Chained/pull/3804)
 
 ---
 
@@ -38,6 +38,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### ✨ Features
 
+- 👤 📋 Instructions Add interactive 3D visualization of multi-tiered instruction architecture [#3802](https://github.com/enufacas/Chained/pull/3802)
 - 👤 3D AG-UI organism with react-three-fiber and standard theme [#3800](https://github.com/enufacas/Chained/pull/3800)
 - 👤 meta-coordination: 2025-12-10 02:04 run - closed 22 PRs, merged 2, reduced open count 55% [#3756](https://github.com/enufacas/Chained/pull/3756)
 - 👤 🔧 Agents Research: API-Claude integration patterns for agent-to-service bridges [#3778](https://github.com/enufacas/Chained/pull/3778)
