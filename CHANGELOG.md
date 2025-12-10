@@ -28,14 +28,20 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ## 2025-12-10
 
+### ✨ Features
+
+- 👤 meta-coordination: 2025-12-10 04:25 - closed 4 stale CHANGELOG PRs, 50% reduction achieved [#3809](https://github.com/enufacas/Chained/pull/3809)
+
 ### 🐛 Bug Fixes
 
+- 👤 🏗️ Infrastructure Fix Cloud Run startup failures with lazy Vertex AI initialization and tolerant probes [#3814](https://github.com/enufacas/Chained/pull/3814)
+- 👤 Add E2E tests, document deployment URLs, fix Firestore permissions [#3815](https://github.com/enufacas/Chained/pull/3815)
 - 👤 📋 Instructions Regenerate AG-UI Frontend package-lock.json and add package management instructions [#20086950265](https://github.com/enufacas/Chained/pull/20086950265)
 
 ### 🧹 Chores & Maintenance
 
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x41) [#3814](https://github.com/enufacas/Chained/pull/3814)
 - 👤 **Documentation**: Document deployed URL for PR 3D organism implementation [#3816](https://github.com/enufacas/Chained/pull/3816)
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x38) [#3813](https://github.com/enufacas/Chained/pull/3813)
 
 ---
 
