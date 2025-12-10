@@ -30,7 +30,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x16) [#3763](https://github.com/enufacas/Chained/pull/3763)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x17) [#3764](https://github.com/enufacas/Chained/pull/3764)
 
 ---
 
@@ -38,6 +38,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### ✨ Features
 
+- 🤖 🧠 Learning 🧠 Learning Pipeline - 2025-12-10 [#3765](https://github.com/enufacas/Chained/pull/3765)
 - 👤 📚 Docs Elevate AI-Native Control Plane and Mission System in README [#3761](https://github.com/enufacas/Chained/pull/3761)
 - 🤖 🎯 Daily goal for 2025-12-09 [#3729](https://github.com/enufacas/Chained/pull/3729)
 - 🤖 🧠 Learning 🧠 Learn from GitHub Copilot sources - 2025-12-09 [#3731](https://github.com/enufacas/Chained/pull/3731)
