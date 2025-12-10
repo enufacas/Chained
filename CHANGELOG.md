@@ -30,7 +30,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x8) [#3749](https://github.com/enufacas/Chained/pull/3749)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x9) [#3750](https://github.com/enufacas/Chained/pull/3750)
 
 ---
 
@@ -183,6 +183,5 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 - 👤 resolve ESLint errors in AG-UI Frontend storage.ts [#3550](https://github.com/enufacas/Chained/pull/3550)
 - 👤 🔧 Agents Fix error-observer GitHub dispatch, agent display, localStorage quota, concurrent writes, and A2A protocol compliance [#3548](https://github.com/enufacas/Chained/pull/3548)
-- 👤 🔧 Agents Enable Vertex AI API for ADK agent authentication [#3542](https://github.com/enufacas/Chained/pull/3542)
 
 ---
