@@ -114,11 +114,15 @@ test.describe('AG-UI Live Deployment Tests', () => {
     
     console.log('Pipeline created:', createData);
     
-    expect(createData).toHaveProperty('id');
-    expect(createData).toHaveProperty('status');
-    expect(['pending', 'running']).toContain(createData.status);
+    // Response has format: { success: true, pipeline: { id, status, ... } }
+    expect(createData).toHaveProperty('success');
+    expect(createData.success).toBe(true);
+    expect(createData).toHaveProperty('pipeline');
+    expect(createData.pipeline).toHaveProperty('id');
+    expect(createData.pipeline).toHaveProperty('status');
+    expect(['pending', 'running']).toContain(createData.pipeline.status);
     
-    const pipelineId = createData.id;
+    const pipelineId = createData.pipeline.id;
     
     // Step 2: Take screenshot of initial state
     await page.screenshot({ path: 'test-results/pipeline-started.png', fullPage: true });
@@ -176,7 +180,7 @@ test.describe('AG-UI Live Deployment Tests', () => {
     });
     
     const createData = await createResponse.json();
-    const pipelineId = createData.id;
+    const pipelineId = createData.pipeline.id;
     
     console.log('Pipeline created for polling test:', pipelineId);
     
@@ -266,7 +270,7 @@ test.describe('AG-UI Live Deployment Tests', () => {
     
     expect(createResponse.ok()).toBeTruthy();
     const createData = await createResponse.json();
-    const pipelineId = createData.id;
+    const pipelineId = createData.pipeline.id;
     
     console.log('Multi-agent pipeline created:', pipelineId);
     
