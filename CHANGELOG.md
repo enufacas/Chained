@@ -30,7 +30,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x27) [#3779](https://github.com/enufacas/Chained/pull/3779)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x29) [#3756](https://github.com/enufacas/Chained/pull/3756)
 
 ---
 
@@ -38,6 +38,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### ✨ Features
 
+- 👤 meta-coordination: 2025-12-10 02:04 run - closed 22 PRs, merged 2, reduced open count 55% [#3756](https://github.com/enufacas/Chained/pull/3756)
 - 👤 🔧 Agents Research: API-Claude integration patterns for agent-to-service bridges [#3778](https://github.com/enufacas/Chained/pull/3778)
 - 👤 🧠 Learning Complete learning mission idea:89 - Go language trends (2025-11-24) [#3779](https://github.com/enufacas/Chained/pull/3779)
 - 👤 🧠 Learning Complete DevOps Cloud learning mission (idea:90) - @cloud-architect [#3780](https://github.com/enufacas/Chained/pull/3780)
@@ -51,6 +52,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🐛 Bug Fixes
 
+- 👤 Remove ESLint violations blocking AG-UI Frontend build [#3788](https://github.com/enufacas/Chained/pull/3788)
 - 👤 ⚙️ Workflows Fix GitHub Pages empty sections via aggregated data files and workflow automation [#3775](https://github.com/enufacas/Chained/pull/3775)
 - 👤 Sync AG-UI Frontend package-lock.json with package.json [#3785](https://github.com/enufacas/Chained/pull/3785)
 - 👤 [WIP] Close issues older than two hours and conflicted PRs [#3760](https://github.com/enufacas/Chained/pull/3760)
