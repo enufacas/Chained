@@ -14,8 +14,8 @@ export default function SceneSetup() {
   const { scene } = useThree();
 
   useEffect(() => {
-    // Set up fog for depth effect
-    scene.fog = new THREE.FogExp2(0x0a0e1a, 0.012);
+    // Subtle fog for depth (slate-900 background color)
+    scene.fog = new THREE.FogExp2(0x0f172a, 0.008);
   }, [scene]);
 
   return (
@@ -32,20 +32,20 @@ export default function SceneSetup() {
         target={[0, 0, 0]}
       />
 
-      {/* Ambient Light */}
-      <ambientLight intensity={0.3} />
+      {/* Ambient Light - general illumination */}
+      <ambientLight intensity={0.4} />
 
-      {/* Hemisphere Light for better ambient */}
+      {/* Hemisphere Light - subtle gradient from top to bottom */}
       <hemisphereLight
-        color={0x0099ff}
-        groundColor={0xff0099}
-        intensity={0.4}
+        color={0xffffff}
+        groundColor={0x334155}
+        intensity={0.5}
       />
 
-      {/* Main Directional Light with shadows */}
+      {/* Main Directional Light with shadows - clean studio lighting */}
       <directionalLight
         position={[30, 40, 20]}
-        intensity={1.5}
+        intensity={1.2}
         castShadow
         shadow-mapSize-width={2048}
         shadow-mapSize-height={2048}
@@ -57,10 +57,9 @@ export default function SceneSetup() {
         shadow-camera-bottom={-100}
       />
 
-      {/* Accent Point Lights */}
-      <pointLight position={[25, 20, 25]} color={0x00ffff} intensity={2} distance={100} castShadow />
-      <pointLight position={[-25, -10, -25]} color={0xff00ff} intensity={2} distance={100} castShadow />
-      <pointLight position={[0, 30, 0]} color={0xffaa00} intensity={1.5} distance={80} />
+      {/* Fill lights - subtle, no strong colors */}
+      <pointLight position={[20, 15, 20]} color={0xffffff} intensity={0.8} distance={80} />
+      <pointLight position={[-20, 10, -20]} color={0xffffff} intensity={0.6} distance={80} />
     </>
   );
 }

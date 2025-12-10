@@ -30,41 +30,8 @@ export default function AgentHumanoid3D({
   const floatOffset = useRef(Math.random() * Math.PI * 2);
   const originalY = useRef(position[1]);
 
-  // Material for the humanoid
-  const material = useMemo(
-    () =>
-      new THREE.MeshStandardMaterial({
-        color: new THREE.Color(color),
-        emissive: new THREE.Color(color),
-        emissiveIntensity: status === 'working' ? 0.8 : 0.6,
-        metalness: 0.9,
-        roughness: 0.1,
-      }),
-    [color, status]
-  );
-
-  // Visor material
-  const visorMaterial = useMemo(
-    () =>
-      new THREE.MeshBasicMaterial({
-        color: 0x00ffff,
-        transparent: true,
-        opacity: 0.8,
-      }),
-    []
-  );
-
-  // Glow material
-  const glowMaterial = useMemo(
-    () =>
-      new THREE.MeshBasicMaterial({
-        color: new THREE.Color(color),
-        transparent: true,
-        opacity: 0.3,
-        side: THREE.BackSide,
-      }),
-    [color]
-  );
+  // Calculate emissive intensity based on status
+  const emissiveIntensity = status === 'working' ? 0.3 : 0.1;
 
   // Animation
   useFrame((state) => {
@@ -98,18 +65,37 @@ export default function AgentHumanoid3D({
       onPointerOut={() => document.body.style.cursor = 'default'}
     >
       {/* Head */}
-      <mesh position={[0, size * 1.5, 0]} castShadow receiveShadow material={material}>
+      <mesh position={[0, size * 1.5, 0]} castShadow receiveShadow>
         <sphereGeometry args={[size * 0.4, 16, 16]} />
+        <meshStandardMaterial
+          color={color}
+          emissive={color}
+          emissiveIntensity={emissiveIntensity}
+          metalness={0.5}
+          roughness={0.5}
+        />
       </mesh>
 
       {/* Visor/Eyes */}
-      <mesh position={[0, size * 1.5, size * 0.4]} material={visorMaterial}>
+      <mesh position={[0, size * 1.5, size * 0.4]}>
         <planeGeometry args={[size * 0.6, size * 0.15]} />
+        <meshBasicMaterial
+          color={0x3b82f6}
+          transparent
+          opacity={0.6}
+        />
       </mesh>
 
       {/* Torso */}
-      <mesh position={[0, size * 0.6, 0]} castShadow receiveShadow material={material}>
+      <mesh position={[0, size * 0.6, 0]} castShadow receiveShadow>
         <capsuleGeometry args={[size * 0.35, size * 0.8, 8, 16]} />
+        <meshStandardMaterial
+          color={color}
+          emissive={color}
+          emissiveIntensity={emissiveIntensity}
+          metalness={0.5}
+          roughness={0.5}
+        />
       </mesh>
 
       {/* Chest Light */}
@@ -128,9 +114,15 @@ export default function AgentHumanoid3D({
         rotation={[0, 0, Math.PI * 0.15]}
         castShadow
         receiveShadow
-        material={material}
       >
         <capsuleGeometry args={[size * 0.15, size * 0.7, 4, 8]} />
+        <meshStandardMaterial
+          color={color}
+          emissive={color}
+          emissiveIntensity={emissiveIntensity}
+          metalness={0.5}
+          roughness={0.5}
+        />
       </mesh>
 
       {/* Right Arm */}
@@ -139,9 +131,15 @@ export default function AgentHumanoid3D({
         rotation={[0, 0, -Math.PI * 0.15]}
         castShadow
         receiveShadow
-        material={material}
       >
         <capsuleGeometry args={[size * 0.15, size * 0.7, 4, 8]} />
+        <meshStandardMaterial
+          color={color}
+          emissive={color}
+          emissiveIntensity={emissiveIntensity}
+          metalness={0.5}
+          roughness={0.5}
+        />
       </mesh>
 
       {/* Left Leg */}
@@ -149,9 +147,15 @@ export default function AgentHumanoid3D({
         position={[-size * 0.2, size * -0.4, 0]}
         castShadow
         receiveShadow
-        material={material}
       >
         <capsuleGeometry args={[size * 0.18, size * 0.8, 4, 8]} />
+        <meshStandardMaterial
+          color={color}
+          emissive={color}
+          emissiveIntensity={emissiveIntensity}
+          metalness={0.5}
+          roughness={0.5}
+        />
       </mesh>
 
       {/* Right Leg */}
@@ -159,34 +163,25 @@ export default function AgentHumanoid3D({
         position={[size * 0.2, size * -0.4, 0]}
         castShadow
         receiveShadow
-        material={material}
       >
         <capsuleGeometry args={[size * 0.18, size * 0.8, 4, 8]} />
-      </mesh>
-
-      {/* Glow Effect */}
-      <mesh position={[0, size * 0.5, 0]} material={glowMaterial}>
-        <sphereGeometry args={[size * 1.3, 16, 16]} />
-      </mesh>
-
-      {/* Wireframe overlay for cyberpunk effect */}
-      <mesh position={[0, size * 0.5, 0]}>
-        <sphereGeometry args={[size * 1.1, 8, 8]} />
-        <meshBasicMaterial
+        <meshStandardMaterial
           color={color}
-          wireframe
-          transparent
-          opacity={0.2}
+          emissive={color}
+          emissiveIntensity={emissiveIntensity}
+          metalness={0.5}
+          roughness={0.5}
         />
       </mesh>
 
-      {/* Data ring around agent */}
-      <mesh position={[0, size * 0.5, 0]} rotation={[Math.PI / 2, 0, 0]}>
-        <torusGeometry args={[size * 1.4, size * 0.03, 8, 32]} />
+      {/* Subtle highlight (minimal, not glowing) */}
+      <mesh position={[0, size * 0.5, 0]}>
+        <sphereGeometry args={[size * 1.15, 16, 16]} />
         <meshBasicMaterial
-          color={0x00ffff}
+          color={color}
           transparent
-          opacity={0.5}
+          opacity={0.1}
+          side={THREE.BackSide}
         />
       </mesh>
     </group>

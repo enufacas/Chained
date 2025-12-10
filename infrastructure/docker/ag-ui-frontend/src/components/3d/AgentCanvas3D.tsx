@@ -44,17 +44,17 @@ interface AgentCanvas3DProps {
   showConnections?: boolean;
 }
 
-// Color mapping for different agent types
+// Color mapping for different agent types - clean, professional colors
 const getAgentColor = (agentId: string): number => {
   const colors: Record<string, number> = {
-    'academic-research': 0x00ffff,
-    'google-trends': 0xff00ff,
-    'blog-writer': 0x00ff00,
-    'code-reviewer': 0xffaa00,
-    'data-analyst': 0x9900ff,
-    'image-generator': 0xff0099,
+    'academic-research': 0x3b82f6, // blue-500
+    'google-trends': 0x10b981,     // green-500
+    'blog-writer': 0x8b5cf6,       // purple-500
+    'code-reviewer': 0xf59e0b,     // yellow-500
+    'data-analyst': 0x06b6d4,      // cyan-500
+    'image-generator': 0xec4899,   // pink-500
   };
-  return colors[agentId] || 0x00ffff;
+  return colors[agentId] || 0x6366f1; // indigo-500 default
 };
 
 export default function AgentCanvas3D({
@@ -88,7 +88,7 @@ export default function AgentCanvas3D({
     .filter((pos): pos is [number, number, number] => pos !== undefined);
 
   return (
-    <div style={{ width: '100%', height: '100%', background: '#0a0e1a' }}>
+    <div style={{ width: '100%', height: '100%', background: '#0f172a' }}> {/* slate-900 */}
       <Canvas
         shadows
         gl={{
@@ -126,16 +126,15 @@ export default function AgentCanvas3D({
                   center
                   distanceFactor={10}
                   style={{
-                    color: '#00ffff',
+                    color: '#f1f5f9', // slate-100
                     fontSize: '12px',
-                    fontFamily: 'Segoe UI, sans-serif',
-                    background: 'rgba(10, 14, 26, 0.8)',
+                    fontFamily: 'system-ui, sans-serif',
+                    background: 'rgba(15, 23, 42, 0.9)', // slate-900
                     padding: '4px 8px',
                     borderRadius: '4px',
-                    border: '1px solid #00ffff',
+                    border: '1px solid #475569', // slate-600
                     whiteSpace: 'nowrap',
                     pointerEvents: 'none',
-                    textShadow: '0 0 5px rgba(0, 255, 255, 0.5)',
                   }}
                 >
                   {agent.icon} {agent.displayName}
@@ -146,7 +145,7 @@ export default function AgentCanvas3D({
 
           {/* Connection lines between selected agents */}
           {showConnections && selectedPositions.length > 1 && (
-            <ConnectionLines3D positions={selectedPositions} color={0xff00ff} />
+            <ConnectionLines3D positions={selectedPositions} color={0x3b82f6} /> {/* blue-500 */}
           )}
 
           {/* Artifact visualizations */}
@@ -168,11 +167,11 @@ function LoadingFallback() {
   return (
     <Html center>
       <div style={{
-        color: '#00ffff',
-        fontSize: '16px',
-        fontFamily: 'Courier New, monospace',
+        color: '#94a3b8', // slate-400
+        fontSize: '14px',
+        fontFamily: 'system-ui, sans-serif',
       }}>
-        INITIALIZING 3D SCENE...
+        Loading 3D Scene...
       </div>
     </Html>
   );

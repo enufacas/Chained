@@ -262,10 +262,10 @@ export default function OrganismPage() {
           <div className="flex-1 flex overflow-hidden">
             
             {/* Left Panel - Agent Selection */}
-            <div className="w-80 bg-[rgba(10,14,26,0.95)] border-r-2 border-cyan-400 overflow-y-auto">
-              <div className="sticky top-0 bg-cyan-400/10 border-b border-cyan-400 p-4 z-10">
-                <h2 className="text-sm uppercase tracking-widest text-cyan-400 mb-2">Available Agents</h2>
-                <p className="text-xs text-gray-500">Click to select agents for execution</p>
+            <div className="w-80 bg-slate-800/95 border-r border-slate-700 overflow-y-auto">
+              <div className="sticky top-0 bg-slate-800 border-b border-slate-700 p-4 z-10">
+                <h2 className="text-sm font-semibold text-white mb-2">Available Agents</h2>
+                <p className="text-xs text-slate-400">Click to select agents for execution</p>
               </div>
               
               <div className="p-3">
@@ -273,21 +273,22 @@ export default function OrganismPage() {
                   <div
                     key={agent.id}
                     onClick={() => toggleAgentSelection(agent.id)}
-                    className={`p-3 mb-2 rounded cursor-pointer transition-all border-l-4 ${
+                    className={`p-3 mb-2 rounded cursor-pointer transition-all border-l-2 ${
                       selectedAgents.has(agent.id)
-                        ? 'bg-magenta-400/20 border-magenta-400'
-                        : 'bg-cyan-400/5 border-cyan-400'
-                    } hover:bg-cyan-400/15 hover:translate-x-1`}
+                        ? 'bg-blue-500/20 border-blue-500'
+                        : 'bg-slate-700/30 border-slate-600'
+                    } hover:bg-slate-700/50`}
                   >
                     <div className="flex items-start gap-2">
                       <span className="text-2xl">{agent.icon}</span>
                       <div className="flex-1">
-                        <div className="font-bold text-cyan-400 text-sm mb-1">{agent.displayName}</div>
-                        <div className="text-xs text-gray-500 mb-1">{agent.description}</div>
+                        <div className="font-semibold text-white text-sm mb-1">{agent.displayName}</div>
+                        <div className="text-xs text-slate-400 mb-1">{agent.description}</div>
                         <span className={`inline-block px-2 py-1 text-[10px] uppercase rounded ${
-                          agent.status === 'working' ? 'bg-green-400/20 text-green-400' :
-                          agent.status === 'completed' ? 'bg-cyan-400/20 text-cyan-400' :
-                          'bg-gray-400/20 text-gray-400'
+                          agent.status === 'working' ? 'bg-blue-500/20 text-blue-400' :
+                          agent.status === 'completed' ? 'bg-green-500/20 text-green-400' :
+                          agent.status === 'failed' ? 'bg-red-500/20 text-red-400' :
+                          'bg-slate-600/20 text-slate-400'
                         }`}>
                           {agent.status}
                         </span>
@@ -311,12 +312,12 @@ export default function OrganismPage() {
             </div>
 
             {/* Right Panel - Prompt & Activity */}
-            <div className="w-[350px] bg-[rgba(10,14,26,0.95)] border-l-2 border-cyan-400 p-5 overflow-y-auto">
+            <div className="w-[350px] bg-slate-800/95 border-l border-slate-700 p-5 overflow-y-auto">
               
               {/* Selected Agents */}
               <div className="mb-5">
-                <h3 className="text-sm uppercase text-magenta-400 mb-2">Selected Agents</h3>
-                <div className="text-xs text-gray-500">
+                <h3 className="text-sm font-semibold text-white mb-2">Selected Agents</h3>
+                <div className="text-xs text-slate-400">
                   {selectedAgents.size === 0 ? (
                     <em>No agents selected</em>
                   ) : (
@@ -324,7 +325,7 @@ export default function OrganismPage() {
                       {Array.from(selectedAgents).map(id => {
                         const agent = agents.find(a => a.id === id);
                         return agent ? (
-                          <span key={id} className="inline-block px-2 py-1 bg-magenta-400/20 border border-magenta-400 rounded text-magenta-400">
+                          <span key={id} className="inline-block px-2 py-1 bg-blue-500/20 border border-blue-500 rounded text-blue-400 text-xs">
                             {agent.icon} {agent.displayName}
                           </span>
                         ) : null;
@@ -336,14 +337,14 @@ export default function OrganismPage() {
 
               {/* Execution Prompt */}
               <div className="mb-5">
-                <h3 className="text-sm uppercase text-magenta-400 mb-2">Execution Prompt</h3>
+                <h3 className="text-sm font-semibold text-white mb-2">Execution Prompt</h3>
                 <textarea
                   value={prompt}
                   onChange={(e) => setPrompt(e.target.value)}
                   placeholder="Enter your prompt for the selected agents...
 
 Example: Research the latest trends in AI and create a blog post about them."
-                  className="w-full min-h-[150px] p-3 bg-black/70 border border-cyan-400 rounded text-cyan-400 font-mono text-xs resize-vertical placeholder:text-gray-600"
+                  className="w-full min-h-[150px] p-3 bg-slate-900/70 border border-slate-600 rounded text-white text-xs resize-vertical placeholder:text-slate-500"
                 />
               </div>
 
@@ -351,24 +352,24 @@ Example: Research the latest trends in AI and create a blog post about them."
               <button
                 onClick={executePipeline}
                 disabled={selectedAgents.size === 0 || !prompt.trim() || isExecuting}
-                className="w-full py-3 bg-gradient-to-r from-magenta-500 to-cyan-500 rounded text-white font-bold uppercase transition-all hover:shadow-[0_0_20px_rgba(255,0,255,0.8)] hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+                className="w-full py-3 bg-blue-500 rounded text-white font-semibold uppercase transition-all hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-blue-500"
               >
-                {isExecuting ? 'EXECUTING...' : 'Execute Pipeline'}
+                {isExecuting ? 'Executing...' : 'Execute Pipeline'}
               </button>
 
               {/* Activity Log */}
               <div className="mt-5">
-                <h3 className="text-sm uppercase text-magenta-400 mb-2">Activity Log</h3>
-                <div className="max-h-[300px] overflow-y-auto text-xs font-mono bg-black/50 border border-cyan-400 rounded p-2">
+                <h3 className="text-sm font-semibold text-white mb-2">Activity Log</h3>
+                <div className="max-h-[300px] overflow-y-auto text-xs bg-slate-900/50 border border-slate-700 rounded p-2">
                   {activityLog.map((log, i) => (
                     <div key={i} className={`mb-2 pb-2 border-l-2 pl-2 ${
-                      log.type === 'agent' ? 'border-magenta-400' :
-                      log.type === 'artifact' ? 'border-green-400' :
-                      log.type === 'error' ? 'border-red-400' :
-                      'border-cyan-400'
+                      log.type === 'agent' ? 'border-blue-500' :
+                      log.type === 'artifact' ? 'border-green-500' :
+                      log.type === 'error' ? 'border-red-500' :
+                      'border-slate-600'
                     }`}>
-                      <span className="text-gray-600 mr-2">[{log.timestamp}]</span>
-                      <span className="text-cyan-400">{log.message}</span>
+                      <span className="text-slate-500 mr-2">[{log.timestamp}]</span>
+                      <span className="text-slate-300">{log.message}</span>
                     </div>
                   ))}
                 </div>
@@ -377,26 +378,26 @@ Example: Research the latest trends in AI and create a blog post about them."
           </div>
 
           {/* Control Panel */}
-          <div className="absolute bottom-5 left-1/2 transform -translate-x-1/2 bg-[rgba(10,14,26,0.95)] border-2 border-cyan-400 rounded-lg px-5 py-3 flex gap-4 items-center shadow-[0_4px_20px_rgba(0,255,255,0.3)] z-40">
+          <div className="absolute bottom-5 left-1/2 transform -translate-x-1/2 bg-slate-800/95 border border-slate-700 rounded-lg px-5 py-3 flex gap-4 items-center z-40">
             <button
               onClick={() => {/* Reset camera */}}
-              className={`px-4 py-2 border border-cyan-400 text-cyan-400 rounded text-xs uppercase transition-all hover:bg-cyan-400/30`}
+              className="px-4 py-2 border border-slate-600 text-slate-300 rounded text-xs font-medium transition-all hover:bg-slate-700"
             >
               Reset View
             </button>
             <button
               onClick={() => setEnableBloom(!enableBloom)}
-              className={`px-4 py-2 border rounded text-xs uppercase transition-all ${
-                enableBloom ? 'bg-magenta-400/30 border-magenta-400 text-magenta-400' : 'border-cyan-400 text-cyan-400'
-              } hover:bg-cyan-400/30`}
+              className={`px-4 py-2 border rounded text-xs font-medium transition-all ${
+                enableBloom ? 'bg-blue-500/20 border-blue-500 text-blue-400' : 'border-slate-600 text-slate-300'
+              } hover:bg-slate-700`}
             >
               Bloom: {enableBloom ? 'ON' : 'OFF'}
             </button>
             <button
               onClick={() => setShowConnections(!showConnections)}
-              className={`px-4 py-2 border rounded text-xs uppercase transition-all ${
-                showConnections ? 'bg-magenta-400/30 border-magenta-400 text-magenta-400' : 'border-cyan-400 text-cyan-400'
-              } hover:bg-cyan-400/30`}
+              className={`px-4 py-2 border rounded text-xs font-medium transition-all ${
+                showConnections ? 'bg-blue-500/20 border-blue-500 text-blue-400' : 'border-slate-600 text-slate-300'
+              } hover:bg-slate-700`}
             >
               Connections: {showConnections ? 'ON' : 'OFF'}
             </button>

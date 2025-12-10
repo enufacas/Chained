@@ -48,19 +48,21 @@ export default function ArtifactVisualization3D({
     ];
   }, [artifact.position, agentPosition]);
 
-  // Determine color based on artifact type
+  // Determine color based on artifact type - clean, professional colors
   const color = useMemo(() => {
     switch (artifact.type) {
       case 'text':
-        return 0x00ffff;
+        return 0x3b82f6; // blue-500
       case 'json':
-        return 0xff00ff;
+        return 0x8b5cf6; // purple-500
       case 'image':
-        return 0x00ff00;
+        return 0x10b981; // green-500
       default:
-        return 0xffaa00;
+        return 0xf59e0b; // yellow-500
     }
   }, [artifact.type]);
+
+  const emissiveIntensity = 0.2;
 
   // Animation
   useFrame((state) => {
@@ -87,9 +89,9 @@ export default function ArtifactVisualization3D({
       <meshPhongMaterial
         color={color}
         emissive={color}
-        emissiveIntensity={0.6}
+        emissiveIntensity={emissiveIntensity}
         transparent
-        opacity={0.8}
+        opacity={0.7}
       />
     </mesh>
   );
