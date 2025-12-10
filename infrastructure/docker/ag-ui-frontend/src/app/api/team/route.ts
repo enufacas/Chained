@@ -16,6 +16,7 @@ import {
   saveArtifact,
   saveSession,
 } from "@/lib/storage";
+import { getPersistenceStore, type PersistedSession } from "@/lib/persistence";
 
 // =============================================================================
 // Configuration
@@ -461,23 +462,25 @@ ${JSON.stringify(session.context, null, 2)}`;
       }
     }
     
-    // Persist artifacts to localStorage
-    persistTurnArtifacts(turnResult, session);
+    // Persist artifacts to localStorage and Firestore (fire and forget - don't wait)
+    persistTurnArtifacts(turnResult, session).catch(err => 
+      console.error("[Team API] Persistence error:", err)
+    );
   }
   
   return turnResult;
 }
 
 /**
- * Persist turn artifacts to localStorage for cross-page access
- * NOTE: Only saves artifact IDs and summary info to prevent localStorage quota issues
+ * Persist turn artifacts to both localStorage and Firestore
+ * NOTE: localStorage gets lightweight summaries, Firestore gets complete data
  */
-function persistTurnArtifacts(turnResult: TurnResult, session: TeamSession): void {
+async function persistTurnArtifacts(turnResult: TurnResult, session: TeamSession): Promise<void> {
   try {
     const sourceType = session.recipeId.startsWith("custom-") ? "team" : "recipe";
     const storedArtifactIds: string[] = [];
     
-    // Save all artifacts from this turn
+    // Save all artifacts from this turn to localStorage
     for (const artifact of turnResult.artifacts) {
       const stored = saveArtifact({
         name: artifact.name,
@@ -532,6 +535,7 @@ function persistTurnArtifacts(turnResult: TurnResult, session: TeamSession): voi
       error: turnResult.error,
     };
     
+    // Save to localStorage (lightweight)
     saveSession({
       id: session.id,
       type: sourceType,
@@ -554,6 +558,55 @@ function persistTurnArtifacts(turnResult: TurnResult, session: TeamSession): voi
       },
       a2aContextId: session.context.contextId as string,
     });
+    
+    // Also persist to Firestore (complete data) for long-term storage
+    try {
+      const store = getPersistenceStore();
+      await store.saveSession({
+        id: session.id,
+        type: sourceType,
+        name: session.recipeName,
+        topic: session.goal,
+        status: session.status,
+        createdAt: session.createdAt,
+        updatedAt: session.updatedAt,
+        completedAt: session.status === "completed" ? session.updatedAt : undefined,
+        artifacts: [...artifactIds, ...storedArtifactIds],
+        metadata: {
+          currentTurn: session.currentTurn,
+          totalTurns: session.totalTurns,
+          recipeId: session.recipeId,
+          // Store FULL turnResults in Firestore for complete historical record
+          turnResults: session.turnResults,
+          config: session.config,
+        },
+        a2aContextId: session.context.contextId as string,
+      });
+      
+      // Also save artifacts to Firestore
+      for (const artifact of turnResult.artifacts) {
+        await store.saveArtifact({
+          id: `${session.id}-${artifact.name}-${Date.now()}`,
+          name: artifact.name,
+          type: artifact.type,
+          data: artifact.data,
+          preview: artifact.data.substring(0, 200),
+          source: sourceType,
+          sourceId: session.id,
+          sourceName: session.recipeName,
+          createdAt: new Date().toISOString(),
+          agentName: turnResult.agentName,
+          phase: `Turn ${turnResult.turnNumber || 1}`,
+          a2aType: artifact.type.includes("vnd.a2a.agent-card") ? "agent-card" :
+                   artifact.type.includes("vnd.a2a.task") ? "task" :
+                   artifact.type.includes("vnd.a2a.message") ? "message" : undefined,
+          taskId: turnResult.taskId,
+          contextId: turnResult.contextId,
+        });
+      }
+    } catch (firestoreError) {
+      console.warn("[Team API] Failed to persist to Firestore (non-critical):", firestoreError);
+    }
   } catch (error) {
     console.warn("[Team API] Failed to persist artifacts:", error);
   }
@@ -570,16 +623,51 @@ function persistTurnArtifacts(turnResult: TurnResult, session: TeamSession): voi
  * - recipe: Get specific recipe by ID
  * - sessions: List active sessions (true/false)
  * - session: Get specific session by ID
+ * - limit: Number of sessions to return (default: 20, for pagination)
+ * - cursor: Pagination cursor
  */
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const recipeId = searchParams.get("recipe");
   const showSessions = searchParams.get("sessions") === "true";
   const sessionId = searchParams.get("session");
+  const limit = parseInt(searchParams.get("limit") || "20", 10);
+  const cursor = searchParams.get("cursor") || undefined;
   
   // Get specific session
   if (sessionId) {
-    const session = activeSessions.get(sessionId);
+    // First check in-memory (for active sessions with full data)
+    let session = activeSessions.get(sessionId);
+    
+    // If not in memory, check persistent storage
+    if (!session) {
+      try {
+        const store = getPersistenceStore();
+        const persistedSession = await store.getSession(sessionId);
+        
+        if (persistedSession) {
+          // Convert persisted session back to TeamSession format
+          // Note: Full turnResults may not be available for old sessions
+          session = {
+            id: persistedSession.id,
+            recipeId: persistedSession.metadata?.recipeId as string || "unknown",
+            recipeName: persistedSession.name,
+            goal: persistedSession.topic,
+            status: persistedSession.status as TurnStatus,
+            currentTurn: persistedSession.metadata?.currentTurn as number || 0,
+            totalTurns: persistedSession.metadata?.totalTurns as number || 0,
+            createdAt: persistedSession.createdAt,
+            updatedAt: persistedSession.updatedAt,
+            context: {},
+            turnResults: (persistedSession.metadata?.turnSummaries || []) as TurnResult[],
+            config: persistedSession.metadata?.config as ExecutionConfig,
+          };
+        }
+      } catch (error) {
+        console.error("[Team API] Error fetching from persistent storage:", error);
+      }
+    }
+    
     if (!session) {
       return new Response(JSON.stringify({ error: "Session not found" }), {
         status: 404,
@@ -594,20 +682,74 @@ export async function GET(request: NextRequest) {
   
   // List sessions
   if (showSessions) {
-    const sessions = Array.from(activeSessions.values())
-      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    // Get active sessions from memory
+    const activeSessionsArray = Array.from(activeSessions.values());
     
-    return new Response(
-      JSON.stringify({
-        sessions,
-        total: sessions.length,
-        active: sessions.filter((s) => s.status === "running").length,
-      }),
-      {
-        status: 200,
-        headers: { "Content-Type": "application/json" },
-      }
-    );
+    // Get historical sessions from persistent storage
+    let allSessions = [...activeSessionsArray];
+    try {
+      const store = getPersistenceStore();
+      const result = await store.listSessions("team", limit, cursor);
+      
+      // Convert persisted sessions and merge with active ones
+      // Remove duplicates (prefer active session data)
+      const activeIds = new Set(activeSessionsArray.map(s => s.id));
+      const persistedConverted = result.items
+        .filter(p => !activeIds.has(p.id))
+        .map(p => ({
+          id: p.id,
+          recipeId: p.metadata?.recipeId as string || "unknown",
+          recipeName: p.name,
+          goal: p.topic,
+          status: p.status as TurnStatus,
+          currentTurn: p.metadata?.currentTurn as number || 0,
+          totalTurns: p.metadata?.totalTurns as number || 0,
+          createdAt: p.createdAt,
+          updatedAt: p.updatedAt,
+          context: {},
+          turnResults: [],
+          config: p.metadata?.config as ExecutionConfig,
+        }));
+      
+      allSessions = [...activeSessionsArray, ...persistedConverted];
+      
+      // Sort by creation date
+      allSessions.sort((a, b) => 
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      );
+      
+      return new Response(
+        JSON.stringify({
+          sessions: allSessions.slice(0, limit),
+          total: result.total,
+          active: activeSessionsArray.filter((s) => s.status === "running").length,
+          hasMore: result.hasMore,
+          nextCursor: result.nextCursor,
+        }),
+        {
+          status: 200,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+    } catch (error) {
+      console.error("[Team API] Error listing sessions from persistent storage:", error);
+      
+      // Fall back to active sessions only
+      return new Response(
+        JSON.stringify({
+          sessions: activeSessionsArray.sort((a, b) => 
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          ).slice(0, limit),
+          total: activeSessionsArray.length,
+          active: activeSessionsArray.filter((s) => s.status === "running").length,
+          hasMore: false,
+        }),
+        {
+          status: 200,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+    }
   }
   
   // Get specific recipe

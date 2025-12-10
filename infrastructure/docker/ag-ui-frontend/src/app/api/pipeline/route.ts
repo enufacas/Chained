@@ -19,6 +19,7 @@ import {
   saveSession,
   saveA2ATask,
 } from "@/lib/storage";
+import { getPersistenceStore } from "@/lib/persistence";
 
 // =============================================================================
 // Logging Utilities
@@ -270,6 +271,7 @@ export async function OPTIONS() {
  * - id: Get a specific pipeline by ID
  * - status: Filter by status (pending, running, completed, failed)
  * - limit: Number of pipelines to return (default: 10)
+ * - cursor: Pagination cursor
  * 
  * Returns ONLY real pipelines that were created via POST /api/pipeline
  * No demo or fake data is included.
@@ -279,16 +281,47 @@ export async function GET(request: NextRequest) {
   const pipelineId = searchParams.get("id");
   const statusFilter = searchParams.get("status");
   const limit = parseInt(searchParams.get("limit") || "10", 10);
+  const cursor = searchParams.get("cursor") || undefined;
   
   logWithTimestamp("DEBUG", "GET request received", {
     pipelineId,
     statusFilter,
     limit,
+    cursor,
   });
 
   // Get a specific pipeline
   if (pipelineId) {
-    const pipeline = activePipelines.get(pipelineId);
+    // First check in-memory (for active pipelines with full data)
+    let pipeline = activePipelines.get(pipelineId);
+
+    // If not in memory, check persistent storage
+    if (!pipeline) {
+      try {
+        const store = getPersistenceStore();
+        const persistedSession = await store.getSession(pipelineId);
+        
+        if (persistedSession && persistedSession.type === "workflow") {
+          // Convert persisted session to Pipeline format
+          const a2aSteps = persistedSession.metadata?.a2aSteps as any[];
+          pipeline = {
+            id: persistedSession.id,
+            topic: persistedSession.topic,
+            status: persistedSession.status as Pipeline["status"],
+            createdAt: persistedSession.createdAt,
+            updatedAt: persistedSession.updatedAt,
+            progress: persistedSession.status === "completed" ? 100 :
+                     persistedSession.status === "running" ? 50 : 0,
+            currentPhase: (persistedSession.metadata?.currentPhase as Pipeline["currentPhase"]) || "research",
+            results: persistedSession.metadata?.results as Pipeline["results"],
+            a2aSteps,
+            totalDurationMs: persistedSession.metadata?.totalDurationMs as number,
+          };
+        }
+      } catch (error) {
+        logWithTimestamp("WARN", `Error fetching from persistent storage: ${error}`);
+      }
+    }
 
     if (!pipeline) {
       logWithTimestamp("WARN", `Pipeline not found: ${pipelineId}`);
@@ -309,33 +342,66 @@ export async function GET(request: NextRequest) {
     });
   }
 
-  // List pipelines - only real pipelines from activePipelines
-  let pipelines = Array.from(activePipelines.values());
+  // List pipelines - merge active + historical
+  const activePipelinesArray = Array.from(activePipelines.values());
+  let allPipelines = [...activePipelinesArray];
+  
+  try {
+    const store = getPersistenceStore();
+    const result = await store.listSessions("workflow", limit, cursor);
+    
+    // Convert persisted sessions and merge with active ones
+    // Remove duplicates (prefer active pipeline data)
+    const activeIds = new Set(activePipelinesArray.map(p => p.id));
+    const persistedConverted = result.items
+      .filter(p => !activeIds.has(p.id))
+      .map(p => {
+        const a2aSteps = p.metadata?.a2aSteps as any[];
+        return {
+          id: p.id,
+          topic: p.topic,
+          status: p.status as Pipeline["status"],
+          createdAt: p.createdAt,
+          updatedAt: p.updatedAt,
+          progress: p.status === "completed" ? 100 :
+                   p.status === "running" ? 50 : 0,
+          currentPhase: (p.metadata?.currentPhase as Pipeline["currentPhase"]) || "complete",
+          results: p.metadata?.results as Pipeline["results"],
+          a2aSteps,
+          totalDurationMs: p.metadata?.totalDurationMs as number,
+        };
+      });
+    
+    allPipelines = [...activePipelinesArray, ...persistedConverted];
+  } catch (error) {
+    logWithTimestamp("WARN", `Error listing from persistent storage: ${error}`);
+    // Continue with just active pipelines
+  }
 
   // Apply status filter
   if (statusFilter) {
-    pipelines = pipelines.filter((p) => p.status === statusFilter);
+    allPipelines = allPipelines.filter((p) => p.status === statusFilter);
   }
 
   // Sort by creation date (newest first) and limit
-  pipelines = pipelines
+  allPipelines = allPipelines
     .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
     .slice(0, limit);
 
+  const activePipelinesCount = activePipelinesArray.filter(
+    (p) => p.status === "pending" || p.status === "running"
+  ).length;
+
   logWithTimestamp("INFO", "Pipelines listed", {
-    total: pipelines.length,
-    activePipelinesCount: pipelines.filter(
-      (p) => p.status === "pending" || p.status === "running"
-    ).length,
+    total: allPipelines.length,
+    activePipelinesCount,
   });
 
   return new Response(
     JSON.stringify({
-      pipelines,
-      total: pipelines.length,
-      activePipelinesCount: pipelines.filter(
-        (p) => p.status === "pending" || p.status === "running"
-      ).length,
+      pipelines: allPipelines,
+      total: allPipelines.length,
+      activePipelinesCount,
     }),
     {
       status: 200,
@@ -1011,7 +1077,7 @@ Domain: ${domain}`,
       
       logWithTimestamp("INFO", `Saved ultimate artifact for pipeline ${pipelineId}`);
       
-      // Save session record
+      // Save session record to localStorage
       saveSession({
         id: pipelineId,
         type: "workflow",
@@ -1024,6 +1090,8 @@ Domain: ${domain}`,
           totalDurationMs: pipeline.totalDurationMs,
           agentStepsCount: pipeline.a2aSteps?.length || 0,
           blogUrl: pipeline.results?.blog?.url,
+          currentPhase: pipeline.currentPhase,
+          results: pipeline.results,
           // CRITICAL: Save a2aSteps so they can be reconstructed after container restart
           // This allows the detail view to show agent details even after page refresh
           a2aSteps: pipeline.a2aSteps?.map(step => ({
@@ -1047,7 +1115,67 @@ Domain: ${domain}`,
         taskIds: taskIds,
       });
       
-      logWithTimestamp("INFO", `Saved session for pipeline ${pipelineId} with ${savedArtifactIds.length} artifacts`);
+      logWithTimestamp("INFO", `Saved session to localStorage for pipeline ${pipelineId} with ${savedArtifactIds.length} artifacts`);
+      
+      // ALSO save to Firestore for long-term persistence
+      (async () => {
+        try {
+          const store = getPersistenceStore();
+          await store.saveSession({
+            id: pipelineId,
+            type: "workflow",
+            name: "A2A Pipeline",
+            topic: pipeline.topic,
+            status: pipeline.status,
+            createdAt: pipeline.createdAt,
+            updatedAt: pipeline.updatedAt,
+            completedAt: pipeline.updatedAt,
+            artifacts: savedArtifactIds,
+            metadata: {
+              totalDurationMs: pipeline.totalDurationMs,
+              agentStepsCount: pipeline.a2aSteps?.length || 0,
+              blogUrl: pipeline.results?.blog?.url,
+              currentPhase: pipeline.currentPhase,
+              results: pipeline.results,
+              // Store FULL a2aSteps in Firestore (not just previews)
+              a2aSteps: pipeline.a2aSteps,
+            },
+            a2aContextId: pipelineId,
+            taskIds: taskIds,
+          });
+          
+          logWithTimestamp("INFO", `Saved session to Firestore for pipeline ${pipelineId}`);
+          
+          // Save artifacts to Firestore too
+          for (const artifactId of savedArtifactIds) {
+            const artifact = pipeline.a2aSteps
+              ?.flatMap(step => step.artifacts)
+              .find(a => a.name.includes(artifactId.split('-')[0]));
+            
+            if (artifact) {
+              await store.saveArtifact({
+                id: artifactId,
+                name: artifact.name,
+                type: artifact.type,
+                data: artifact.data,
+                preview: artifact.preview,
+                source: "workflow",
+                sourceId: pipelineId,
+                sourceName: pipeline.topic,
+                createdAt: new Date().toISOString(),
+                agentName: "Pipeline Agent",
+                phase: "complete",
+              });
+            }
+          }
+          
+          logWithTimestamp("INFO", `Saved ${savedArtifactIds.length} artifacts to Firestore for pipeline ${pipelineId}`);
+        } catch (firestoreError) {
+          logWithTimestamp("WARN", `Failed to persist to Firestore (non-critical)`, {
+            error: firestoreError instanceof Error ? firestoreError.message : String(firestoreError),
+          });
+        }
+      })();
       
     } catch (storageError) {
       logWithTimestamp("WARN", `Failed to persist artifacts to localStorage`, {
