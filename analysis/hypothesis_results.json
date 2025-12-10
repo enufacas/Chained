@@ -1,10 +1,10 @@
 {
-  "generated_at": "2025-11-18T03:16:23.279937+00:00",
+  "generated_at": "2025-12-10T10:19:51.840932+00:00",
   "repository": ".",
-  "metrics_analyzed": 130,
-  "hypotheses_generated": 6,
-  "hypotheses_validated": 1,
-  "validation_rate": 0.16666666666666666,
+  "metrics_analyzed": 147,
+  "hypotheses_generated": 5,
+  "hypotheses_validated": 0,
+  "validation_rate": 0.0,
   "hypotheses": [
     {
       "hypothesis_id": "hyp_complexity_quality_1",
@@ -17,31 +17,31 @@
       "tested": true,
       "validated": false,
       "confidence": 0.05,
-      "p_value": 0.9860260282673107,
-      "sample_size": 130,
+      "p_value": 0.8688456090884611,
+      "sample_size": 147,
       "supporting_examples": [
         {
-          "file": "scripts/generate_episode.py",
-          "function": "_generate_activity_scenes",
-          "independent": 14.0,
-          "dependent": 0.0
-        },
-        {
-          "file": "test_pr_attribution_debug.py",
+          "file": "services/state-db/test_vector.py",
           "function": "main",
-          "independent": 13.0,
+          "independent": 11.0,
           "dependent": 0.0
         },
         {
-          "file": "test_agent_scoring_accuracy.py",
-          "function": "test_pr_attribution_logic",
-          "independent": 12.0,
-          "dependent": 1.0
+          "file": "services/ai-control-plane/main.py",
+          "function": "classify_intent",
+          "independent": 11.0,
+          "dependent": 0.0
+        },
+        {
+          "file": "examples/demo_hypothesis_testing.py",
+          "function": "main",
+          "independent": 10.0,
+          "dependent": 0.0
         }
       ],
       "contradicting_examples": [],
-      "generated_at": "2025-11-18T03:16:23.278787+00:00",
-      "tested_at": "2025-11-18T03:16:23.278845+00:00"
+      "generated_at": "2025-12-10T10:19:51.839972+00:00",
+      "tested_at": "2025-12-10T10:19:51.840023+00:00"
     },
     {
       "hypothesis_id": "hyp_complexity_quality_3",
@@ -55,30 +55,30 @@
       "validated": false,
       "confidence": 0.05,
       "p_value": 1.0,
-      "sample_size": 130,
+      "sample_size": 147,
       "supporting_examples": [
         {
-          "file": "test_agent_attribution.py",
-          "function": "test_copilot_agent_comment_parsing",
+          "file": "investigation-reports/mcp-ai-analysis-example.py",
+          "function": "main",
           "independent": 0.0,
           "dependent": 1.0
         },
         {
-          "file": "test_agent_attribution.py",
-          "function": "test_agent_specialization_in_registry",
+          "file": "investigation-reports/mcp-ai-analysis-example.py",
+          "function": "__repr__",
           "independent": 0.0,
-          "dependent": 1.0
+          "dependent": 0.0
         },
         {
-          "file": "test_agent_attribution.py",
-          "function": "test_metrics_collector_import",
+          "file": "investigation-reports/mcp-ai-analysis-example.py",
+          "function": "to_dict",
           "independent": 0.0,
-          "dependent": 1.0
+          "dependent": 0.0
         }
       ],
       "contradicting_examples": [],
-      "generated_at": "2025-11-18T03:16:23.278808+00:00",
-      "tested_at": "2025-11-18T03:16:23.279130+00:00"
+      "generated_at": "2025-12-10T10:19:51.839994+00:00",
+      "tested_at": "2025-12-10T10:19:51.840292+00:00"
     },
     {
       "hypothesis_id": "hyp_naming_quality_5",
@@ -92,11 +92,11 @@
       "validated": false,
       "confidence": 0.05,
       "p_value": null,
-      "sample_size": 130,
+      "sample_size": 147,
       "supporting_examples": [],
       "contradicting_examples": [],
-      "generated_at": "2025-11-18T03:16:23.278818+00:00",
-      "tested_at": "2025-11-18T03:16:23.279389+00:00"
+      "generated_at": "2025-12-10T10:19:51.840002+00:00",
+      "tested_at": "2025-12-10T10:19:51.840523+00:00"
     },
     {
       "hypothesis_id": "hyp_naming_quality_7",
@@ -110,11 +110,11 @@
       "validated": false,
       "confidence": 0.05,
       "p_value": null,
-      "sample_size": 130,
+      "sample_size": 147,
       "supporting_examples": [],
       "contradicting_examples": [],
-      "generated_at": "2025-11-18T03:16:23.278823+00:00",
-      "tested_at": "2025-11-18T03:16:23.279482+00:00"
+      "generated_at": "2025-12-10T10:19:51.840007+00:00",
+      "tested_at": "2025-12-10T10:19:51.840607+00:00"
     },
     {
       "hypothesis_id": "hyp_size_threshold_9",
@@ -125,65 +125,29 @@
       "threshold": 50.0,
       "direction": null,
       "tested": true,
-      "validated": true,
-      "confidence": 0.95,
-      "p_value": 0.1181032177555932,
-      "sample_size": 130,
+      "validated": false,
+      "confidence": 0.05,
+      "p_value": 0.06277977945190527,
+      "sample_size": 147,
       "supporting_examples": [
         {
-          "file": "test_agent_attribution.py",
-          "function": "test_copilot_agent_comment_parsing",
-          "value": 61
-        },
-        {
-          "file": "test_agent_attribution.py",
-          "function": "test_agent_mention_extraction",
-          "value": 88
-        },
-        {
-          "file": "test_agent_attribution.py",
-          "function": "test_strict_attribution_config",
-          "value": 51
+          "file": "investigation-reports/mcp-ai-analysis-example.py",
+          "function": "main",
+          "value": 97
         }
       ],
       "contradicting_examples": [],
-      "generated_at": "2025-11-18T03:16:23.278830+00:00",
-      "tested_at": "2025-11-18T03:16:23.279564+00:00"
-    },
-    {
-      "hypothesis_id": "hyp_size_threshold_11",
-      "description": "Functions exceeding 5 parameters tend to have poor cohesion",
-      "hypothesis_type": "threshold",
-      "independent_var": "parameters",
-      "dependent_var": "quality",
-      "threshold": 5.0,
-      "direction": null,
-      "tested": true,
-      "validated": false,
-      "confidence": 0.05,
-      "p_value": null,
-      "sample_size": 130,
-      "supporting_examples": [],
-      "contradicting_examples": [],
-      "generated_at": "2025-11-18T03:16:23.278835+00:00",
-      "tested_at": "2025-11-18T03:16:23.279796+00:00"
+      "generated_at": "2025-12-10T10:19:51.840014+00:00",
+      "tested_at": "2025-12-10T10:19:51.840675+00:00"
     }
   ],
   "summary": {
-    "top_validated_hypotheses": [
-      {
-        "description": "Functions exceeding 50 lines tend to have multiple responsibilities",
-        "confidence": 0.95,
-        "sample_size": 130
-      }
-    ],
+    "top_validated_hypotheses": [],
     "hypothesis_types": {
       "correlation": 2,
-      "threshold": 2,
+      "threshold": 1,
       "pattern": 2
     },
-    "insights": [
-      "Consider refactoring functions with lines > 50.0"
-    ]
+    "insights": []
   }
 }
