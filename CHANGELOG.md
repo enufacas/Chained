@@ -26,6 +26,22 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ---
 
+## 2025-12-10
+
+### 🧹 Chores & Maintenance
+
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x2) [#3737](https://github.com/enufacas/Chained/pull/3737)
+
+---
+
+## 2025-12-09
+
+### ✨ Features
+
+- 🤖 🧠 Learning 🧠 Learn from GitHub Copilot sources - 2025-12-09 [#3731](https://github.com/enufacas/Chained/pull/3731)
+
+---
+
 ## 2025-12-08
 
 ### ✨ Features
@@ -39,7 +55,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x5) [#3708](https://github.com/enufacas/Chained/pull/3708)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x6) [#3722](https://github.com/enufacas/Chained/pull/3722)
 
 ---
 
@@ -146,7 +162,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x11) [#3569](https://github.com/enufacas/Chained/pull/3569)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x8) [#3569](https://github.com/enufacas/Chained/pull/3569)
 - 👤 📋 Instructions **Documentation**: Update A2A README with error observer system and add maintenance instructions [#3520](https://github.com/enufacas/Chained/pull/3520)
 
 ---
@@ -156,60 +172,11 @@ This changelog excludes automated data syncs and routine maintenance commits.
 ### ✨ Features
 
 - 👤 🔧 Agents Add missing agents to AG-UI activity monitoring, implement end-to-end error reporting, and update A2A documentation [#3546](https://github.com/enufacas/Chained/pull/3546)
-- 👤 Implement main-branch-only automated changelog with 100% PR coverage, codebase area grouping, actor differentiation, auto-merge, and smart deduplication [#3519](https://github.com/enufacas/Chained/pull/3519)
-- 🤖 🧠 Learning 🧠 Learn from GitHub Copilot sources - 2025-12-02 [#3524](https://github.com/enufacas/Chained/pull/3524)
 
 ### 🐛 Bug Fixes
 
 - 👤 resolve ESLint errors in AG-UI Frontend storage.ts [#3550](https://github.com/enufacas/Chained/pull/3550)
 - 👤 🔧 Agents Fix error-observer GitHub dispatch, agent display, localStorage quota, concurrent writes, and A2A protocol compliance [#3548](https://github.com/enufacas/Chained/pull/3548)
 - 👤 🔧 Agents Enable Vertex AI API for ADK agent authentication [#3542](https://github.com/enufacas/Chained/pull/3542)
-- 👤 ⚙️ Workflows Add missing Cloud Run service imports to Terraform workflow [#3540](https://github.com/enufacas/Chained/pull/3540)
-- 👤 🔧 Tools Fix TypeScript ESLint errors in AG-UI frontend and add configurable GitHub repo for error-observer [#3537](https://github.com/enufacas/Chained/pull/3537)
-- 👤 ⚙️ Workflows Fix critical error observer issues: Terraform data source, missing workflow, security vulnerability [#3535](https://github.com/enufacas/Chained/pull/3535)
-- 👤 Implement A2A-native error observer system with GitHub dispatch integration [#3520](https://github.com/enufacas/Chained/pull/3520)
-
-### 🧹 Chores & Maintenance
-
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x2) [#3534](https://github.com/enufacas/Chained/pull/3534)
-
----
-
-## 2025-12-01
-
-### ✨ Features
-
-- 👤 Add "ask gemini" escalation standard for Copilot sessions [#3510](https://github.com/enufacas/Chained/pull/3510)
-- 👤 📋 Instructions Add instruction source diagram generator for PR transparency [#3506](https://github.com/enufacas/Chained/pull/3506)
-- 👤 ⚙️ Workflows Add daily schedule and auto-merge to learn-from-copilot workflow (x2) [#3503](https://github.com/enufacas/Chained/pull/3503)
-- 👤 ⚙️ Workflows update-context-summaries workflow to daily with auto-merge [#3502](https://github.com/enufacas/Chained/pull/3502)
-- 🤖 🧠 Learning 🧠 Learn from GitHub Copilot sources - 2025-12-01 [#3499](https://github.com/enufacas/Chained/pull/3499)
-- 👤 ⚙️ Workflows Add auto-merge to agentops-data-sync workflow [#3496](https://github.com/enufacas/Chained/pull/3496)
-- 👤 ⚙️ Workflows Add A2A protocol artifacts to AG-UI and improve workflow UX [#3487](https://github.com/enufacas/Chained/pull/3487)
-
-### 🐛 Bug Fixes
-
-- 👤 🔧 Agents Transform gemini-consultant from analysis provider to code-fixing agent with full repository access via MCP [#3514](https://github.com/enufacas/Chained/pull/3514)
-- 👤 Add frontend error logging and retry logic to A2A UI [#3516](https://github.com/enufacas/Chained/pull/3516)
-- 👤 Fix AG-UI Frontend OOM crashes causing missing artifacts and progress failures [#3512](https://github.com/enufacas/Chained/pull/3512)
-- 👤 🏗️ Infrastructure Fix: Move max_instance_request_concurrency to template level in Terraform [#3509](https://github.com/enufacas/Chained/pull/3509)
-- 👤 🏗️ Infrastructure Fix: Add max_instance_request_concurrency=1 for Cloud Run services with CPU < 1 [#3508](https://github.com/enufacas/Chained/pull/3508)
-- 👤 🏗️ Infrastructure Fix: Reduce Cloud Run CPU allocation to resolve quota exceeded error [#3507](https://github.com/enufacas/Chained/pull/3507)
-- 👤 [WIP] Fix blank session data in history section [#3501](https://github.com/enufacas/Chained/pull/3501)
-- 👤 Add graceful fallback to direct Anthropic API when Vertex AI auth fails [#3416](https://github.com/enufacas/Chained/pull/3416)
-- 👤 Fix artifact persistence and parallel execution dependencies in A2A pipeline [#3497](https://github.com/enufacas/Chained/pull/3497)
-- 👤 Fix: Persist full turnResults in team session storage [#3495](https://github.com/enufacas/Chained/pull/3495)
-- 👤 Fix session state race conditions causing stuck progress and stale data on refresh [#3493](https://github.com/enufacas/Chained/pull/3493)
-- 👤 Fix session state tracking race conditions and progress display issues (PR ) [#3492](https://github.com/enufacas/Chained/pull/3492)
-- 👤 Fix AG-UI session persistence and filter terminology [#3492](https://github.com/enufacas/Chained/pull/3492)
-- 👤 ⚙️ Workflows Fix AG-UI team workflow completion tracking and add A2A artifact persistence [#3491](https://github.com/enufacas/Chained/pull/3491)
-- 👤 🏗️ Infrastructure Fix npm ci failure in AG-UI Frontend Docker build [#3490](https://github.com/enufacas/Chained/pull/3490)
-- 👤 Fix AG-UI real-time progress updates, session accumulation, and artifact streaming [#3476](https://github.com/enufacas/Chained/pull/3476)
-
-### 🧹 Chores & Maintenance
-
-- 👤 ⚙️ Workflows **Documentation**: Remove goal-and-idea-system workflow and cleanup related documentation [#3504](https://github.com/enufacas/Chained/pull/3504)
-- 👤 ⚙️ Workflows **Documentation**: Add disabled workflows report documenting purpose, triggers, and artifacts [#3431](https://github.com/enufacas/Chained/pull/3431)
-- 👤 🔧 Agents **Documentation**: streamline README and document Agent Canvas features [#3489](https://github.com/enufacas/Chained/pull/3489)
 
 ---
