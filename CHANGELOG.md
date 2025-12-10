@@ -34,7 +34,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x36) [#3796](https://github.com/enufacas/Chained/pull/3796)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x37) [#3811](https://github.com/enufacas/Chained/pull/3811)
 
 ---
 
@@ -59,6 +59,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🐛 Bug Fixes
 
+- 👤 AG-UI: Add error recovery and root cause analysis for update reliability [#3812](https://github.com/enufacas/Chained/pull/3812)
 - 👤 📋 Instructions Sync package-lock.json and add npm dependency management instructions [#3806](https://github.com/enufacas/Chained/pull/3806)
 - 👤 Fix AG-UI: unify historical/active displays, improve polling frequency [#3803](https://github.com/enufacas/Chained/pull/3803)
 - 👤 Restore truncated lifecycle.html and ai-knowledge-graph.html [#3789](https://github.com/enufacas/Chained/pull/3789)
