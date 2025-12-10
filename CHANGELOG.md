@@ -30,7 +30,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x22) [#3784](https://github.com/enufacas/Chained/pull/3784)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x23) [#3786](https://github.com/enufacas/Chained/pull/3786)
 
 ---
 
@@ -47,6 +47,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🐛 Bug Fixes
 
+- 👤 ⚙️ Workflows Fix GitHub Pages empty sections via aggregated data files and workflow automation [#3775](https://github.com/enufacas/Chained/pull/3775)
 - 👤 Sync AG-UI Frontend package-lock.json with package.json [#3785](https://github.com/enufacas/Chained/pull/3785)
 - 👤 [WIP] Close issues older than two hours and conflicted PRs [#3760](https://github.com/enufacas/Chained/pull/3760)
 
