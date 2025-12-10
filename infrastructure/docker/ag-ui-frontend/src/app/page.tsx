@@ -468,16 +468,62 @@ function UnifiedOutcomes({
   const [loading, setLoading] = useState(true);
   const [expandedItem, setExpandedItem] = useState<string | null>(null);
   const [expandedStepIndex, setExpandedStepIndex] = useState<number | null>(null);
+  const [fetchError, setFetchError] = useState<string | null>(null);
+  const [lastUpdate, setLastUpdate] = useState<Date | null>(null);
+  const retryCountRef = useRef(0);
+  const MAX_RETRIES = 3;
+  const RETRY_DELAY = 1000; // 1 second
 
   const fetchPipelines = useCallback(async () => {
     try {
-      const response = await fetch("/api/pipeline?limit=10");
+      // Add timeout to fetch request
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
+      
+      const response = await fetch("/api/pipeline?limit=10", {
+        signal: controller.signal,
+      });
+      
+      clearTimeout(timeoutId);
+      
       if (response.ok) {
         const result = await response.json();
         setPipelines(result.pipelines || []);
+        setFetchError(null);
+        setLastUpdate(new Date());
+        retryCountRef.current = 0; // Reset retry count on success
+      } else {
+        // Handle non-ok responses (4xx, 5xx)
+        const errorText = await response.text().catch(() => "Unknown error");
+        const errorMsg = `API error (${response.status}): ${errorText}`;
+        console.error("[UnifiedOutcomes]", errorMsg);
+        setFetchError(errorMsg);
+        
+        // Retry logic with exponential backoff
+        if (retryCountRef.current < MAX_RETRIES) {
+          retryCountRef.current++;
+          const delay = RETRY_DELAY * Math.pow(2, retryCountRef.current - 1);
+          console.log(`[UnifiedOutcomes] Retrying in ${delay}ms (attempt ${retryCountRef.current}/${MAX_RETRIES})`);
+          setTimeout(fetchPipelines, delay);
+        }
       }
     } catch (err) {
-      console.error("[UnifiedOutcomes] Fetch error:", err);
+      // Handle network errors, timeouts, etc.
+      const isTimeout = err instanceof Error && err.name === 'AbortError';
+      const errorMsg = isTimeout 
+        ? "Request timed out after 10s"
+        : err instanceof Error ? err.message : String(err);
+      
+      console.error("[UnifiedOutcomes] Fetch error:", errorMsg);
+      setFetchError(errorMsg);
+      
+      // Retry logic for transient errors
+      if (retryCountRef.current < MAX_RETRIES) {
+        retryCountRef.current++;
+        const delay = RETRY_DELAY * Math.pow(2, retryCountRef.current - 1);
+        console.log(`[UnifiedOutcomes] Retrying in ${delay}ms (attempt ${retryCountRef.current}/${MAX_RETRIES})`);
+        setTimeout(fetchPipelines, delay);
+      }
     } finally {
       setLoading(false);
     }
@@ -520,17 +566,63 @@ function UnifiedOutcomes({
   return (
     <div className="bg-slate-800 rounded-lg border border-slate-700 overflow-hidden">
       {/* Header */}
-      <div className="px-3 py-2 border-b border-slate-700 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <span className="text-lg">📊</span>
-          <h3 className="text-sm font-semibold text-white">Progress & Outcomes</h3>
+      <div className="px-3 py-2 border-b border-slate-700">
+        <div className="flex items-center justify-between mb-1">
+          <div className="flex items-center gap-2">
+            <span className="text-lg">📊</span>
+            <h3 className="text-sm font-semibold text-white">Progress & Outcomes</h3>
+          </div>
+          {hasActiveWork && (
+            <span className="px-2 py-0.5 text-xs rounded-full bg-blue-500/20 text-blue-400 animate-pulse">
+              Active
+            </span>
+          )}
         </div>
-        {hasActiveWork && (
-          <span className="px-2 py-0.5 text-xs rounded-full bg-blue-500/20 text-blue-400 animate-pulse">
-            Active
-          </span>
-        )}
+        {/* Status indicator row */}
+        <div className="flex items-center justify-between text-[10px]">
+          <div className="flex items-center gap-2">
+            {fetchError ? (
+              <span className="text-red-400 flex items-center gap-1">
+                <span>⚠️</span>
+                <span>Update failed</span>
+                {retryCountRef.current > 0 && (
+                  <span className="text-slate-500">(retry {retryCountRef.current}/{MAX_RETRIES})</span>
+                )}
+              </span>
+            ) : lastUpdate ? (
+              <span className="text-slate-500 flex items-center gap-1">
+                <span>✓</span>
+                <span>Updated {Math.floor((Date.now() - lastUpdate.getTime()) / 1000)}s ago</span>
+              </span>
+            ) : null}
+          </div>
+          {fetchError && (
+            <button
+              onClick={() => {
+                retryCountRef.current = 0;
+                fetchPipelines();
+              }}
+              className="text-blue-400 hover:text-blue-300 underline"
+            >
+              Retry now
+            </button>
+          )}
+        </div>
       </div>
+      
+      {/* Error banner - shown prominently when updates fail */}
+      {fetchError && retryCountRef.current >= MAX_RETRIES && (
+        <div className="px-3 py-2 bg-red-500/10 border-b border-red-500/20 text-xs">
+          <div className="flex items-start gap-2">
+            <span className="text-red-400">⚠️</span>
+            <div className="flex-1">
+              <div className="text-red-300 font-medium">Unable to fetch updates</div>
+              <div className="text-red-400/70 mt-0.5">{fetchError}</div>
+              <div className="text-slate-400 mt-1">Real-time updates may be delayed. Page refresh recommended.</div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Active Session Progress - Prominent when running */}
       {activeSession && (
