@@ -303,7 +303,7 @@ export async function GET(request: NextRequest) {
         
         if (persistedSession && persistedSession.type === "workflow") {
           // Convert persisted session to Pipeline format
-          const a2aSteps = persistedSession.metadata?.a2aSteps as any[];
+          const a2aSteps = (persistedSession.metadata?.a2aSteps as A2AStepDetail[]) || [];
           pipeline = {
             id: persistedSession.id,
             topic: persistedSession.topic,
@@ -356,7 +356,7 @@ export async function GET(request: NextRequest) {
     const persistedConverted = result.items
       .filter(p => !activeIds.has(p.id))
       .map(p => {
-        const a2aSteps = p.metadata?.a2aSteps as any[];
+        const a2aSteps = (p.metadata?.a2aSteps as A2AStepDetail[]) || [];
         return {
           id: p.id,
           topic: p.topic,
