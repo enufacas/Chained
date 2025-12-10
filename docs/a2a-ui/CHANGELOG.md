@@ -6,7 +6,165 @@ Format: `## [Date] PR #XXX - Title`
 
 ---
 
-## [2025-12-10] PR #TBD - Fix Real-Time Updates and Unify UI Display Styles
+## [2025-12-10] PR #TBD - Add Error Recovery and Deeper Root Cause Analysis
+
+### Problem
+After PR #3803 merged with polling improvements and unified displays, user asked in comment:
+> "what other problems could exist that would cause the UI not to update. The polling alone seems like it would not be the fix often i waited past the old polling interval. Is there some other type of race condition or lack of update or error handling that could be a culprit?"
+
+**Context:** Original Copilot session (Run #20087201916) was cancelled while actively investigating these deeper root causes.
+
+### Root Causes Identified
+Beyond polling frequency, discovered 5 critical issues:
+
+1. **CRITICAL: In-memory data volatility**
+   - `activePipelines` and `activeSessions` are volatile Maps
+   - Lost on Cloud Run scale-down/restart
+   - Frontend polls → gets empty array → shows "No outcomes yet"
+   - User waited past polling interval because DATA WAS GONE, not polling slow
+
+2. **HIGH: No error recovery in frontend polling**
+   - Single failed fetch → no retry → stale data forever
+   - No timeout protection
+   - Silent failures (logged but not shown to user)
+
+3. **HIGH: Session polling stops permanently on error**
+   - One network blip → `setIsTeamExecuting(false)` → user must refresh
+
+4. **MEDIUM: Silent backend persistence failures**
+   - Firestore save failures only logged, not surfaced
+   - In-memory copy is sole source of truth
+
+5. **MEDIUM: Cold start delays**
+   - `cpu_idle=true` scales to zero
+   - 2-5s cold starts lose all in-memory state
+
+### Fixed in This PR
+- **Frontend Error Recovery**:
+  - ✅ Added retry logic with exponential backoff (3 attempts: 500ms, 1s, 1.5s)
+  - ✅ Added timeout protection (10s per request using AbortController)
+  - ✅ Explicit handling of non-ok responses (4xx, 5xx)
+  - ✅ Session polling retries transient errors (doesn't stop permanently)
+  - ✅ Preserves existing data on failure (doesn't clear pipelines/sessions)
+
+- **Visual Error Indicators**:
+  - ✅ Error state tracking (`fetchError`, `lastUpdate`)
+  - ✅ Status line showing "Updated Xs ago" or "Update failed"
+  - ✅ Error banner with details when all retries exhausted
+  - ✅ "Retry now" button for manual recovery
+  - ✅ Retry attempt counter (e.g., "retry 2/3")
+
+### Not Yet Fixed (Requires Backend Work)
+- ⏹️ **In-memory data volatility** (CRITICAL):
+  - Need to load running pipelines/sessions from Firestore on startup
+  - OR save to Firestore after every state update
+  - OR use Redis/Memorystore for shared state across instances
+  - **This is the PRIMARY cause** of "waited past polling interval" issue
+
+- ⏹️ **Silent persistence failures** (MEDIUM):
+  - Make Firestore save failures fatal (return 500, update pipeline.status)
+
+- ⏹️ **Cold start delays** (MEDIUM):
+  - Consider `min_instances=1` (~$15-30/month to keep warm)
+
+### Technical Details
+**Files Modified:**
+- `infrastructure/docker/ag-ui-frontend/src/app/page.tsx`
+  - `UnifiedOutcomes.fetchPipelines()` - Added retry logic, timeout, error state
+  - `MainContent.pollSession()` - Added retry logic, continues on transient errors
+  - Added error UI components (status indicator, banner, retry button)
+
+**New Documentation:**
+- `docs/AG_UI_UPDATE_RELIABILITY_ANALYSIS.md` - Comprehensive root cause analysis with recommendations
+
+**Code Changes:**
+```typescript
+// Before: No retry
+const fetchPipelines = useCallback(async () => {
+  try {
+    const response = await fetch("/api/pipeline?limit=10");
+    if (response.ok) {
+      setPipelines(result.pipelines || []);
+    }
+    // ❌ Silent failure if !response.ok
+  } catch (err) {
+    console.error(err); // ❌ No retry
+  }
+}, []);
+
+// After: Retry logic + timeout + error handling
+const fetchPipelines = useCallback(async () => {
+  let retries = 3;
+  while (retries > 0) {
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 10000);
+      const response = await fetch("/api/pipeline?limit=10", { signal: controller.signal });
+      clearTimeout(timeoutId);
+      
+      if (response.ok) {
+        setPipelines(result.pipelines || []);
+        setFetchError(null);
+        setLastUpdate(new Date());
+        return; // Success
+      } else {
+        console.warn(`Response ${response.status}, retries left: ${retries - 1}`);
+      }
+    } catch (err) {
+      console.error("Fetch error:", err);
+    }
+    
+    retries--;
+    if (retries > 0) {
+      await new Promise(r => setTimeout(r, 500 * (4 - retries))); // Backoff
+    }
+  }
+  // After all retries, keep existing data
+}, []);
+```
+
+### Benefits
+**What's Better Now:**
+- Transient network errors no longer break real-time updates permanently
+- Users see when updates fail (not silent anymore)
+- Manual recovery available via "Retry now" button
+- Timeout protection prevents hanging requests
+- Better error logging with context
+
+**What Still Needs Work:**
+- Data loss on Cloud Run restart (backend persistence required)
+- Cold start delays (infrastructure scaling)
+
+### Testing
+- ✅ Code compiles without TypeScript errors
+- ✅ Retry logic handles different error scenarios
+- ⏹️ Manual testing on production AG-UI needed
+
+### User Impact
+**Before:** User reported "often i waited past the old polling interval"
+- Cause: Data lost on Cloud Run restart + no retry logic
+- User saw stale/empty data with no indication why
+
+**After (with this PR):**
+- Transient errors recover automatically (3 retries)
+- User sees error state and last update time
+- Manual retry option available
+- BUT: Data loss on restart still occurs (needs backend fix)
+
+**After (with backend persistence - future PR):**
+- Data survives Cloud Run restarts
+- No more "disappeared pipeline" scenarios
+- True reliability achieved
+
+### Related
+- **Original PR:** #3803 (polling improvements + unified displays)
+- **User Comment:** https://github.com/enufacas/Chained/pull/3803#issuecomment-3635313876
+- **Original Copilot Session:** https://github.com/enufacas/Chained/actions/runs/20087201916 (cancelled)
+- **Analysis Document:** docs/AG_UI_UPDATE_RELIABILITY_ANALYSIS.md
+
+---
+
+## [2025-12-10] PR #3803 - Fix Real-Time Updates and Unify UI Display Styles
 
 ### Problem
 Production AG-UI at https://chained-ag-ui-frontend-sguacxy5gq-uc.a.run.app/ had two critical issues:
