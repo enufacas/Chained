@@ -46,8 +46,9 @@
       {
         "name": "Bun",
         "capability": "Native TypeScript execution",
-        "performance": "30x faster than Node.js",
-        "impact": "No build step required"
+        "performance": "Significantly faster than Node.js in many benchmarks",
+        "performance_note": "Startup time and server request handling show substantial improvements",
+        "impact": "No build step required for TypeScript"
       },
       {
         "name": "esbuild",

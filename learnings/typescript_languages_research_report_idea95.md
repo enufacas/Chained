@@ -302,10 +302,10 @@ Homebrew's change reflects a broader tension:
 **Historical Context:** TypeScript was once criticized for build times and runtime overhead.
 
 **Current Reality (Late 2025):**
-- **Bun**: Native TypeScript execution, no build step required
-- **esbuild**: 100x faster than Webpack
-- **SWC**: Rust-based compiler, 20x faster than Babel
-- **Deno**: Native TypeScript runtime
+- **Bun**: Native TypeScript execution, no build step required, significantly faster startup and request handling
+- **esbuild**: Dramatically faster bundling than Webpack (benchmarks show 100x+ in some cases)
+- **SWC**: Rust-based compiler, substantially faster than Babel (20x+ in benchmarks)
+- **Deno**: Native TypeScript runtime with modern security model
 
 **Result:** TypeScript projects now build and run faster than equivalent JavaScript projects from 5 years ago.
 
