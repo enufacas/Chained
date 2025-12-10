@@ -30,6 +30,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### ✨ Features
 
+- 👤 Research: AI/ML trends Nov 2025 - Integration roadmap (idea:96) [#3846](https://github.com/enufacas/Chained/pull/3846)
 - 👤 🔧 Agents Research: AI/ML Agents trends (Nov 24, 2025) - 5 integration proposals [#3848](https://github.com/enufacas/Chained/pull/3848)
 - 🤖 🧠 Learning 🧠 Learn from GitHub Copilot sources - 2025-12-10 [#3850](https://github.com/enufacas/Chained/pull/3850)
 - 🤖 🔧 Agents 🎯 Agent Missions - Pipeline [#3840](https://github.com/enufacas/Chained/pull/3840)
@@ -46,11 +47,11 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x49) [#3852](https://github.com/enufacas/Chained/pull/3852)
-- 👤 📚 Docs **Documentation**: Add compiler-specialist quickstart guide for Integration by @engineer-master [#2](https://github.com/enufacas/Chained/pull/2)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x51) [#3846](https://github.com/enufacas/Chained/pull/3846)
 - 🤖 **Documentation**: 📚 Sync World State to Docs - Pipeline [#3841](https://github.com/enufacas/Chained/pull/3841)
 - 👤 **Documentation**: Document deployed URL for PR 3D organism implementation [#3816](https://github.com/enufacas/Chained/pull/3816)
 - 🤖 **Chore**: 🌍 World Model Update - Pipeline [#3833](https://github.com/enufacas/Chained/pull/3833)
+- 👤 🔧 Tools **Test**: Complete TypeScript trends investigation (idea:95) by @investigate-specialist [#3845](https://github.com/enufacas/Chained/pull/3845)
 
 ---
 
