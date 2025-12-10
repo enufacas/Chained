@@ -1,0 +1,241 @@
+{
+  "version": "1.0.0",
+  "last_updated": "2025-12-10T10:31:40.817159+00:00",
+  "repository": "Chained",
+  "total_decisions": 6,
+  "decisions": [
+    {
+      "id": "DD-f3ae29ca",
+      "title": "Fix ERROR_OBSERVER_URL not set: remove fallback, add diagnostics, verify deployment (#3587)",
+      "date": "2025-12-04T06:06:35+00:00",
+      "status": "accepted",
+      "category": "deployment",
+      "context": "Fix ERROR_OBSERVER_URL not set: remove fallback, add diagnostics, verify deployment (#3587)\n* Initial plan",
+      "decision": "Fix ERROR_OBSERVER_URL not set: remove fallback, add diagnostics, verify deployment (#3587)",
+      "consequences": "",
+      "alternatives": "",
+      "commit": "f3ae29c",
+      "author": "Copilot",
+      "metadata": {
+        "files_affected": [
+          ".github/workflows/deploy-adk-agents.yml",
+          "docs/investigations/ERROR_OBSERVER_URL_INVESTIGATION_SUMMARY.md",
+          "docs/investigations/ERROR_OBSERVER_URL_NOT_SET_FIX.md",
+          "docs/investigations/ERROR_OBSERVER_URL_TROUBLESHOOTING_GUIDE.md",
+          "infrastructure/docker/ag-ui-frontend/__tests__/A2A_ERROR_FLOW_TESTS.md",
+          "infrastructure/docker/ag-ui-frontend/__tests__/api/error-observer.test.ts",
+          "infrastructure/docker/ag-ui-frontend/src/app/api/debug/env/route.ts",
+          "infrastructure/docker/ag-ui-frontend/src/app/api/error-observer/status/route.ts",
+          "infrastructure/docker/ag-ui-frontend/src/app/api/test-github-webhook/route.ts",
+          "infrastructure/docker/ag-ui-frontend/src/app/api/ui-error-report/route.ts"
+        ],
+        "commit_timestamp": 1764828395
+      }
+    },
+    {
+      "id": "DD-a239107e",
+      "title": "Add dedicated Demo & Deep Dive documentation page (#3579)",
+      "date": "2025-12-04T05:09:48+00:00",
+      "status": "deprecated",
+      "category": "general",
+      "context": "Add dedicated Demo & Deep Dive documentation page (#3579)\n* Initial plan",
+      "decision": "Add dedicated Demo & Deep Dive documentation page (#3579)",
+      "consequences": "",
+      "alternatives": "",
+      "commit": "a239107",
+      "author": "Copilot",
+      "metadata": {
+        "files_affected": [
+          "README.md",
+          "docs/DEMO_DEEP_DIVE.md"
+        ],
+        "commit_timestamp": 1764824988
+      }
+    },
+    {
+      "id": "DD-776d9085",
+      "title": "fix: use gemini-3-pro-preview for ADK agents Vertex AI (#3456)",
+      "date": "2025-11-30T23:02:39+00:00",
+      "status": "accepted",
+      "category": "general",
+      "context": "this specific version was not found or the project didn't have access",
+      "decision": "fix: use gemini-3-pro-preview for ADK agents Vertex AI (#3456)",
+      "consequences": "",
+      "alternatives": "",
+      "commit": "776d908",
+      "author": "Copilot",
+      "metadata": {
+        "files_affected": [
+          "infrastructure/docker/adk-agents/shared/gemini_client.py"
+        ],
+        "commit_timestamp": 1764543759
+      }
+    },
+    {
+      "id": "DD-eeffaed6",
+      "title": "Fix Terraform import for adk_agents service account; add A2A URLs to README (#3278)",
+      "date": "2025-11-27T22:10:14+00:00",
+      "status": "accepted",
+      "category": "general",
+      "context": "Fix Terraform import for adk_agents service account; add A2A URLs to README (#3278)\n* Initial plan",
+      "decision": "Fix Terraform import for adk_agents service account; add A2A URLs to README (#3278)",
+      "consequences": "",
+      "alternatives": "",
+      "commit": "eeffaed",
+      "author": "Copilot",
+      "metadata": {
+        "files_affected": [
+          ".github/workflows/deploy-gcp-infrastructure.yml",
+          "README.md"
+        ],
+        "commit_timestamp": 1764281414
+      }
+    },
+    {
+      "id": "DD-2beeef8a",
+      "title": "Refactor A2A workflow: Parallel agent execution with GitHub Artifacts (#3231)",
+      "date": "2025-11-27T05:37:20+00:00",
+      "status": "accepted",
+      "category": "general",
+      "context": "Creates context file for Gemini CLI",
+      "decision": "Refactor A2A workflow: Parallel agent execution with GitHub Artifacts (#3231)",
+      "consequences": "",
+      "alternatives": "",
+      "commit": "2beeef8",
+      "author": "Copilot",
+      "metadata": {
+        "files_affected": [
+          ".github/workflows/a2a-multi-agent.yml",
+          ".github/workflows/a2a-parallel-agents.yml",
+          "tools/a2a/workflow_orchestrator.py"
+        ],
+        "commit_timestamp": 1764221840
+      }
+    },
+    {
+      "id": "DD-63ae7936",
+      "title": "A2A Protocol: Complete Phase 3A Implementation - Gemini & Copilot Multi-Agent Orchestration with Working Infrastructure (#3090)",
+      "date": "2025-11-26T13:50:57+00:00",
+      "status": "deprecated",
+      "category": "architecture",
+      "context": "A2A Protocol: Complete Phase 3A Implementation - Gemini & Copilot Multi-Agent Orchestration with Working Infrastructure (#3090)\n* Initial plan",
+      "decision": "Use GraphQL exclusively for Phase 3 implementation",
+      "consequences": "",
+      "alternatives": "",
+      "commit": "63ae793",
+      "author": "Copilot",
+      "metadata": {
+        "files_affected": [
+          ".github/agent-system/config.json",
+          ".github/agents/a2a-coordinator.md",
+          ".github/workflows/README-A2A-TESTING.md",
+          ".github/workflows/copilot-a2a-coordinator.yml",
+          ".github/workflows/gemini-a2a-coordinator.yml",
+          "docs/A2A_GITHUB_RUNNERS_ARCHITECTURE.md",
+          "docs/A2A_GITHUB_RUNNERS_COMPLIANCE.md",
+          "docs/A2A_IMPLEMENTATION_SUMMARY.md",
+          "docs/A2A_INTEGRATION_DESIGN.md",
+          "docs/A2A_INTEGRATION_README.md",
+          "docs/A2A_MCP_TRANSPORT_DESIGN.md",
+          "docs/A2A_PHASE_2B_TESTING_SUMMARY.md",
+          "docs/A2A_TRANSPORT_COMPARISON.md",
+          "docs/a2a/A2A_BRANCH_BASED_COORDINATION.md",
+          "docs/a2a/A2A_COPILOT_CLI_INVESTIGATION.md",
+          "docs/a2a/A2A_COPILOT_REALITY_CHECK.md",
+          "docs/a2a/A2A_COPILOT_SESSIONS_EXPLAINED.md",
+          "docs/a2a/A2A_CROSS_PLATFORM_ORCHESTRATION.md",
+          "docs/a2a/A2A_GEMINI_IMPLEMENTATION.md",
+          "docs/a2a/A2A_GITHUB_RUNNERS_ARCHITECTURE.md",
+          "docs/a2a/A2A_GITHUB_RUNNERS_COMPLIANCE.md",
+          "docs/a2a/A2A_IMPLEMENTATION_SUMMARY.md",
+          "docs/a2a/A2A_INTEGRATION_DESIGN.md",
+          "docs/a2a/A2A_INTEGRATION_README.md",
+          "docs/a2a/A2A_MCP_TRANSPORT_DESIGN.md",
+          "docs/a2a/A2A_PHASE_2B_TESTING_SUMMARY.md",
+          "docs/a2a/A2A_PHASE_3_DESIGN.md",
+          "docs/a2a/A2A_STATUS.md",
+          "docs/a2a/A2A_TRANSPORT_COMPARISON.md",
+          "docs/a2a/A2A_VIABLE_PATH_FORWARD.md",
+          "docs/a2a/PHASE_3A_IMPLEMENTATION_SUMMARY.md",
+          "docs/a2a/README.md",
+          "tools/a2a/__init__.py",
+          "tools/a2a/agent_card.py",
+          "tools/a2a/agent_executor.py",
+          "tools/a2a/agent_server.py",
+          "tools/a2a/branch_cleanup.py",
+          "tools/a2a/branch_message_bus_setup.py",
+          "tools/a2a/branch_polling_monitor.py",
+          "tools/a2a/branch_result_aggregator.py",
+          "tools/a2a/client.py",
+          "tools/a2a/copilot_agent_assigner.py",
+          "tools/a2a/copilot_coordination_summary.py",
+          "tools/a2a/copilot_task_analyzer.py",
+          "tools/a2a/discovery.py",
+          "tools/a2a/gemini_result_aggregator.py",
+          "tools/a2a/gemini_task_analyzer.py",
+          "tools/a2a/gemini_tier1_orchestrator.py",
+          "tools/a2a/gemini_tier2_orchestrator.py",
+          "tools/a2a/github_branch_transport.py",
+          "tools/a2a/github_transport.py",
+          "tools/a2a/mcp_transport.py",
+          "tools/a2a/utils.py"
+        ],
+        "commit_timestamp": 1764165057
+      }
+    }
+  ],
+  "index": {
+    "by_status": {
+      "accepted": [
+        0,
+        2,
+        3,
+        4
+      ],
+      "deprecated": [
+        1,
+        5
+      ]
+    },
+    "by_category": {
+      "deployment": [
+        0
+      ],
+      "general": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "architecture": [
+        5
+      ]
+    },
+    "by_date": {
+      "2025-12": [
+        0,
+        1
+      ],
+      "2025-11": [
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    "by_hash": {
+      "DD-f3ae29ca": 0,
+      "DD-a239107e": 1,
+      "DD-776d9085": 2,
+      "DD-eeffaed6": 3,
+      "DD-2beeef8a": 4,
+      "DD-63ae7936": 5
+    }
+  },
+  "statistics": {
+    "accepted": 4,
+    "rejected": 0,
+    "deprecated": 2,
+    "proposed": 0
+  }
+}
