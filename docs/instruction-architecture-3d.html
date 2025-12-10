@@ -1,0 +1,1338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instruction Architecture 3D - Chained</title>
+    <link rel="icon" href="favicon.ico">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0e1a;
+            color: #00ffff;
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        /* Header */
+        #header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: linear-gradient(135deg, #0a0e1a 0%, #1a1f3a 100%);
+            border-bottom: 2px solid #00ffff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            z-index: 1000;
+            box-shadow: 0 2px 20px rgba(0, 255, 255, 0.3);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .home-btn {
+            background: none;
+            border: 1px solid #00ffff;
+            color: #00ffff;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .home-btn:hover {
+            background: rgba(0, 255, 255, 0.2);
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+        }
+
+        #header h1 {
+            font-size: 20px;
+            color: #00ffff;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .view-btn {
+            background: rgba(0, 255, 255, 0.1);
+            border: 1px solid #00ffff;
+            color: #00ffff;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s;
+        }
+
+        .view-btn:hover, .view-btn.active {
+            background: rgba(0, 255, 255, 0.3);
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+        }
+
+        /* Main Container */
+        #container {
+            position: fixed;
+            top: 60px;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+        }
+
+        /* Canvas Container */
+        #canvas-container {
+            flex: 1;
+            position: relative;
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Side Panel */
+        #detail-panel {
+            position: fixed;
+            right: -400px;
+            top: 60px;
+            bottom: 0;
+            width: 400px;
+            background: rgba(10, 14, 26, 0.98);
+            border-left: 2px solid #00ffff;
+            overflow-y: auto;
+            z-index: 100;
+            transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: -5px 0 30px rgba(0, 0, 0, 0.5);
+        }
+
+        #detail-panel.visible {
+            right: 0;
+        }
+
+        .panel-header {
+            padding: 20px;
+            background: rgba(0, 255, 255, 0.1);
+            border-bottom: 2px solid #00ffff;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            backdrop-filter: blur(10px);
+        }
+
+        .panel-header h2 {
+            font-size: 18px;
+            color: #00ffff;
+            margin-bottom: 8px;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+        }
+
+        .panel-header .layer-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .panel-header .layer-badge.layer-1 { background: #0088ff; color: white; }
+        .panel-header .layer-badge.layer-2 { background: #ffaa00; color: black; }
+        .panel-header .layer-badge.layer-2-5 { background: #ff6600; color: white; }
+        .panel-header .layer-badge.layer-3 { background: #aa00ff; color: white; }
+
+        .panel-content {
+            padding: 20px;
+        }
+
+        .panel-section {
+            margin-bottom: 20px;
+        }
+
+        .panel-section h3 {
+            font-size: 14px;
+            color: #ff00ff;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .panel-section p, .panel-section li {
+            font-size: 13px;
+            line-height: 1.6;
+            color: #aaa;
+        }
+
+        .panel-section ul {
+            margin-left: 20px;
+        }
+
+        .panel-section code {
+            background: rgba(0, 255, 255, 0.1);
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            color: #00ffff;
+            font-size: 12px;
+        }
+
+        .close-panel {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: 1px solid #ff00ff;
+            color: #ff00ff;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px;
+            line-height: 1;
+            transition: all 0.3s;
+        }
+
+        .close-panel:hover {
+            background: rgba(255, 0, 255, 0.2);
+            transform: rotate(90deg);
+        }
+
+        /* Controls Info */
+        #controls-info {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(10, 14, 26, 0.9);
+            border: 1px solid #00ffff;
+            border-radius: 8px;
+            padding: 15px 20px;
+            z-index: 100;
+            max-width: 350px;
+            box-shadow: 0 4px 20px rgba(0, 255, 255, 0.2);
+        }
+
+        #controls-info h3 {
+            font-size: 14px;
+            color: #ff00ff;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .control-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 12px;
+        }
+
+        .control-key {
+            background: rgba(0, 255, 255, 0.2);
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            color: #00ffff;
+        }
+
+        .control-desc {
+            color: #aaa;
+        }
+
+        /* Loading Screen */
+        #loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #0a0e1a;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            transition: opacity 0.5s;
+        }
+
+        #loading.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .loader {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(0, 255, 255, 0.2);
+            border-top-color: #00ffff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            margin-top: 20px;
+            font-size: 16px;
+            color: #00ffff;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+        }
+
+        /* Legend */
+        #legend {
+            position: fixed;
+            top: 80px;
+            left: 20px;
+            background: rgba(10, 14, 26, 0.9);
+            border: 1px solid #00ffff;
+            border-radius: 8px;
+            padding: 15px;
+            z-index: 100;
+            box-shadow: 0 4px 20px rgba(0, 255, 255, 0.2);
+        }
+
+        #legend h3 {
+            font-size: 12px;
+            color: #ff00ff;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+            font-size: 11px;
+        }
+
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .legend-label {
+            color: #aaa;
+        }
+
+        /* Stats */
+        #stats {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            background: rgba(10, 14, 26, 0.9);
+            border: 1px solid #00ffff;
+            border-radius: 8px;
+            padding: 15px;
+            z-index: 100;
+            min-width: 150px;
+            box-shadow: 0 4px 20px rgba(0, 255, 255, 0.2);
+        }
+
+        #stats h3 {
+            font-size: 12px;
+            color: #ff00ff;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 6px;
+            font-size: 11px;
+        }
+
+        .stat-label {
+            color: #aaa;
+        }
+
+        .stat-value {
+            color: #00ffff;
+            font-weight: bold;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            #detail-panel {
+                width: 100%;
+                right: -100%;
+            }
+            
+            #controls-info {
+                font-size: 10px;
+                padding: 10px;
+                max-width: 250px;
+            }
+            
+            #legend, #stats {
+                font-size: 10px;
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div id="header">
+        <div class="header-left">
+            <a href="index.html" class="home-btn">🏠 Home</a>
+            <h1>📚 Instruction Architecture 3D</h1>
+        </div>
+        <div class="header-right">
+            <button class="view-btn active" data-view="overview">Overview</button>
+            <button class="view-btn" data-view="flow">Flow</button>
+            <button class="view-btn" data-view="layers">Layers</button>
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <div id="container">
+        <div id="canvas-container"></div>
+    </div>
+
+    <!-- Detail Panel -->
+    <div id="detail-panel">
+        <button class="close-panel" onclick="closeDetailPanel()">×</button>
+        <div class="panel-header">
+            <h2 id="panel-title">Select a node to view details</h2>
+            <span class="layer-badge" id="panel-badge"></span>
+        </div>
+        <div class="panel-content" id="panel-content">
+            <p style="color: #888; text-align: center; padding: 40px 20px;">
+                Click on any instruction node in the 3D visualization to see its details, 
+                apply patterns, and role in the architecture.
+            </p>
+        </div>
+    </div>
+
+    <!-- Legend -->
+    <div id="legend">
+        <h3>🎨 Layer Types</h3>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #0088ff;"></div>
+            <div class="legend-label">Layer 1: Built-in</div>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #ffaa00;"></div>
+            <div class="legend-label">Layer 2: Base Repository</div>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #ff6600;"></div>
+            <div class="legend-label">Layer 2.5: Path-Based</div>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #aa00ff;"></div>
+            <div class="legend-label">Layer 3: Agent-Specific</div>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #00ffff;"></div>
+            <div class="legend-label">Complete Context</div>
+        </div>
+    </div>
+
+    <!-- Stats -->
+    <div id="stats">
+        <h3>📊 Architecture Stats</h3>
+        <div class="stat-row">
+            <span class="stat-label">Total Files:</span>
+            <span class="stat-value" id="stat-total">0</span>
+        </div>
+        <div class="stat-row">
+            <span class="stat-label">Base:</span>
+            <span class="stat-value" id="stat-base">0</span>
+        </div>
+        <div class="stat-row">
+            <span class="stat-label">Path-Based:</span>
+            <span class="stat-value" id="stat-path">0</span>
+        </div>
+        <div class="stat-row">
+            <span class="stat-label">Agents:</span>
+            <span class="stat-value" id="stat-agents">0</span>
+        </div>
+        <div class="stat-row">
+            <span class="stat-label">FPS:</span>
+            <span class="stat-value" id="stat-fps">60</span>
+        </div>
+    </div>
+
+    <!-- Controls Info -->
+    <div id="controls-info">
+        <h3>⌨️ Controls</h3>
+        <div class="control-item">
+            <span class="control-key">Left Click + Drag</span>
+            <span class="control-desc">Rotate</span>
+        </div>
+        <div class="control-item">
+            <span class="control-key">Right Click + Drag</span>
+            <span class="control-desc">Pan</span>
+        </div>
+        <div class="control-item">
+            <span class="control-key">Scroll</span>
+            <span class="control-desc">Zoom</span>
+        </div>
+        <div class="control-item">
+            <span class="control-key">Click Node</span>
+            <span class="control-desc">View Details</span>
+        </div>
+        <div class="control-item">
+            <span class="control-key">1-4</span>
+            <span class="control-desc">Layer Views</span>
+        </div>
+        <div class="control-item">
+            <span class="control-key">Space</span>
+            <span class="control-desc">Reset Camera</span>
+        </div>
+    </div>
+
+    <!-- Loading Screen -->
+    <div id="loading">
+        <div class="loader"></div>
+        <div class="loading-text">Loading Instruction Architecture...</div>
+    </div>
+
+    <!-- Three.js Import Map -->
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+        }
+    }
+    </script>
+
+    <!-- Main Application -->
+    <script type="module">
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+        import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+        import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+        import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+        import { CSS3DRenderer, CSS3DObject } from 'three/addons/renderers/CSS3DRenderer.js';
+
+        // Application State
+        const state = {
+            scene: null,
+            camera: null,
+            renderer: null,
+            css3DRenderer: null,
+            controls: null,
+            composer: null,
+            nodes: [],
+            connections: [],
+            particles: [],
+            selectedNode: null,
+            hoveredNode: null,
+            instructionData: null,
+            currentView: 'overview'
+        };
+
+        // Instruction Architecture Data
+        const instructionArchitecture = {
+            layers: [
+                {
+                    id: 'layer-1',
+                    name: 'GitHub Copilot Built-in',
+                    level: 0,
+                    color: 0x0088ff,
+                    description: 'Foundation capabilities always present. Cannot be modified.',
+                    files: [
+                        { name: 'Copilot Core', type: 'built-in', description: 'Base LLM capabilities, code understanding, context awareness' }
+                    ]
+                },
+                {
+                    id: 'layer-2',
+                    name: 'Base Repository Instructions',
+                    level: 1,
+                    color: 0xffaa00,
+                    description: 'Universal standards and conventions applied to all agents.',
+                    files: [
+                        { 
+                            name: '.copilot-instructions.md',
+                            type: 'base',
+                            path: '.copilot-instructions.md',
+                            description: 'Root level instructions with project overview and basic conventions'
+                        },
+                        { 
+                            name: '.github/copilot-instructions.md',
+                            type: 'base',
+                            path: '.github/copilot-instructions.md',
+                            description: 'Comprehensive repository standards: agents catalog, selection rules, autonomous system context, project structure'
+                        }
+                    ]
+                },
+                {
+                    id: 'layer-2-5',
+                    name: 'Path-Based Instructions',
+                    level: 2,
+                    color: 0xff6600,
+                    description: 'Conditionally applied based on file paths being modified.',
+                    files: [
+                        { name: 'threejs-rendering.instructions.md', applyTo: ['docs/**/*3d*.html', 'docs/**/*three*.html'] },
+                        { name: 'branch-protection.instructions.md', applyTo: ['.github/workflows/**/*.yml'] },
+                        { name: 'agent-mentions.instructions.md', applyTo: ['**/*.yml', '**/*.yaml'] },
+                        { name: 'workflow-reference.instructions.md', applyTo: ['.github/workflows/**/*.yml'] },
+                        { name: 'terraform-provider-docs.instructions.md', applyTo: ['infrastructure/terraform/**/*.tf'] },
+                        { name: 'root-directory-protection.instructions.md', applyTo: ['/*.md', '/*.txt', '/*.json'] },
+                        { name: 'meta-coordinator-system.instructions.md', applyTo: ['.github/workflows/meta-coordinator.yml'] },
+                        { name: 'a2a-ui-development.instructions.md', applyTo: ['infrastructure/docker/ag-ui-frontend/**'] },
+                        { name: 'a2a-ui-real-data.instructions.md', applyTo: ['infrastructure/docker/ag-ui-frontend/**'] },
+                        { name: 'agent-definition-sync.instructions.md', applyTo: ['.github/agents/*.md'] },
+                        { name: 'agent-issue-updates.instructions.md', applyTo: ['.github/workflows/**/*.yml'] },
+                        { name: 'issue-pr-agent-mentions.instructions.md', applyTo: ['**/*issue*.md', '**/*pull_request*.md'] },
+                        { name: 'github-pages-testing.instructions.md', applyTo: ['docs/**/*.html'] },
+                        { name: 'changelog-maintenance.instructions.md', applyTo: ['CHANGELOG.md', '**/*.md'] },
+                        { name: 'docs-a2a-maintenance.instructions.md', applyTo: ['docs/a2a/**'] }
+                    ]
+                },
+                {
+                    id: 'layer-3',
+                    name: 'Agent-Specific Instructions',
+                    level: 3,
+                    color: 0xaa00ff,
+                    description: 'Applied only when specific agent is assigned. Contains personality, specialization, tools.',
+                    files: [
+                        { name: 'render-3d-master.md', personality: 'John Carmack', specialization: '3D Rendering & WebGL', highlighted: true },
+                        { name: 'engineer-master.md', personality: 'Margaret Hamilton', specialization: 'API Engineering' },
+                        { name: 'troubleshoot-expert.md', personality: 'Grace Hopper', specialization: 'Workflow Debugging', protected: true },
+                        { name: 'secure-specialist.md', personality: 'Bruce Schneier', specialization: 'Security' },
+                        { name: 'organize-guru.md', personality: 'Robert Martin', specialization: 'Code Organization' },
+                        { name: 'accelerate-master.md', personality: 'Rich Hickey', specialization: 'Performance' },
+                        { name: 'assert-specialist.md', personality: 'Leslie Lamport', specialization: 'Testing' },
+                        { name: 'bridge-master.md', personality: 'Tim Berners-Lee', specialization: 'Integration' },
+                        { name: 'meta-coordinator.md', personality: 'Alan Turing', specialization: 'Multi-Agent Coordination', protected: true },
+                        { name: 'pioneer-pro.md', personality: 'Ivan Sutherland', specialization: 'Innovation' },
+                        { name: 'coach-master.md', personality: 'Barbara Liskov', specialization: 'Code Review' },
+                        { name: 'clarify-champion.md', personality: 'Neil deGrasse Tyson', specialization: 'Documentation' }
+                    ]
+                },
+                {
+                    id: 'complete',
+                    name: 'Complete Agent Context',
+                    level: 4,
+                    color: 0x00ffff,
+                    description: 'Final assembled context with all applicable instructions merged.',
+                    files: [
+                        { name: 'Complete Context', type: 'complete', description: 'Layer 1 + Layer 2 + Applicable Layer 2.5 + Assigned Layer 3' }
+                    ]
+                }
+            ]
+        };
+
+        // Initialize
+        async function init() {
+            const container = document.getElementById('canvas-container');
+            
+            // Scene
+            state.scene = new THREE.Scene();
+            state.scene.fog = new THREE.FogExp2(0x0a0e1a, 0.002);
+
+            // Camera
+            state.camera = new THREE.PerspectiveCamera(
+                60,
+                container.clientWidth / container.clientHeight,
+                0.1,
+                1000
+            );
+            state.camera.position.set(30, 25, 40);
+
+            // WebGL Renderer
+            state.renderer = new THREE.WebGLRenderer({ 
+                antialias: true,
+                alpha: true 
+            });
+            state.renderer.setSize(container.clientWidth, container.clientHeight);
+            state.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            state.renderer.setClearColor(0x0a0e1a, 1);
+            container.appendChild(state.renderer.domElement);
+
+            // CSS3D Renderer for labels
+            state.css3DRenderer = new CSS3DRenderer();
+            state.css3DRenderer.setSize(container.clientWidth, container.clientHeight);
+            state.css3DRenderer.domElement.style.position = 'absolute';
+            state.css3DRenderer.domElement.style.top = '0';
+            state.css3DRenderer.domElement.style.pointerEvents = 'none';
+            container.appendChild(state.css3DRenderer.domElement);
+
+            // Controls
+            state.controls = new OrbitControls(state.camera, state.renderer.domElement);
+            state.controls.enableDamping = true;
+            state.controls.dampingFactor = 0.05;
+            state.controls.minDistance = 10;
+            state.controls.maxDistance = 100;
+            state.controls.maxPolarAngle = Math.PI / 1.5;
+
+            // Post-processing
+            state.composer = new EffectComposer(state.renderer);
+            const renderPass = new RenderPass(state.scene, state.camera);
+            state.composer.addPass(renderPass);
+
+            const bloomPass = new UnrealBloomPass(
+                new THREE.Vector2(container.clientWidth, container.clientHeight),
+                1.2,  // strength
+                0.6,  // radius
+                0.3   // threshold
+            );
+            state.composer.addPass(bloomPass);
+
+            // Lighting
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
+            state.scene.add(ambientLight);
+
+            const pointLight1 = new THREE.PointLight(0x00ffff, 1, 100);
+            pointLight1.position.set(20, 30, 20);
+            state.scene.add(pointLight1);
+
+            const pointLight2 = new THREE.PointLight(0xff00ff, 1, 100);
+            pointLight2.position.set(-20, 30, -20);
+            state.scene.add(pointLight2);
+
+            // Create instruction architecture
+            createInstructionArchitecture();
+
+            // Add ambient particles
+            createAmbientParticles();
+
+            // Event listeners
+            window.addEventListener('resize', onWindowResize);
+            window.addEventListener('click', onMouseClick);
+            window.addEventListener('mousemove', onMouseMove);
+            window.addEventListener('keydown', onKeyDown);
+
+            // View buttons
+            document.querySelectorAll('.view-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    state.currentView = btn.dataset.view;
+                    animateToView(state.currentView);
+                });
+            });
+
+            // Update stats
+            updateStats();
+
+            // Hide loading
+            setTimeout(() => {
+                document.getElementById('loading').classList.add('hidden');
+            }, 1000);
+
+            // Start animation
+            animate();
+        }
+
+        function createInstructionArchitecture() {
+            const layerSpacing = 12;
+            const nodeSpacing = 4;
+
+            instructionArchitecture.layers.forEach((layer, layerIndex) => {
+                const yPos = layerIndex * layerSpacing - (instructionArchitecture.layers.length * layerSpacing) / 2;
+                const numFiles = layer.files.length;
+                
+                // Create layer platform
+                const platformGeometry = new THREE.CylinderGeometry(
+                    Math.max(6, numFiles * 1.5), 
+                    Math.max(6, numFiles * 1.5), 
+                    0.3, 
+                    32
+                );
+                const platformMaterial = new THREE.MeshPhongMaterial({
+                    color: layer.color,
+                    transparent: true,
+                    opacity: 0.15,
+                    emissive: layer.color,
+                    emissiveIntensity: 0.2
+                });
+                const platform = new THREE.Mesh(platformGeometry, platformMaterial);
+                platform.position.y = yPos - 1;
+                state.scene.add(platform);
+
+                // Create layer label
+                createLayerLabel(layer.name, yPos + 2.5, layer.color);
+
+                // Create file nodes
+                layer.files.forEach((file, fileIndex) => {
+                    const angle = (fileIndex / numFiles) * Math.PI * 2;
+                    const radius = Math.max(4, numFiles * 0.8);
+                    const xPos = Math.cos(angle) * radius;
+                    const zPos = Math.sin(angle) * radius;
+
+                    const node = createFileNode(file, xPos, yPos, zPos, layer.color, layer.id);
+                    state.nodes.push({
+                        mesh: node,
+                        data: file,
+                        layer: layer,
+                        position: new THREE.Vector3(xPos, yPos, zPos)
+                    });
+
+                    // Create connections to previous layer
+                    if (layerIndex > 0) {
+                        const prevLayer = instructionArchitecture.layers[layerIndex - 1];
+                        prevLayer.files.forEach((prevFile, prevIndex) => {
+                            const prevAngle = (prevIndex / prevLayer.files.length) * Math.PI * 2;
+                            const prevRadius = Math.max(4, prevLayer.files.length * 0.8);
+                            const prevX = Math.cos(prevAngle) * prevRadius;
+                            const prevZ = Math.sin(prevAngle) * prevRadius;
+                            const prevY = (layerIndex - 1) * layerSpacing - (instructionArchitecture.layers.length * layerSpacing) / 2;
+
+                            createConnection(
+                                new THREE.Vector3(prevX, prevY, prevZ),
+                                new THREE.Vector3(xPos, yPos, zPos),
+                                layer.color
+                            );
+                        });
+                    }
+                });
+            });
+        }
+
+        function createFileNode(file, x, y, z, color, layerId) {
+            // Node geometry
+            let geometry;
+            if (file.highlighted) {
+                geometry = new THREE.OctahedronGeometry(0.8, 0);
+            } else if (file.protected) {
+                geometry = new THREE.IcosahedronGeometry(0.7, 0);
+            } else if (file.type === 'complete') {
+                geometry = new THREE.SphereGeometry(1.2, 16, 16);
+            } else if (file.type === 'built-in') {
+                geometry = new THREE.BoxGeometry(1.5, 1.5, 1.5);
+            } else {
+                geometry = new THREE.SphereGeometry(0.6, 16, 16);
+            }
+
+            const material = new THREE.MeshPhongMaterial({
+                color: color,
+                emissive: color,
+                emissiveIntensity: 0.5,
+                transparent: true,
+                opacity: 0.9
+            });
+
+            const mesh = new THREE.Mesh(geometry, material);
+            mesh.position.set(x, y, z);
+            mesh.userData = { file, layerId };
+            state.scene.add(mesh);
+
+            // Glow sphere
+            const glowGeometry = geometry.clone();
+            const glowMaterial = new THREE.MeshBasicMaterial({
+                color: color,
+                transparent: true,
+                opacity: 0.2,
+                side: THREE.BackSide
+            });
+            const glow = new THREE.Mesh(glowGeometry, glowMaterial);
+            glow.scale.multiplyScalar(1.3);
+            mesh.add(glow);
+
+            // Label
+            createNodeLabel(file.name, x, y + 1.5, z);
+
+            return mesh;
+        }
+
+        function createNodeLabel(text, x, y, z) {
+            const labelDiv = document.createElement('div');
+            labelDiv.className = 'node-label';
+            labelDiv.textContent = text;
+            labelDiv.style.cssText = `
+                color: #00ffff;
+                font-size: 10px;
+                font-family: 'Courier New', monospace;
+                text-align: center;
+                background: rgba(10, 14, 26, 0.8);
+                padding: 4px 8px;
+                border-radius: 4px;
+                border: 1px solid rgba(0, 255, 255, 0.3);
+                white-space: nowrap;
+                pointer-events: none;
+                text-shadow: 0 0 5px rgba(0, 255, 255, 0.8);
+            `;
+
+            const label = new CSS3DObject(labelDiv);
+            label.position.set(x, y, z);
+            label.scale.set(0.05, 0.05, 0.05);
+            state.scene.add(label);
+        }
+
+        function createLayerLabel(text, y, color) {
+            const labelDiv = document.createElement('div');
+            labelDiv.textContent = text;
+            labelDiv.style.cssText = `
+                color: ${colorToHex(color)};
+                font-size: 16px;
+                font-weight: bold;
+                text-align: center;
+                background: rgba(10, 14, 26, 0.9);
+                padding: 8px 16px;
+                border-radius: 8px;
+                border: 2px solid ${colorToHex(color)};
+                text-transform: uppercase;
+                letter-spacing: 2px;
+                pointer-events: none;
+                text-shadow: 0 0 10px ${colorToHex(color)};
+                box-shadow: 0 0 20px ${colorToHex(color)}40;
+            `;
+
+            const label = new CSS3DObject(labelDiv);
+            label.position.set(0, y, 0);
+            label.scale.set(0.08, 0.08, 0.08);
+            state.scene.add(label);
+        }
+
+        function createConnection(start, end, color) {
+            const points = [];
+            const steps = 20;
+            
+            for (let i = 0; i <= steps; i++) {
+                const t = i / steps;
+                const x = start.x + (end.x - start.x) * t;
+                const y = start.y + (end.y - start.y) * t + Math.sin(t * Math.PI) * 2;
+                const z = start.z + (end.z - start.z) * t;
+                points.push(new THREE.Vector3(x, y, z));
+            }
+
+            const geometry = new THREE.BufferGeometry().setFromPoints(points);
+            const material = new THREE.LineBasicMaterial({
+                color: color,
+                transparent: true,
+                opacity: 0.3
+            });
+            const line = new THREE.Line(geometry, material);
+            state.scene.add(line);
+
+            state.connections.push({ line, points, color });
+        }
+
+        function createAmbientParticles() {
+            const particleCount = 500;
+            const geometry = new THREE.BufferGeometry();
+            const positions = new Float32Array(particleCount * 3);
+            const colors = new Float32Array(particleCount * 3);
+            const velocities = [];
+
+            const color1 = new THREE.Color(0x00ffff);
+            const color2 = new THREE.Color(0xff00ff);
+
+            for (let i = 0; i < particleCount; i++) {
+                positions[i * 3] = (Math.random() - 0.5) * 80;
+                positions[i * 3 + 1] = (Math.random() - 0.5) * 60;
+                positions[i * 3 + 2] = (Math.random() - 0.5) * 80;
+
+                const mixColor = color1.clone().lerp(color2, Math.random());
+                colors[i * 3] = mixColor.r;
+                colors[i * 3 + 1] = mixColor.g;
+                colors[i * 3 + 2] = mixColor.b;
+
+                velocities.push({
+                    x: (Math.random() - 0.5) * 0.02,
+                    y: Math.random() * 0.02,
+                    z: (Math.random() - 0.5) * 0.02
+                });
+            }
+
+            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+            const material = new THREE.PointsMaterial({
+                size: 0.15,
+                vertexColors: true,
+                transparent: true,
+                opacity: 0.6,
+                blending: THREE.AdditiveBlending
+            });
+
+            const particles = new THREE.Points(geometry, material);
+            state.scene.add(particles);
+
+            state.particles = { mesh: particles, velocities, geometry };
+        }
+
+        function animateParticles() {
+            if (!state.particles.mesh) return;
+
+            const positions = state.particles.geometry.attributes.position.array;
+            const velocities = state.particles.velocities;
+
+            for (let i = 0; i < positions.length / 3; i++) {
+                positions[i * 3] += velocities[i].x;
+                positions[i * 3 + 1] += velocities[i].y;
+                positions[i * 3 + 2] += velocities[i].z;
+
+                // Wrap around
+                if (Math.abs(positions[i * 3]) > 40) positions[i * 3] *= -1;
+                if (positions[i * 3 + 1] > 30) positions[i * 3 + 1] = -30;
+                if (Math.abs(positions[i * 3 + 2]) > 40) positions[i * 3 + 2] *= -1;
+            }
+
+            state.particles.geometry.attributes.position.needsUpdate = true;
+        }
+
+        function onMouseClick(event) {
+            if (event.target.tagName !== 'CANVAS') return;
+
+            const rect = state.renderer.domElement.getBoundingClientRect();
+            const mouse = new THREE.Vector2(
+                ((event.clientX - rect.left) / rect.width) * 2 - 1,
+                -((event.clientY - rect.top) / rect.height) * 2 + 1
+            );
+
+            const raycaster = new THREE.Raycaster();
+            raycaster.setFromCamera(mouse, state.camera);
+
+            const intersects = raycaster.intersectObjects(
+                state.nodes.map(n => n.mesh)
+            );
+
+            if (intersects.length > 0) {
+                const node = state.nodes.find(n => n.mesh === intersects[0].object);
+                if (node) {
+                    selectNode(node);
+                }
+            }
+        }
+
+        function onMouseMove(event) {
+            if (event.target.tagName !== 'CANVAS') return;
+
+            const rect = state.renderer.domElement.getBoundingClientRect();
+            const mouse = new THREE.Vector2(
+                ((event.clientX - rect.left) / rect.width) * 2 - 1,
+                -((event.clientY - rect.top) / rect.height) * 2 + 1
+            );
+
+            const raycaster = new THREE.Raycaster();
+            raycaster.setFromCamera(mouse, state.camera);
+
+            const intersects = raycaster.intersectObjects(
+                state.nodes.map(n => n.mesh)
+            );
+
+            // Reset previous hover
+            if (state.hoveredNode && (!intersects.length || intersects[0].object !== state.hoveredNode.mesh)) {
+                state.hoveredNode.mesh.material.emissiveIntensity = 0.5;
+                state.hoveredNode = null;
+                state.renderer.domElement.style.cursor = 'default';
+            }
+
+            // Set new hover
+            if (intersects.length > 0) {
+                const node = state.nodes.find(n => n.mesh === intersects[0].object);
+                if (node && node !== state.hoveredNode) {
+                    state.hoveredNode = node;
+                    node.mesh.material.emissiveIntensity = 1.0;
+                    state.renderer.domElement.style.cursor = 'pointer';
+                }
+            }
+        }
+
+        function selectNode(node) {
+            // Deselect previous
+            if (state.selectedNode) {
+                state.selectedNode.mesh.material.opacity = 0.9;
+            }
+
+            state.selectedNode = node;
+            node.mesh.material.opacity = 1.0;
+
+            // Show detail panel
+            showDetailPanel(node);
+
+            // Animate camera to node
+            const targetPos = node.position.clone();
+            targetPos.y += 5;
+            targetPos.z += 10;
+            
+            animateCameraToTarget(targetPos, node.position);
+        }
+
+        function showDetailPanel(node) {
+            const panel = document.getElementById('detail-panel');
+            const title = document.getElementById('panel-title');
+            const badge = document.getElementById('panel-badge');
+            const content = document.getElementById('panel-content');
+
+            title.textContent = node.data.name;
+            
+            // Set badge
+            badge.className = 'layer-badge ' + node.layer.id;
+            badge.textContent = node.layer.name;
+
+            // Build content
+            let html = '';
+
+            if (node.data.description) {
+                html += `
+                    <div class="panel-section">
+                        <h3>📝 Description</h3>
+                        <p>${node.data.description}</p>
+                    </div>
+                `;
+            }
+
+            if (node.data.personality) {
+                html += `
+                    <div class="panel-section">
+                        <h3>👤 Personality</h3>
+                        <p>Inspired by <strong>${node.data.personality}</strong></p>
+                    </div>
+                `;
+            }
+
+            if (node.data.specialization) {
+                html += `
+                    <div class="panel-section">
+                        <h3>🎯 Specialization</h3>
+                        <p>${node.data.specialization}</p>
+                    </div>
+                `;
+            }
+
+            if (node.data.applyTo && node.data.applyTo.length > 0) {
+                html += `
+                    <div class="panel-section">
+                        <h3>📂 Apply To Patterns</h3>
+                        <ul>
+                            ${node.data.applyTo.map(pattern => `<li><code>${pattern}</code></li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+            }
+
+            if (node.data.path) {
+                html += `
+                    <div class="panel-section">
+                        <h3>📄 File Path</h3>
+                        <p><code>${node.data.path}</code></p>
+                    </div>
+                `;
+            }
+
+            if (node.data.highlighted) {
+                html += `
+                    <div class="panel-section">
+                        <h3>⭐ Special Note</h3>
+                        <p>This is YOU! The <strong>render-3d-master</strong> agent created this visualization.</p>
+                    </div>
+                `;
+            }
+
+            if (node.data.protected) {
+                html += `
+                    <div class="panel-section">
+                        <h3>🛡️ Protected Agent</h3>
+                        <p>This agent cannot be eliminated and provides critical system functionality.</p>
+                    </div>
+                `;
+            }
+
+            html += `
+                <div class="panel-section">
+                    <h3>🏗️ Layer Information</h3>
+                    <p>${node.layer.description}</p>
+                    <p style="margin-top: 10px;"><strong>Layer Level:</strong> ${node.layer.level + 1} of ${instructionArchitecture.layers.length}</p>
+                </div>
+            `;
+
+            content.innerHTML = html;
+            panel.classList.add('visible');
+        }
+
+        function closeDetailPanel() {
+            document.getElementById('detail-panel').classList.remove('visible');
+            if (state.selectedNode) {
+                state.selectedNode.mesh.material.opacity = 0.9;
+                state.selectedNode = null;
+            }
+        }
+
+        function animateToView(view) {
+            let targetPos, targetLookAt;
+
+            switch (view) {
+                case 'overview':
+                    targetPos = new THREE.Vector3(30, 25, 40);
+                    targetLookAt = new THREE.Vector3(0, 0, 0);
+                    break;
+                case 'flow':
+                    targetPos = new THREE.Vector3(0, 0, 60);
+                    targetLookAt = new THREE.Vector3(0, 0, 0);
+                    break;
+                case 'layers':
+                    targetPos = new THREE.Vector3(40, 5, 0);
+                    targetLookAt = new THREE.Vector3(0, 0, 0);
+                    break;
+            }
+
+            animateCameraToTarget(targetPos, targetLookAt);
+        }
+
+        function animateCameraToTarget(position, lookAt) {
+            const duration = 1500;
+            const startPos = state.camera.position.clone();
+            const startTarget = state.controls.target.clone();
+            const startTime = Date.now();
+
+            function animate() {
+                const elapsed = Date.now() - startTime;
+                const t = Math.min(elapsed / duration, 1);
+                const eased = easeInOutCubic(t);
+
+                state.camera.position.lerpVectors(startPos, position, eased);
+                state.controls.target.lerpVectors(startTarget, lookAt, eased);
+                state.controls.update();
+
+                if (t < 1) {
+                    requestAnimationFrame(animate);
+                }
+            }
+
+            animate();
+        }
+
+        function easeInOutCubic(t) {
+            return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+        }
+
+        function onKeyDown(event) {
+            switch (event.key) {
+                case ' ':
+                    animateToView('overview');
+                    break;
+                case '1':
+                    focusOnLayer(0);
+                    break;
+                case '2':
+                    focusOnLayer(1);
+                    break;
+                case '3':
+                    focusOnLayer(2);
+                    break;
+                case '4':
+                    focusOnLayer(3);
+                    break;
+                case 'Escape':
+                    closeDetailPanel();
+                    break;
+            }
+        }
+
+        function focusOnLayer(layerIndex) {
+            if (layerIndex >= instructionArchitecture.layers.length) return;
+
+            const layer = instructionArchitecture.layers[layerIndex];
+            const yPos = layerIndex * 12 - (instructionArchitecture.layers.length * 12) / 2;
+            
+            const targetPos = new THREE.Vector3(20, yPos + 5, 20);
+            const targetLookAt = new THREE.Vector3(0, yPos, 0);
+            
+            animateCameraToTarget(targetPos, targetLookAt);
+        }
+
+        function updateStats() {
+            let totalFiles = 0;
+            let baseFiles = 0;
+            let pathFiles = 0;
+            let agentFiles = 0;
+
+            instructionArchitecture.layers.forEach(layer => {
+                totalFiles += layer.files.length;
+                if (layer.id === 'layer-2') baseFiles = layer.files.length;
+                if (layer.id === 'layer-2-5') pathFiles = layer.files.length;
+                if (layer.id === 'layer-3') agentFiles = layer.files.length;
+            });
+
+            document.getElementById('stat-total').textContent = totalFiles;
+            document.getElementById('stat-base').textContent = baseFiles;
+            document.getElementById('stat-path').textContent = pathFiles;
+            document.getElementById('stat-agents').textContent = agentFiles;
+        }
+
+        function onWindowResize() {
+            const container = document.getElementById('canvas-container');
+            const width = container.clientWidth;
+            const height = container.clientHeight;
+
+            state.camera.aspect = width / height;
+            state.camera.updateProjectionMatrix();
+
+            state.renderer.setSize(width, height);
+            state.css3DRenderer.setSize(width, height);
+            state.composer.setSize(width, height);
+        }
+
+        function colorToHex(color) {
+            return '#' + color.toString(16).padStart(6, '0');
+        }
+
+        // Animation loop
+        let lastTime = Date.now();
+        let frameCount = 0;
+        let fps = 60;
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            // FPS counter
+            frameCount++;
+            const currentTime = Date.now();
+            if (currentTime - lastTime >= 1000) {
+                fps = frameCount;
+                frameCount = 0;
+                lastTime = currentTime;
+                document.getElementById('stat-fps').textContent = fps;
+            }
+
+            // Animate particles
+            animateParticles();
+
+            // Rotate nodes slightly
+            state.nodes.forEach(node => {
+                node.mesh.rotation.y += 0.005;
+            });
+
+            // Update controls
+            state.controls.update();
+
+            // Render
+            state.composer.render();
+            state.css3DRenderer.render(state.scene, state.camera);
+        }
+
+        // Make closeDetailPanel global
+        window.closeDetailPanel = closeDetailPanel;
+
+        // Start the application
+        init();
+    </script>
+</body>
+</html>
