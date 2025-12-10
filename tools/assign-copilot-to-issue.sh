@@ -186,7 +186,7 @@ The agent needs to be registered and active in the system before work can begin.
   
   # If no explicit agent found, use intelligent matching to determine best agent
   if [ -z "$explicit_agent" ]; then
-    agent_match=$(python3 tools/match-issue-to-agent.py "$issue_title" "$issue_body" 2>/dev/null || echo '{"agent":"create-guru","score":0,"confidence":"low"}')
+    agent_match=$(python3 tools/match-issue-to-agent.py "$issue_title" "$issue_body" 2>/dev/null || echo '{"agent":"create-botter","score":0,"confidence":"low"}')
     matched_agent=$(echo "$agent_match" | jq -r '.agent')
     agent_score=$(echo "$agent_match" | jq -r '.score')
     agent_confidence=$(echo "$agent_match" | jq -r '.confidence')
