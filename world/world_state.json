@@ -1,6 +1,6 @@
 {
-  "time": "2025-12-10T08:39:42Z",
-  "tick": 90,
+  "time": "2025-12-10T08:40:49Z",
+  "tick": 91,
   "agents": [
     {
       "id": "agent-1762910779",
@@ -31,13 +31,13 @@
       "label": "💭 Turing",
       "specialization": "coach-master",
       "location_region_id": "US:Charlotte",
-      "status": "exploring",
+      "status": "working",
       "path": [
         "US:Seattle",
         "US:Redmond",
         "US:San Francisco"
       ],
-      "current_idea_id": "idea:135",
+      "current_idea_id": "idea:93",
       "home_base": "US:Charlotte",
       "metrics": {
         "issues_resolved": 2,
@@ -50,6 +50,12 @@
         "creativity": 66,
         "caution": 81,
         "speed": 78
+      },
+      "current_mission": {
+        "mission_id": "idea:93",
+        "title": "AI/ML: Gpt (2025-11-24)",
+        "issue_number": null,
+        "assigned_at": "2025-12-10T08:40:49Z"
       }
     },
     {
@@ -57,11 +63,11 @@
       "label": "🎯 Liskov",
       "specialization": "investigate-champion",
       "location_region_id": "US:Charlotte",
-      "status": "exploring",
+      "status": "working",
       "path": [
         "US:San Francisco"
       ],
-      "current_idea_id": "idea:110",
+      "current_idea_id": "idea:94",
       "home_base": "US:Charlotte",
       "metrics": {
         "issues_resolved": 2,
@@ -74,6 +80,12 @@
         "creativity": 78,
         "caution": 75,
         "speed": 95
+      },
+      "current_mission": {
+        "mission_id": "idea:94",
+        "title": "AI/ML: Claude (2025-11-24)",
+        "issue_number": null,
+        "assigned_at": "2025-12-10T08:40:49Z"
       }
     },
     {
