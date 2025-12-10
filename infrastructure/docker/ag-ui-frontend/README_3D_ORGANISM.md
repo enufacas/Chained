@@ -30,10 +30,12 @@ This implementation recreates the standard AG-UI page component-by-component usi
 ### Visual Parity
 
 The 3D organism maintains visual similarity to the standard AG-UI:
-- **Color Scheme**: Cyan (#00ffff) and Magenta (#ff00ff) cyberpunk theme
+- **Color Scheme**: Slate-based professional theme (slate-900, slate-800, slate-700)
+- **Text**: White, slate-300, slate-400 hierarchy
+- **Accents**: Blue-500, green-500, purple-500, yellow-500 for status
 - **Layout**: Same three-panel layout (agent selection, 3D canvas, prompt/activity)
-- **Animations**: Floating agents, pulsing effects for working agents, rotating artifacts
-- **Effects**: Bloom effect, glow materials, wireframe overlays
+- **Animations**: Floating agents, subtle pulsing for working agents, rotating artifacts
+- **Effects**: Minimal emissive glow, professional studio lighting
 
 ### Technology Stack
 
@@ -83,29 +85,27 @@ http://localhost:3000/organism
 ### Humanoid Agent Structure
 
 Each humanoid consists of:
-- Head (sphere) with visor (plane)
+- Head (sphere) with visor (plane) in blue-500
 - Torso (capsule) with chest light
 - Arms (capsules) at 15° angles
 - Legs (capsules) for stability
-- Glow effect (outer sphere, translucent)
-- Wireframe overlay for cyberpunk aesthetic
-- Data ring (torus) orbiting the agent
+- Subtle highlight (minimal outer sphere, translucent)
 
 ### Animations
 
 - **Floating**: Sine wave motion for idle agents
-- **Working**: Gentle swaying + pulsing emissive intensity
+- **Working**: Gentle swaying + subtle pulsing emissive intensity (0.1 to 0.3)
 - **Artifacts**: Rotation + upward floating, fade out after 10 seconds
 
 ### Color Coding
 
-Different agent types have unique colors:
-- Academic Research: Cyan (#00ffff)
-- Google Trends: Magenta (#ff00ff)
-- Blog Writer: Green (#00ff00)
-- Code Reviewer: Orange (#ffaa00)
-- Data Analyst: Purple (#9900ff)
-- Image Generator: Pink (#ff0099)
+Different agent types have unique colors (Tailwind palette):
+- Academic Research: Blue (#3b82f6 - blue-500)
+- Google Trends: Green (#10b981 - green-500)
+- Blog Writer: Purple (#8b5cf6 - purple-500)
+- Code Reviewer: Yellow (#f59e0b - yellow-500)
+- Data Analyst: Cyan (#06b6d4 - cyan-500)
+- Image Generator: Pink (#ec4899 - pink-500)
 
 ## Real Data Integration
 
@@ -165,7 +165,6 @@ Potential improvements:
 ## Credits
 
 Based on:
-- `docs/organism.html` - Original 3D humanoid design
-- `docs/ag-organism.html` - AG-UI integration patterns
-- Standard AG-UI frontend - Component structure and data flow
+- `docs/organism.html` - Original 3D humanoid design (structure only, not theme)
+- Standard AG-UI frontend - Component structure, data flow, and visual theme
 - [react-three-fiber](https://github.com/pmndrs/react-three-fiber) - React Three.js integration
