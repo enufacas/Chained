@@ -28,9 +28,13 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ## 2025-12-10
 
+### 🐛 Bug Fixes
+
+- 👤 📋 Instructions Regenerate AG-UI Frontend package-lock.json and add package management instructions [#20086950265](https://github.com/enufacas/Chained/pull/20086950265)
+
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x33) [#3804](https://github.com/enufacas/Chained/pull/3804)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x35) [#3803](https://github.com/enufacas/Chained/pull/3803)
 
 ---
 
@@ -38,6 +42,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### ✨ Features
 
+- 👤 meta-coordination: 03:17 run - merged 1 PR, 8 stale PRs cleaned [#3796](https://github.com/enufacas/Chained/pull/3796)
 - 👤 📋 Instructions Add interactive 3D visualization of multi-tiered instruction architecture [#3802](https://github.com/enufacas/Chained/pull/3802)
 - 👤 3D AG-UI organism with react-three-fiber and standard theme [#3800](https://github.com/enufacas/Chained/pull/3800)
 - 👤 meta-coordination: 2025-12-10 02:04 run - closed 22 PRs, merged 2, reduced open count 55% [#3756](https://github.com/enufacas/Chained/pull/3756)
@@ -54,6 +59,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🐛 Bug Fixes
 
+- 👤 Fix AG-UI: unify historical/active displays, improve polling frequency [#3803](https://github.com/enufacas/Chained/pull/3803)
 - 👤 Restore truncated lifecycle.html and ai-knowledge-graph.html [#3789](https://github.com/enufacas/Chained/pull/3789)
 - 👤 Remove ESLint violations blocking AG-UI Frontend build [#3788](https://github.com/enufacas/Chained/pull/3788)
 - 👤 ⚙️ Workflows Fix GitHub Pages empty sections via aggregated data files and workflow automation [#3775](https://github.com/enufacas/Chained/pull/3775)
