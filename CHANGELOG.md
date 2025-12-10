@@ -30,7 +30,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x20) [#3777](https://github.com/enufacas/Chained/pull/3777)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x21) [#3782](https://github.com/enufacas/Chained/pull/3782)
 
 ---
 
@@ -38,6 +38,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### ✨ Features
 
+- 👤 Add Firestore persistence and adaptive polling to AG-UI [#3762](https://github.com/enufacas/Chained/pull/3762)
 - 🤖 🔧 Agents 🎯 Agent Missions - Pipeline [#3774](https://github.com/enufacas/Chained/pull/3774)
 - 🤖 🧠 Learning 🧠 Learning Pipeline - 2025-12-10 [#3765](https://github.com/enufacas/Chained/pull/3765)
 - 👤 📚 Docs Elevate AI-Native Control Plane and Mission System in README [#3761](https://github.com/enufacas/Chained/pull/3761)
@@ -178,7 +179,6 @@ This changelog excludes automated data syncs and routine maintenance commits.
 ### 🧹 Chores & Maintenance
 
 - 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x7) [#3569](https://github.com/enufacas/Chained/pull/3569)
-- 👤 📋 Instructions **Documentation**: Update A2A README with error observer system and add maintenance instructions [#3520](https://github.com/enufacas/Chained/pull/3520)
 
 ---
 
