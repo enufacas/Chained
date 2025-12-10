@@ -323,12 +323,14 @@ class TestHypothesisTestingEngine(unittest.TestCase):
         for i in range(3):
             test_file = Path(self.temp_dir) / f"test_{i}.py"
             complexity = i * 5 + 2
+            # Generate complexity lines
+            complexity_code = "if x > 0: result += z\n        " * complexity
             test_file.write_text(f'''
 def test_function_{i}(x, y, z):
     """Test function {i}"""
     try:
         result = x + y
-        {"if x > 0: result += z\n    " * complexity}
+        {complexity_code}
         return result
     except Exception as e:
         return None

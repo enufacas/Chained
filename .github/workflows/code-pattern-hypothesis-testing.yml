@@ -1,0 +1,358 @@
+name: AI Code Pattern Hypothesis Testing
+
+# Automated AI system that generates and tests hypotheses about code patterns
+# Runs weekly to discover insights and create actionable issues
+
+on:
+  schedule:
+    # Run every Sunday at 6 AM UTC
+    - cron: '0 6 * * 0'
+  
+  workflow_dispatch:
+    inputs:
+      num_hypotheses:
+        description: 'Number of hypotheses to generate'
+        required: false
+        default: '15'
+        type: string
+      max_files:
+        description: 'Maximum number of files to analyze'
+        required: false
+        default: '150'
+        type: string
+      create_issues:
+        description: 'Create issues for validated hypotheses'
+        required: false
+        default: 'true'
+        type: choice
+        options:
+          - 'true'
+          - 'false'
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+jobs:
+  generate-and-test-hypotheses:
+    name: "🔬 Generate & Test Code Pattern Hypotheses"
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Run Hypothesis Testing Engine
+        id: test_hypotheses
+        env:
+          NUM_HYPOTHESES: ${{ github.event.inputs.num_hypotheses || '15' }}
+          MAX_FILES: ${{ github.event.inputs.max_files || '150' }}
+        run: |
+          # Create output directory
+          mkdir -p learnings/hypothesis_testing
+          
+          # Generate timestamp for unique filename
+          TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+          OUTPUT_FILE="learnings/hypothesis_testing/results_${TIMESTAMP}.json"
+          
+          echo "output_file=${OUTPUT_FILE}" >> $GITHUB_OUTPUT
+          echo "timestamp=${TIMESTAMP}" >> $GITHUB_OUTPUT
+          
+          # Run the hypothesis testing engine
+          python3 tools/hypothesis_testing_engine.py \
+            --num-hypotheses "${NUM_HYPOTHESES}" \
+            --max-files "${MAX_FILES}" \
+            --output "${OUTPUT_FILE}"
+          
+          # Extract key metrics for reporting
+          VALIDATED=$(python3 -c "import json; data=json.load(open('${OUTPUT_FILE}')); print(data['hypotheses_validated'])")
+          TOTAL=$(python3 -c "import json; data=json.load(open('${OUTPUT_FILE}')); print(data['hypotheses_generated'])")
+          RATE=$(python3 -c "import json; data=json.load(open('${OUTPUT_FILE}')); print(f\"{data['validation_rate']:.1%}\")")
+          
+          echo "validated=${VALIDATED}" >> $GITHUB_OUTPUT
+          echo "total=${TOTAL}" >> $GITHUB_OUTPUT
+          echo "validation_rate=${RATE}" >> $GITHUB_OUTPUT
+          
+          echo "✅ Generated ${TOTAL} hypotheses, validated ${VALIDATED} (${RATE})"
+
+      - name: Generate Insights Summary
+        id: generate_summary
+        run: |
+          OUTPUT_FILE="${{ steps.test_hypotheses.outputs.output_file }}"
+          
+          # Create markdown summary
+          python3 << 'PYTHON_SCRIPT'
+          import json
+          import os
+          
+          output_file = os.environ['OUTPUT_FILE']
+          with open(output_file) as f:
+              results = json.load(f)
+          
+          summary = f"""## 🔬 AI Code Pattern Hypothesis Testing Results
+          
+          **Run Date:** {results['generated_at'][:10]}
+          **Repository:** {results['repository']}
+          
+          ### 📊 Statistics
+          - **Functions Analyzed:** {results['metrics_analyzed']}
+          - **Hypotheses Generated:** {results['hypotheses_generated']}
+          - **Hypotheses Validated:** {results['hypotheses_validated']}
+          - **Validation Rate:** {results['validation_rate']:.1%}
+          
+          ### 🏆 Top Validated Hypotheses
+          
+          """
+          
+          for i, hyp in enumerate(results['summary']['top_validated_hypotheses'], 1):
+              summary += f"{i}. **{hyp['description']}**\n"
+              summary += f"   - Confidence: {hyp['confidence']:.1%}\n"
+              summary += f"   - Sample Size: {hyp['sample_size']}\n\n"
+          
+          if results['summary']['insights']:
+              summary += "### 💡 Actionable Insights\n\n"
+              for insight in results['summary']['insights']:
+                  summary += f"- {insight}\n"
+          
+          # Save summary to file
+          summary_file = output_file.replace('.json', '_summary.md')
+          with open(summary_file, 'w') as f:
+              f.write(summary)
+          
+          print(f"summary_file={summary_file}")
+          PYTHON_SCRIPT
+          
+          SUMMARY_FILE=$(python3 << 'PYTHON_SCRIPT'
+          import json
+          import os
+          output_file = os.environ['OUTPUT_FILE']
+          summary_file = output_file.replace('.json', '_summary.md')
+          print(summary_file)
+          PYTHON_SCRIPT
+          )
+          
+          echo "summary_file=${SUMMARY_FILE}" >> $GITHUB_OUTPUT
+          
+          # Output summary for GitHub Actions
+          cat "${SUMMARY_FILE}" >> $GITHUB_STEP_SUMMARY
+
+      - name: Create Issues for Validated Hypotheses
+        if: ${{ (github.event.inputs.create_issues == 'true' || github.event_name == 'schedule') && steps.test_hypotheses.outputs.validated != '0' }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          OUTPUT_FILE: ${{ steps.test_hypotheses.outputs.output_file }}
+          TIMESTAMP: ${{ steps.test_hypotheses.outputs.timestamp }}
+        run: |
+          python3 << 'PYTHON_SCRIPT'
+          import json
+          import os
+          import subprocess
+          
+          output_file = os.environ['OUTPUT_FILE']
+          timestamp = os.environ['TIMESTAMP']
+          
+          with open(output_file) as f:
+              results = json.load(f)
+          
+          # Get top validated hypotheses
+          validated = [h for h in results['hypotheses'] if h['validated']]
+          top_validated = sorted(validated, key=lambda x: x['confidence'], reverse=True)[:3]
+          
+          for hyp in top_validated:
+              # Create issue title
+              title = f"💡 Code Pattern Insight: {hyp['description'][:80]}"
+              
+              # Create issue body with agent attribution
+              body = f"""## 🔬 AI-Discovered Code Pattern Hypothesis
+          
+          **@create-champion** has discovered and validated this code pattern hypothesis.
+          
+          This hypothesis was automatically generated and validated by the AI Code Pattern Hypothesis Testing system.
+          
+          ### Hypothesis
+          **{hyp['description']}**
+          
+          ### Validation Results
+          - **Validated:** ✅ Yes
+          - **Confidence:** {hyp['confidence']:.1%}
+          - **Sample Size:** {hyp['sample_size']} functions
+          - **P-Value:** {hyp['p_value']:.3f if hyp['p_value'] else 'N/A'}
+          - **Type:** {hyp['hypothesis_type']}
+          
+          ### Variables
+          - **Independent Variable:** {hyp['independent_var']}
+          - **Dependent Variable:** {hyp['dependent_var']}
+          """
+          
+              if hyp['threshold']:
+                  body += f"- **Threshold:** {hyp['threshold']}\n"
+          
+              if hyp['supporting_examples']:
+                  body += "\n### 📌 Supporting Examples\n\n"
+                  for i, example in enumerate(hyp['supporting_examples'][:5], 1):
+                      body += f"{i}. **{example['function']}** in `{example['file']}`\n"
+                      body += f"   - Independent: {example['independent']}, Dependent: {example['dependent']}\n"
+          
+              body += f"""
+          ### 🎯 Recommended Action
+          
+          **@create-champion** recommends:
+          1. Refactoring code that exhibits this pattern
+          2. Updating coding guidelines based on this insight
+          3. Implementing automated checks to prevent this pattern
+          
+          ### 📊 Full Results
+          
+          For complete analysis, see: `{output_file}`
+          
+          ---
+          
+          *🤖 Created by workflow: [AI Code Pattern Hypothesis Testing](https://github.com/${{{{ github.repository }}}}/actions/runs/${{{{ github.run_id }}}})*
+          *Generated at: {timestamp}*
+          *Agent: @create-champion*
+          """
+              
+              # Create the issue
+              result = subprocess.run(
+                  ['gh', 'issue', 'create',
+                   '--title', title,
+                   '--body', body,
+                   '--label', 'ai-insight,code-pattern,automated'],
+                  capture_output=True,
+                  text=True
+              )
+              
+              if result.returncode == 0:
+                  print(f"✅ Created issue: {title}")
+              else:
+                  print(f"❌ Failed to create issue: {result.stderr}")
+          PYTHON_SCRIPT
+
+      - name: Commit Results to Repository
+        run: |
+          TIMESTAMP="${{ steps.test_hypotheses.outputs.timestamp }}"
+          
+          # Configure git
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # Create branch
+          BRANCH_NAME="hypothesis-results/${TIMESTAMP}-${{ github.run_id }}"
+          git checkout -b "${BRANCH_NAME}"
+          
+          # Add results
+          git add learnings/hypothesis_testing/
+          
+          # Check if there are changes to commit
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+          
+          # Commit
+          git commit -m "feat: AI hypothesis testing results by @create-champion" \
+            -m "Generated ${{ steps.test_hypotheses.outputs.total }} hypotheses" \
+            -m "Validated ${{ steps.test_hypotheses.outputs.validated }} hypotheses" \
+            -m "Validation rate: ${{ steps.test_hypotheses.outputs.validation_rate }}" \
+            -m "" \
+            -m "Results saved to learnings/hypothesis_testing/" \
+            -m "" \
+            -m "Co-authored-by: @create-champion <create-champion@chained.ai>"
+          
+          # Push
+          git push origin "${BRANCH_NAME}"
+          
+          # Create PR
+          gh pr create \
+            --title "feat: AI code pattern hypothesis testing results (@create-champion)" \
+            --body "## 🔬 AI Code Pattern Hypothesis Testing Results
+
+          **@create-champion** has completed automated hypothesis testing on the codebase.
+
+          ### 📊 Summary
+          - **Hypotheses Generated:** ${{ steps.test_hypotheses.outputs.total }}
+          - **Hypotheses Validated:** ${{ steps.test_hypotheses.outputs.validated }}
+          - **Validation Rate:** ${{ steps.test_hypotheses.outputs.validation_rate }}
+
+          ### 📁 Files Added
+          - Results: \`${{ steps.test_hypotheses.outputs.output_file }}\`
+          - Summary: \`${{ steps.generate_summary.outputs.summary_file }}\`
+
+          ### 🎯 Next Steps
+          - Review validated hypotheses
+          - Check created issues for actionable insights
+          - Consider implementing recommended refactorings
+
+          ---
+
+          *🤖 Created by workflow: [AI Code Pattern Hypothesis Testing](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})*
+          *Agent: @create-champion*" \
+            --label "automated,ai-insight,code-pattern" \
+            --base main \
+            --head "${BRANCH_NAME}"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Update Learning System
+        run: |
+          # Record this run in the learning system
+          python3 << 'PYTHON_SCRIPT'
+          import json
+          import os
+          from datetime import datetime, timezone
+          from pathlib import Path
+          
+          # Load results
+          output_file = os.environ['OUTPUT_FILE']
+          with open(output_file) as f:
+              results = json.load(f)
+          
+          # Create learning entry
+          learning_entry = {
+              'timestamp': datetime.now(timezone.utc).isoformat(),
+              'type': 'hypothesis_testing',
+              'run_id': os.environ['GITHUB_RUN_ID'],
+              'metrics': {
+                  'functions_analyzed': results['metrics_analyzed'],
+                  'hypotheses_generated': results['hypotheses_generated'],
+                  'hypotheses_validated': results['hypotheses_validated'],
+                  'validation_rate': results['validation_rate']
+              },
+              'top_insights': [
+                  hyp['description'] for hyp in results['summary']['top_validated_hypotheses']
+              ]
+          }
+          
+          # Append to learning log
+          learning_file = Path('learnings/hypothesis_testing/learning_log.jsonl')
+          learning_file.parent.mkdir(parents=True, exist_ok=True)
+          
+          with open(learning_file, 'a') as f:
+              f.write(json.dumps(learning_entry) + '\n')
+          
+          print(f"✅ Learning entry recorded to {learning_file}")
+          PYTHON_SCRIPT
+        env:
+          OUTPUT_FILE: ${{ steps.test_hypotheses.outputs.output_file }}
+          GITHUB_RUN_ID: ${{ github.run_id }}
+
+      - name: Workflow Summary
+        run: |
+          echo "## ✅ Workflow Complete" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**@create-champion** has successfully completed AI code pattern hypothesis testing." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Results" >> $GITHUB_STEP_SUMMARY
+          echo "- Generated: ${{ steps.test_hypotheses.outputs.total }} hypotheses" >> $GITHUB_STEP_SUMMARY
+          echo "- Validated: ${{ steps.test_hypotheses.outputs.validated }} hypotheses" >> $GITHUB_STEP_SUMMARY
+          echo "- Rate: ${{ steps.test_hypotheses.outputs.validation_rate }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Files Created" >> $GITHUB_STEP_SUMMARY
+          echo "- \`${{ steps.test_hypotheses.outputs.output_file }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- \`${{ steps.generate_summary.outputs.summary_file }}\`" >> $GITHUB_STEP_SUMMARY
