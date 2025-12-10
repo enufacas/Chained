@@ -30,7 +30,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x18) [#3766](https://github.com/enufacas/Chained/pull/3766)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x19) [#3768](https://github.com/enufacas/Chained/pull/3768)
 
 ---
 
@@ -38,6 +38,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### ✨ Features
 
+- 🤖 🔧 Agents 🎯 Agent Missions - Pipeline [#3774](https://github.com/enufacas/Chained/pull/3774)
 - 🤖 🧠 Learning 🧠 Learning Pipeline - 2025-12-10 [#3765](https://github.com/enufacas/Chained/pull/3765)
 - 👤 📚 Docs Elevate AI-Native Control Plane and Mission System in README [#3761](https://github.com/enufacas/Chained/pull/3761)
 - 🤖 🎯 Daily goal for 2025-12-09 [#3729](https://github.com/enufacas/Chained/pull/3729)
