@@ -87,10 +87,14 @@ async function fetchStats() {
                 
                 // Try to load learning stats
                 try {
-                    const learningResponse = await fetch('../learnings/index.json');
+                    const learningResponse = await fetch('data/learnings-summary.json');
                     if (learningResponse.ok) {
                         const learningStats = await learningResponse.json();
                         console.log('Learning stats:', learningStats);
+                        // Update footer with learning count
+                        if (document.getElementById('footer-learning-sessions')) {
+                            document.getElementById('footer-learning-sessions').textContent = learningStats.total_learnings || 0;
+                        }
                     }
                 } catch (e) {
                     console.log('Learning stats not yet available');
@@ -476,76 +480,30 @@ function escapeHtml(text) {
 // Load auto learnings from the learnings directory
 async function loadAutoLearnings() {
     try {
-        // Fetch learning index
-        const indexResponse = await fetch('../learnings/index.json');
-        if (!indexResponse.ok) {
-            console.log('Learning index not available');
+        // Fetch learning summary
+        const summaryResponse = await fetch('data/learnings-summary.json');
+        if (!summaryResponse.ok) {
+            console.log('Learning summary not available');
+            // Set defaults
+            document.getElementById('total-learnings').textContent = '0';
+            document.getElementById('tldr-learnings').textContent = '0';
+            document.getElementById('hn-learnings').textContent = '0';
             return;
         }
         
-        const indexData = await indexResponse.json();
+        const summaryData = await summaryResponse.json();
         
         // Update stats
-        document.getElementById('total-learnings').textContent = indexData.total_learnings || 0;
-        document.getElementById('tldr-learnings').textContent = indexData.sources?.tldr || 0;
-        document.getElementById('hn-learnings').textContent = indexData.sources?.hacker_news || 0;
-        
-        // Try to fetch recent files by looking at the current date pattern
-        const container = document.getElementById('learning-files-container');
-        container.innerHTML = '';
-        
-        // Fetch learning files - try common patterns for today
-        const learningFiles = [];
-        const today = new Date();
-        const dateStr = today.toISOString().split('T')[0].replace(/-/g, '');
-        
-        // Add known patterns for today
-        ['082735', '083000', '202403', '202500'].forEach(time => {
-            learningFiles.push({ name: `tldr_${dateStr}_${time}.json`, type: 'tldr' });
-        });
-        
-        ['070959', '071000', '131719', '131800', '190715', '191000'].forEach(time => {
-            learningFiles.push({ name: `hn_${dateStr}_${time}.json`, type: 'hn' });
-        });
-        
-        // Try yesterday too
-        const yesterday = new Date(today);
-        yesterday.setDate(today.getDate() - 1);
-        const yesterdayStr = yesterday.toISOString().split('T')[0].replace(/-/g, '');
-        ['082000', '083000', '202000', '202500'].forEach(time => {
-            learningFiles.push({ name: `tldr_${yesterdayStr}_${time}.json`, type: 'tldr' });
-        });
-        ['070000', '071000', '130000', '131000', '190000', '191000'].forEach(time => {
-            learningFiles.push({ name: `hn_${yesterdayStr}_${time}.json`, type: 'hn' });
-        });
-        
-        let filesFound = 0;
-        for (const file of learningFiles) {
-            try {
-                const response = await fetch(`../learnings/${file.name}`, { method: 'HEAD' });
-                if (response.ok) {
-                    const dataResponse = await fetch(`../learnings/${file.name}`);
-                    const data = await dataResponse.json();
-                    
-                    if (data.learnings && data.learnings.length > 0) {
-                        filesFound++;
-                        const fileItem = createLearningFileItem(file.name, data);
-                        container.appendChild(fileItem);
-                        
-                        if (filesFound >= 10) break;
-                    }
-                }
-            } catch (e) {
-                // File doesn't exist, continue silently
-            }
-        }
-        
-        if (filesFound === 0) {
-            container.innerHTML = '<p style="color: var(--text-muted);">No learning sessions found yet. Check back after the scheduled learning workflows run.</p>';
-        }
+        document.getElementById('total-learnings').textContent = summaryData.total_learnings || 0;
+        document.getElementById('tldr-learnings').textContent = summaryData.sources?.tldr || 0;
+        document.getElementById('hn-learnings').textContent = summaryData.sources?.hacker_news || 0;
         
     } catch (error) {
         console.error('Error loading auto learnings:', error);
+        // Set defaults on error
+        document.getElementById('total-learnings').textContent = '0';
+        document.getElementById('tldr-learnings').textContent = '0';
+        document.getElementById('hn-learnings').textContent = '0';
     }
 }
 
