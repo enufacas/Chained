@@ -30,6 +30,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### ✨ Features
 
+- 🤖 🧠 Learning 🧠 Learn from GitHub Copilot sources - 2025-12-10 [#3850](https://github.com/enufacas/Chained/pull/3850)
 - 🤖 🔧 Agents 🎯 Agent Missions - Pipeline [#3840](https://github.com/enufacas/Chained/pull/3840)
 - 🤖 🧠 Learning 🧠 Learning Pipeline - 2025-12-10 [#3831](https://github.com/enufacas/Chained/pull/3831)
 - 👤 meta-coordination: 2025-12-10 06:20 run - system stable, all coordination tasks complete [#3821](https://github.com/enufacas/Chained/pull/3821)
@@ -44,8 +45,9 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
+- 👤 📚 Docs **Documentation**: Add compiler-specialist quickstart guide for Integration by @engineer-master [#2](https://github.com/enufacas/Chained/pull/2)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x48) [#3847](https://github.com/enufacas/Chained/pull/3847)
 - 🤖 **Documentation**: 📚 Sync World State to Docs - Pipeline [#3841](https://github.com/enufacas/Chained/pull/3841)
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x47) [#3842](https://github.com/enufacas/Chained/pull/3842)
 - 👤 **Documentation**: Document deployed URL for PR 3D organism implementation [#3816](https://github.com/enufacas/Chained/pull/3816)
 - 🤖 **Chore**: 🌍 World Model Update - Pipeline [#3833](https://github.com/enufacas/Chained/pull/3833)
 
@@ -199,7 +201,6 @@ This changelog excludes automated data syncs and routine maintenance commits.
 ### ✨ Features
 
 - 👤 🔧 Agents Rename @create-guru agent to @create-botter [#3575](https://github.com/enufacas/Chained/pull/3575)
-- 🤖 🧠 Learning 🧠 Learn from GitHub Copilot sources - 2025-12-03 [#3562](https://github.com/enufacas/Chained/pull/3562)
 
 ### 🐛 Bug Fixes
 
