@@ -80,6 +80,30 @@ Provisions GCP infrastructure:
 - **Cloud Monitoring:** Latency, error rates, request counts
 - **Cloud Trace:** Distributed tracing between agents
 - **GitHub Actions:** Pipeline success/failure tracking
+- **Tracking Issue:** Automated issue with run history
+
+#### Pipeline Tracking Issue
+
+The workflow automatically maintains a tracking issue for all pipeline runs:
+
+- **Label:** `adk-pipeline`
+- **Title:** "🤖 ADK A2A Blog Pipeline Status"
+- **Purpose:** Centralized history of all pipeline executions
+
+**How it works:**
+1. On each pipeline run, the workflow searches for an open issue with label `adk-pipeline`
+2. If no issue exists, it creates one automatically
+3. After each run, it posts a comment with:
+   - Timestamp (UTC)
+   - Run mode (scheduled, manual, dry_run, simulation, cloud run)
+   - Trigger type (schedule, workflow_dispatch)
+   - Link to workflow run
+   - Pipeline summary and agent status
+
+**Finding the tracking issue:**
+- Search GitHub issues for label `adk-pipeline`
+- Or search for title "🤖 ADK A2A Blog Pipeline Status"
+- View all comments to see complete run history
 
 ## A2A Protocol Implementation
 
@@ -175,6 +199,17 @@ Manual trigger available via workflow_dispatch.
 
 ## Monitoring & Troubleshooting
 
+### Pipeline Run History
+
+View complete pipeline history in the tracking issue:
+```bash
+# Find the tracking issue
+gh issue list --label "adk-pipeline" --state open
+
+# View issue with comments (replace NUMBER with actual issue number)
+gh issue view NUMBER --comments
+```
+
 ### Health Check URLs
 
 ```bash
@@ -199,6 +234,7 @@ gcloud run services logs read chained-academic-research --region=us-central1
 
 | Issue | Cause | Solution |
 |-------|-------|----------|
+| Tracking issue not updated | Wrong env variable | Workflow now uses GH_TOKEN (fixed) |
 | Agent unhealthy | Container startup failed | Check Cloud Run logs |
 | Pipeline timeout | Agent unresponsive | Increase timeout, check health |
 | No topics found | Research agent issue | Check agent card, verify skills |
