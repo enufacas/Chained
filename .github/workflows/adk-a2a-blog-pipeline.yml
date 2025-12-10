@@ -13,7 +13,8 @@
 #
 # Observability:
 # - ADK Dev UI available at deployed Cloud Run services
-# - Pipeline success/failure reported via GitHub issue comments
+# - Pipeline runs tracked in GitHub issue with label "adk-pipeline"
+# - Each run posts a comment with timestamp, mode, and results
 # - Metrics collected in Cloud Monitoring
 # =============================================================================
 
@@ -328,6 +329,9 @@ jobs:
   # ===========================================================================
   # Report Results
   # ===========================================================================
+  # This job creates/updates a tracking issue with label "adk-pipeline".
+  # Each run posts a comment with timestamp, mode, and summary.
+  # Find the tracking issue by searching for label "adk-pipeline".
   report:
     name: "Report Results"
     runs-on: ubuntu-latest
@@ -340,7 +344,7 @@ jobs:
 
       - name: Create pipeline report issue comment
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_REPO: ${{ github.repository }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           RUN_MODE: ${{ needs.preflight.outputs.run_mode }}
