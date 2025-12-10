@@ -2,9 +2,9 @@
 
 > Performance tuning, benchmarks, and optimization techniques
 
-**Total Insights:** 287
+**Total Insights:** 309
 
-**Last Updated:** 2025-12-09
+**Last Updated:** 2025-12-10
 
 ---
 
@@ -555,7 +555,7 @@ A fast reverse proxy to help you expose a local server behind a NAT or firewall 
 ---
 
 
-### Untitled
+### HKUDS/LightRAG - [EMNLP2025] "LightRAG: Simple and Fast Retrieval-Augmented Generation"
 
 **Link:** https://github.com/HKUDS/LightRAG
 
@@ -565,7 +565,7 @@ A fast reverse proxy to help you expose a local server behind a NAT or firewall 
 ---
 
 
-### Untitled
+### fatedier/frp - A fast reverse proxy to help you expose a local server behind a NAT or firewall to the internet.
 
 **Link:** https://github.com/fatedier/frp
 

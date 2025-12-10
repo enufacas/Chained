@@ -2,9 +2,9 @@
 
 > CI/CD, containers, orchestration, and infrastructure automation
 
-**Total Insights:** 287
+**Total Insights:** 308
 
-**Last Updated:** 2025-12-09
+**Last Updated:** 2025-12-10
 
 ---
 
@@ -199,6 +199,15 @@ Ingress NGINX Retirement: What You Need to Know By Tabitha Sable (Kubernetes SRC
 ## 📰 From Unknown
 
 
+### Cloudflare error page generator
+
+**Community Score:** 36 upvotes
+
+**Link:** https://github.com/donlon/cloudflare-error-page
+
+---
+
+
 ### Kubernetes Ingress Nginx is retiring
 
 **Link:** https://www.kubernetes.dev/blog/2025/11/12/ingress-nginx-retirement/
@@ -300,46 +309,6 @@ A Kubernetes web UI that is fully-featured, user-friendly and extensible
 ---
 
 
-### Untitled
-
-**Link:** https://github.com/serverless-dns/serverless-dns
-
-
-The RethinkDNS resolver that deploys to Cloudflare Workers, Deno Deploy, Fastly, and Fly.io
-
----
-
-
-### Untitled
-
-**Link:** https://github.com/traefik/traefik
-
-
-The Cloud Native Application Proxy
-
----
-
-
-### Untitled
-
-**Link:** https://github.com/milvus-io/milvus
-
-
-Milvus is a high-performance, cloud-native vector database built for scalable vector ANN search
-
----
-
-
-### Untitled
-
-**Link:** https://github.com/kubernetes-sigs/headlamp
-
-
-A Kubernetes web UI that is fully-featured, user-friendly and extensible
-
----
-
-
 ### serverless-dns/serverless-dns - The RethinkDNS resolver that deploys to Cloudflare Workers, Deno Deploy, Fastly, and Fly.io
 
 **Link:** https://github.com/serverless-dns/serverless-dns
@@ -396,5 +365,35 @@ The RethinkDNS resolver that deploys to Cloudflare Workers, Deno Deploy, Fastly,
 
 
 The Cloud Native Application Proxy
+
+---
+
+
+### milvus-io/milvus - Milvus is a high-performance, cloud-native vector database built for scalable vector ANN search
+
+**Link:** https://github.com/milvus-io/milvus
+
+
+Milvus is a high-performance, cloud-native vector database built for scalable vector ANN search
+
+---
+
+
+### kubernetes-sigs/headlamp - A Kubernetes web UI that is fully-featured, user-friendly and extensible
+
+**Link:** https://github.com/kubernetes-sigs/headlamp
+
+
+A Kubernetes web UI that is fully-featured, user-friendly and extensible
+
+---
+
+
+### Untitled
+
+**Link:** https://github.com/prometheus-operator/prometheus-operator
+
+
+Prometheus Operator creates/configures/manages Prometheus clusters atop Kubernetes
 
 ---
