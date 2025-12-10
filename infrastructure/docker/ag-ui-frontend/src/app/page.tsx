@@ -485,7 +485,7 @@ function UnifiedOutcomes({
 
   useEffect(() => {
     fetchPipelines();
-    const interval = setInterval(fetchPipelines, 5000);
+    const interval = setInterval(fetchPipelines, 2000); // Poll every 2 seconds for faster updates
     return () => clearInterval(interval);
   }, [fetchPipelines]);
 
@@ -746,48 +746,200 @@ function UnifiedOutcomes({
         </div>
       )}
 
-      {/* Completed Team Sessions (history) */}
+      {/* Completed Team Sessions (history) - Using same detailed view as active session */}
       {completedSessions.length > 0 && (
         <div className="border-b border-slate-700">
           <div className="px-3 py-2 bg-slate-900/30">
             <h4 className="text-[10px] text-slate-500 uppercase tracking-wider">Recent Team Sessions</h4>
           </div>
-          <div className="max-h-48 overflow-y-auto">
+          <div className="max-h-[600px] overflow-y-auto">
             {completedSessions.filter(s => !activeSession || s.id !== activeSession.id).slice(0, 5).map((session) => {
               const isExpanded = expandedItem === `completed-session-${session.id}`;
+              const agentStats = calculateAgentStats(session.turnResults);
+              
               return (
                 <div key={session.id} className="border-b border-slate-700/30 last:border-b-0">
                   <button
                     onClick={() => setExpandedItem(isExpanded ? null : `completed-session-${session.id}`)}
-                    className="w-full px-3 py-2 flex items-center gap-2 hover:bg-slate-700/30 transition text-xs"
+                    className="w-full px-3 py-3 flex items-center gap-3 hover:bg-slate-700/30 transition"
                   >
-                    <span className={session.status === "completed" ? "text-green-400" : "text-red-400"}>
-                      {session.status === "completed" ? "✓" : "✗"}
-                    </span>
-                    <span className="flex-1 truncate text-slate-300 text-left">{session.recipeName} - {session.goal?.substring(0, 30) || "No goal"}</span>
-                    <span className="text-slate-500">{formatTimeAgo(session.updatedAt)}</span>
-                    <span className={`text-slate-500 transition-transform ${isExpanded ? "rotate-180" : ""}`}>▼</span>
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm ${
+                      session.status === "completed" ? "bg-green-500" : "bg-red-500"
+                    }`}>
+                      {session.status === "completed" ? "✅" : "❌"}
+                    </div>
+                    <div className="flex-1 min-w-0 text-left">
+                      <div className="font-medium text-white text-sm truncate">{session.recipeName}</div>
+                      <div className="text-xs text-slate-400 truncate">{session.goal}</div>
+                      <div className="text-[10px] text-slate-500 mt-0.5">
+                        {agentStats.length} agents: {agentStats.map((a, i) => (
+                          <span key={a.agentId} className={a.completed === a.total ? "text-green-400" : "text-yellow-400"}>
+                            {agentIcons[a.agentId] || "🤖"}{a.completed}/{a.total}
+                            {i < agentStats.length - 1 ? ", " : ""}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-xs text-slate-400">
+                        Turn {session.currentTurn}/{session.totalTurns}
+                      </div>
+                      <div className="text-[10px] text-slate-500 mt-0.5">
+                        {formatTimeAgo(session.updatedAt)}
+                      </div>
+                    </div>
+                    <span className={`text-slate-500 transition-transform text-xs ${isExpanded ? "rotate-180" : ""}`}>▼</span>
                   </button>
                   
+                  {/* Expanded Session Details - Same as active session */}
                   {isExpanded && (
-                    <div className="px-3 pb-2 space-y-1 text-xs">
-                      <div className="text-slate-400">
-                        {session.turnResults.filter(t => t.status === "completed").length}/{session.turnResults.length} steps completed
-                      </div>
-                      {session.turnResults.some(t => t.artifacts && t.artifacts.length > 0) && (
-                        <div className="flex flex-wrap gap-1">
-                          {session.turnResults.flatMap(t => t.artifacts || []).slice(0, 4).map((artifact, i) => (
-                            <button
-                              key={i}
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                onSelectArtifact?.(artifact);
-                              }}
-                              className="px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-400 hover:bg-purple-500/30 transition"
-                            >
-                              📦 {artifact.name}
-                            </button>
+                    <div className="px-3 pb-3 space-y-2">
+                      {/* Agent Summary Header */}
+                      <div className="p-2 rounded bg-gradient-to-r from-slate-700/30 to-slate-800/30 border border-slate-600/30">
+                        <div className="text-[10px] text-slate-500 uppercase tracking-wider mb-1">Session Summary</div>
+                        <div className="grid grid-cols-2 gap-1">
+                          {agentStats.map((stat) => (
+                            <div key={stat.agentId} className="flex items-center gap-1 text-xs">
+                              <span className="text-sm">{agentIcons[stat.agentId] || "🤖"}</span>
+                              <span className="flex-1 truncate text-slate-300">{stat.agentId}</span>
+                              <span className={stat.completed === stat.total ? "text-green-400 font-bold" : stat.failed > 0 ? "text-red-400" : "text-yellow-400"}>
+                                {stat.completed}/{stat.total}
+                              </span>
+                            </div>
                           ))}
+                        </div>
+                        <div className="text-[10px] text-slate-500 mt-1">
+                          {session.config?.maxTurnsPerAgent ? `${session.config.maxTurnsPerAgent} turns per agent, ` : ""}
+                          {session.config?.executionMode === "parallel" ? "parallel execution" : "sequential execution"}
+                        </div>
+                      </div>
+                      
+                      {/* Individual Turn Results - Same as active session */}
+                      {session.turnResults.map((turn, idx) => {
+                        const icon = agentIcons[turn.agentId] || "🤖";
+                        const isStepExpanded = expandedStepIndex === idx;
+                        const hasArtifacts = turn.artifacts && turn.artifacts.length > 0;
+                        
+                        return (
+                          <div key={turn.stepIndex} className="space-y-1">
+                            {/* Step Header - Click to expand */}
+                            <button
+                              onClick={() => setExpandedStepIndex(isStepExpanded ? null : idx)}
+                              className={`w-full flex items-center gap-2 p-2 rounded text-xs transition ${
+                                turn.status === "completed" ? "bg-green-500/5 border border-green-500/20" :
+                                turn.status === "failed" ? "bg-red-500/5 border border-red-500/20" :
+                                "bg-slate-700/30 border border-slate-600/30"
+                              } ${hasArtifacts ? "cursor-pointer hover:bg-slate-700/50" : ""}`}
+                              disabled={!hasArtifacts && turn.status !== "completed"}
+                            >
+                              <span className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold ${
+                                turn.status === "completed" ? "bg-green-500 text-white" :
+                                turn.status === "failed" ? "bg-red-500 text-white" :
+                                "bg-slate-600 text-slate-300"
+                              }`}>
+                                {idx + 1}
+                              </span>
+                              <span>{icon}</span>
+                              <span className="flex-1 truncate text-slate-300 text-left">
+                                {turn.agentName}
+                                {turn.turnNumber && <span className="text-slate-500 ml-1 text-[10px]">(turn {turn.turnNumber})</span>}
+                              </span>
+                              {turn.status === "completed" && <span className="text-green-400">✓</span>}
+                              {turn.status === "failed" && <span className="text-red-400">✗</span>}
+                              {turn.durationMs && <span className="text-slate-500">{(turn.durationMs / 1000).toFixed(1)}s</span>}
+                              {hasArtifacts && (
+                                <span className="px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-400">
+                                  {turn.artifacts.length} 📦
+                                </span>
+                              )}
+                              {hasArtifacts && (
+                                <span className={`text-slate-500 transition-transform ${isStepExpanded ? "rotate-180" : ""}`}>▼</span>
+                              )}
+                            </button>
+                            
+                            {/* Expanded Step Details with Artifacts */}
+                            {isStepExpanded && (
+                              <div className="ml-7 p-2 rounded bg-slate-800/50 border border-slate-700 space-y-2">
+                                {/* Message */}
+                                {turn.message && (
+                                  <div className="text-xs text-slate-400">
+                                    <span className="text-slate-500 block mb-1">Message:</span>
+                                    <p className="line-clamp-3">{turn.message}</p>
+                                  </div>
+                                )}
+                                
+                                {/* Artifacts List */}
+                                {hasArtifacts && (
+                                  <div>
+                                    <span className="text-[10px] text-slate-500 block mb-1.5">Artifacts:</span>
+                                    <div className="grid grid-cols-2 gap-1">
+                                      {turn.artifacts.map((artifact, artifactIdx) => {
+                                        // Determine icon based on A2A protocol type (vendor MIME types)
+                                        const icon = artifact.type.includes("a2a.agent-card") ? "🪪" :
+                                                     artifact.type.includes("a2a.task") ? "📋" :
+                                                     artifact.type.includes("a2a.message") ? "💬" :
+                                                     artifact.type.includes("json") ? "📋" :
+                                                     artifact.type.includes("svg") ? "🖼️" :
+                                                     artifact.type.includes("markdown") ? "📝" :
+                                                     artifact.type.includes("html") ? "🌐" : "📄";
+                                        
+                                        // Determine type label for A2A artifacts
+                                        const typeLabel = artifact.type.includes("a2a.agent-card") ? "agent card" :
+                                                          artifact.type.includes("a2a.task") ? "task" :
+                                                          artifact.type.includes("a2a.message") ? "message" :
+                                                          artifact.type.split("/").pop();
+                                        
+                                        return (
+                                          <button
+                                            key={artifactIdx}
+                                            onClick={() => onSelectArtifact?.(artifact)}
+                                            className="flex items-center gap-1.5 p-1.5 rounded bg-slate-700/50 hover:bg-slate-600/50 text-left transition"
+                                          >
+                                            <span className="text-sm">{icon}</span>
+                                            <div className="flex-1 min-w-0">
+                                              <div className="text-[10px] text-white truncate">{artifact.name}</div>
+                                              <div className="text-[10px] text-slate-500">{typeLabel}</div>
+                                            </div>
+                                            <span className="text-[10px] text-purple-400">View</span>
+                                          </button>
+                                        );
+                                      })}
+                                    </div>
+                                  </div>
+                                )}
+                                
+                                {/* Error message if failed */}
+                                {turn.error && (
+                                  <div className="text-[10px] text-red-400 bg-red-500/10 p-1.5 rounded">
+                                    Error: {turn.error}
+                                  </div>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                      
+                      {/* Overall Result Section */}
+                      {session.turnResults.some(t => t.artifacts?.length > 0) && (
+                        <div className="mt-3 p-2 rounded bg-gradient-to-r from-purple-500/10 to-pink-500/10 border border-purple-500/20">
+                          <div className="flex items-center justify-between">
+                            <span className="text-xs font-medium text-purple-300">📦 All Session Artifacts</span>
+                            <span className="text-[10px] text-slate-500">
+                              {session.turnResults.reduce((acc, t) => acc + (t.artifacts?.length || 0), 0)} total
+                            </span>
+                          </div>
+                          <div className="flex flex-wrap gap-1 mt-2">
+                            {session.turnResults.flatMap(t => t.artifacts || []).slice(0, 6).map((artifact, i) => (
+                              <button
+                                key={i}
+                                onClick={() => onSelectArtifact?.(artifact)}
+                                className="px-2 py-1 text-[10px] rounded bg-purple-500/20 text-purple-300 hover:bg-purple-500/30 transition"
+                              >
+                                {artifact.name}
+                              </button>
+                            ))}
+                          </div>
                         </div>
                       )}
                     </div>
@@ -850,42 +1002,104 @@ function UnifiedOutcomes({
         );
       })}
 
-      {/* Completed Pipelines */}
+      {/* Completed Pipelines - Using same detailed view as active pipelines */}
       {completedPipelines.length > 0 ? (
-        <div className="max-h-64 overflow-y-auto">
+        <div className="max-h-[600px] overflow-y-auto">
           {completedPipelines.slice(0, 5).map((pipeline) => {
             const isExpanded = expandedItem === `completed-${pipeline.id}`;
+            const phaseInfo = PHASE_ICONS["complete"] || { icon: "🎉", color: "emerald" };
             
             return (
               <div key={pipeline.id} className="border-b border-slate-700/50 last:border-b-0">
                 <button
                   onClick={() => setExpandedItem(isExpanded ? null : `completed-${pipeline.id}`)}
-                  className="w-full px-3 py-2 flex items-center gap-2 hover:bg-slate-700/30 transition text-xs"
+                  className="w-full px-3 py-3 flex items-center gap-3 hover:bg-slate-700/30 transition"
                 >
-                  <span className="text-green-400">✓</span>
-                  <span className="flex-1 truncate text-slate-300 text-left">{pipeline.topic}</span>
-                  <span className="text-slate-500">{formatTimeAgo(pipeline.updatedAt)}</span>
-                  <span className={`text-slate-500 transition-transform ${isExpanded ? "rotate-180" : ""}`}>▼</span>
+                  <div className="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center">
+                    <span className="text-sm">{phaseInfo.icon}</span>
+                  </div>
+                  <div className="flex-1 min-w-0 text-left">
+                    <div className="font-medium text-white text-sm truncate">{pipeline.topic}</div>
+                    <div className="text-xs text-slate-400">Completed • 100%</div>
+                    {pipeline.results?.blog && (
+                      <div className="text-[10px] text-green-400 mt-0.5 truncate">
+                        📝 {pipeline.results.blog.title}
+                      </div>
+                    )}
+                  </div>
+                  <div className="text-right">
+                    <div className="text-xs text-slate-400">
+                      {formatTimeAgo(pipeline.updatedAt)}
+                    </div>
+                    {pipeline.results?.blog && (
+                      <div className="text-[10px] text-slate-500 mt-0.5">
+                        {pipeline.results.blog.wordCount}w
+                      </div>
+                    )}
+                  </div>
+                  <span className={`text-slate-500 transition-transform text-xs ${isExpanded ? "rotate-180" : ""}`}>▼</span>
                 </button>
                 
-                {isExpanded && pipeline.results && (
-                  <div className="px-3 pb-2 space-y-1 text-xs">
-                    {pipeline.results.blog && (
-                      <a
-                        href={pipeline.results.blog.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center gap-2 p-2 rounded bg-accent-500/10 border border-accent-500/20 hover:bg-accent-500/20 transition"
-                      >
-                        <span>📝</span>
-                        <span className="flex-1 truncate text-accent-300">{pipeline.results.blog.title}</span>
-                        <span className="text-slate-500">{pipeline.results.blog.wordCount}w</span>
-                        <span>↗</span>
-                      </a>
-                    )}
-                    {pipeline.results.research && (
-                      <div className="text-slate-400">
-                        🔬 {pipeline.results.research.domain} • {pipeline.results.research.keywords?.slice(0, 3).join(", ")}
+                {isExpanded && (
+                  <div className="px-3 pb-3 space-y-2">
+                    {/* Phase visualization - Same as active pipelines */}
+                    <div className="flex items-center gap-1 text-xs">
+                      {["research", "trends", "writing", "publishing", "complete"].map((phase, idx) => {
+                        return (
+                          <div key={phase} className="flex items-center">
+                            {idx > 0 && <span className="text-slate-600 mx-1">→</span>}
+                            <span className="text-green-400">
+                              {PHASE_ICONS[phase]?.icon || "○"}
+                            </span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                    
+                    {/* Results Details */}
+                    {pipeline.results && (
+                      <div className="space-y-2">
+                        {pipeline.results.blog && (
+                          <a
+                            href={pipeline.results.blog.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-2 p-2 rounded bg-accent-500/10 border border-accent-500/20 hover:bg-accent-500/20 transition text-xs"
+                          >
+                            <span>📝</span>
+                            <div className="flex-1 min-w-0">
+                              <div className="font-medium text-accent-300 truncate">{pipeline.results.blog.title}</div>
+                              <div className="text-[10px] text-slate-500">{pipeline.results.blog.wordCount} words</div>
+                            </div>
+                            <span>↗</span>
+                          </a>
+                        )}
+                        {pipeline.results.research && (
+                          <div className="p-2 rounded bg-blue-500/10 border border-blue-500/20 text-xs">
+                            <div className="text-blue-300 font-medium mb-1">🔬 Research</div>
+                            <div className="text-slate-400">
+                              <div><span className="text-slate-500">Domain:</span> {pipeline.results.research.domain}</div>
+                              {pipeline.results.research.keywords && pipeline.results.research.keywords.length > 0 && (
+                                <div className="mt-1">
+                                  <span className="text-slate-500">Keywords:</span> {pipeline.results.research.keywords.slice(0, 5).join(", ")}
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        )}
+                        {pipeline.results.trends && (
+                          <div className="p-2 rounded bg-green-500/10 border border-green-500/20 text-xs">
+                            <div className="text-green-300 font-medium mb-1">📈 Trends</div>
+                            <div className="text-slate-400">
+                              {pipeline.results.trends.trendingKeywords && pipeline.results.trends.trendingKeywords.length > 0 && (
+                                <div><span className="text-slate-500">Top Keywords:</span> {pipeline.results.trends.trendingKeywords.slice(0, 5).join(", ")}</div>
+                              )}
+                              {pipeline.results.trends.recommendedFocus && (
+                                <div className="mt-1"><span className="text-slate-500">Focus:</span> {pipeline.results.trends.recommendedFocus}</div>
+                              )}
+                            </div>
+                          </div>
+                        )}
                       </div>
                     )}
                   </div>
@@ -1277,7 +1491,7 @@ function MainContent({
           // Check status explicitly rather than relying on currentTurn vs totalTurns
           // to avoid race conditions
           if (isSessionActive(session)) {
-            setTimeout(poll, 2000);
+            setTimeout(poll, 1000); // Poll every 1 second for faster updates
           } else {
             // Session completed or failed - stop polling and update UI
             setIsTeamExecuting(false);
@@ -1303,7 +1517,7 @@ function MainContent({
       }
     };
     
-    setTimeout(poll, 1000); // Start polling after 1 second
+    setTimeout(poll, 500); // Start polling after 0.5 seconds (faster initial update)
   }, []);
 
   // Resume polling for restored session (triggered by verification effect above)
