@@ -180,7 +180,7 @@ export default function PipelineOutcomes() {
 
   // Use smart polling hook with exponential backoff
   // Polls fast when there are active pipelines, slows down when stable
-  const { currentInterval, forcePoll } = usePoll(fetchPipelines, {
+  const { currentInterval } = usePoll(fetchPipelines, {
     interval: 5000, // 5 seconds base
     maxInterval: 30000, // 30 seconds max
     enableBackoff: true,

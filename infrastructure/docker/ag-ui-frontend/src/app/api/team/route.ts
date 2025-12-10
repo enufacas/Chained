@@ -16,7 +16,7 @@ import {
   saveArtifact,
   saveSession,
 } from "@/lib/storage";
-import { getPersistenceStore, type PersistedSession } from "@/lib/persistence";
+import { getPersistenceStore } from "@/lib/persistence";
 
 // =============================================================================
 // Configuration

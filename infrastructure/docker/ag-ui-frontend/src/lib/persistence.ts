@@ -17,7 +17,7 @@
  * - Container instances are replaced
  */
 
-import { Firestore } from "@google-cloud/firestore";
+import { Firestore, Query } from "@google-cloud/firestore";
 
 // =============================================================================
 // Types
@@ -249,9 +249,9 @@ class FirestoreStore implements PersistenceStore {
     const nextCursor = hasMore ? snapshot.docs[limit - 1].id : undefined;
     
     // Get total count (for display)
-    let totalQuery = this.db.collection(this.sessionsCollection);
+    let totalQuery: Query = this.db.collection(this.sessionsCollection);
     if (type) {
-      totalQuery = totalQuery.where("type", "==", type) as any;
+      totalQuery = totalQuery.where("type", "==", type);
     }
     const countSnapshot = await totalQuery.count().get();
     const total = countSnapshot.data().count;
@@ -317,9 +317,9 @@ class FirestoreStore implements PersistenceStore {
     const nextCursor = hasMore ? snapshot.docs[limit - 1].id : undefined;
     
     // Get total count
-    let totalQuery = this.db.collection(this.artifactsCollection);
+    let totalQuery: Query = this.db.collection(this.artifactsCollection);
     if (sourceId) {
-      totalQuery = totalQuery.where("sourceId", "==", sourceId) as any;
+      totalQuery = totalQuery.where("sourceId", "==", sourceId);
     }
     const countSnapshot = await totalQuery.count().get();
     const total = countSnapshot.data().count;
