@@ -30,7 +30,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x23) [#3786](https://github.com/enufacas/Chained/pull/3786)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x25) [#3783](https://github.com/enufacas/Chained/pull/3783)
 
 ---
 
@@ -38,6 +38,8 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### ✨ Features
 
+- 👤 🧠 Learning Complete DevOps Cloud learning mission (idea:90) - @cloud-architect [#3780](https://github.com/enufacas/Chained/pull/3780)
+- 👤 Research: AWS DevOps cost optimization and bot defense patterns (idea:92) [#3783](https://github.com/enufacas/Chained/pull/3783)
 - 👤 Add Firestore persistence and adaptive polling to AG-UI [#3762](https://github.com/enufacas/Chained/pull/3762)
 - 🤖 🔧 Agents 🎯 Agent Missions - Pipeline [#3774](https://github.com/enufacas/Chained/pull/3774)
 - 🤖 🧠 Learning 🧠 Learning Pipeline - 2025-12-10 [#3765](https://github.com/enufacas/Chained/pull/3765)
