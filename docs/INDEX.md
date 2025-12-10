@@ -17,6 +17,25 @@ New to Chained? Start here:
 9. **[TROUBLESHOOTING_QUICK_REFERENCE.md](./TROUBLESHOOTING_QUICK_REFERENCE.md)** - ⭐ **NEW!** Quick reference card (@clarify-champion)
 10. **[COMPREHENSIVE_TROUBLESHOOTING_GUIDE.md](./COMPREHENSIVE_TROUBLESHOOTING_GUIDE.md)** - ⭐ **NEW!** Complete diagnostic manual (@clarify-champion)
 
+## 📝 Changelog & Release Notes
+
+**See what's new and track project evolution:**
+
+### Main Changelog
+- **[CHANGELOG.md](../CHANGELOG.md)** - ⭐ **PRIMARY REFERENCE** - Comprehensive, automatically-updated changelog
+  - ✨ Features, 🐛 Bug Fixes, 🧹 Chores & Maintenance
+  - 👤 User-initiated vs 🤖 Bot-generated changes
+  - Smart filtering (excludes auto-churn commits)
+  - Auto-updated on PR merge
+
+### System Documentation
+- **[CHANGELOG_SYSTEM.md](./CHANGELOG_SYSTEM.md)** - How the changelog system works
+- **[Changelog Maintenance Guide](../.github/instructions/changelog-maintenance.instructions.md)** - Contribution guidelines
+- **[tools/generate-changelog.py](../tools/generate-changelog.py)** - Generation script
+
+### Quick Access
+📖 **[View Full Changelog →](../CHANGELOG.md)** | 📊 **[Latest Updates →](../CHANGELOG.md#2025-12-10)**
+
 ## 🤖 Agent System
 
 Learn about the autonomous agent ecosystem:
@@ -289,7 +308,7 @@ This index is maintained by the doc-master agent. If you notice missing or outda
 
 ---
 
-**Last Updated**: 2025-11-12
+**Last Updated**: 2025-12-10
 
 *Index maintained by 📚 Lambda-1111 (doc-master agent)*  
 *Code quality documentation by 💭 Turing (coach-master agent)*
