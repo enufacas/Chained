@@ -207,10 +207,10 @@ resource "google_cloud_run_v2_service" "academic_research" {
           path = "/health"
           port = 8080
         }
-        initial_delay_seconds = 5
-        timeout_seconds       = 3
-        period_seconds        = 5
-        failure_threshold     = 3
+        initial_delay_seconds = 10  # Increased from 5 to allow for lazy initialization
+        timeout_seconds       = 5   # Increased from 3 for better reliability
+        period_seconds        = 10  # Increased from 5 to reduce probe frequency
+        failure_threshold     = 5   # Increased from 3 to allow more retry attempts (50s total)
       }
 
       liveness_probe {
@@ -219,7 +219,7 @@ resource "google_cloud_run_v2_service" "academic_research" {
           port = 8080
         }
         period_seconds    = 30
-        timeout_seconds   = 3
+        timeout_seconds   = 5   # Increased from 3 for consistency
         failure_threshold = 3
       }
     }
@@ -353,10 +353,10 @@ resource "google_cloud_run_v2_service" "blog_writer" {
           path = "/health"
           port = 8080
         }
-        initial_delay_seconds = 5
-        timeout_seconds       = 3
-        period_seconds        = 5
-        failure_threshold     = 3
+        initial_delay_seconds = 10  # Increased from 5 to allow for lazy initialization
+        timeout_seconds       = 5   # Increased from 3 for better reliability
+        period_seconds        = 10  # Increased from 5 to reduce probe frequency
+        failure_threshold     = 5   # Increased from 3 to allow more retry attempts (50s total)
       }
 
       liveness_probe {
@@ -365,7 +365,7 @@ resource "google_cloud_run_v2_service" "blog_writer" {
           port = 8080
         }
         period_seconds    = 30
-        timeout_seconds   = 3
+        timeout_seconds   = 5   # Increased from 3 for consistency
         failure_threshold = 3
       }
     }
@@ -491,10 +491,10 @@ resource "google_cloud_run_v2_service" "google_trends" {
           path = "/health"
           port = 8080
         }
-        initial_delay_seconds = 5
-        timeout_seconds       = 3
-        period_seconds        = 5
-        failure_threshold     = 3
+        initial_delay_seconds = 10  # Increased from 5 to allow for lazy initialization
+        timeout_seconds       = 5   # Increased from 3 for better reliability
+        period_seconds        = 10  # Increased from 5 to reduce probe frequency
+        failure_threshold     = 5   # Increased from 3 to allow more retry attempts (50s total)
       }
 
       liveness_probe {
@@ -503,7 +503,7 @@ resource "google_cloud_run_v2_service" "google_trends" {
           port = 8080
         }
         period_seconds    = 30
-        timeout_seconds   = 3
+        timeout_seconds   = 5   # Increased from 3 for consistency
         failure_threshold = 3
       }
     }
@@ -614,10 +614,10 @@ resource "google_cloud_run_v2_service" "code_reviewer" {
           path = "/health"
           port = 8080
         }
-        initial_delay_seconds = 5
-        timeout_seconds       = 3
-        period_seconds        = 5
-        failure_threshold     = 3
+        initial_delay_seconds = 10  # Increased from 5 to allow for lazy initialization
+        timeout_seconds       = 5   # Increased from 3 for better reliability
+        period_seconds        = 10  # Increased from 5 to reduce probe frequency
+        failure_threshold     = 5   # Increased from 3 to allow more retry attempts (50s total)
       }
 
       liveness_probe {
@@ -626,7 +626,7 @@ resource "google_cloud_run_v2_service" "code_reviewer" {
           port = 8080
         }
         period_seconds    = 30
-        timeout_seconds   = 3
+        timeout_seconds   = 5   # Increased from 3 for consistency
         failure_threshold = 3
       }
     }
@@ -737,10 +737,10 @@ resource "google_cloud_run_v2_service" "data_analyst" {
           path = "/health"
           port = 8080
         }
-        initial_delay_seconds = 5
-        timeout_seconds       = 3
-        period_seconds        = 5
-        failure_threshold     = 3
+        initial_delay_seconds = 10  # Increased from 5 to allow for lazy initialization
+        timeout_seconds       = 5   # Increased from 3 for better reliability
+        period_seconds        = 10  # Increased from 5 to reduce probe frequency
+        failure_threshold     = 5   # Increased from 3 to allow more retry attempts (50s total)
       }
 
       liveness_probe {
@@ -749,7 +749,7 @@ resource "google_cloud_run_v2_service" "data_analyst" {
           port = 8080
         }
         period_seconds    = 30
-        timeout_seconds   = 3
+        timeout_seconds   = 5   # Increased from 3 for consistency
         failure_threshold = 3
       }
     }
@@ -860,10 +860,10 @@ resource "google_cloud_run_v2_service" "image_generator" {
           path = "/health"
           port = 8080
         }
-        initial_delay_seconds = 5
-        timeout_seconds       = 3
-        period_seconds        = 5
-        failure_threshold     = 3
+        initial_delay_seconds = 10  # Increased from 5 to allow for lazy initialization
+        timeout_seconds       = 5   # Increased from 3 for better reliability
+        period_seconds        = 10  # Increased from 5 to reduce probe frequency
+        failure_threshold     = 5   # Increased from 3 to allow more retry attempts (50s total)
       }
 
       liveness_probe {
@@ -872,7 +872,7 @@ resource "google_cloud_run_v2_service" "image_generator" {
           port = 8080
         }
         period_seconds    = 30
-        timeout_seconds   = 3
+        timeout_seconds   = 5   # Increased from 3 for consistency
         failure_threshold = 3
       }
     }
@@ -1021,10 +1021,10 @@ resource "google_cloud_run_v2_service" "adk_api_server" {
           path = "/health"
           port = 8080
         }
-        initial_delay_seconds = 5
-        timeout_seconds       = 3
-        period_seconds        = 5
-        failure_threshold     = 3
+        initial_delay_seconds = 10  # Increased from 5 to allow for lazy initialization
+        timeout_seconds       = 5   # Increased from 3 for better reliability
+        period_seconds        = 10  # Increased from 5 to reduce probe frequency
+        failure_threshold     = 5   # Increased from 3 to allow more retry attempts (50s total)
       }
 
       liveness_probe {
@@ -1033,7 +1033,7 @@ resource "google_cloud_run_v2_service" "adk_api_server" {
           port = 8080
         }
         period_seconds    = 30
-        timeout_seconds   = 3
+        timeout_seconds   = 5   # Increased from 3 for consistency
         failure_threshold = 3
       }
     }
@@ -1259,7 +1259,7 @@ resource "google_cloud_run_v2_service" "ag_ui_frontend" {
         initial_delay_seconds = 10
         timeout_seconds       = 5
         period_seconds        = 10
-        failure_threshold     = 3
+        failure_threshold     = 5   # Increased from 3 to allow more retry attempts (50s total)
       }
 
       liveness_probe {
@@ -1375,10 +1375,10 @@ resource "google_cloud_run_v2_service" "error_observer" {
           path = "/health"
           port = 8090
         }
-        initial_delay_seconds = 5
-        timeout_seconds       = 3
-        period_seconds        = 5
-        failure_threshold     = 3
+        initial_delay_seconds = 10  # Increased from 5 to allow for lazy initialization
+        timeout_seconds       = 5   # Increased from 3 for better reliability
+        period_seconds        = 10  # Increased from 5 to reduce probe frequency
+        failure_threshold     = 5   # Increased from 3 to allow more retry attempts (50s total)
       }
 
       liveness_probe {
@@ -1387,7 +1387,7 @@ resource "google_cloud_run_v2_service" "error_observer" {
           port = 8090
         }
         period_seconds    = 30
-        timeout_seconds   = 3
+        timeout_seconds   = 5   # Increased from 3 for consistency
         failure_threshold = 3
       }
     }
@@ -1465,10 +1465,10 @@ resource "google_cloud_run_v2_service" "log_consumer" {
           path = "/health"
           port = 8091
         }
-        initial_delay_seconds = 5
-        timeout_seconds       = 3
-        period_seconds        = 5
-        failure_threshold     = 3
+        initial_delay_seconds = 10  # Increased from 5 to allow for lazy initialization
+        timeout_seconds       = 5   # Increased from 3 for better reliability
+        period_seconds        = 10  # Increased from 5 to reduce probe frequency
+        failure_threshold     = 5   # Increased from 3 to allow more retry attempts (50s total)
       }
 
       liveness_probe {
@@ -1477,7 +1477,7 @@ resource "google_cloud_run_v2_service" "log_consumer" {
           port = 8091
         }
         period_seconds    = 30
-        timeout_seconds   = 3
+        timeout_seconds   = 5   # Increased from 3 for consistency
         failure_threshold = 3
       }
     }
@@ -1564,10 +1564,10 @@ resource "google_cloud_run_v2_service" "ag_organism_frontend" {
           path = "/health"
           port = 8080
         }
-        initial_delay_seconds = 5
-        timeout_seconds       = 3
-        period_seconds        = 5
-        failure_threshold     = 3
+        initial_delay_seconds = 10  # Increased from 5 to allow for lazy initialization
+        timeout_seconds       = 5   # Increased from 3 for better reliability
+        period_seconds        = 10  # Increased from 5 to reduce probe frequency
+        failure_threshold     = 5   # Increased from 3 to allow more retry attempts (50s total)
       }
 
       liveness_probe {
@@ -1576,7 +1576,7 @@ resource "google_cloud_run_v2_service" "ag_organism_frontend" {
           port = 8080
         }
         period_seconds    = 30
-        timeout_seconds   = 3
+        timeout_seconds   = 5   # Increased from 3 for consistency
         failure_threshold = 3
       }
     }

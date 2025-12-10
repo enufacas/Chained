@@ -109,26 +109,59 @@ ACTIVE_MODE = get_active_mode()
 # =============================================================================
 
 _initialized = False
+_initialization_failed = False
+_initialization_error = None
 
 def _ensure_initialized():
-    """Ensure the appropriate Gemini library is initialized."""
-    global _initialized
+    """
+    Ensure the appropriate Gemini library is initialized.
+    
+    Uses lazy initialization with retry logic to handle Cloud Run startup.
+    If initialization fails, the error is cached and re-raised on subsequent calls.
+    """
+    global _initialized, _initialization_failed, _initialization_error
+    
     if _initialized:
         return
     
-    if ACTIVE_MODE == "vertex":
-        # Initialize Vertex AI
-        location = os.getenv("GOOGLE_CLOUD_LOCATION", "us-central1")
-        vertexai.init(project=GOOGLE_CLOUD_PROJECT, location=location)
-        print(f"✅ Vertex AI initialized (project={GOOGLE_CLOUD_PROJECT}, location={location})")
-        _initialized = True
-        
-    elif ACTIVE_MODE == "genai":
-        # Initialize Google AI Studio
-        api_key = GEMINI_API_KEY or GOOGLE_API_KEY
-        genai.configure(api_key=api_key)
-        print(f"✅ Google AI Studio initialized (API key: {api_key[:8]}...)")
-        _initialized = True
+    if _initialization_failed:
+        # Re-raise the cached error
+        raise GeminiError(f"Gemini initialization failed previously: {_initialization_error}")
+    
+    try:
+        if ACTIVE_MODE == "vertex":
+            # Initialize Vertex AI with retry logic
+            location = os.getenv("GOOGLE_CLOUD_LOCATION", "us-central1")
+            
+            # Retry logic for Cloud Run startup issues
+            max_retries = 3
+            for attempt in range(max_retries):
+                try:
+                    vertexai.init(project=GOOGLE_CLOUD_PROJECT, location=location)
+                    print(f"✅ Vertex AI initialized (project={GOOGLE_CLOUD_PROJECT}, location={location}, attempt={attempt+1})")
+                    _initialized = True
+                    return
+                except Exception as e:
+                    if attempt < max_retries - 1:
+                        import time
+                        wait_time = 2 ** attempt  # Exponential backoff: 1s, 2s, 4s
+                        print(f"⚠️ Vertex AI init attempt {attempt+1} failed: {e}. Retrying in {wait_time}s...")
+                        time.sleep(wait_time)
+                    else:
+                        raise  # Re-raise on final attempt
+            
+        elif ACTIVE_MODE == "genai":
+            # Initialize Google AI Studio (simpler, no retry needed)
+            api_key = GEMINI_API_KEY or GOOGLE_API_KEY
+            genai.configure(api_key=api_key)
+            print(f"✅ Google AI Studio initialized (API key: {api_key[:8]}...)")
+            _initialized = True
+            
+    except Exception as e:
+        _initialization_failed = True
+        _initialization_error = str(e)
+        print(f"❌ Gemini initialization failed: {e}")
+        raise GeminiError(f"Failed to initialize Gemini: {e}") from e
 
 
 # =============================================================================

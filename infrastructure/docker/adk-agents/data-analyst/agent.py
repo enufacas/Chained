@@ -44,13 +44,18 @@ AGENT_DESCRIPTION = "Analyzes data, generates insights, and provides statistical
 AGENT_VERSION = "1.0.0"
 PORT = int(os.getenv("PORT", "8085"))
 
+# Check if AI is available (configuration check, doesn't initialize yet)
 USE_AI = gemini_is_available()
 
+print(f"📊 Data Analyst Agent starting...")
+print(f"   Port: {PORT}")
+print(f"   AI Available: {USE_AI}")
 if USE_AI:
     config_info = gemini_get_config_info()
-    print(f"✅ Gemini AI configured for data analyst agent (mode={config_info['active_mode']})")
+    print(f"   AI Mode: {config_info['active_mode']}")
+    print(f"   Note: AI will be initialized on first request (lazy initialization)")
 else:
-    print(f"⚠️ Data Analyst Agent: Gemini AI NOT configured - will return error")
+    print(f"   ⚠️ AI NOT configured - agent will return errors for AI requests")
 
 
 # =============================================================================
@@ -377,12 +382,30 @@ async def get_task(task_id: str) -> Task:
 
 @app.get("/health")
 async def health():
-    """Health check endpoint."""
+    """
+    Health check endpoint.
+    
+    Always returns 200 OK to allow container startup.
+    Indicates AI initialization status but doesn't fail if AI is unavailable.
+    """
+    # Check AI initialization status without triggering initialization
+    ai_status = "available" if USE_AI else "not_configured"
+    
+    # Try to check if already initialized (won't trigger initialization)
+    try:
+        from shared.gemini_client import _initialized, _initialization_failed, _initialization_error
+        if _initialized:
+            ai_status = "initialized"
+        elif _initialization_failed:
+            ai_status = f"initialization_failed: {_initialization_error}"
+    except Exception:
+        pass  # Ignore errors during health check
+    
     return {
         "status": "healthy",
         "agent": AGENT_NAME,
         "version": AGENT_VERSION,
-        "ai_mode": "enabled" if USE_AI else "disabled",
+        "ai_status": ai_status,
         "timestamp": datetime.utcnow().isoformat(),
     }
 
