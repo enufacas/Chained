@@ -30,7 +30,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x21) [#3782](https://github.com/enufacas/Chained/pull/3782)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x22) [#3784](https://github.com/enufacas/Chained/pull/3784)
 
 ---
 
@@ -47,6 +47,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🐛 Bug Fixes
 
+- 👤 Sync AG-UI Frontend package-lock.json with package.json [#3785](https://github.com/enufacas/Chained/pull/3785)
 - 👤 [WIP] Close issues older than two hours and conflicted PRs [#3760](https://github.com/enufacas/Chained/pull/3760)
 
 ### 🧹 Chores & Maintenance
@@ -178,15 +179,11 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x7) [#3569](https://github.com/enufacas/Chained/pull/3569)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x6) [#3569](https://github.com/enufacas/Chained/pull/3569)
 
 ---
 
 ## 2025-12-02
-
-### ✨ Features
-
-- 👤 🔧 Agents Add missing agents to AG-UI activity monitoring, implement end-to-end error reporting, and update A2A documentation [#3546](https://github.com/enufacas/Chained/pull/3546)
 
 ### 🐛 Bug Fixes
 
