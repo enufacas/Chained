@@ -273,7 +273,7 @@ class TestCodeCompletionPredictor(unittest.TestCase):
     def test_complete_function_requirement_2(self):
         """
         TEST CASE 2: Completes functions
-        Validates Requirement 1: Sequence prediction model
+        Validates sequence prediction model with beam search
         """
         # Partial function needing completion
         partial_function = "def process_data(items):\n    result = []\n    for item in items:\n        "

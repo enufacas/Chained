@@ -31,8 +31,8 @@ Create a lightweight ML model that predicts the next line of code based on conte
    - Maintains semantic context
 
 2. **SequencePredictor**: Lightweight sequence model
-   - N-gram based prediction (inspired by LSTM)
-   - Statistical pattern learning
+   - N-gram based prediction (traditional statistical language modeling)
+   - Pattern frequency learning
    - Beam search for better completions
 
 3. **CodeCompletionPredictor**: Main interface
@@ -199,7 +199,7 @@ python3 test_code_completion_predictor.py
 ### Test Results
 
 ```
-Ran 27 tests in 0.XXXs
+Ran 26 tests in 0.013s
 OK
 
 Requirements Validated:

@@ -3,7 +3,7 @@
 Code Completion Predictor - A lightweight ML model for code prediction
 
 This module implements a sequence-based code completion predictor inspired by
-GitHub Copilot, using a lightweight LSTM-inspired architecture optimized for
+GitHub Copilot, using a lightweight N-gram statistical architecture optimized for
 real-time inference.
 
 Created by @create-botter - Visionary infrastructure with Tesla-inspired innovation.
@@ -135,7 +135,7 @@ class SequencePredictor:
     """
     N-gram based sequence predictor with learned patterns.
     
-    Uses statistical methods inspired by LSTM for sequence prediction:
+    Uses traditional statistical language modeling for sequence prediction:
     - Learns from token sequences
     - Builds n-gram frequency tables
     - Provides confidence scores
