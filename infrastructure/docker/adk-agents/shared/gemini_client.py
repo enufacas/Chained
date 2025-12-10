@@ -47,6 +47,10 @@ USE_VERTEX_AI = os.getenv("USE_VERTEX_AI", "false").lower() in ("true", "1", "ye
 DEFAULT_GENAI_MODEL = "gemini-1.5-flash"  # Google AI Studio model name
 DEFAULT_VERTEX_MODEL = "gemini-2.0-flash"  # Vertex AI model name (stable, widely available)
 
+# Retry configuration for initialization
+MAX_INIT_RETRIES = 3
+RETRY_BASE_DELAY = 1  # Base delay in seconds for exponential backoff (1s, 2s, 4s)
+
 # =============================================================================
 # Availability Flags
 # =============================================================================
@@ -109,26 +113,58 @@ ACTIVE_MODE = get_active_mode()
 # =============================================================================
 
 _initialized = False
+_initialization_failed = False
+_initialization_error = None
 
 def _ensure_initialized():
-    """Ensure the appropriate Gemini library is initialized."""
-    global _initialized
+    """
+    Ensure the appropriate Gemini library is initialized.
+    
+    Uses lazy initialization with retry logic to handle Cloud Run startup.
+    If initialization fails, the error is cached and re-raised on subsequent calls.
+    """
+    global _initialized, _initialization_failed, _initialization_error
+    
     if _initialized:
         return
     
-    if ACTIVE_MODE == "vertex":
-        # Initialize Vertex AI
-        location = os.getenv("GOOGLE_CLOUD_LOCATION", "us-central1")
-        vertexai.init(project=GOOGLE_CLOUD_PROJECT, location=location)
-        print(f"✅ Vertex AI initialized (project={GOOGLE_CLOUD_PROJECT}, location={location})")
-        _initialized = True
-        
-    elif ACTIVE_MODE == "genai":
-        # Initialize Google AI Studio
-        api_key = GEMINI_API_KEY or GOOGLE_API_KEY
-        genai.configure(api_key=api_key)
-        print(f"✅ Google AI Studio initialized (API key: {api_key[:8]}...)")
-        _initialized = True
+    if _initialization_failed:
+        # Re-raise the cached error
+        raise GeminiError(f"Gemini initialization failed previously: {_initialization_error}")
+    
+    try:
+        if ACTIVE_MODE == "vertex":
+            # Initialize Vertex AI with retry logic
+            location = os.getenv("GOOGLE_CLOUD_LOCATION", "us-central1")
+            
+            # Retry logic for Cloud Run startup issues
+            for attempt in range(MAX_INIT_RETRIES):
+                try:
+                    vertexai.init(project=GOOGLE_CLOUD_PROJECT, location=location)
+                    print(f"✅ Vertex AI initialized (project={GOOGLE_CLOUD_PROJECT}, location={location}, attempt={attempt+1})")
+                    _initialized = True
+                    return
+                except Exception as e:
+                    if attempt < MAX_INIT_RETRIES - 1:
+                        import time
+                        wait_time = RETRY_BASE_DELAY * (2 ** attempt)  # Exponential backoff
+                        print(f"⚠️ Vertex AI init attempt {attempt+1} failed: {e}. Retrying in {wait_time}s...")
+                        time.sleep(wait_time)
+                    else:
+                        raise  # Re-raise on final attempt
+            
+        elif ACTIVE_MODE == "genai":
+            # Initialize Google AI Studio (simpler, no retry needed)
+            api_key = GEMINI_API_KEY or GOOGLE_API_KEY
+            genai.configure(api_key=api_key)
+            print(f"✅ Google AI Studio initialized (API key: {api_key[:8]}...)")
+            _initialized = True
+            
+    except Exception as e:
+        _initialization_failed = True
+        _initialization_error = str(e)
+        print(f"❌ Gemini initialization failed: {e}")
+        raise GeminiError(f"Failed to initialize Gemini: {e}") from e
 
 
 # =============================================================================
@@ -341,4 +377,21 @@ def get_config_info() -> Dict[str, Any]:
         "has_project_id": bool(GOOGLE_CLOUD_PROJECT),
         "default_vertex_model": DEFAULT_VERTEX_MODEL,
         "default_genai_model": DEFAULT_GENAI_MODEL,
+    }
+
+
+def get_initialization_status() -> Dict[str, Any]:
+    """
+    Get the current initialization status.
+    
+    Returns:
+        Dict with:
+            - initialized: bool - Whether successfully initialized
+            - failed: bool - Whether initialization failed
+            - error: str or None - Error message if initialization failed
+    """
+    return {
+        "initialized": _initialized,
+        "failed": _initialization_failed,
+        "error": _initialization_error,
     }
