@@ -30,11 +30,13 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🐛 Bug Fixes
 
+- 👤 Add E2E tests, document deployment URLs, fix Firestore permissions [#3815](https://github.com/enufacas/Chained/pull/3815)
 - 👤 📋 Instructions Regenerate AG-UI Frontend package-lock.json and add package management instructions [#20086950265](https://github.com/enufacas/Chained/pull/20086950265)
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x37) [#3811](https://github.com/enufacas/Chained/pull/3811)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x39) [#3816](https://github.com/enufacas/Chained/pull/3816)
+- 👤 **Documentation**: Document deployed URL for PR 3D organism implementation [#3816](https://github.com/enufacas/Chained/pull/3816)
 
 ---
 
@@ -192,12 +194,9 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 - 👤 🔧 Tools Fix TypeScript build error: use shared Pipeline interface in PipelineOutcomes [#3580](https://github.com/enufacas/Chained/pull/3580)
 - 👤 Fix AG-UI frontend: ERROR_OBSERVER_URL runtime config, localStorage quota, and pipeline detail persistence [#3558](https://github.com/enufacas/Chained/pull/3558)
-- 👤 Fix session timestamp preservation in work history page [#3555](https://github.com/enufacas/Chained/pull/3555)
-- 👤 Fix AG-UI Error Observer config race condition and session persistence data loss [#3554](https://github.com/enufacas/Chained/pull/3554)
-- 👤 Fix localStorage quota exceeded in AG-UI team runs and add E2E tests [#3552](https://github.com/enufacas/Chained/pull/3552)
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x4) [#3569](https://github.com/enufacas/Chained/pull/3569)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge [#3569](https://github.com/enufacas/Chained/pull/3569)
 
 ---
