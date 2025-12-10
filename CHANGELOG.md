@@ -30,6 +30,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### ✨ Features
 
+- 👤 meta-coordination: 2025-12-10 10:16 run - closed 2 stale PRs, merged 1 PR [#3862](https://github.com/enufacas/Chained/pull/3862)
 - 👤 Restore AI code pattern hypothesis testing system (@create-champion) [#3864](https://github.com/enufacas/Chained/pull/3864)
 - 👤 Initial plan [#3865](https://github.com/enufacas/Chained/pull/3865)
 - 👤 meta-coordination: 2025-12-10 08:17 - system healthy, monitoring 6 PRs [#3829](https://github.com/enufacas/Chained/pull/3829)
@@ -53,7 +54,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x59) [#3865](https://github.com/enufacas/Chained/pull/3865)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x61) [#3862](https://github.com/enufacas/Chained/pull/3862)
 - 👤 🧠 Learning **Documentation**: Validate GitHub Copilot learning session 2025-12-10 [#3866](https://github.com/enufacas/Chained/pull/3866)
 - 🤖 **Documentation**: 📚 Sync World State to Docs - Pipeline [#3841](https://github.com/enufacas/Chained/pull/3841)
 - 👤 **Documentation**: Document deployed URL for PR 3D organism implementation [#3816](https://github.com/enufacas/Chained/pull/3816)
@@ -214,10 +215,5 @@ This changelog excludes automated data syncs and routine maintenance commits.
 ### 🐛 Bug Fixes
 
 - 👤 🔧 Tools Fix TypeScript build error: use shared Pipeline interface in PipelineOutcomes [#3580](https://github.com/enufacas/Chained/pull/3580)
-- 👤 Fix AG-UI frontend: ERROR_OBSERVER_URL runtime config, localStorage quota, and pipeline detail persistence [#3558](https://github.com/enufacas/Chained/pull/3558)
-
-### 🧹 Chores & Maintenance
-
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge [#3569](https://github.com/enufacas/Chained/pull/3569)
 
 ---
