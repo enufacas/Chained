@@ -2,9 +2,9 @@
 
 > Programming languages, frameworks, libraries, and development tools
 
-**Total Insights:** 855
+**Total Insights:** 924
 
-**Last Updated:** 2025-12-09
+**Last Updated:** 2025-12-10
 
 ---
 
@@ -641,6 +641,69 @@ The Go Blog Go’s Sweet 16 Austin Clements, for the Go team 14 November 2025 Th
 ---
 
 
+### Rust in the kernel is no longer experimental
+
+**Community Score:** 398 upvotes
+
+**Link:** https://lwn.net/Articles/1049831/
+
+---
+
+
+### Revisiting "Let's Build a Compiler"
+
+**Community Score:** 42 upvotes
+
+**Link:** https://eli.thegreenplace.net/2025/revisiting-lets-build-a-compiler/
+
+---
+
+
+### PeerTube is recognized as a digital public good by Digital Public Goods Alliance
+
+**Community Score:** 506 upvotes
+
+**Link:** https://www.digitalpublicgoods.net/r/peertube
+
+---
+
+
+### Django: what’s new in 6.0
+
+**Community Score:** 259 upvotes
+
+**Link:** https://adamj.eu/tech/2025/12/03/django-whats-new-6.0/
+
+---
+
+
+### When a video codec wins an Emmy
+
+**Community Score:** 105 upvotes
+
+**Link:** https://blog.mozilla.org/en/mozilla/av1-video-codec-wins-emmy/
+
+---
+
+
+### If you're going to vibe code, why not do it in C?
+
+**Community Score:** 442 upvotes
+
+**Link:** https://stephenramsay.net/posts/vibe-coding.html
+
+---
+
+
+### Writing our own Cheat Engine in Rust
+
+**Community Score:** 56 upvotes
+
+**Link:** https://lonami.dev/blog/woce-1/
+
+---
+
+
 ### Think in math, write in code (2019)
 
 **Link:** https://www.jmeiners.com/think-in-math/
@@ -708,78 +771,5 @@ yt-dlp / yt-dlp Public Uh oh! There was an error while loading. Please reload th
 **Community Score:** 279 upvotes
 
 **Link:** https://github.com/jackdoe/pico2-swd-riscv
-
----
-
-
-### Go's Sweet 16
-
-**Community Score:** 142 upvotes
-
-**Link:** https://go.dev/blog/16years
-
-
-**Content Summary:**
-
-The Go Blog Go’s Sweet 16 Austin Clements, for the Go team 14 November 2025 This past Monday, November 10th, we celebrated the 16th anniversary of Go’s open source release ! We released Go 1.24 in February and Go 1.25 in August , following our now well-established and dependable release cadence. Continuing our mission to build the most productive language platform for building production systems, these releases included new APIs for building robust and reliable software, significant advances in ...
-
----
-
-
-### A Fast 64-Bit Date Algorithm (30–40% faster by counting dates backwards)
-
-**Community Score:** 133 upvotes
-
-**Link:** https://www.benjoffe.com/fast-date-64
-
----
-
-
-### Statistical Process Control in Python
-
-**Community Score:** 168 upvotes
-
-**Link:** https://timothyfraser.com/sigma/statistical-process-control-in-python.html
-
----
-
-
-### DRAM prices are spiking, but I don't trust the industry's why
-
-**Community Score:** 91 upvotes
-
-**Link:** https://www.xda-developers.com/dram-prices-spiking-dont-trust-industry-reasons/
-
----
-
-
-### JOPA: Java compiler in C++, Jikes modernized to Java 6 with Claude
-
-**Community Score:** 36 upvotes
-
-**Link:** https://github.com/7mind/jopa
-
----
-
-
-### Surprisingly, Emacs on Android is pretty good
-
-**Community Score:** 214 upvotes
-
-**Link:** https://kristofferbalintona.me/posts/202505291438/
-
----
-
-
-### Think in math, write in code (2019
-
-**Community Score:** 178 upvotes
-
-**Link:** https://www.jmeiners.com/think-in-math/
-
-
-**Content Summary:**
-
-Home GitHub Rss Think in Math. Write in Code. 6/8/19 Programmers love to discuss programming languages. We not only debate their technical merits and aesthetic qualities, but they become integrated into our personal identities, along with the values and traits that we associate with them. Some even defend a form of Linguistic Determinism that thinking is confined to what the language makes typable. Since we spend so much time writing code, a keen interest in language design is justified. However...
 
 ---

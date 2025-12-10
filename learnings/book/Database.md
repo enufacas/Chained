@@ -2,9 +2,9 @@
 
 > SQL, NoSQL, data storage, and data engineering
 
-**Total Insights:** 136
+**Total Insights:** 147
 
-**Last Updated:** 2025-12-09
+**Last Updated:** 2025-12-10
 
 ---
 
@@ -141,6 +141,15 @@ Perkeep is under active development. If you're a programmer or fairly technical,
 ## 📰 From Unknown
 
 
+### Distributed ID Formats Are Architectural Commitments, Not Just Data Types
+
+**Community Score:** 32 upvotes
+
+**Link:** https://piljoong.dev/posts/distributed-id-generation-complicated/
+
+---
+
+
 ### RegreSQL: Regression Testing for PostgreSQL Queries
 
 **Link:** https://boringsql.com/posts/regresql-testing-queries/
@@ -277,15 +286,6 @@ Perkeep is under active development. If you're a programmer or fairly technical,
 ### 650GB of Data (Delta Lake on S3). Polars vs. DuckDB vs. Daft vs. Spark
 
 **Link:** https://dataengineeringcentral.substack.com/p/650gb-of-data-delta-lake-on-s3-polars
-
----
-
-
-### Unpowered SSDs slowly lose data
-
-**Community Score:** 684 upvotes
-
-**Link:** https://www.xda-developers.com/your-unpowered-ssd-is-slowly-losing-your-data/
 
 ---
 

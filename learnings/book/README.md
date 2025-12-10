@@ -2,11 +2,11 @@
 
 > A curated collection of insights from TLDR Tech, Hacker News, and other sources
 
-**Generated:** 2025-12-09 09:17 UTC
+**Generated:** 2025-12-10 09:17 UTC
 
-**Total Learning Sessions:** 156
+**Total Learning Sessions:** 161
 
-**Total Insights:** 10605
+**Total Insights:** 11625
 
 ---
 
@@ -18,70 +18,70 @@
 
 Artificial intelligence, machine learning, LLMs, and neural networks
 
-**Insights:** 4105
+**Insights:** 4623
 
 
 ### [💻 Programming Languages & Frameworks](./Programming.md)
 
 Programming languages, frameworks, libraries, and development tools
 
-**Insights:** 855
+**Insights:** 924
 
 
 ### [🚀 DevOps & Infrastructure](./DevOps.md)
 
 CI/CD, containers, orchestration, and infrastructure automation
 
-**Insights:** 287
+**Insights:** 308
 
 
 ### [🗄️ Databases & Data Management](./Database.md)
 
 SQL, NoSQL, data storage, and data engineering
 
-**Insights:** 136
+**Insights:** 147
 
 
 ### [🌐 Web Development](./Web.md)
 
 Web technologies, browsers, APIs, and frontend frameworks
 
-**Insights:** 341
+**Insights:** 366
 
 
 ### [🔒 Security & Privacy](./Security.md)
 
 Security vulnerabilities, encryption, authentication, and privacy
 
-**Insights:** 133
+**Insights:** 144
 
 
 ### [⚡ Performance & Optimization](./Performance.md)
 
 Performance tuning, benchmarks, and optimization techniques
 
-**Insights:** 287
+**Insights:** 309
 
 
 ### [🔧 Developer Tools](./Tools.md)
 
 IDEs, editors, debuggers, and productivity tools
 
-**Insights:** 601
+**Insights:** 646
 
 
 ### [🌟 Open Source & Community](./OpenSource.md)
 
 Open source projects, community insights, and collaboration
 
-**Insights:** 69
+**Insights:** 76
 
 
 ### [📚 General Tech Insights](./Other.md)
 
 General technology news and insights
 
-**Insights:** 3791
+**Insights:** 4082
 
 
 ## 📊 Statistics
@@ -89,11 +89,11 @@ General technology news and insights
 
 ### By Source
 
-- **Unknown:** 76 learning sessions
+- **Unknown:** 80 learning sessions
+
+- **GitHub Copilot (Combined):** 27 learning sessions
 
 - **Hacker News:** 26 learning sessions
-
-- **GitHub Copilot (Combined):** 26 learning sessions
 
 - **TLDR Tech:** 20 learning sessions
 
@@ -106,25 +106,25 @@ General technology news and insights
 
 ### By Topic
 
-- **🤖 AI & Machine Learning:** 4105 insights
+- **🤖 AI & Machine Learning:** 4623 insights
 
-- **📚 General Tech Insights:** 3791 insights
+- **📚 General Tech Insights:** 4082 insights
 
-- **💻 Programming Languages & Frameworks:** 855 insights
+- **💻 Programming Languages & Frameworks:** 924 insights
 
-- **🔧 Developer Tools:** 601 insights
+- **🔧 Developer Tools:** 646 insights
 
-- **🌐 Web Development:** 341 insights
+- **🌐 Web Development:** 366 insights
 
-- **⚡ Performance & Optimization:** 287 insights
+- **⚡ Performance & Optimization:** 309 insights
 
-- **🚀 DevOps & Infrastructure:** 287 insights
+- **🚀 DevOps & Infrastructure:** 308 insights
 
-- **🗄️ Databases & Data Management:** 136 insights
+- **🗄️ Databases & Data Management:** 147 insights
 
-- **🔒 Security & Privacy:** 133 insights
+- **🔒 Security & Privacy:** 144 insights
 
-- **🌟 Open Source & Community:** 69 insights
+- **🌟 Open Source & Community:** 76 insights
 
 
 ## 💡 How to Use This Book

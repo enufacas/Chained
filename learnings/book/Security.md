@@ -2,9 +2,9 @@
 
 > Security vulnerabilities, encryption, authentication, and privacy
 
-**Total Insights:** 133
+**Total Insights:** 144
 
-**Last Updated:** 2025-12-09
+**Last Updated:** 2025-12-10
 
 ---
 
@@ -255,6 +255,13 @@ Posted on November 5, 2025 November 5, 2025 by Jean-Luc Aufranc (CNXSoft) - 3 Co
 ---
 
 
+### Sam Altman's SpaceX rival 🚀, Spotify Wrapped 🎵, critical RSC vulnerability 💻
+
+**Link:** https://tldr.tech/tech/2025-12-04
+
+---
+
+
 ### Checkout.com hacked, refuses ransom payment, donates to security labs
 
 **Community Score:** 425 upvotes
@@ -357,19 +364,5 @@ Sign in Get in touch Resource center Search Text Link Thank you! Your submission
 **Content Summary:**
 
 Posted on November 5, 2025 November 5, 2025 by Jean-Luc Aufranc (CNXSoft) - 4 Comments on Bluetooth 6.2 gets more responsive, improves security, USB communication, and testing capabilities Bluetooth 6.2 gets more responsive, improves security, USB communication, and testing capabilities Bluetooth 6.2 specification has just been released with a range of new features to enhance responsiveness with shorter connection intervals, strengthen security against amplitude-based RF attacks, and improve com...
-
----
-
-
-### Bluetooth 6.2 – more responsive, improves security, USB comms, and testing
-
-**Community Score:** 145 upvotes
-
-**Link:** https://www.cnx-software.com/2025/11/05/bluetooth-6-2-gets-more-responsive-improves-security-usb-communication-and-testing-capabilities/
-
-
-**Content Summary:**
-
-Posted on November 5, 2025 November 5, 2025 by Jean-Luc Aufranc (CNXSoft) - 3 Comments on Bluetooth 6.2 gets more responsive, improves security, USB communication, and testing capabilities Bluetooth 6.2 gets more responsive, improves security, USB communication, and testing capabilities Bluetooth 6.2 specification has just been released with a range of new features to enhance responsiveness with shorter connection intervals, strengthen security against amplitude-based RF attacks, and improve com...
 
 ---
