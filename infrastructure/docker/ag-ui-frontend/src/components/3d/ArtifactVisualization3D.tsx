@@ -65,7 +65,7 @@ export default function ArtifactVisualization3D({
   const emissiveIntensity = 0.2;
 
   // Animation
-  useFrame((state) => {
+  useFrame(() => {
     if (!meshRef.current) return;
 
     // Rotate artifact
@@ -77,9 +77,11 @@ export default function ArtifactVisualization3D({
 
     // Check if artifact is too old (10 seconds) and fade out
     const age = Date.now() - startTime.current;
-    if (age > 9000) {
+    if (age > 9000 && meshRef.current.material) {
       const fadeProgress = (age - 9000) / 1000;
-      meshRef.current.material.opacity = Math.max(0, 1 - fadeProgress);
+      if ('opacity' in meshRef.current.material) {
+        meshRef.current.material.opacity = Math.max(0, 1 - fadeProgress);
+      }
     }
   });
 

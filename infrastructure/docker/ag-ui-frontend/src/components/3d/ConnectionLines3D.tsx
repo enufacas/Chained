@@ -6,6 +6,7 @@
 
 import * as THREE from 'three';
 import { useMemo } from 'react';
+import { Line } from '@react-three/drei';
 
 interface ConnectionLines3DProps {
   positions: Array<[number, number, number]>;
@@ -15,35 +16,26 @@ interface ConnectionLines3DProps {
 
 export default function ConnectionLines3D({
   positions,
-  color = 0xff00ff,
+  color = 0x3b82f6,
   opacity = 0.6,
 }: ConnectionLines3DProps) {
-  const lineGeometries = useMemo(() => {
-    const geometries: THREE.BufferGeometry[] = [];
-    
-    for (let i = 0; i < positions.length - 1; i++) {
-      const points = [
-        new THREE.Vector3(...positions[i]),
-        new THREE.Vector3(...positions[i + 1]),
-      ];
-      const geometry = new THREE.BufferGeometry().setFromPoints(points);
-      geometries.push(geometry);
+  const points = useMemo(() => {
+    const pts: THREE.Vector3[] = [];
+    for (let i = 0; i < positions.length; i++) {
+      pts.push(new THREE.Vector3(...positions[i]));
     }
-    
-    return geometries;
+    return pts;
   }, [positions]);
 
+  if (points.length < 2) return null;
+
   return (
-    <group>
-      {lineGeometries.map((geometry, index) => (
-        <line key={index} geometry={geometry}>
-          <lineBasicMaterial
-            color={color}
-            transparent
-            opacity={opacity}
-          />
-        </line>
-      ))}
-    </group>
+    <Line
+      points={points}
+      color={color}
+      lineWidth={2}
+      transparent
+      opacity={opacity}
+    />
   );
 }

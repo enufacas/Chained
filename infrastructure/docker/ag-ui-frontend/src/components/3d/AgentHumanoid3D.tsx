@@ -5,7 +5,7 @@
  * Based on the humanoid shape from organism.html
  */
 
-import { useRef, useMemo } from 'react';
+import { useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 
@@ -44,10 +44,6 @@ export default function AgentHumanoid3D({
     // Working animation - gentle sway
     if (status === 'working') {
       groupRef.current.rotation.y = Math.sin(state.clock.elapsedTime) * 0.1;
-      
-      // Pulse emissive intensity
-      const pulse = (Math.sin(state.clock.elapsedTime * 3) + 1) / 2;
-      material.emissiveIntensity = 0.3 + pulse * 0.5;
     }
 
     // Make humanoid look at target

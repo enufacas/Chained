@@ -15,7 +15,7 @@
 "use client";
 
 import { CopilotPopup } from "@copilotkit/react-ui";
-import { useCopilotAction, useCopilotReadable, CopilotKit } from "@copilotkit/react-core";
+import { CopilotKit } from "@copilotkit/react-core";
 import { useState, useEffect, useCallback } from "react";
 import dynamic from 'next/dynamic';
 import ErrorBoundary from "@/components/ErrorBoundary";
@@ -102,31 +102,31 @@ export default function OrganismPage() {
   const [enableBloom, setEnableBloom] = useState(true);
   const [showConnections, setShowConnections] = useState(true);
 
-  // Load available agents from API
-  useEffect(() => {
-    fetch('/api/registry')
-      .then(res => res.json())
-      .then(data => {
-        if (data.agents) {
-          setAgents(data.agents.map((a: any) => ({
-            ...a,
-            status: 'idle' as const,
-          })));
-          addLog('system', `Loaded ${data.agents.length} available agents`);
-        }
-      })
-      .catch(err => {
-        console.error('Failed to load agents:', err);
-        addLog('error', `Failed to load agents: ${err.message}`);
-      });
-  }, []);
-
   const addLog = useCallback((type: string, message: string) => {
     setActivityLog(prev => [
       { timestamp: new Date().toLocaleTimeString(), type, message },
       ...prev.slice(0, 49), // Keep last 50 entries
     ]);
   }, []);
+
+  // Load available agents from API
+  useEffect(() => {
+    fetch('/api/registry')
+      .then(res => res.json())
+      .then(data => {
+        if (data.agents) {
+          setAgents(data.agents.map((a: { id: string; displayName: string; name: string; description: string; icon: string; framework: string }) => ({
+            ...a,
+            status: 'idle' as const,
+          })));
+          addLog('system', `Loaded ${data.agents.length} available agents`);
+        }
+      })
+      .catch((err: Error) => {
+        console.error('Failed to load agents:', err);
+        addLog('error', `Failed to load agents: ${err.message}`);
+      });
+  }, [addLog]);
 
   const toggleAgentSelection = (agentId: string) => {
     setSelectedAgents(prev => {
@@ -165,14 +165,14 @@ export default function OrganismPage() {
       }
 
       const data = await response.json();
-      const pipelineId = data.pipeline.id;
+      const pipelineId = data.pipeline.id as string;
       addLog('system', `Pipeline created: ${pipelineId}`);
 
       // Poll for updates
       pollPipeline(pipelineId);
 
-    } catch (error: any) {
-      addLog('error', `Pipeline failed: ${error.message}`);
+    } catch (error) {
+      addLog('error', `Pipeline failed: ${error instanceof Error ? error.message : String(error)}`);
       setSystemStatus('ERROR');
       setIsExecuting(false);
     }
@@ -198,21 +198,25 @@ export default function OrganismPage() {
     }, 2000);
   };
 
-  const updateFromPipeline = (pipeline: any) => {
+  const updateFromPipeline = (pipeline: { a2aSteps?: Array<{
+    agentName: string;
+    status?: { state?: string; message?: { parts?: Array<{ text?: string }> } };
+    artifacts?: Array<{ name: string; type: string; data: string }>;
+  }> }) => {
     if (!pipeline.a2aSteps) return;
 
-    pipeline.a2aSteps.forEach((step: any) => {
+    pipeline.a2aSteps.forEach((step) => {
       const agentId = step.agentName;
       const status = step.status?.state || 'pending';
 
       // Update agent status
       setAgents(prev => prev.map(a => 
-        a.id === agentId ? { ...a, status: status as any } : a
+        a.id === agentId ? { ...a, status: (status === 'idle' || status === 'working' || status === 'completed' || status === 'failed' ? status : 'idle') } : a
       ));
 
       // Process artifacts
       if (step.artifacts && step.artifacts.length > 0) {
-        step.artifacts.forEach((artifact: any) => {
+        step.artifacts.forEach((artifact: { name: string; type: string; data: string }) => {
           addLog('artifact', `${step.agentName} created: ${artifact.name} (${artifact.type})`);
           
           const newArtifact: Artifact = {

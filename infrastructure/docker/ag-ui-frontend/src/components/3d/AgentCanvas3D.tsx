@@ -7,9 +7,9 @@
 
 'use client';
 
+import React, { Suspense, useState, useEffect } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { Html } from '@react-three/drei';
-import { Suspense, useState, useEffect } from 'react';
 import AgentHumanoid3D from './AgentHumanoid3D';
 import SceneSetup from './SceneSetup';
 import ConnectionLines3D from './ConnectionLines3D';
@@ -62,7 +62,6 @@ export default function AgentCanvas3D({
   selectedAgents,
   onAgentClick,
   artifacts = [],
-  enableBloom = true,
   showConnections = true,
 }: AgentCanvas3DProps) {
   const [agentPositions, setAgentPositions] = useState<Map<string, [number, number, number]>>(new Map());
@@ -85,10 +84,10 @@ export default function AgentCanvas3D({
   // Get selected agent positions for connection lines
   const selectedPositions = Array.from(selectedAgents)
     .map(id => agentPositions.get(id))
-    .filter((pos): pos is [number, number, number] => pos !== undefined);
+    .filter((pos) => pos !== undefined) as Array<[number, number, number]>;
 
   return (
-    <div style={{ width: '100%', height: '100%', background: '#0f172a' }}> {/* slate-900 */}
+    <><div style={{ width: '100%', height: '100%', background: '#0f172a' }}>
       <Canvas
         shadows
         gl={{
@@ -101,7 +100,6 @@ export default function AgentCanvas3D({
         <Suspense fallback={<LoadingFallback />}>
           <SceneSetup />
 
-          {/* Render all agents as humanoids */}
           {agents.map((agent) => {
             const position = agentPositions.get(agent.id);
             if (!position) return null;
@@ -120,7 +118,6 @@ export default function AgentCanvas3D({
                   lookAt={[0, 0, 0]}
                 />
                 
-                {/* Agent Label */}
                 <Html
                   position={[position[0], position[1] + 4, position[2]]}
                   center
@@ -143,12 +140,10 @@ export default function AgentCanvas3D({
             );
           })}
 
-          {/* Connection lines between selected agents */}
           {showConnections && selectedPositions.length > 1 && (
-            <ConnectionLines3D positions={selectedPositions} color={0x3b82f6} /> {/* blue-500 */}
+            <ConnectionLines3D positions={selectedPositions} color={0x3b82f6} />
           )}
 
-          {/* Artifact visualizations */}
           {artifacts.map((artifact) => (
             <ArtifactVisualization3D
               key={artifact.id}
@@ -158,7 +153,7 @@ export default function AgentCanvas3D({
           ))}
         </Suspense>
       </Canvas>
-    </div>
+    </div></>
   );
 }
 
