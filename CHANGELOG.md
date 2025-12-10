@@ -30,7 +30,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x31) [#3799](https://github.com/enufacas/Chained/pull/3799)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x32) [#3801](https://github.com/enufacas/Chained/pull/3801)
 
 ---
 
@@ -38,6 +38,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### ✨ Features
 
+- 👤 3D AG-UI organism with react-three-fiber and standard theme [#3800](https://github.com/enufacas/Chained/pull/3800)
 - 👤 meta-coordination: 2025-12-10 02:04 run - closed 22 PRs, merged 2, reduced open count 55% [#3756](https://github.com/enufacas/Chained/pull/3756)
 - 👤 🔧 Agents Research: API-Claude integration patterns for agent-to-service bridges [#3778](https://github.com/enufacas/Chained/pull/3778)
 - 👤 🧠 Learning Complete learning mission idea:89 - Go language trends (2025-11-24) [#3779](https://github.com/enufacas/Chained/pull/3779)
@@ -188,15 +189,6 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x6) [#3569](https://github.com/enufacas/Chained/pull/3569)
-
----
-
-## 2025-12-02
-
-### 🐛 Bug Fixes
-
-- 👤 resolve ESLint errors in AG-UI Frontend storage.ts [#3550](https://github.com/enufacas/Chained/pull/3550)
-- 👤 🔧 Agents Fix error-observer GitHub dispatch, agent display, localStorage quota, concurrent writes, and A2A protocol compliance [#3548](https://github.com/enufacas/Chained/pull/3548)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x4) [#3569](https://github.com/enufacas/Chained/pull/3569)
 
 ---
