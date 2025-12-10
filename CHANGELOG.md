@@ -30,7 +30,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x9) [#3750](https://github.com/enufacas/Chained/pull/3750)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x10) [#3751](https://github.com/enufacas/Chained/pull/3751)
 
 ---
 
@@ -168,7 +168,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x8) [#3569](https://github.com/enufacas/Chained/pull/3569)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x7) [#3569](https://github.com/enufacas/Chained/pull/3569)
 - 👤 📋 Instructions **Documentation**: Update A2A README with error observer system and add maintenance instructions [#3520](https://github.com/enufacas/Chained/pull/3520)
 
 ---
