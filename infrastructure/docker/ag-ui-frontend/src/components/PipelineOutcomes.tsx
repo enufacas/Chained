@@ -13,11 +13,12 @@
 
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback } from "react";
 import PipelineDetailView from "./PipelineDetailView";
 import { getArtifactsBySourceId, getStoredSessions, getArtifactById, type StoredSession } from "@/lib/storage";
 import { logApiError } from "@/lib/error-logging";
 import { Pipeline, A2AStepDetail } from "@/types";
+import { usePoll } from "@/hooks/usePoll";
 
 // Use the shared Pipeline interface from types
 // (PipelineResult is now an alias for consistency with existing code)
@@ -177,45 +178,17 @@ export default function PipelineOutcomes() {
     }
   }, []);
 
-  useEffect(() => {
-    fetchPipelines();
-    
-    // Refresh every 5 seconds for more real-time updates
-    let interval: NodeJS.Timeout | null = null;
-    
-    const startPolling = () => {
-      if (!interval) {
-        interval = setInterval(fetchPipelines, 5000);
-      }
-    };
-    
-    const stopPolling = () => {
-      if (interval) {
-        clearInterval(interval);
-        interval = null;
-      }
-    };
-    
-    const handleVisibilityChange = () => {
-      if (document.visibilityState === "visible") {
-        fetchPipelines();
-        startPolling();
-      } else {
-        stopPolling();
-      }
-    };
-    
-    if (document.visibilityState === "visible") {
-      startPolling();
-    }
-    
-    document.addEventListener("visibilitychange", handleVisibilityChange);
-    
-    return () => {
-      stopPolling();
-      document.removeEventListener("visibilitychange", handleVisibilityChange);
-    };
-  }, [fetchPipelines]);
+  // Use smart polling hook with exponential backoff
+  // Polls fast when there are active pipelines, slows down when stable
+  const { currentInterval, forcePoll } = usePoll(fetchPipelines, {
+    interval: 5000, // 5 seconds base
+    maxInterval: 30000, // 30 seconds max
+    enableBackoff: true,
+    shouldPollFast: () => {
+      // Poll fast if there are active pipelines
+      return (data?.activePipelinesCount || 0) > 0;
+    },
+  });
 
   if (loading) {
     return (
@@ -266,6 +239,19 @@ export default function PipelineOutcomes() {
             </div>
           </div>
           <div className="flex items-center gap-2">
+            {/* Polling Status Indicator */}
+            {data && (
+              <span className="text-xs text-slate-400 flex items-center gap-1.5">
+                <span className={`w-1.5 h-1.5 rounded-full ${
+                  data.activePipelinesCount > 0 
+                    ? 'bg-green-400 animate-pulse' 
+                    : 'bg-slate-500'
+                }`}></span>
+                <span>
+                  Poll: {Math.round(currentInterval / 1000)}s
+                </span>
+              </span>
+            )}
             {activePipelines.length > 0 && (
               <span className="text-xs bg-yellow-500/20 text-yellow-400 px-2 py-0.5 rounded-full border border-yellow-500/30 animate-pulse">
                 {activePipelines.length} in progress
