@@ -30,7 +30,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x30) [#3798](https://github.com/enufacas/Chained/pull/3798)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x31) [#3799](https://github.com/enufacas/Chained/pull/3799)
 
 ---
 
@@ -52,6 +52,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🐛 Bug Fixes
 
+- 👤 Restore truncated lifecycle.html and ai-knowledge-graph.html [#3789](https://github.com/enufacas/Chained/pull/3789)
 - 👤 Remove ESLint violations blocking AG-UI Frontend build [#3788](https://github.com/enufacas/Chained/pull/3788)
 - 👤 ⚙️ Workflows Fix GitHub Pages empty sections via aggregated data files and workflow automation [#3775](https://github.com/enufacas/Chained/pull/3775)
 - 👤 Sync AG-UI Frontend package-lock.json with package.json [#3785](https://github.com/enufacas/Chained/pull/3785)
