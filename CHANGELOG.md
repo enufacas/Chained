@@ -30,7 +30,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x11) [#3752](https://github.com/enufacas/Chained/pull/3752)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x12) [#3753](https://github.com/enufacas/Chained/pull/3753)
 
 ---
 
