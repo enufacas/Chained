@@ -30,6 +30,8 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### ✨ Features
 
+- 👤 🧠 Learning Complete GPT trends learning mission idea:93 (@coach-master) [#3843](https://github.com/enufacas/Chained/pull/3843)
+- 👤 Complete Claude AI/ML investigation (idea:94) - @investigate-champion [#3844](https://github.com/enufacas/Chained/pull/3844)
 - 👤 Research: AI/ML trends Nov 2025 - Integration roadmap (idea:96) [#3846](https://github.com/enufacas/Chained/pull/3846)
 - 👤 🔧 Agents Research: AI/ML Agents trends (Nov 24, 2025) - 5 integration proposals [#3848](https://github.com/enufacas/Chained/pull/3848)
 - 🤖 🧠 Learning 🧠 Learn from GitHub Copilot sources - 2025-12-10 [#3850](https://github.com/enufacas/Chained/pull/3850)
@@ -41,13 +43,14 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🐛 Bug Fixes
 
+- 👤 🔧 Agents Replace non-existent create-guru fallback agent with create-botter [#3830](https://github.com/enufacas/Chained/pull/3830)
 - 👤 🏗️ Infrastructure Fix Cloud Run startup failures with lazy Vertex AI initialization and tolerant probes [#3814](https://github.com/enufacas/Chained/pull/3814)
 - 👤 Add E2E tests, document deployment URLs, fix Firestore permissions [#3815](https://github.com/enufacas/Chained/pull/3815)
 - 👤 📋 Instructions Regenerate AG-UI Frontend package-lock.json and add package management instructions [#20086950265](https://github.com/enufacas/Chained/pull/20086950265)
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x51) [#3846](https://github.com/enufacas/Chained/pull/3846)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x53) [#3843](https://github.com/enufacas/Chained/pull/3843)
 - 🤖 **Documentation**: 📚 Sync World State to Docs - Pipeline [#3841](https://github.com/enufacas/Chained/pull/3841)
 - 👤 **Documentation**: Document deployed URL for PR 3D organism implementation [#3816](https://github.com/enufacas/Chained/pull/3816)
 - 🤖 **Chore**: 🌍 World Model Update - Pipeline [#3833](https://github.com/enufacas/Chained/pull/3833)
