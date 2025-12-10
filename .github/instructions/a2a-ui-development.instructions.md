@@ -22,7 +22,19 @@ See: `.github/instructions/a2a-ui-real-data.instructions.md`
 ### 2. GCP Cloud Run Agents
 Data sources should be GCP Cloud Run deployed agents, not GitHub APIs (unless explicitly requested).
 
-### 3. Update Documentation
+### 3. NPM Package Management
+**CRITICAL**: When modifying `package.json`, ALWAYS regenerate `package-lock.json`.
+
+See: `.github/instructions/npm-package-management.instructions.md`
+
+**Required steps:**
+```bash
+rm package-lock.json
+npm install
+npm ci  # Verify it works
+```
+
+### 4. Update Documentation
 After making changes:
 1. Update `docs/a2a-ui/CHANGELOG.md` with your PR
 2. Update `docs/a2a-ui/README.md` if architecture changes
@@ -91,6 +103,8 @@ interface A2AStepDetail {
 ## Testing Checklist
 
 Before committing changes:
+- [ ] Dependencies synchronized: If `package.json` was modified, `package-lock.json` was regenerated
+- [ ] `npm ci` succeeds without "Missing from lock file" errors
 - [ ] `npm run lint` passes
 - [ ] `npm run build` succeeds
 - [ ] Tested in browser (local dev server)
@@ -103,3 +117,4 @@ Before committing changes:
 - [A2A Status](../../../docs/a2a/A2A_STATUS.md)
 - [Path Instructions - Real Data](./a2a-ui-real-data.instructions.md)
 - [Path Instructions - Data Sources](./a2a-ui-data-sources.instructions.md)
+- [Path Instructions - NPM Package Management](./npm-package-management.instructions.md)
