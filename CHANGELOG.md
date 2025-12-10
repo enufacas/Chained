@@ -30,7 +30,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x7) [#3748](https://github.com/enufacas/Chained/pull/3748)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x8) [#3749](https://github.com/enufacas/Chained/pull/3749)
 
 ---
 
@@ -43,6 +43,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
+- 👤 🔧 Agents **Documentation**: Document existing A2A multi-agent orchestration patterns [#3630](https://github.com/enufacas/Chained/pull/3630)
 - 🤖 **Chore**: update issue clustering analysis (@engineer-master) [#3697](https://github.com/enufacas/Chained/pull/3697)
 
 ---
