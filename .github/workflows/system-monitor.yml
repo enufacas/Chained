@@ -139,7 +139,75 @@ jobs:
           }
           EOF
           
-          echo "Timeline data updated successfully with automation metrics"
+          # Generate learnings summary for GitHub Pages
+          echo "Generating learnings summary..."
+          python3 << 'PYTHON_EOF'
+          import json
+          from pathlib import Path
+          from datetime import datetime
+          
+          learnings_dir = Path('learnings')
+          all_learnings = list(learnings_dir.glob('*.json'))
+          
+          tldr_count = len([f for f in all_learnings if f.name.startswith('tldr_')])
+          hn_count = len([f for f in all_learnings if f.name.startswith('hn_')])
+          copilot_count = len([f for f in all_learnings if f.name.startswith('copilot_')])
+          github_trending_count = len([f for f in all_learnings if f.name.startswith('github_trending_')])
+          analysis_count = len([f for f in all_learnings if 'analysis' in f.name or 'combined' in f.name or 'commit' in f.name])
+          
+          recent_files = sorted(all_learnings, key=lambda x: x.stat().st_mtime, reverse=True)[:10]
+          recent_sessions = []
+          for f in recent_files:
+              file_type = 'Unknown'
+              if f.name.startswith('tldr_'):
+                  file_type = 'TLDR Tech'
+              elif f.name.startswith('hn_'):
+                  file_type = 'Hacker News'
+              elif f.name.startswith('copilot_'):
+                  file_type = 'Copilot Learning'
+              elif f.name.startswith('github_trending_'):
+                  file_type = 'GitHub Trending'
+              elif 'analysis' in f.name or 'combined' in f.name:
+                  file_type = 'Analysis'
+              elif 'commit' in f.name:
+                  file_type = 'Commit Analysis'
+              
+              parts = f.name.split('_')
+              if len(parts) >= 2 and len(parts[1]) == 8:
+                  date_part = parts[1]
+                  date_formatted = f"{date_part[0:4]}-{date_part[4:6]}-{date_part[6:8]}"
+              else:
+                  date_formatted = datetime.fromtimestamp(f.stat().st_mtime).strftime('%Y-%m-%d')
+              
+              recent_sessions.append({
+                  'source': file_type,
+                  'date': date_formatted,
+                  'file': f.name
+              })
+          
+          summary = {
+              'total_learnings': len(all_learnings),
+              'sources': {
+                  'tldr': tldr_count,
+                  'hacker_news': hn_count,
+                  'copilot': copilot_count,
+                  'github_trending': github_trending_count,
+                  'analysis': analysis_count
+              },
+              'last_updated': datetime.now().isoformat(),
+              'recent_sessions': recent_sessions
+          }
+          
+          Path('docs/data/learnings-summary.json').write_text(json.dumps(summary, indent=2))
+          print(f"✅ Generated learnings-summary.json ({len(all_learnings)} total learnings)")
+          PYTHON_EOF
+          
+          # Copy agent registry for public access
+          echo "Copying agent registry for public access..."
+          cp .github/agent-system/registry.json docs/data/agent-registry-public.json
+          echo "✅ Copied agent registry to docs/data/agent-registry-public.json"
+          
+          echo "Timeline data updated successfully with automation metrics and aggregated data files"
 
       - name: Create or update PR for timeline updates
         env:
