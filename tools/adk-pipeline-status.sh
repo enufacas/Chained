@@ -20,9 +20,13 @@
 set -euo pipefail
 
 # Configuration
-TRACKING_ISSUE_NUMBER="3894"
 TRACKING_LABEL="adk-pipeline"
 WORKFLOW_FILE="adk-a2a-blog-pipeline.yml"
+
+# Dynamically find the tracking issue number
+get_tracking_issue_number() {
+    gh issue list --label "$TRACKING_LABEL" --state open --limit 1 --json number --jq 'if length > 0 then .[0].number else empty end' 2>/dev/null || echo ""
+}
 
 # Colors for output
 RED='\033[0;31m'
@@ -65,6 +69,16 @@ check_gh_cli() {
 
 # View tracking issue
 view_tracking_issue() {
+    TRACKING_ISSUE_NUMBER=$(get_tracking_issue_number)
+    
+    if [[ -z "$TRACKING_ISSUE_NUMBER" ]]; then
+        print_error "No tracking issue found with label '${TRACKING_LABEL}'"
+        echo ""
+        print_info "The tracking issue will be created automatically on the next pipeline run."
+        print_info "Or create one manually with: gh issue create --title '🤖 ADK A2A Blog Pipeline Status' --label '${TRACKING_LABEL},automated'"
+        return 1
+    fi
+    
     print_header "Tracking Issue #${TRACKING_ISSUE_NUMBER}"
     
     echo ""
@@ -252,10 +266,14 @@ EXAMPLES:
     ./tools/adk-pipeline-status.sh health
 
 TRACKING ISSUE:
-    Issue #${TRACKING_ISSUE_NUMBER} - Label: ${TRACKING_LABEL}
+    Label: ${TRACKING_LABEL}
     
-    The tracking issue serves as a centralized history of all pipeline
-    executions. Each run posts a comment with timestamp, mode, and results.
+    The tracking issue is automatically discovered by searching for the
+    '${TRACKING_LABEL}' label. The workflow creates it automatically if
+    it doesn't exist. Each pipeline run posts a comment with results.
+    
+    To manually find the current tracking issue:
+    gh issue list --label "${TRACKING_LABEL}" --state open
 
 DOCUMENTATION:
     For detailed information, see:

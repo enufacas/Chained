@@ -7,10 +7,10 @@
 ### View Tracking Issue
 
 ```bash
-# Using GitHub CLI
-gh issue view 3894 --comments
+# Find and view tracking issue
+gh issue list --label "adk-pipeline" --state open
 
-# Using helper script
+# Using helper script (recommended)
 ./tools/adk-pipeline-status.sh view
 ```
 
@@ -39,17 +39,22 @@ gh workflow run adk-a2a-blog-pipeline.yml
 
 ## 📊 Tracking Issue
 
-**Issue #3894: 🤖 ADK A2A Blog Pipeline Status**
+**Title:** 🤖 ADK A2A Blog Pipeline Status
 
-- **Label:** `adk-pipeline`
+- **Label:** `adk-pipeline` (use this to find the current tracking issue)
 - **Purpose:** Centralized history of all pipeline runs
 - **Updated:** Automatically after each run
+
+**Find current tracking issue:**
+```bash
+gh issue list --label "adk-pipeline" --state open
+```
 
 ## 🔗 Key Resources
 
 | Resource | Location |
 |----------|----------|
-| **Tracking Issue** | [#3894](https://github.com/enufacas/Chained/issues/3894) |
+| **Tracking Issue** | Search for label: `adk-pipeline` |
 | **Workflow** | `.github/workflows/adk-a2a-blog-pipeline.yml` |
 | **Documentation** | `docs/ADK_PIPELINE_TRACKING_GUIDE.md` |
 | **Helper Script** | `tools/adk-pipeline-status.sh` |
@@ -90,10 +95,12 @@ gh run view <RUN_ID> --log
 gh issue list --label "adk-pipeline" --state open
 
 # View with comments
-gh issue view 3894 --comments
+ISSUE_NUMBER=$(gh issue list --label "adk-pipeline" --state open --limit 1 --json number --jq '.[0].number')
+gh issue view "$ISSUE_NUMBER" --comments
 
 # Subscribe to updates
-gh issue view 3894 --web
+ISSUE_NUMBER=$(gh issue list --label "adk-pipeline" --state open --limit 1 --json number --jq '.[0].number')
+gh issue view "$ISSUE_NUMBER" --web
 ```
 
 ### Manual Triggers
@@ -134,7 +141,11 @@ gcloud run services describe chained-academic-research \
 
 1. Check workflow runs: `gh run list --workflow=adk-a2a-blog-pipeline.yml`
 2. View recent logs: `gh run view <RUN_ID> --log`
-3. Verify label exists: `gh issue view 3894 --json labels`
+3. Find and verify tracking issue:
+   ```bash
+   ISSUE_NUMBER=$(gh issue list --label "adk-pipeline" --state open --limit 1 --json number --jq '.[0].number')
+   gh issue view "$ISSUE_NUMBER" --json labels
+   ```
 
 ### Pipeline failing?
 
