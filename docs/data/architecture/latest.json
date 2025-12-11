@@ -1,11 +1,11 @@
 {
-  "timestamp": "2025-12-10T12:58:44.037258",
-  "commit": "04960d234ad586730c77da4bf45d79b6cd67c1f5",
+  "timestamp": "2025-12-11T02:08:26.725531",
+  "commit": "ad4b5e4dc95951ba33a8e23efd92d2bdb4ada5e3",
   "structure": {
     "directories": {
       "tools": {
-        "file_count": 419,
-        "line_count": 167261,
+        "file_count": 420,
+        "line_count": 167564,
         "files": [
           ".context.md",
           "AB_TESTING_README.md",
@@ -60,8 +60,8 @@
         ]
       },
       "docs": {
-        "file_count": 1016,
-        "line_count": 308059,
+        "file_count": 1021,
+        "line_count": 308789,
         "files": [
           ".nojekyll",
           "01_overview.md",
@@ -108,11 +108,11 @@
           "ACTOR_ID_SYSTEM.md",
           "ADK_A2A_PIPELINE_IMPLEMENTATION.md",
           "ADK_DEV_UI_GUIDE.md",
-          "AGENTOPS_DASHBOARD.md",
-          "AGENTOPS_DATA_EXTRACTION_SUMMARY.md",
-          "AGENTOPS_ENHANCEMENT_ANALYSIS.md",
-          "AGENTS.md",
-          "AGENT_ASSIGNMENT_DIVERSITY_FIX.md"
+          "ADK_PIPELINE_QUICK_REF.md",
+          "ADK_PIPELINE_TRACKING_ENHANCEMENT.md",
+          "ADK_PIPELINE_TRACKING_GUIDE.md",
+          "ADK_PIPELINE_TRACKING_ISSUE_FIX.md",
+          "AGENTOPS_DASHBOARD.md"
         ]
       },
       ".github/workflows": {
@@ -125,9 +125,19 @@
         "line_count": 0,
         "files": []
       },
+      "analysis": {
+        "file_count": 4,
+        "line_count": 1184,
+        "files": [
+          "architecture.mmd",
+          "evolution.json",
+          "latest.json",
+          "snapshot_2025-12-10T12-58-44.json"
+        ]
+      },
       "learnings": {
-        "file_count": 435,
-        "line_count": 257084,
+        "file_count": 440,
+        "line_count": 259282,
         "files": [
           "AI_ML.md",
           "CLAUDE_AI_INVESTIGATION.md",
@@ -183,8 +193,8 @@
       }
     },
     "files_by_type": {},
-    "total_files": 1870,
-    "total_lines": 732404
+    "total_files": 1885,
+    "total_lines": 736819
   },
   "dependencies": {
     "internal_imports": {
@@ -489,18 +499,18 @@
     ]
   },
   "metrics": {
-    "total_components": 5,
-    "total_files": 1870,
-    "total_lines": 732404,
+    "total_components": 6,
+    "total_files": 1885,
+    "total_lines": 736819,
     "total_dependencies": 2,
     "external_libraries": 86,
     "coupling_score": 5.34159500026708e-05,
-    "complexity_score": 0.9791497326203209
+    "complexity_score": 0.9772135278514589
   },
   "components": {
     "learning_system": {
       "file_count": 46,
-      "line_count": 257084,
+      "line_count": 259282,
       "files": [
         "AI_ML.md",
         "CLAUDE_AI_INVESTIGATION.md",
@@ -524,9 +534,19 @@
         "WORLD_MODEL_UPDATE.md"
       ]
     },
+    "analysis_tools": {
+      "file_count": 4,
+      "line_count": 1184,
+      "files": [
+        "architecture.mmd",
+        "evolution.json",
+        "latest.json",
+        "snapshot_2025-12-10T12-58-44.json"
+      ]
+    },
     "documentation": {
       "file_count": 50,
-      "line_count": 308059,
+      "line_count": 308789,
       "files": [
         ".nojekyll",
         "01_overview.md",
@@ -552,7 +572,7 @@
     },
     "tools": {
       "file_count": 50,
-      "line_count": 167261,
+      "line_count": 167564,
       "files": [
         ".context.md",
         "AB_TESTING_README.md",
