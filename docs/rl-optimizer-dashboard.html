@@ -253,8 +253,12 @@
     </div>
 
     <script>
-        // API base URL (adjust for your deployment)
-        const API_BASE = 'http://localhost:5000';
+        // API base URL - Configure this for your deployment
+        // Default: localhost:5000 for local development
+        // Production: Set to your deployed API endpoint
+        const API_BASE = window.location.hostname === 'localhost' 
+            ? 'http://localhost:5000'
+            : (window.RL_OPTIMIZER_API_URL || 'http://localhost:5000');
 
         // Load dashboard data
         async function loadDashboardData() {

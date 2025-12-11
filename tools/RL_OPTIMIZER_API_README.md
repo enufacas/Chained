@@ -452,7 +452,7 @@ Error responses include details:
 
 ## Performance
 
-- **Recommendation latency**: &lt;100ms typical
+- **Recommendation latency**: <100ms typical
 - **Training latency**: ~0.01s per episode
 - **Memory usage**: ~50MB base + model size
 - **Concurrent requests**: Supports multiple concurrent clients

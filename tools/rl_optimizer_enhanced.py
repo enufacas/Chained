@@ -454,7 +454,7 @@ def main():
     )
     parser.add_argument(
         '--repo-root',
-        help='Repository root directory'
+        help='Path to the repository root directory (defaults to current working directory)'
     )
     
     args = parser.parse_args()

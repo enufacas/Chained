@@ -298,7 +298,9 @@ class RLOptimizerAPI:
                     result['message'] = f'Would apply {action} to {workflow} (dry run)'
                 else:
                     result['message'] = f'Applied {action} to {workflow}'
-                    # TODO: Integrate with GitHub Actions API to actually apply changes
+                    # TODO(#future): Integrate with GitHub Actions API to actually apply changes
+                    # Tracking: This will require workflow file modification and PR creation
+                    # Timeline: Phase 4 of RL optimization roadmap
                     result['warning'] = 'Automatic application not yet implemented. Manual workflow update required.'
 
                 return jsonify(result)
