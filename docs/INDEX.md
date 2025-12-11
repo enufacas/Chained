@@ -163,7 +163,7 @@ Technical documentation for developers:
 - **[ADK_PIPELINE_TRACKING_GUIDE.md](./ADK_PIPELINE_TRACKING_GUIDE.md)** - ⭐ **NEW!** Complete tracking system guide
 - **[ADK_PIPELINE_QUICK_REF.md](./ADK_PIPELINE_QUICK_REF.md)** - ⭐ **NEW!** Quick reference and commands
 - **[tools/adk-pipeline-status.sh](../tools/adk-pipeline-status.sh)** - ⭐ **NEW!** Interactive CLI helper tool
-- **[Tracking Issue #3894](https://github.com/enufacas/Chained/issues/3894)** - Live pipeline run history
+- **Tracking Issue** - Search for label: `adk-pipeline` - Live pipeline run history
 
 **Quick Start:**
 ```bash

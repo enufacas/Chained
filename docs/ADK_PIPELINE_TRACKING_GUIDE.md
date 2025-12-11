@@ -8,22 +8,25 @@ This guide explains how the ADK A2A Blog Pipeline tracking system works and how 
 
 ## 📍 Tracking Issue Location
 
-**Issue #3894: 🤖 ADK A2A Blog Pipeline Status**
+**Title:** 🤖 ADK A2A Blog Pipeline Status  
+**Label:** `adk-pipeline`
 
-This is the **permanent tracking issue** for all ADK A2A Blog Pipeline executions. It serves as a centralized history of all pipeline runs.
+The tracking issue serves as a centralized history of all ADK A2A Blog Pipeline executions. The workflow automatically creates and maintains this issue.
 
 ### Finding the Tracking Issue
 
 ```bash
-# Method 1: Search by label
+# Method 1: Search by label (recommended - always current)
 gh issue list --label "adk-pipeline" --state open
 
-# Method 2: Direct issue number
-gh issue view 3894
-
-# Method 3: Search by title
+# Method 2: Search by title
 gh issue list --search "ADK A2A Blog Pipeline Status" --state open
+
+# Method 3: Using the helper script
+./tools/adk-pipeline-status.sh view
 ```
+
+> **Note:** The issue number may change if tracking issues are closed and recreated. Always search by label to find the current tracking issue.
 
 ## 🔄 How the Tracking System Works
 
@@ -70,7 +73,7 @@ Each pipeline run posts a comment containing:
                             │       (Generate & publish blog)
                             │
                             └─► Report Results
-                                └─► Post comment to tracking issue #3894
+                                └─► Post comment to tracking issue
 ```
 
 ## 📅 Pipeline Schedule
@@ -133,8 +136,12 @@ gh workflow run adk-a2a-blog-pipeline.yml \
 ### View All Comments on Tracking Issue
 
 ```bash
-# View issue with all pipeline run comments
-gh issue view 3894 --comments
+# Find and view the tracking issue with all comments
+ISSUE_NUMBER=$(gh issue list --label "adk-pipeline" --state open --limit 1 --json number --jq '.[0].number')
+gh issue view "$ISSUE_NUMBER" --comments
+
+# Or use the helper script
+./tools/adk-pipeline-status.sh view
 ```
 
 ### View Recent Workflow Runs
@@ -266,8 +273,11 @@ Required secrets for Cloud Run deployment:
 
 **Solutions:**
 ```bash
+# Find tracking issue
+ISSUE_NUMBER=$(gh issue list --label "adk-pipeline" --state open --limit 1 --json number --jq '.[0].number')
+
 # Verify issue has correct label
-gh issue view 3894 --json labels
+gh issue view "$ISSUE_NUMBER" --json labels
 
 # Check recent workflow runs
 gh run list --workflow=adk-a2a-blog-pipeline.yml --limit 5
