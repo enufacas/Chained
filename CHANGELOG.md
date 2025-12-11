@@ -30,6 +30,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### ✨ Features
 
+- 🤖 🧠 Learning 🧠 Learning Pipeline - 2025-12-11 [#3959](https://github.com/enufacas/Chained/pull/3959)
 - 🤖 🎯 Daily goal for 2025-12-11 [#3952](https://github.com/enufacas/Chained/pull/3952)
 - 🤖 meta-coordination: 2025-12-11 04:28 run - assessment only, no actions needed [#3944](https://github.com/enufacas/Chained/pull/3944)
 
@@ -39,7 +40,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x10) [#3949](https://github.com/enufacas/Chained/pull/3949)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x11) [#3958](https://github.com/enufacas/Chained/pull/3958)
 - 👤 🏗️ Infrastructure **Documentation**: Verify ADK A2A Blog Pipeline tracking infrastructure (@align-wizard) [#3949](https://github.com/enufacas/Chained/pull/3949)
 - 🤖 🔧 Agents **Chore**: meta-coordination: 2025-12-11 06:20 - cleanup stale PR, assign agent [#3946](https://github.com/enufacas/Chained/pull/3946)
 
