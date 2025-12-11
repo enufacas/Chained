@@ -7,7 +7,9 @@ This script takes a PR-centric approach:
 2. Ensures every changelog entry has a PR link
 3. Optionally includes sub-commits when they add significant value
 4. Categorizes by conventional commit type (feat, fix, chore, etc.)
-5. Differentiates user-prompted vs bot-only changes
+5. Differentiates user-initiated vs workflow-driven autonomous changes:
+   - User-initiated (👤): User creates issue → Copilot works on it
+   - Workflow-driven (🤖): Workflow creates issue → Copilot works on it
 6. Excludes auto-churn commits (data syncs, automated updates)
 7. Maintains chronological order by date
 """
@@ -50,6 +52,18 @@ AUTO_CHURN_PATTERNS = [
 # Actors that indicate user-initiated vs bot-only
 USER_ACTORS = ['enufacas']  # Add more user names as needed
 BOT_ACTORS = ['github-actions[bot]', 'copilot-swe-agent[bot]']
+
+# Patterns to identify workflow-driven autonomous work (not user-initiated)
+# These are PRs created by scheduled workflows, not user-created issues
+WORKFLOW_DRIVEN_PATTERNS = [
+    r'^meta-coordination:',  # Meta-coordinator system (scheduled)
+    r'^🧠\s+Learning\s+Pipeline',  # Daily learning workflow
+    r'^🎯\s+Agent\s+Missions\s+-\s+Pipeline',  # Agent missions workflow
+    r'^🌍\s+World\s+Model\s+Update\s+-\s+Pipeline',  # World model sync workflow
+    r'^📊\s+Goal\s+progress\s+update:',  # Goal tracking workflow
+    r'^📚\s+Sync\s+World\s+State\s+to\s+Docs\s+-\s+Pipeline',  # Documentation sync workflow
+    r'^🎯\s+Daily\s+goal\s+for',  # Daily goal generation workflow
+]
 
 
 class Commit:
@@ -189,14 +203,26 @@ class Commit:
         return None
     
     def _determine_user_initiated(self) -> bool:
-        """Determine if this was user-initiated or bot-only."""
+        """Determine if this was user-initiated or bot-only.
+        
+        User-initiated: User creates an issue → Copilot works on it
+        Workflow-driven (bot): Automated workflow creates issue → Copilot works on it
+        """
+        # First check if this matches workflow-driven patterns (autonomous work)
+        # These are PRs from scheduled workflows, not user-created issues
+        for pattern in WORKFLOW_DRIVEN_PATTERNS:
+            if re.search(pattern, self.subject, re.IGNORECASE):
+                return False  # Workflow-driven = bot-generated
+        
         # Check if author is a known user
         if any(user in self.author_email for user in USER_ACTORS):
             return True
         
         # Check if it's a PR merge with Copilot author (user prompted through issue)
+        # BUT: Only if it doesn't match workflow-driven patterns (checked above)
         if self.pr_number and 'Copilot' in self.author_email and 'copilot-swe-agent' not in self.author_email:
-            # PRs merged by main Copilot account are usually user-initiated
+            # PRs merged by main Copilot account are user-initiated (from user issues)
+            # unless they match workflow-driven patterns (already checked above)
             return True
         
         return False

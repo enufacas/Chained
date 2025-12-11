@@ -53,8 +53,19 @@ When making changes that will be merged to main, **you MUST update CHANGELOG.md*
 ```
 
 #### Actor Indicators
-- **👤** = User-initiated (from issues you logged or direct commits)
-- **🤖** = Bot-generated (autonomous system or agent task)
+- **👤** = User-initiated (user creates issue → Copilot works on it)
+- **🤖** = Bot-generated (workflow creates issue → Copilot works on it, completely autonomous)
+
+**Key distinction:**
+- **User-initiated (👤)**: A human manually created an issue or made a direct commit
+- **Workflow-driven (🤖)**: An automated workflow (e.g., meta-coordinator, learning pipeline) created an issue that triggered the work
+
+**Examples of workflow-driven autonomous work (🤖):**
+- `meta-coordination:` - Meta-coordinator system orchestration
+- `🧠 Learning Pipeline` - Daily learning workflow
+- `🎯 Agent Missions` - Agent mission workflows
+- `🌍 World Model Update` - World model sync workflows
+- `📊 Goal progress update` - Goal tracking workflows
 
 #### Codebase Area Indicators
 - ⚙️ **Workflows** - GitHub Actions (`.github/workflows/`)
