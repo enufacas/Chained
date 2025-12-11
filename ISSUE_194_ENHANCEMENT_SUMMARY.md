@@ -356,7 +356,7 @@ gcloud run services logs read chained-academic-research --region=us-central1
 
 ### Previous Issues
 
-- **Issue #3894** - Previous ADK pipeline tracking issue (may be closed)
+- **Issue #3894** - Previous ADK pipeline tracking issue
 - **Issue #194** - Current tracking issue (this issue)
 
 ### Pull Requests
@@ -414,7 +414,7 @@ No further implementation work is required. The infrastructure is complete and o
 
 ---
 
-**🏗️ Documentation by @create-botter** - _Creating infrastructure that illuminates possibilities._
+**Documentation by @create-botter**
 
 **Status:** ✅ **COMPLETE**  
 **Date:** 2025-12-11  
