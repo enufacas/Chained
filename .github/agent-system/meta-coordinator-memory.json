@@ -1,10 +1,10 @@
 {
   "version": "1.1",
   "created_at": "2025-11-24T05:17:32.537364",
-  "last_updated": "2025-12-11T04:32:44.883033",
+  "last_updated": "2025-12-11T06:27:42.626706",
   "runs": {
-    "total_runs": 69,
-    "successful_runs": 69,
+    "total_runs": 72,
+    "successful_runs": 72,
     "failed_runs": 0,
     "last_run": {
       "timestamp": "2025-12-10T16:25:26.565001",
@@ -23,24 +23,19 @@
     "approval_times": []
   },
   "issue_patterns": {
-    "total_issues_processed": 8,
+    "total_issues_processed": 9,
     "agents_assigned": {
-      "edge-cases-pro": 72057594037927936,
-      "coach-master": 72057594037927936,
-      "construct-specialist": 72057594037927936,
-      "create-botter": 216172782113783808,
-      "investigate-champion": 72057594037927936,
-      "troubleshoot-expert": 72057594037927936
+      "edge-cases-pro": 576460752303423488,
+      "coach-master": 576460752303423488,
+      "construct-specialist": 576460752303423488,
+      "create-botter": 1729382256910270464,
+      "investigate-champion": 576460752303423488,
+      "troubleshoot-expert": 576460752303423488,
+      "align-wizard": 1
     },
     "agent_success_rates": {},
     "assignment_times": [
       {
-        "issue": 2733,
-        "agent": "create-botter",
-        "timestamp": "2025-11-24T10:54:58.013023",
-        "score": 13
-      },
-      {
         "issue": 2715,
         "agent": "investigate-champion",
         "timestamp": "2025-11-24T10:54:58.013030",
@@ -633,6 +628,12 @@
         "agent": "create-botter",
         "timestamp": "2025-11-24T10:54:58.013048",
         "score": 11
+      },
+      {
+        "issue": 3948,
+        "agent": "align-wizard",
+        "timestamp": "2025-12-11T06:27:42.626140",
+        "score": 3
       }
     ]
   },
@@ -649,17 +650,6 @@
   },
   "decisions": {
     "recent": [
-      {
-        "type": "issue_assignment",
-        "description": "Assigned issue #2743 to create-botter (score: 14.00)",
-        "context": {
-          "issue_number": 2743,
-          "agent": "create-botter",
-          "score": 14
-        },
-        "timestamp": "2025-11-24T10:54:58.013018",
-        "session_id": "a8f53e273f33a934"
-      },
       {
         "type": "issue_assignment",
         "description": "Assigned issue #2733 to create-botter (score: 13.00)",
@@ -1726,6 +1716,17 @@
         },
         "timestamp": "2025-11-24T16:48:45.900297",
         "session_id": "2558d13cf9329d86"
+      },
+      {
+        "type": "issue_assignment",
+        "description": "Assigned issue #3948 to align-wizard (score: 3.00)",
+        "context": {
+          "issue_number": 3948,
+          "agent": "align-wizard",
+          "score": 3
+        },
+        "timestamp": "2025-12-11T06:27:42.626155",
+        "session_id": "b6785798b8e43e99"
       }
     ],
     "patterns": {}
