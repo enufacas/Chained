@@ -2,9 +2,9 @@
 
 > SQL, NoSQL, data storage, and data engineering
 
-**Total Insights:** 147
+**Total Insights:** 160
 
-**Last Updated:** 2025-12-10
+**Last Updated:** 2025-12-11
 
 ---
 
@@ -141,15 +141,6 @@ Perkeep is under active development. If you're a programmer or fairly technical,
 ## 📰 From Unknown
 
 
-### Distributed ID Formats Are Architectural Commitments, Not Just Data Types
-
-**Community Score:** 32 upvotes
-
-**Link:** https://piljoong.dev/posts/distributed-id-generation-complicated/
-
----
-
-
 ### RegreSQL: Regression Testing for PostgreSQL Queries
 
 **Link:** https://boringsql.com/posts/regresql-testing-queries/
@@ -276,6 +267,26 @@ Perkeep is under active development. If you're a programmer or fairly technical,
 ---
 
 
+### Untitled
+
+**Link:** https://github.com/tikv/tikv
+
+
+Distributed transactional key-value database, originally created to complement TiDB
+
+---
+
+
+### Untitled
+
+**Link:** https://github.com/apache/datafusion
+
+
+Apache DataFusion SQL Query Engine
+
+---
+
+
 ### RegreSQL: Regression Testing for PostgreSQL Queries
 
 **Link:** https://boringsql.com/posts/regresql-testing-queries/
@@ -366,12 +377,5 @@ Perkeep (
 née Camlistore
 ) is a set of open source formats, protocols, and software for modeling, storing, searching, sharing and synchronizing data in the post-PC era. Data may be files or objects, tweets or 5TB videos, and you can access it via a phone, browser or FUSE filesystem.
 Perkeep is under active development. If you're a programmer or fairly technical, you can probably get it up and running and ge...
-
----
-
-
-### RegreSQL: Regression Testing for PostgreSQL Queries
-
-**Link:** https://boringsql.com/posts/regresql-testing-queries/
 
 ---
