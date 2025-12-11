@@ -82,8 +82,14 @@ jobs:
           
           case "$MODE" in
             "train")
-              echo "🎮 Training RL model..."
-              python3 tools/rl_resource_optimizer.py --simulate "$EPISODES" --report
+              echo "🎮 Training RL model with enhanced optimizer..."
+              # Use enhanced optimizer if available, fallback to base
+              if [ -f "tools/rl_optimizer_enhanced.py" ]; then
+                echo "Using enhanced optimizer with Double Q-Learning + PER"
+                python3 tools/rl_optimizer_enhanced.py --simulate "$EPISODES"
+              else
+                python3 tools/rl_resource_optimizer.py --simulate "$EPISODES" --report
+              fi
               ;;
             "recommend")
               if [ -n "$WORKFLOW" ]; then
