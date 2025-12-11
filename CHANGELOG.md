@@ -30,6 +30,8 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### ✨ Features
 
+- 👤 🔧 Agents Complete agents-cloud-infrastructure integration research (idea:107) - API gateway, service discovery, multi-region design [#3976](https://github.com/enufacas/Chained/pull/3976)
+- 🤖 🧠 Learning 🧠 Learn from GitHub Copilot sources - 2025-12-11 [#3978](https://github.com/enufacas/Chained/pull/3978)
 - 🤖 🔧 Agents 🎯 Agent Missions - Pipeline [#3968](https://github.com/enufacas/Chained/pull/3968)
 - 🤖 🧠 Learning 🧠 Learning Pipeline - 2025-12-11 [#3959](https://github.com/enufacas/Chained/pull/3959)
 - 🤖 🎯 Daily goal for 2025-12-11 [#3952](https://github.com/enufacas/Chained/pull/3952)
@@ -37,12 +39,13 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🐛 Bug Fixes
 
+- 👤 Add issue completion comment file for (@coach-master) [#3965](https://github.com/enufacas/Chained/pull/3965)
 - 👤 ⚙️ Workflows Fix changelog attribution: distinguish workflow-driven from user-initiated work [#3950](https://github.com/enufacas/Chained/pull/3950)
 
 ### 🧹 Chores & Maintenance
 
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x16) [#3980](https://github.com/enufacas/Chained/pull/3980)
 - 🤖 **Documentation**: 📚 Sync World State to Docs - Pipeline [#3970](https://github.com/enufacas/Chained/pull/3970)
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x14) [#3969](https://github.com/enufacas/Chained/pull/3969)
 - 👤 🏗️ Infrastructure **Documentation**: Verify ADK A2A Blog Pipeline tracking infrastructure (@align-wizard) [#3949](https://github.com/enufacas/Chained/pull/3949)
 - 🤖 **Chore**: 🌍 World Model Update - Pipeline [#3961](https://github.com/enufacas/Chained/pull/3961)
 - 🤖 🔧 Agents **Chore**: meta-coordination: 2025-12-11 06:20 - cleanup stale PR, assign agent [#3946](https://github.com/enufacas/Chained/pull/3946)
@@ -230,7 +233,6 @@ This changelog excludes automated data syncs and routine maintenance commits.
 ### ✨ Features
 
 - 👤 🔧 Agents Add intentional ZeroDivisionError to code-reviewer agent for error_observer testing [#3603](https://github.com/enufacas/Chained/pull/3603)
-- 🤖 🧠 Learning 🧠 Learn from GitHub Copilot sources - 2025-12-04 [#3596](https://github.com/enufacas/Chained/pull/3596)
 
 ### 🧹 Chores & Maintenance
 
