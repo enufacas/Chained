@@ -1,11 +1,11 @@
 {
-  "timestamp": "2025-12-11T02:08:26.725531",
-  "commit": "ad4b5e4dc95951ba33a8e23efd92d2bdb4ada5e3",
+  "timestamp": "2025-12-11T12:59:49.967601",
+  "commit": "d6688694e58a54027acc61bbe4fffc6f0c481a49",
   "structure": {
     "directories": {
       "tools": {
-        "file_count": 420,
-        "line_count": 167564,
+        "file_count": 424,
+        "line_count": 169403,
         "files": [
           ".context.md",
           "AB_TESTING_README.md",
@@ -60,8 +60,8 @@
         ]
       },
       "docs": {
-        "file_count": 1021,
-        "line_count": 308789,
+        "file_count": 1029,
+        "line_count": 312234,
         "files": [
           ".nojekyll",
           "01_overview.md",
@@ -108,11 +108,11 @@
           "ACTOR_ID_SYSTEM.md",
           "ADK_A2A_PIPELINE_IMPLEMENTATION.md",
           "ADK_DEV_UI_GUIDE.md",
+          "ADK_PIPELINE_ISSUE_AGNOSTIC_FIX.md",
           "ADK_PIPELINE_QUICK_REF.md",
+          "ADK_PIPELINE_SESSION_SUMMARY.md",
           "ADK_PIPELINE_TRACKING_ENHANCEMENT.md",
-          "ADK_PIPELINE_TRACKING_GUIDE.md",
-          "ADK_PIPELINE_TRACKING_ISSUE_FIX.md",
-          "AGENTOPS_DASHBOARD.md"
+          "ADK_PIPELINE_TRACKING_GUIDE.md"
         ]
       },
       ".github/workflows": {
@@ -126,18 +126,19 @@
         "files": []
       },
       "analysis": {
-        "file_count": 4,
-        "line_count": 1184,
+        "file_count": 5,
+        "line_count": 1822,
         "files": [
           "architecture.mmd",
           "evolution.json",
           "latest.json",
-          "snapshot_2025-12-10T12-58-44.json"
+          "snapshot_2025-12-10T12-58-44.json",
+          "snapshot_2025-12-11T02-08-26.json"
         ]
       },
       "learnings": {
-        "file_count": 440,
-        "line_count": 259282,
+        "file_count": 452,
+        "line_count": 275243,
         "files": [
           "AI_ML.md",
           "CLAUDE_AI_INVESTIGATION.md",
@@ -147,6 +148,7 @@
           "DevOps.md",
           "ECOSYSTEM_ASSESSMENT.md",
           "INTEGRATION_IMPLEMENTATION.md",
+          "ISSUE_3965_COMPLETION_COMMENT.md",
           "ISSUE_SUMMARY_20251119.md",
           "MISSION_COMPLETE.md",
           "OpenSource.md",
@@ -169,7 +171,9 @@
           "agents_cloud_integration_proposal_idea86.md",
           "agents_cloud_integration_research_report_idea86.md",
           "ai_agents_ecosystem_integration_proposal_20251124.md",
+          "ai_agents_ecosystem_integration_proposal_20251211_idea104.md",
           "ai_agents_emerging_theme_research_report_20251124.md",
+          "ai_agents_emerging_theme_research_report_20251211_idea104.md",
           "ai_agents_innovation_deep_dive_nov16_2025.md",
           "ai_ml_agents_investigation_20251116.md",
           "ai_ml_innovation_research_report_coach_master.md",
@@ -185,16 +189,13 @@
           "analysis_20251114_132406.json",
           "analysis_20251114_190931.json",
           "analysis_20251114_202751.json",
-          "analysis_20251115_070942.json",
-          "analysis_20251115_082901.json",
-          "analysis_20251115_131750.json",
-          "analysis_20251115_190732.json"
+          "analysis_20251115_070942.json"
         ]
       }
     },
     "files_by_type": {},
-    "total_files": 1885,
-    "total_lines": 736819
+    "total_files": 1910,
+    "total_lines": 758702
   },
   "dependencies": {
     "internal_imports": {
@@ -232,6 +233,7 @@
       "thematic-analyzer.py": [],
       "autonomous_issue_prioritizer.py": [],
       "prompt-quality-scorer.py": [],
+      "rl_optimizer_enhanced.py": [],
       "pr-content-analyzer.py": [],
       "dynamic-agent-spawner.py": [],
       "meta_learning_scheduler.py": [],
@@ -326,6 +328,7 @@
       "generate-context-summaries.py": [],
       "match-issue-to-agent.py": [],
       "ask_gemini_mcp.py": [],
+      "rl_optimizer_api.py": [],
       "lazy_evaluation_integration_example.py": [],
       "github_actions_data_collector.py": [],
       "get-agent-info.py": [],
@@ -398,22 +401,22 @@
       "validation_utils.py": []
     },
     "external_imports": {
-      "os": 116,
-      "sys": 154,
-      "json": 170,
+      "os": 118,
+      "sys": 156,
+      "json": 172,
       "re": 76,
       "ast": 18,
-      "datetime": 134,
-      "pathlib": 160,
-      "typing": 147,
-      "collections": 77,
+      "datetime": 136,
+      "pathlib": 162,
+      "typing": 149,
+      "collections": 78,
       "functools": 9,
-      "argparse": 135,
-      "math": 12,
-      "random": 27,
+      "argparse": 137,
+      "math": 13,
+      "random": 28,
       "time": 31,
       "statistics": 17,
-      "dataclasses": 80,
+      "dataclasses": 82,
       "adaptive_workload_monitor": 2,
       "agent_coordinator": 1,
       "workload_subagent_spawner": 2,
@@ -433,6 +436,8 @@
       "ai_workflow_predictor": 5,
       "tempfile": 7,
       "shutil": 8,
+      "heapq": 1,
+      "rl_resource_optimizer": 2,
       "workflow_execution_tracker": 2,
       "registry_manager": 13,
       "fcntl": 2,
@@ -470,6 +475,8 @@
       "openai": 1,
       "anthropic": 1,
       "ask_gemini": 1,
+      "flask": 1,
+      "flask_cors": 1,
       "lazy_evaluation_system": 1,
       "unicodedata": 1,
       "queue": 1,
@@ -500,17 +507,17 @@
   },
   "metrics": {
     "total_components": 6,
-    "total_files": 1885,
-    "total_lines": 736819,
+    "total_files": 1910,
+    "total_lines": 758702,
     "total_dependencies": 2,
-    "external_libraries": 86,
-    "coupling_score": 5.34159500026708e-05,
-    "complexity_score": 0.9772135278514589
+    "external_libraries": 90,
+    "coupling_score": 5.2328623757195185e-05,
+    "complexity_score": 0.993065445026178
   },
   "components": {
     "learning_system": {
       "file_count": 46,
-      "line_count": 259282,
+      "line_count": 275243,
       "files": [
         "AI_ML.md",
         "CLAUDE_AI_INVESTIGATION.md",
@@ -520,6 +527,7 @@
         "DevOps.md",
         "ECOSYSTEM_ASSESSMENT.md",
         "INTEGRATION_IMPLEMENTATION.md",
+        "ISSUE_3965_COMPLETION_COMMENT.md",
         "ISSUE_SUMMARY_20251119.md",
         "MISSION_COMPLETE.md",
         "OpenSource.md",
@@ -530,23 +538,23 @@
         "README.md",
         "RESEARCH_REPORT.md",
         "Security.md",
-        "Tools.md",
-        "WORLD_MODEL_UPDATE.md"
+        "Tools.md"
       ]
     },
     "analysis_tools": {
-      "file_count": 4,
-      "line_count": 1184,
+      "file_count": 5,
+      "line_count": 1822,
       "files": [
         "architecture.mmd",
         "evolution.json",
         "latest.json",
-        "snapshot_2025-12-10T12-58-44.json"
+        "snapshot_2025-12-10T12-58-44.json",
+        "snapshot_2025-12-11T02-08-26.json"
       ]
     },
     "documentation": {
       "file_count": 50,
-      "line_count": 308789,
+      "line_count": 312234,
       "files": [
         ".nojekyll",
         "01_overview.md",
@@ -572,7 +580,7 @@
     },
     "tools": {
       "file_count": 50,
-      "line_count": 167564,
+      "line_count": 169403,
       "files": [
         ".context.md",
         "AB_TESTING_README.md",
