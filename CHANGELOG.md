@@ -48,8 +48,8 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x26) [#4000](https://github.com/enufacas/Chained/pull/4000)
 - 👤 🧠 Learning **Documentation**: Verify and document completed daily learning reflection (2025-12-11) [#3990](https://github.com/enufacas/Chained/pull/3990)
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x25) [#3973](https://github.com/enufacas/Chained/pull/3973)
 - 👤 🧠 Learning **Documentation**: Verify GitHub Copilot learning collection - @create-botter [#3991](https://github.com/enufacas/Chained/pull/3991)
 - 🤖 **Documentation**: 📚 Sync World State to Docs - Pipeline [#3970](https://github.com/enufacas/Chained/pull/3970)
 - 👤 🏗️ Infrastructure **Documentation**: Verify ADK A2A Blog Pipeline tracking infrastructure (@align-wizard) [#3949](https://github.com/enufacas/Chained/pull/3949)
@@ -232,17 +232,5 @@ This changelog excludes automated data syncs and routine maintenance commits.
 ### 🐛 Bug Fixes
 
 - 👤 Fix AG-UI pipeline state updates and error observer configuration [#3629](https://github.com/enufacas/Chained/pull/3629)
-
----
-
-## 2025-12-04
-
-### ✨ Features
-
-- 👤 🔧 Agents Add intentional ZeroDivisionError to code-reviewer agent for error_observer testing [#3603](https://github.com/enufacas/Chained/pull/3603)
-
-### 🧹 Chores & Maintenance
-
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge [#3604](https://github.com/enufacas/Chained/pull/3604)
 
 ---
