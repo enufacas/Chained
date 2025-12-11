@@ -2,9 +2,9 @@
 
 > Artificial intelligence, machine learning, LLMs, and neural networks
 
-**Total Insights:** 4623
+**Total Insights:** 5166
 
-**Last Updated:** 2025-12-10
+**Last Updated:** 2025-12-11
 
 ---
 
@@ -110,10 +110,11 @@ If you ...
 About Copilot auto model selection
 Automatically select models for Copilot Chat and Copilot coding agent.
 Who can use this feature?
-Auto model selection for Copilot Chat is in public preview for supported IDEs with all GitHub Copilot plans. Auto model selection for Copilot coding agent is generally available for GitHub Copilot Pro and GitHub Copilot Pro+ users.
+Auto model selection for Copilot Chat is available with all GitHub Copilot plans.
+Auto model selection for Copilot coding agent is available for GitHub Copilot Pro and GitHub Copilot Pro+ plans.
 In this article
 Overview
-Experience less rate limiting and reduce the mental load of choosing a model by letting Copilot auto model sele...
+Experience less rate limiting and reduce the mental load of choosing a model by letting Copilot auto model selection automatically choose the best a...
 
 ---
 
@@ -1253,33 +1254,6 @@ Essay | 10/03/2025 Economic / Social Policy - Rosalux International - UK / Irela
 ---
 
 
-### Putting email in its place with Emacs and Mu4e
-
-**Community Score:** 10 upvotes
-
-**Link:** https://eamonnsullivan.co.uk/posts-output/email-setup/2025-12-3-putting-email-in-its-place/
-
----
-
-
-### Pebble Index 01 – External memory for your brain
-
-**Community Score:** 474 upvotes
-
-**Link:** https://repebble.com/blog/meet-pebble-index-01-external-memory-for-your-brain
-
----
-
-
-### Donating the Model Context Protocol and establishing the Agentic AI Foundation
-
-**Community Score:** 211 upvotes
-
-**Link:** https://www.anthropic.com/news/donating-the-model-context-protocol-and-establishing-of-the-agentic-ai-foundation
-
----
-
-
 ### Show HN: Pegma, the free and open-source version of the classic Peg solitaire
 
 **Link:** https://pegma.vercel.app
@@ -1320,5 +1294,31 @@ Hey HN! We’re Jason &amp; Matt and we’re building Tweeks (<a href="https:&#x
 
 
 Of late, I’ve found my relationship with internet changing. I was here back in the early 2000s and it has always been the first place I go to for entertainment, advice, and work<p>But increasingly, I find myself completely disengaged with the internet. Every time I see a text post, I start asking myself: is this even a real person? Am I just talking to a bot?<p>Every time I see a yellow-tinged image on any of my social media feeds, I mentally switch off. I know it was made by AI and I just find it hard to engage with anything AI-made, no matter how good<p>Same for any AI video that pops up on my feed. It just doesn’t make me scroll past it, it makes me question why am I even here and I end up leaving<p>I know I can’t be the only one. I used to love the internet because it was one place where I could engage with people from all over the world. But now, it feels like I just spend half my energy on figuring out which one is real, which one is AI<p>The line will eventually blur and as a late 30s guy, I really don’t want to spend any more of my time on earth talking to a bot<p>As someone who used to create and build for the web, I find myself increasingly disengaged and discouraged. I’m pouring into a rapidly emptying cup<p>Anyone else feel the same way?
+
+---
+
+
+### SlopStop: Community-driven AI slop detection in Kagi Search
+
+**Link:** https://blog.kagi.com/slopstop
+
+---
+
+
+### Show HN: DBOS Java – Postgres-Backed Durable Workflows
+
+**Link:** https://github.com/dbos-inc/dbos-transact-java
+
+
+Hi HN - I’m Peter, here with Harry (devhawk), and we’re building DBOS Java, an open-source Java library for durable workflows, backed by Postgres.<p><a href="https:&#x2F;&#x2F;github.com&#x2F;dbos-inc&#x2F;dbos-transact-java" rel="nofollow">https:&#x2F;&#x2F;github.com&#x2F;dbos-inc&#x2F;dbos-transact-java</a><p>Essentially, DBOS helps you write long-lived, reliable code that can survive failures, restarts, and crashes without losing state or duplicating work. As your workflows run, it checkpoints each step they take in a Postgres database. When a process stops (fails, restarts, or crashes), your program can recover from those checkpoints to restore its exact state and continue from where it left off, as if nothing happened.<p>In practice, this makes it easier to build reliable systems for use cases like AI agents, payments, data synchronization, or anything that takes hours, days, or weeks to complete. Rather than bolting on ad-hoc retry logic and database checkpoints, durable workflows give you one consistent model for ensuring your programs can recover from any failure from exactly where they left off.<p>This library contains all you need to add durable workflows to your program: there&#x27;s no separate service or orchestrator or any external dependencies except Postgres. Because it&#x27;s just a library, you can incrementally add it to your projects, and it works out of the box with frameworks like Spring. And because it&#x27;s built on Postgres, it natively supports all the tooling you&#x27;re familiar with (backups, GUIs, CLI tools) and works with any Postgres provider.<p>If you want to try it out, check out the quickstart:<p><a href="https:&#x2F;&#x2F;docs.dbos.dev&#x2F;quickstart?language=java" rel="nofollow">https:&#x2F;&#x2F;docs.dbos.dev&#x2F;quickstart?language=java</a><p>We&#x27;d love to hear what you think! We’ll be in the comments for the rest of the day to answer any questions.
+
+---
+
+
+### LLMs are steroids for your Dunning-Kruger
+
+**Community Score:** 128 upvotes
+
+**Link:** https://bytesauna.com/post/dunning-kruger
 
 ---

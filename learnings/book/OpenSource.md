@@ -2,9 +2,9 @@
 
 > Open source projects, community insights, and collaboration
 
-**Total Insights:** 76
+**Total Insights:** 84
 
-**Last Updated:** 2025-12-10
+**Last Updated:** 2025-12-11
 
 ---
 
@@ -86,32 +86,20 @@ To use the Mastodon web application, please enable JavaScript. Alternatively, tr
 ---
 
 
-### bobeff/open-source-games - A list of open source games.
+### Fossils reveal anacondas have been giants for over 12 million years
 
-**Link:** https://github.com/bobeff/open-source-games
+**Community Score:** 44 upvotes
 
-
-A list of open source games.
-
----
-
-
-### bobeff/open-source-games - A list of open source games.
-
-**Link:** https://github.com/bobeff/open-source-games
-
-
-A list of open source games.
+**Link:** https://www.cam.ac.uk/stories/twelve-million-years-of-giant-anacondas
 
 ---
 
 
-### bobeff/open-source-games - A list of open source games.
+### Show HN: Automated license plate reader coverage in the USA
 
-**Link:** https://github.com/bobeff/open-source-games
+**Community Score:** 173 upvotes
 
-
-A list of open source games.
+**Link:** https://alpranalysis.com
 
 ---
 
@@ -128,10 +116,103 @@ A list of open source games.
 
 ### Untitled
 
-**Link:** https://github.com/sst/opencode
+**Link:** https://github.com/lfnovo/open-notebook
 
 
-The open source coding agent.
+An Open Source implementation of Notebook LM with more flexibility and features
+
+---
+
+
+### bobeff/open-source-games - A list of open source games.
+
+**Link:** https://github.com/bobeff/open-source-games
+
+
+A list of open source games.
+
+---
+
+
+### bobeff/open-source-games - A list of open source games.
+
+**Link:** https://github.com/bobeff/open-source-games
+
+
+A list of open source games.
+
+---
+
+
+### bobeff/open-source-games - A list of open source games.
+
+**Link:** https://github.com/bobeff/open-source-games
+
+
+A list of open source games.
+
+---
+
+
+### Android 16 QPR1 is being pushed to the Android Open Source Project
+
+**Community Score:** 217 upvotes
+
+**Link:** https://grapheneos.social/@GrapheneOS/115533432439509433
+
+
+**Content Summary:**
+
+To use the Mastodon web application, please enable JavaScript. Alternatively, try one of the native apps for Mastodon for your platform.
+
+---
+
+
+### Show HN: Automated license plate reader coverage in the USA
+
+**Community Score:** 33 upvotes
+
+**Link:** https://alpranalysis.com
+
+---
+
+
+### bobeff/open-source-games - A list of open source games.
+
+**Link:** https://github.com/bobeff/open-source-games
+
+
+A list of open source games.
+
+---
+
+
+### bobeff/open-source-games - A list of open source games.
+
+**Link:** https://github.com/bobeff/open-source-games
+
+
+A list of open source games.
+
+---
+
+
+### bobeff/open-source-games - A list of open source games.
+
+**Link:** https://github.com/bobeff/open-source-games
+
+
+A list of open source games.
+
+---
+
+
+### bobeff/open-source-games - A list of open source games.
+
+**Link:** https://github.com/bobeff/open-source-games
+
+
+A list of open source games.
 
 ---
 
@@ -186,93 +267,6 @@ A list of open source games.
 
 
 A list of open source games.
-
----
-
-
-### bobeff/open-source-games - A list of open source games.
-
-**Link:** https://github.com/bobeff/open-source-games
-
-
-A list of open source games.
-
----
-
-
-### Android 16 QPR1 is being pushed to the Android Open Source Project
-
-**Community Score:** 217 upvotes
-
-**Link:** https://grapheneos.social/@GrapheneOS/115533432439509433
-
-
-**Content Summary:**
-
-To use the Mastodon web application, please enable JavaScript. Alternatively, try one of the native apps for Mastodon for your platform.
-
----
-
-
-### bobeff/open-source-games - A list of open source games.
-
-**Link:** https://github.com/bobeff/open-source-games
-
-
-A list of open source games.
-
----
-
-
-### bobeff/open-source-games - A list of open source games.
-
-**Link:** https://github.com/bobeff/open-source-games
-
-
-A list of open source games.
-
----
-
-
-### bobeff/open-source-games - A list of open source games.
-
-**Link:** https://github.com/bobeff/open-source-games
-
-
-A list of open source games.
-
----
-
-
-### bobeff/open-source-games - A list of open source games.
-
-**Link:** https://github.com/bobeff/open-source-games
-
-
-A list of open source games.
-
----
-
-
-### Android 16 QPR1 is being pushed to the Android Open Source Project
-
-**Community Score:** 217 upvotes
-
-**Link:** https://grapheneos.social/@GrapheneOS/115533432439509433
-
-
-**Content Summary:**
-
-To use the Mastodon web application, please enable JavaScript. Alternatively, try one of the native apps for Mastodon for your platform.
-
----
-
-
-### Pebble Watch software is now 100% open source
-
-**Community Score:** 261 upvotes
-
-**Link:** https://ericmigi.com/blog/pebble-watch-software-is-now-100percent-open-source
 
 ---
 

@@ -2,9 +2,9 @@
 
 > Web technologies, browsers, APIs, and frontend frameworks
 
-**Total Insights:** 366
+**Total Insights:** 389
 
-**Last Updated:** 2025-12-10
+**Last Updated:** 2025-12-11
 
 ---
 
@@ -277,15 +277,6 @@ Related post: <a href="https:&#x2F;&#x2F;hazyresearch.stanford.edu&#x2F;blog&#x2
 ---
 
 
-### Handsdown one of the coolest 3D websites
-
-**Community Score:** 548 upvotes
-
-**Link:** https://bruno-simon.com/
-
----
-
-
 ### Meta replaces WhatsApp for Windows with web wrapper that uses 1 GB RAM when idle
 
 **Community Score:** 103 upvotes
@@ -431,6 +422,16 @@ Free and open-source API Client & Interceptor.
 
 
 Deliver web apps with confidence 🚀
+
+---
+
+
+### Untitled
+
+**Link:** https://github.com/UseInterstellar/Interstellar
+
+
+One of the most popular modern web proxies with blazing fast speeds and a variety of games.
 
 ---
 
