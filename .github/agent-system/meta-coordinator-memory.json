@@ -1,10 +1,10 @@
 {
   "version": "1.1",
   "created_at": "2025-11-24T05:17:32.537364",
-  "last_updated": "2025-12-11T06:27:42.626706",
+  "last_updated": "2025-12-11T08:25:48.318867",
   "runs": {
-    "total_runs": 72,
-    "successful_runs": 72,
+    "total_runs": 73,
+    "successful_runs": 73,
     "failed_runs": 0,
     "last_run": {
       "timestamp": "2025-12-10T16:25:26.565001",
@@ -25,13 +25,13 @@
   "issue_patterns": {
     "total_issues_processed": 9,
     "agents_assigned": {
-      "edge-cases-pro": 576460752303423488,
-      "coach-master": 576460752303423488,
-      "construct-specialist": 576460752303423488,
-      "create-botter": 1729382256910270464,
-      "investigate-champion": 576460752303423488,
-      "troubleshoot-expert": 576460752303423488,
-      "align-wizard": 1
+      "edge-cases-pro": 1152921504606846976,
+      "coach-master": 1152921504606846976,
+      "construct-specialist": 1152921504606846976,
+      "create-botter": 3458764513820540928,
+      "investigate-champion": 1152921504606846976,
+      "troubleshoot-expert": 1152921504606846976,
+      "align-wizard": 2
     },
     "agent_success_rates": {},
     "assignment_times": [
