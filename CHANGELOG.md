@@ -30,7 +30,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x3) [#3931](https://github.com/enufacas/Chained/pull/3931)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x4) [#3938](https://github.com/enufacas/Chained/pull/3938)
 
 ---
 
@@ -38,6 +38,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### ✨ Features
 
+- 👤 🏗️ Infrastructure Make ADK pipeline tracking infrastructure issue-agnostic [#3940](https://github.com/enufacas/Chained/pull/3940)
 - 👤 meta-coordination: 2025-12-11 00:57 - system health verified, no actions required [#3930](https://github.com/enufacas/Chained/pull/3930)
 - 👤 meta-coordination: 2025-12-10 run - merged 1 PR, closed 6 stale PRs [#3925](https://github.com/enufacas/Chained/pull/3925)
 - 👤 Research: Web API trends (Nov 24, 2025) - Multi-model routing, GPT-5.1, API security [#3912](https://github.com/enufacas/Chained/pull/3912)
@@ -215,7 +216,6 @@ This changelog excludes automated data syncs and routine maintenance commits.
 - 👤 🔧 Agents Add intentional ZeroDivisionError to code-reviewer agent for error_observer testing [#3603](https://github.com/enufacas/Chained/pull/3603)
 - 🤖 🧠 Learning 🧠 Learn from GitHub Copilot sources - 2025-12-04 [#3596](https://github.com/enufacas/Chained/pull/3596)
 - 👤 Restructure Copilot section for demo/presentation format [#3218](https://github.com/enufacas/Chained/pull/3218)
-- 👤 Streamline A2A section and remove production-ready language [#3520](https://github.com/enufacas/Chained/pull/3520)
 
 ### 🐛 Bug Fixes
 
@@ -225,19 +225,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x7) [#3604](https://github.com/enufacas/Chained/pull/3604)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x5) [#3604](https://github.com/enufacas/Chained/pull/3604)
 - 👤 📚 Docs **Documentation**: Add dedicated Demo & Deep Dive documentation page [#3579](https://github.com/enufacas/Chained/pull/3579)
-
----
-
-## 2025-12-03
-
-### ✨ Features
-
-- 👤 🔧 Agents Rename @create-guru agent to @create-botter [#3575](https://github.com/enufacas/Chained/pull/3575)
-
-### 🐛 Bug Fixes
-
-- 👤 🔧 Tools Fix TypeScript build error: use shared Pipeline interface in PipelineOutcomes [#3580](https://github.com/enufacas/Chained/pull/3580)
 
 ---
