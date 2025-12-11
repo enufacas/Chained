@@ -30,11 +30,12 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### ✨ Features
 
+- 🤖 🎯 Daily goal for 2025-12-11 [#3952](https://github.com/enufacas/Chained/pull/3952)
 - 👤 meta-coordination: 2025-12-11 04:28 run - assessment only, no actions needed [#3944](https://github.com/enufacas/Chained/pull/3944)
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x6) [#3939](https://github.com/enufacas/Chained/pull/3939)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x7) [#3947](https://github.com/enufacas/Chained/pull/3947)
 
 ---
 
@@ -221,12 +222,8 @@ This changelog excludes automated data syncs and routine maintenance commits.
 - 👤 🔧 Agents Add intentional ZeroDivisionError to code-reviewer agent for error_observer testing [#3603](https://github.com/enufacas/Chained/pull/3603)
 - 🤖 🧠 Learning 🧠 Learn from GitHub Copilot sources - 2025-12-04 [#3596](https://github.com/enufacas/Chained/pull/3596)
 
-### 🐛 Bug Fixes
-
-- 👤 Fix ERROR_OBSERVER_URL runtime access via Next.js dynamic export [#3591](https://github.com/enufacas/Chained/pull/3591)
-
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x2) [#3604](https://github.com/enufacas/Chained/pull/3604)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge [#3604](https://github.com/enufacas/Chained/pull/3604)
 
 ---
