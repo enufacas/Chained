@@ -5,6 +5,8 @@
 
 This document contains the materials prepared for setting up Issue #194 as the ADK A2A Blog Pipeline Status tracking issue.
 
+**Note:** The markdown content below uses absolute GitHub URLs because it's designed to be **posted directly to GitHub issues** where relative paths don't work. When viewing/editing this file in the repository, the URLs remain valid.
+
 ## Issue Description (Enhanced)
 
 ```markdown

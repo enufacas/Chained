@@ -25,7 +25,7 @@ WORKFLOW_FILE="adk-a2a-blog-pipeline.yml"
 
 # Dynamically find the tracking issue number
 get_tracking_issue_number() {
-    gh issue list --label "$TRACKING_LABEL" --state open --limit 1 --json number --jq '.[0].number' 2>/dev/null || echo ""
+    gh issue list --label "$TRACKING_LABEL" --state open --limit 1 --json number --jq 'if length > 0 then .[0].number else empty end' 2>/dev/null || echo ""
 }
 
 # Colors for output
