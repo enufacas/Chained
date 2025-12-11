@@ -41,7 +41,8 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x13) [#3962](https://github.com/enufacas/Chained/pull/3962)
+- 🤖 **Documentation**: 📚 Sync World State to Docs - Pipeline [#3970](https://github.com/enufacas/Chained/pull/3970)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x14) [#3969](https://github.com/enufacas/Chained/pull/3969)
 - 👤 🏗️ Infrastructure **Documentation**: Verify ADK A2A Blog Pipeline tracking infrastructure (@align-wizard) [#3949](https://github.com/enufacas/Chained/pull/3949)
 - 🤖 **Chore**: 🌍 World Model Update - Pipeline [#3961](https://github.com/enufacas/Chained/pull/3961)
 - 🤖 🔧 Agents **Chore**: meta-coordination: 2025-12-11 06:20 - cleanup stale PR, assign agent [#3946](https://github.com/enufacas/Chained/pull/3946)
