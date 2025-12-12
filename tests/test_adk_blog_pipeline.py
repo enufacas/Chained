@@ -319,7 +319,3 @@ class TestHealthChecks:
             assert "academic-research" in health
             assert "blog-writer" in health
             assert "google-trends" in health
-
-
-if __name__ == "__main__":
-    pytest.main([__file__, "-v"])
