@@ -1,10 +1,10 @@
 {
   "version": "1.1",
   "created_at": "2025-11-24T05:17:32.537364",
-  "last_updated": "2025-12-12T12:30:21.699199",
+  "last_updated": "2025-12-12T14:19:28.810234",
   "runs": {
-    "total_runs": 96,
-    "successful_runs": 96,
+    "total_runs": 98,
+    "successful_runs": 98,
     "failed_runs": 0,
     "last_run": {
       "timestamp": "2025-12-10T16:25:26.565001",
@@ -23,24 +23,18 @@
     "approval_times": []
   },
   "issue_patterns": {
-    "total_issues_processed": 9,
+    "total_issues_processed": 10,
     "agents_assigned": {
-      "edge-cases-pro": 9671406556917033397649408,
-      "coach-master": 9671406556917033397649408,
-      "construct-specialist": 9671406556917033397649408,
-      "create-botter": 29014219670751100192948224,
-      "investigate-champion": 9671406556917033397649408,
-      "troubleshoot-expert": 9671406556917033397649408,
-      "align-wizard": 16777216
+      "edge-cases-pro": 38685626227668133590597632,
+      "coach-master": 38685626227668133590597632,
+      "construct-specialist": 38685626227668133590597632,
+      "create-botter": 116056878683004400771792897,
+      "investigate-champion": 38685626227668133590597632,
+      "troubleshoot-expert": 38685626227668133590597632,
+      "align-wizard": 67108864
     },
     "agent_success_rates": {},
     "assignment_times": [
-      {
-        "issue": 2715,
-        "agent": "investigate-champion",
-        "timestamp": "2025-11-24T10:54:58.013030",
-        "score": 10
-      },
       {
         "issue": 2712,
         "agent": "troubleshoot-expert",
@@ -634,6 +628,12 @@
         "agent": "align-wizard",
         "timestamp": "2025-12-11T06:27:42.626140",
         "score": 3
+      },
+      {
+        "issue": 4120,
+        "agent": "create-botter",
+        "timestamp": "2025-12-12T14:19:28.809591",
+        "score": 12
       }
     ]
   },
@@ -650,17 +650,6 @@
   },
   "decisions": {
     "recent": [
-      {
-        "type": "issue_assignment",
-        "description": "Assigned issue #2733 to create-botter (score: 13.00)",
-        "context": {
-          "issue_number": 2733,
-          "agent": "create-botter",
-          "score": 13
-        },
-        "timestamp": "2025-11-24T10:54:58.013025",
-        "session_id": "a8f53e273f33a934"
-      },
       {
         "type": "issue_assignment",
         "description": "Assigned issue #2715 to investigate-champion (score: 10.00)",
@@ -1727,6 +1716,17 @@
         },
         "timestamp": "2025-12-11T06:27:42.626155",
         "session_id": "b6785798b8e43e99"
+      },
+      {
+        "type": "issue_assignment",
+        "description": "Assigned issue #4120 to create-botter (score: 12.00)",
+        "context": {
+          "issue_number": 4120,
+          "agent": "create-botter",
+          "score": 12
+        },
+        "timestamp": "2025-12-12T14:19:28.809602",
+        "session_id": "dd73197487236183"
       }
     ],
     "patterns": {}
