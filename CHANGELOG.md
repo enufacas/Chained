@@ -50,9 +50,9 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x29) [#4132](https://github.com/enufacas/Chained/pull/4132)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x30) [#4135](https://github.com/enufacas/Chained/pull/4135)
 - 🤖 **Documentation**: 📚 Sync World State to Docs - Pipeline [#4086](https://github.com/enufacas/Chained/pull/4086)
-- 🤖 **Chore**: 🌍 World Model Update - Pipeline [#4078](https://github.com/enufacas/Chained/pull/4078)
+- 🤖 **Chore**: 🌍 World Model Update - Pipeline (x2) [#4136](https://github.com/enufacas/Chained/pull/4136)
 - 🤖 **Chore**: meta-coordination: 2025-12-12 06:19 run - system assessment and memory update [#4068](https://github.com/enufacas/Chained/pull/4068)
 
 ---
