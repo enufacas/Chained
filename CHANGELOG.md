@@ -30,7 +30,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x3) [#4052](https://github.com/enufacas/Chained/pull/4052)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x5) [#4061](https://github.com/enufacas/Chained/pull/4061)
 
 ---
 
@@ -38,6 +38,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### ✨ Features
 
+- 🤖 meta-coordination: 2025-12-12 03:17 - enforced 3h conflict policy, cleaned 2 stale PRs [#4060](https://github.com/enufacas/Chained/pull/4060)
 - 🤖 meta-coordination: 2025-12-12 00:57 run - system health check [#4051](https://github.com/enufacas/Chained/pull/4051)
 - 🤖 meta-coordination: 2025-12-11 22:13 run - system stable, no actions needed [#4048](https://github.com/enufacas/Chained/pull/4048)
 - 🤖 meta-coordination: 2025-12-11 20:15 run - merged 1 PR, closed 1 stale conflict [#4022](https://github.com/enufacas/Chained/pull/4022)
@@ -67,6 +68,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
+- 👤 **Documentation**: test/docs: Add validation suite for ADK A2A Blog Pipeline tracking system [#4061](https://github.com/enufacas/Chained/pull/4061)
 - 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x43) [#4047](https://github.com/enufacas/Chained/pull/4047)
 - 👤 **Documentation**: Document Issue ADK A2A Blog Pipeline tracking system (@create-botter) [#4023](https://github.com/enufacas/Chained/pull/4023)
 - 🤖 **Documentation**: 📚 Sync World State to Docs - Pipeline (x2) [#4035](https://github.com/enufacas/Chained/pull/4035)
