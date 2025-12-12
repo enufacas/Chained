@@ -30,6 +30,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### ✨ Features
 
+- 🤖 🧠 Learning 🧠 Learning Pipeline - 2025-12-12 (x2) [#4134](https://github.com/enufacas/Chained/pull/4134)
 - 🤖 meta-coordination: 2025-12-12 18:18 run - system assessment [#4128](https://github.com/enufacas/Chained/pull/4128)
 - 🤖 meta-coordination: 2025-12-12 16:14 run - closed 1 stale PR [#4125](https://github.com/enufacas/Chained/pull/4125)
 - 🤖 🔧 Agents meta-coordination: 2025-12-12 14:13 run - closed 3 stale PRs, assigned 1 agent [#4119](https://github.com/enufacas/Chained/pull/4119)
@@ -44,13 +45,12 @@ This changelog excludes automated data syncs and routine maintenance commits.
 - 👤 🔧 Tools Complete TypeScript trends investigation (idea:116, Nov 25 2025) [#4091](https://github.com/enufacas/Chained/pull/4091)
 - 👤 Complete AI/ML mission idea:117 - Multi-model orchestration research and integration roadmap [#4093](https://github.com/enufacas/Chained/pull/4093)
 - 🤖 🔧 Agents 🎯 Agent Missions - Pipeline [#4085](https://github.com/enufacas/Chained/pull/4085)
-- 🤖 🧠 Learning 🧠 Learning Pipeline - 2025-12-12 [#4076](https://github.com/enufacas/Chained/pull/4076)
 - 🤖 🎯 Daily goal for 2025-12-12 [#4071](https://github.com/enufacas/Chained/pull/4071)
 - 🤖 meta-coordination: 2025-12-12 04:26 run - System orchestration complete [#4065](https://github.com/enufacas/Chained/pull/4065)
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x28) [#4127](https://github.com/enufacas/Chained/pull/4127)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x29) [#4132](https://github.com/enufacas/Chained/pull/4132)
 - 🤖 **Documentation**: 📚 Sync World State to Docs - Pipeline [#4086](https://github.com/enufacas/Chained/pull/4086)
 - 🤖 **Chore**: 🌍 World Model Update - Pipeline [#4078](https://github.com/enufacas/Chained/pull/4078)
 - 🤖 **Chore**: meta-coordination: 2025-12-12 06:19 run - system assessment and memory update [#4068](https://github.com/enufacas/Chained/pull/4068)
