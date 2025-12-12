@@ -30,7 +30,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x3) [#4052](https://github.com/enufacas/Chained/pull/4052)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x4) [#4059](https://github.com/enufacas/Chained/pull/4059)
 
 ---
 
@@ -67,6 +67,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
+- 👤 **Documentation**: test/docs: Add validation suite for ADK A2A Blog Pipeline tracking system [#4061](https://github.com/enufacas/Chained/pull/4061)
 - 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x43) [#4047](https://github.com/enufacas/Chained/pull/4047)
 - 👤 **Documentation**: Document Issue ADK A2A Blog Pipeline tracking system (@create-botter) [#4023](https://github.com/enufacas/Chained/pull/4023)
 - 🤖 **Documentation**: 📚 Sync World State to Docs - Pipeline (x2) [#4035](https://github.com/enufacas/Chained/pull/4035)
