@@ -30,6 +30,8 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### ✨ Features
 
+- 👤 Complete Claude AI/ML investigation (idea:115) - @investigate-champion [#4090](https://github.com/enufacas/Chained/pull/4090)
+- 👤 🔧 Tools Complete TypeScript trends investigation (idea:116, Nov 25 2025) [#4091](https://github.com/enufacas/Chained/pull/4091)
 - 👤 Complete AI/ML mission idea:117 - Multi-model orchestration research and integration roadmap [#4093](https://github.com/enufacas/Chained/pull/4093)
 - 🤖 🔧 Agents 🎯 Agent Missions - Pipeline [#4085](https://github.com/enufacas/Chained/pull/4085)
 - 🤖 🧠 Learning 🧠 Learning Pipeline - 2025-12-12 [#4076](https://github.com/enufacas/Chained/pull/4076)
@@ -38,7 +40,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x13) [#4092](https://github.com/enufacas/Chained/pull/4092)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x16) [#4091](https://github.com/enufacas/Chained/pull/4091)
 - 🤖 **Documentation**: 📚 Sync World State to Docs - Pipeline [#4086](https://github.com/enufacas/Chained/pull/4086)
 - 🤖 **Chore**: 🌍 World Model Update - Pipeline [#4078](https://github.com/enufacas/Chained/pull/4078)
 - 🤖 **Chore**: meta-coordination: 2025-12-12 06:19 run - system assessment and memory update [#4068](https://github.com/enufacas/Chained/pull/4068)
