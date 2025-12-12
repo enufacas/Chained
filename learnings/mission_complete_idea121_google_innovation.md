@@ -17,7 +17,7 @@
 - Handwriting recognition achieving near-perfect multimodal AI
 - Google ADK validating code-first agent development
 
-**Data Analyzed:** 168 learnings with 51 Google-related items (TLDR + GitHub Trending + Hacker News)  
+**Data Analyzed:** 168 learnings with 51 Google-related items identified by keyword matching (google, cursor, nano banana, handwriting recognition, google adk) from TLDR + GitHub Trending + Hacker News sources  
 **Geographic Focus:** US:San Francisco (Google, developer tool innovation hub)
 
 ---
