@@ -1,11 +1,11 @@
 {
-  "timestamp": "2025-12-13T02:01:14.540924",
-  "commit": "994baac490c5bab1a6de7cf639f3620b82f2be19",
+  "timestamp": "2025-12-13T12:51:39.931781",
+  "commit": "92b7e573b56db6725a7937257c9679522faab692",
   "structure": {
     "directories": {
       "tools": {
-        "file_count": 424,
-        "line_count": 169403,
+        "file_count": 432,
+        "line_count": 170921,
         "files": [
           ".context.md",
           "AB_TESTING_README.md",
@@ -60,8 +60,8 @@
         ]
       },
       "docs": {
-        "file_count": 1036,
-        "line_count": 315770,
+        "file_count": 1037,
+        "line_count": 317004,
         "files": [
           ".nojekyll",
           "01_overview.md",
@@ -126,8 +126,8 @@
         "files": []
       },
       "analysis": {
-        "file_count": 8,
-        "line_count": 3712,
+        "file_count": 9,
+        "line_count": 4344,
         "files": [
           "architecture.mmd",
           "evolution.json",
@@ -136,12 +136,13 @@
           "snapshot_2025-12-11T02-08-26.json",
           "snapshot_2025-12-11T12-59-49.json",
           "snapshot_2025-12-12T02-08-02.json",
-          "snapshot_2025-12-12T12-57-02.json"
+          "snapshot_2025-12-12T12-57-02.json",
+          "snapshot_2025-12-13T02-01-14.json"
         ]
       },
       "learnings": {
-        "file_count": 480,
-        "line_count": 299104,
+        "file_count": 488,
+        "line_count": 313523,
         "files": [
           "AI_ML.md",
           "CLAUDE_AI_INVESTIGATION.md",
@@ -154,6 +155,7 @@
           "ISSUE_3965_COMPLETION_COMMENT.md",
           "ISSUE_SUMMARY_20251119.md",
           "MISSION_COMPLETE.md",
+          "MISSION_COMPLETE_idea124_nvidia_innovation.md",
           "OpenSource.md",
           "Other.md",
           "Performance.md",
@@ -175,8 +177,10 @@
           "agents_cloud_integration_research_report_idea86.md",
           "ai_agents_ecosystem_integration_proposal_20251124.md",
           "ai_agents_ecosystem_integration_proposal_20251211_idea104.md",
+          "ai_agents_ecosystem_integration_proposal_idea125_20251125.md",
           "ai_agents_emerging_theme_research_report_20251124.md",
           "ai_agents_emerging_theme_research_report_20251211_idea104.md",
+          "ai_agents_emerging_theme_research_report_idea125_20251125.md",
           "ai_agents_innovation_deep_dive_nov16_2025.md",
           "ai_ml_agents_investigation_20251116.md",
           "ai_ml_innovation_research_report_coach_master.md",
@@ -189,16 +193,13 @@
           "analysis_20251113_202801.json",
           "analysis_20251114_071139.json",
           "analysis_20251114_083243.json",
-          "analysis_20251114_132406.json",
-          "analysis_20251114_190931.json",
-          "analysis_20251114_202751.json",
-          "analysis_20251115_070942.json"
+          "analysis_20251114_132406.json"
         ]
       }
     },
     "files_by_type": {},
-    "total_files": 1948,
-    "total_lines": 787989
+    "total_files": 1966,
+    "total_lines": 805792
   },
   "dependencies": {
     "internal_imports": {
@@ -251,6 +252,7 @@
       "neural_workflow_adapter.py": [],
       "knowledge_graph_builder.py": [],
       "create_labels.py": [],
+      "self-improving-prompt-generator.py": [],
       "commit-strategy-learner.py": [],
       "repo-time-travel.py": [],
       "enhanced_subagent_spawner.py": [],
@@ -404,22 +406,22 @@
       "validation_utils.py": []
     },
     "external_imports": {
-      "os": 118,
+      "os": 119,
       "sys": 156,
-      "json": 172,
+      "json": 173,
       "re": 76,
       "ast": 18,
-      "datetime": 136,
-      "pathlib": 162,
-      "typing": 149,
+      "datetime": 137,
+      "pathlib": 163,
+      "typing": 150,
       "collections": 78,
       "functools": 9,
-      "argparse": 137,
+      "argparse": 138,
       "math": 13,
-      "random": 28,
+      "random": 29,
       "time": 31,
-      "statistics": 17,
-      "dataclasses": 82,
+      "statistics": 18,
+      "dataclasses": 83,
       "adaptive_workload_monitor": 2,
       "agent_coordinator": 1,
       "workload_subagent_spawner": 2,
@@ -431,7 +433,7 @@
       "subprocess": 29,
       "hashlib": 17,
       "traceback": 13,
-      "importlib": 24,
+      "importlib": 25,
       "csv": 1,
       "google": 1,
       "vertexai": 2,
@@ -446,6 +448,8 @@
       "fcntl": 2,
       "contextlib": 1,
       "issue_clustering_system": 1,
+      "prompt_learning_integration": 2,
+      "contextual_prompt_adapter": 1,
       "workload_monitor": 7,
       "intelligent_parent_selector": 2,
       "subagent_performance_learner": 2,
@@ -489,7 +493,6 @@
       "hierarchical_agent_system": 1,
       "psutil": 1,
       "abc": 1,
-      "prompt_learning_integration": 1,
       "prompt_reinforcement": 1,
       "logging": 1,
       "hmac": 1,
@@ -510,17 +513,17 @@
   },
   "metrics": {
     "total_components": 6,
-    "total_files": 1948,
-    "total_lines": 787989,
+    "total_files": 1966,
+    "total_lines": 805792,
     "total_dependencies": 2,
-    "external_libraries": 90,
-    "coupling_score": 5.2328623757195185e-05,
+    "external_libraries": 91,
+    "coupling_score": 5.179736869367036e-05,
     "complexity_score": 1.0
   },
   "components": {
     "learning_system": {
       "file_count": 46,
-      "line_count": 299104,
+      "line_count": 313523,
       "files": [
         "AI_ML.md",
         "CLAUDE_AI_INVESTIGATION.md",
@@ -533,6 +536,7 @@
         "ISSUE_3965_COMPLETION_COMMENT.md",
         "ISSUE_SUMMARY_20251119.md",
         "MISSION_COMPLETE.md",
+        "MISSION_COMPLETE_idea124_nvidia_innovation.md",
         "OpenSource.md",
         "Other.md",
         "Performance.md",
@@ -540,13 +544,12 @@
         "QUICK_REFERENCE.md",
         "README.md",
         "RESEARCH_REPORT.md",
-        "Security.md",
-        "Tools.md"
+        "Security.md"
       ]
     },
     "analysis_tools": {
-      "file_count": 8,
-      "line_count": 3712,
+      "file_count": 9,
+      "line_count": 4344,
       "files": [
         "architecture.mmd",
         "evolution.json",
@@ -555,12 +558,13 @@
         "snapshot_2025-12-11T02-08-26.json",
         "snapshot_2025-12-11T12-59-49.json",
         "snapshot_2025-12-12T02-08-02.json",
-        "snapshot_2025-12-12T12-57-02.json"
+        "snapshot_2025-12-12T12-57-02.json",
+        "snapshot_2025-12-13T02-01-14.json"
       ]
     },
     "documentation": {
       "file_count": 50,
-      "line_count": 315770,
+      "line_count": 317004,
       "files": [
         ".nojekyll",
         "01_overview.md",
@@ -586,7 +590,7 @@
     },
     "tools": {
       "file_count": 50,
-      "line_count": 169403,
+      "line_count": 170921,
       "files": [
         ".context.md",
         "AB_TESTING_README.md",
