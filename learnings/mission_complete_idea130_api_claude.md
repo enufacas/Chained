@@ -268,10 +268,10 @@ response = claude.messages.create(
    - Document learnings
 
 3. 📋 **Evaluate Success**
-   - Cost per mission < $0.50?
-   - Relevance scores improved?
-   - Zero security incidents?
-   - Time saved per mission?
+   - Cost per mission < $0.50
+   - Relevance scores improved
+   - Zero security incidents
+   - Time saved per mission
 
 ### Medium-Term Actions (Next Month) - If Phase 1 Successful
 

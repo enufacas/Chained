@@ -108,6 +108,8 @@
 
 **Costs (Annual):**
 
+*Note: Development costs estimated at ~$250/day (typical developer cost for estimation purposes)*
+
 | Phase | Development | API Usage | Maintenance | Total Annual |
 |-------|------------|-----------|-------------|--------------|
 | Phase 1 | 3 days ($750) | $50/month | 1 hr/month | $1,350 |
