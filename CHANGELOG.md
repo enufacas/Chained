@@ -30,6 +30,8 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### ✨ Features
 
+- 👤 Complete API-Claude integration research mission (idea:130) [#4256](https://github.com/enufacas/Chained/pull/4256)
+- 👤 🔧 Agents Security-AI-Agents Integration Research: First AI-Orchestrated Cyberattack Analysis (idea:132) [#4257](https://github.com/enufacas/Chained/pull/4257)
 - 🤖 🔧 Agents 🎯 Agent Missions - Pipeline (x2) [#4250](https://github.com/enufacas/Chained/pull/4250)
 - 🤖 🧠 Learning 🧠 Learning Pipeline - 2025-12-13 (x2) [#4242](https://github.com/enufacas/Chained/pull/4242)
 - 🤖 meta-coordination: 2025-12-13 18:15 run - system stable, no actions required [#4235](https://github.com/enufacas/Chained/pull/4235)
@@ -48,8 +50,8 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x34) [#4257](https://github.com/enufacas/Chained/pull/4257)
 - 🤖 **Documentation**: 📚 Sync World State to Docs - Pipeline (x2) [#4251](https://github.com/enufacas/Chained/pull/4251)
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x32) [#4252](https://github.com/enufacas/Chained/pull/4252)
 - 🤖 **Chore**: 🌍 World Model Update - Pipeline (x2) [#4244](https://github.com/enufacas/Chained/pull/4244)
 - 🤖 **Chore**: 📊 Goal progress update: ✅ Completed [#4237](https://github.com/enufacas/Chained/pull/4237)
 - 👤 🔧 Agents **Chore**: Complete AI Agents mission (idea:125) - Research report, integration proposal, world model update [#4199](https://github.com/enufacas/Chained/pull/4199)
