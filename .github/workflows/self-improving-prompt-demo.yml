@@ -1,0 +1,189 @@
+name: "AI: Self-Improving Prompt Generator Demo"
+
+# Demonstration workflow showing how to use the self-improving prompt generator
+# in GitHub Actions for automated issue assignment and prompt optimization.
+#
+# Created by @create-botter with systematic workflow design.
+
+on:
+  # Manual trigger for testing
+  workflow_dispatch:
+    inputs:
+      issue_number:
+        description: 'Issue number to generate prompt for'
+        required: true
+        type: string
+      agent_name:
+        description: 'Agent to assign (e.g., create-botter, engineer-master)'
+        required: false
+        default: 'create-botter'
+        type: string
+
+permissions:
+  issues: write
+  contents: read
+  pull-requests: write
+
+jobs:
+  generate-prompt:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      
+      - name: Get issue details
+        id: issue
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          issue_number="${{ inputs.issue_number }}"
+          
+          echo "📥 Fetching issue #$issue_number details..."
+          
+          # Get issue data
+          issue_data=$(gh api repos/${{ github.repository }}/issues/$issue_number)
+          
+          # Extract details
+          title=$(echo "$issue_data" | jq -r '.title')
+          body=$(echo "$issue_data" | jq -r '.body // ""')
+          labels=$(echo "$issue_data" | jq -r '.labels[].name' | paste -sd "," -)
+          
+          # Output to env vars
+          echo "title=$title" >> $GITHUB_OUTPUT
+          echo "body<<EOF" >> $GITHUB_OUTPUT
+          echo "$body" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+          echo "labels=$labels" >> $GITHUB_OUTPUT
+          
+          echo "✓ Issue details extracted"
+          echo "  Title: $title"
+          echo "  Labels: $labels"
+      
+      - name: Generate optimized prompt
+        id: generate
+        run: |
+          echo "🤖 Generating optimized prompt using self-improving system..."
+          
+          # Generate prompt using the orchestrator
+          output=$(python3 tools/self-improving-prompt-generator.py generate \
+            --issue "${{ inputs.issue_number }}" \
+            --title "${{ steps.issue.outputs.title }}" \
+            --body "${{ steps.issue.outputs.body }}" \
+            --labels "${{ steps.issue.outputs.labels }}" \
+            --agent "${{ inputs.agent_name }}" 2>&1)
+          
+          # Extract prompt ID and quality score
+          prompt_id=$(echo "$output" | grep "Generated prompt" | awk '{print $3}')
+          quality_score=$(echo "$output" | grep "Quality score" | awk '{print $3}')
+          learning_insights=$(echo "$output" | grep "Learning insights" | awk '{print $3}')
+          
+          # Extract the actual prompt (between === lines)
+          prompt_text=$(echo "$output" | sed -n '/^====/,/^====/p' | sed '1d;$d')
+          
+          echo "prompt_id=$prompt_id" >> $GITHUB_OUTPUT
+          echo "quality_score=$quality_score" >> $GITHUB_OUTPUT
+          echo "learning_insights=$learning_insights" >> $GITHUB_OUTPUT
+          
+          # Save prompt text to file
+          echo "$prompt_text" > /tmp/generated_prompt.md
+          
+          echo "✓ Prompt generated successfully"
+          echo "  Prompt ID: $prompt_id"
+          echo "  Quality Score: $quality_score"
+          echo "  Learning Insights Used: $learning_insights"
+      
+      - name: Display generated prompt
+        run: |
+          echo "📝 Generated Prompt:"
+          echo "=================="
+          cat /tmp/generated_prompt.md
+          echo "=================="
+      
+      - name: Comment on issue with prompt
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Create comment body
+          cat > /tmp/issue_comment.md <<'EOF'
+          ## 🤖 Optimized Prompt Generated
+          
+          The self-improving prompt generator has created an optimized prompt for **@${{ inputs.agent_name }}**:
+          
+          **Quality Score:** ${{ steps.generate.outputs.quality_score }}
+          **Learning Insights:** ${{ steps.generate.outputs.learning_insights }} recent insights integrated
+          **Prompt ID:** `${{ steps.generate.outputs.prompt_id }}`
+          
+          ---
+          
+          EOF
+          
+          # Append the generated prompt
+          cat /tmp/generated_prompt.md >> /tmp/issue_comment.md
+          
+          # Add footer
+          cat >> /tmp/issue_comment.md <<'EOF'
+          
+          ---
+          
+          **📊 How to provide feedback:**
+          
+          After this issue is resolved, record feedback to help the system improve:
+          
+          ```bash
+          python3 tools/self-improving-prompt-generator.py feedback \
+            --prompt-id "${{ steps.generate.outputs.prompt_id }}" \
+            --success true \
+            --resolution-time 24.0
+          ```
+          
+          This feedback enables continuous improvement of prompt quality!
+          
+          *Generated by the self-improving prompt generator - **@create-botter***
+          EOF
+          
+          # Post comment
+          gh issue comment "${{ inputs.issue_number }}" --body-file /tmp/issue_comment.md
+          
+          echo "✓ Posted optimized prompt to issue #${{ inputs.issue_number }}"
+      
+      - name: Generate performance summary
+        run: |
+          echo "📊 Current System Performance:"
+          echo "=============================="
+          
+          # Get performance report
+          python3 tools/self-improving-prompt-generator.py report 2>&1 | \
+            jq -r '
+              "Total Prompts Generated: \(.total_prompts_generated)",
+              "Total Feedback Received: \(.total_feedback_received)",
+              "",
+              "Overall Metrics:",
+              "  Success Rate: \((.overall_metrics.success_rate // 0) * 100)%",
+              "  Avg Resolution Time: \((.overall_metrics.avg_resolution_time_hours // 0))h",
+              "",
+              "Template Performance:",
+              (.templates | to_entries[] | "  \(.key): \((.value.success_rate // 0) * 100)% success (\(.value.total_uses) uses)")
+            ' 2>/dev/null || echo "No performance data yet - this is the first prompt!"
+      
+      - name: Summary
+        run: |
+          echo "✅ Demo Complete!"
+          echo ""
+          echo "What happened:"
+          echo "1. ✓ Fetched issue #${{ inputs.issue_number }} details"
+          echo "2. ✓ Generated optimized prompt with quality score ${{ steps.generate.outputs.quality_score }}"
+          echo "3. ✓ Integrated ${{ steps.generate.outputs.learning_insights }} learning insights"
+          echo "4. ✓ Posted prompt to issue as comment"
+          echo ""
+          echo "Next steps:"
+          echo "- Assign issue to **@${{ inputs.agent_name }}**"
+          echo "- Let agent work on the issue"
+          echo "- Record feedback after resolution"
+          echo "- System learns and improves!"
+          echo ""
+          echo "The self-improving prompt generator is working! 🚀"

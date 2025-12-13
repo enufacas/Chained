@@ -1,4 +1,16 @@
 {
+  "feature": {
+    "template_id": "feature_v1",
+    "template": "**@{agent_name}** - Implement new feature\n\n## \ud83c\udfaf Feature Request\n\n{issue_body}\n\n## \ud83d\udcdd Implementation Guidance\n\n1. **Design**: Plan the architecture and approach\n2. **Implement**: Build the feature with clean, maintainable code\n3. **Test**: Add comprehensive tests for the new functionality\n4. **Document**: Update documentation and add usage examples\n5. **Validate**: Ensure the feature works as expected\n\n## \u2705 Success Criteria\n\n- Feature works as specified\n- Tests cover edge cases\n- Documentation is clear\n- Code follows repository conventions",
+    "success_count": 0,
+    "total_uses": 2
+  },
+  "bug_fix": {
+    "template_id": "bug_fix_v1",
+    "template": "**@{agent_name}** - Fix bug\n\n## \ud83d\udc1b Bug Report\n\n{issue_body}\n\n## \ud83d\udd0d Debugging Steps\n\n1. **Reproduce**: Verify the bug exists and understand the conditions\n2. **Diagnose**: Identify the root cause\n3. **Fix**: Implement a targeted fix\n4. **Test**: Add tests to prevent regression\n5. **Verify**: Confirm the bug is resolved\n\n## \u26a0\ufe0f Important\n\n- Preserve existing functionality\n- Add regression tests\n- Document the fix if non-obvious",
+    "success_count": 1,
+    "total_uses": 1
+  },
   "bug_fix_systematic": {
     "template_id": "bug_fix_systematic",
     "category": "bug_fix",

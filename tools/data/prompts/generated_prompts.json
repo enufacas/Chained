@@ -1,0 +1,35 @@
+[
+  {
+    "prompt_id": "prompt_999_20251213_102149",
+    "prompt_text": "**@create-botter** - Implement new feature\n\n## \ud83c\udfaf Feature Request\n\nTesting the generator\n\n## \ud83d\udcdd Implementation Guidance\n\n1. **Design**: Plan the architecture and approach\n2. **Implement**: Build the feature with clean, maintainable code\n3. **Test**: Add comprehensive tests for the new functionality\n4. **Document**: Update documentation and add usage examples\n5. **Validate**: Ensure the feature works as expected\n\n## \u2705 Success Criteria\n\n- Feature works as specified\n- Tests cover edge cases\n- Documentation is clear\n- Code follows repository conventions\n\n## \ud83d\udca1 Recent Insights\n\nConsider these recent learnings when implementing:\n\n- **Elon $1T comp approved \ud83d\udcb0, Google TPUs threaten Nvidia \u26a1, agents from scratch \ud83d\udc68\u200d\ud83d\udcbb**: \n- **SoftBank dumps Nvidia \ud83d\udcb0, SpaceX GigaBay \ud83d\ude80, devtool integration \ud83d\udc68\u200d\ud83d\udcbb**: \n- **Apple Gemini deal terms \ud83d\udcb0, Amazon layoff turmoil \ud83d\udcbc, compiler targets \ud83d\udc68\u200d\ud83d\udcbb**: \n",
+    "template_id": "feature_v1",
+    "agent_name": "create-botter",
+    "category": "feature",
+    "quality_score": 0.45,
+    "generated_at": "2025-12-13T10:21:49.889779+00:00",
+    "learning_insights_used": 3,
+    "ab_test_variant": null
+  },
+  {
+    "prompt_id": "prompt_1001_20251213_102430",
+    "prompt_text": "**@create-botter** - Implement new feature\n\n## \ud83c\udfaf Feature Request\n\nImplement WebSocket-based real-time notifications for user events\n\n## \ud83d\udcdd Implementation Guidance\n\n1. **Design**: Plan the architecture and approach\n2. **Implement**: Build the feature with clean, maintainable code\n3. **Test**: Add comprehensive tests for the new functionality\n4. **Document**: Update documentation and add usage examples\n5. **Validate**: Ensure the feature works as expected\n\n## \u2705 Success Criteria\n\n- Feature works as specified\n- Tests cover edge cases\n- Documentation is clear\n- Code follows repository conventions\n\n## \ud83d\udca1 Recent Insights\n\nConsider these recent learnings when implementing:\n\n- **Elon $1T comp approved \ud83d\udcb0, Google TPUs threaten Nvidia \u26a1, agents from scratch \ud83d\udc68\u200d\ud83d\udcbb**: \n- **SoftBank dumps Nvidia \ud83d\udcb0, SpaceX GigaBay \ud83d\ude80, devtool integration \ud83d\udc68\u200d\ud83d\udcbb**: \n- **Apple Gemini deal terms \ud83d\udcb0, Amazon layoff turmoil \ud83d\udcbc, compiler targets \ud83d\udc68\u200d\ud83d\udcbb**: \n",
+    "template_id": "feature_v1",
+    "agent_name": "create-botter",
+    "category": "feature",
+    "quality_score": 0.45,
+    "generated_at": "2025-12-13T10:24:30.785425+00:00",
+    "learning_insights_used": 3,
+    "ab_test_variant": null
+  },
+  {
+    "prompt_id": "prompt_1002_20251213_102430",
+    "prompt_text": "**@secure-specialist** - Fix bug\n\n## \ud83d\udc1b Bug Report\n\nUsers are getting logged out after 5 minutes instead of 30 minutes\n\n## \ud83d\udd0d Debugging Steps\n\n1. **Reproduce**: Verify the bug exists and understand the conditions\n2. **Diagnose**: Identify the root cause\n3. **Fix**: Implement a targeted fix\n4. **Test**: Add tests to prevent regression\n5. **Verify**: Confirm the bug is resolved\n\n## \u26a0\ufe0f Important\n\n- Preserve existing functionality\n- Add regression tests\n- Document the fix if non-obvious\n\n## \ud83d\udca1 Recent Insights\n\nConsider these recent learnings when implementing:\n\n- **iPhone Air flops \ud83d\udcf1, Anthropic OpenAI financials leak \ud83d\udcb0, becoming a compiler engineer \ud83d\udc68\u200d\ud83d\udcbb**: \n- **Low cost MacBook \ud83d\udcbb, Google AI data centers \ud83d\udef0\ufe0f, inside xAI \ud83e\udd16**: \n- **Apple satellite features \ud83d\udef0\ufe0f, inside Cursor \ud83d\udc68\u200d\ud83d\udcbb, becoming full stack \ud83d\udcbc\u00a0**: \n",
+    "template_id": "bug_fix_v1",
+    "agent_name": "secure-specialist",
+    "category": "bug_fix",
+    "quality_score": 0.45,
+    "generated_at": "2025-12-13T10:24:30.787057+00:00",
+    "learning_insights_used": 3,
+    "ab_test_variant": null
+  }
+]
