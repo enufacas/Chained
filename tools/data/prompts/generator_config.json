@@ -1,0 +1,8 @@
+{
+  "ab_testing_enabled": true,
+  "ab_test_traffic_split": 0.2,
+  "learning_refresh_interval_hours": 24,
+  "quality_threshold": 0.6,
+  "auto_improve_enabled": true,
+  "last_learning_refresh": "2025-12-13T10:21:49.889333+00:00"
+}

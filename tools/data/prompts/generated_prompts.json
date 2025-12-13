@@ -1,0 +1,13 @@
+[
+  {
+    "prompt_id": "prompt_999_20251213_102149",
+    "prompt_text": "**@create-botter** - Implement new feature\n\n## \ud83c\udfaf Feature Request\n\nTesting the generator\n\n## \ud83d\udcdd Implementation Guidance\n\n1. **Design**: Plan the architecture and approach\n2. **Implement**: Build the feature with clean, maintainable code\n3. **Test**: Add comprehensive tests for the new functionality\n4. **Document**: Update documentation and add usage examples\n5. **Validate**: Ensure the feature works as expected\n\n## \u2705 Success Criteria\n\n- Feature works as specified\n- Tests cover edge cases\n- Documentation is clear\n- Code follows repository conventions\n\n## \ud83d\udca1 Recent Insights\n\nConsider these recent learnings when implementing:\n\n- **Elon $1T comp approved \ud83d\udcb0, Google TPUs threaten Nvidia \u26a1, agents from scratch \ud83d\udc68\u200d\ud83d\udcbb**: \n- **SoftBank dumps Nvidia \ud83d\udcb0, SpaceX GigaBay \ud83d\ude80, devtool integration \ud83d\udc68\u200d\ud83d\udcbb**: \n- **Apple Gemini deal terms \ud83d\udcb0, Amazon layoff turmoil \ud83d\udcbc, compiler targets \ud83d\udc68\u200d\ud83d\udcbb**: \n",
+    "template_id": "feature_v1",
+    "agent_name": "create-botter",
+    "category": "feature",
+    "quality_score": 0.45,
+    "generated_at": "2025-12-13T10:21:49.889779+00:00",
+    "learning_insights_used": 3,
+    "ab_test_variant": null
+  }
+]
