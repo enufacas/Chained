@@ -661,7 +661,7 @@ def main():
     
     # Feedback command args
     parser.add_argument("--prompt-id", help="Prompt ID for feedback")
-    parser.add_argument("--success", type=bool, help="Was prompt successful")
+    parser.add_argument("--success", choices=['true', 'false'], help="Was prompt successful (true/false)")
     parser.add_argument("--resolution-time", type=float, help="Resolution time in hours")
     
     args = parser.parse_args()
@@ -692,13 +692,16 @@ def main():
         print("="*70)
     
     elif args.command == "feedback":
-        if not all([args.prompt_id, args.success is not None, args.resolution_time]):
+        if not all([args.prompt_id, args.success, args.resolution_time]):
             print("Error: --prompt-id, --success, and --resolution-time required")
             return 1
         
+        # Convert string to bool
+        success = args.success.lower() == 'true'
+        
         feedback = PromptFeedback(
             prompt_id=args.prompt_id,
-            success=args.success,
+            success=success,
             resolution_time_hours=args.resolution_time
         )
         
