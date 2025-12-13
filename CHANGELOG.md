@@ -30,6 +30,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### ✨ Features
 
+- 👤 🏗️ Infrastructure Complete cloud infrastructure learning mission (idea:127) - @cloud-architect [#4201](https://github.com/enufacas/Chained/pull/4201)
 - 🤖 🔧 Agents 🎯 Agent Missions - Pipeline [#4193](https://github.com/enufacas/Chained/pull/4193)
 - 🤖 🧠 Learning 🧠 Learning Pipeline - 2025-12-13 [#4184](https://github.com/enufacas/Chained/pull/4184)
 - 🤖 🔧 Agents meta-coordination: 2025-12-13 06:17 - system stable, all agents assigned [#4177](https://github.com/enufacas/Chained/pull/4177)
@@ -37,8 +38,8 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x13) [#4203](https://github.com/enufacas/Chained/pull/4203)
 - 🤖 **Documentation**: 📚 Sync World State to Docs - Pipeline [#4195](https://github.com/enufacas/Chained/pull/4195)
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x11) [#4194](https://github.com/enufacas/Chained/pull/4194)
 - 🤖 **Chore**: 🌍 World Model Update - Pipeline [#4186](https://github.com/enufacas/Chained/pull/4186)
 - 🤖 **Chore**: meta-coordination: 2025-12-13 04:17 run - system assessment and memory update [#4173](https://github.com/enufacas/Chained/pull/4173)
 
@@ -277,7 +278,6 @@ This changelog excludes automated data syncs and routine maintenance commits.
 - 👤 Complete AI-Native Control Plane Phase 5 MVP with end-to-end examples [#3666](https://github.com/enufacas/Chained/pull/3666)
 - 👤 AI-Native Control Plane Phase 4: Execution layer skeleton services [#3662](https://github.com/enufacas/Chained/pull/3662)
 - 👤 🔧 Agents Phase 3: AI-Native Control Plane agent design (LangChain tools + LangGraph orchestration) [#3658](https://github.com/enufacas/Chained/pull/3658)
-- 🤖 🧠 Learning 🧠 Learn from GitHub Copilot sources - 2025-12-06 [#3647](https://github.com/enufacas/Chained/pull/3647)
 
 ### 🐛 Bug Fixes
 
