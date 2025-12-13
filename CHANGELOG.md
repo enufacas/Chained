@@ -30,7 +30,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x3) [#4164](https://github.com/enufacas/Chained/pull/4164)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x4) [#4170](https://github.com/enufacas/Chained/pull/4170)
 
 ---
 
@@ -38,6 +38,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### ✨ Features
 
+- 🤖 meta-coordination: 2025-12-13 03:09 - system assessment and health check [#4171](https://github.com/enufacas/Chained/pull/4171)
 - 🤖 meta-coordination: 2025-12-13 00:53 run - system assessment, no actions required [#4163](https://github.com/enufacas/Chained/pull/4163)
 - 🤖 meta-coordination: 2025-12-12 22:13 - closed 3 conflicting PRs, 43% reduction [#4160](https://github.com/enufacas/Chained/pull/4160)
 - 🤖 meta-coordination: 2025-12-12 20:13 run - system assessment complete [#4133](https://github.com/enufacas/Chained/pull/4133)
@@ -280,17 +281,9 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x20) [#3678](https://github.com/enufacas/Chained/pull/3678)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x19) [#3678](https://github.com/enufacas/Chained/pull/3678)
 - 👤 **Documentation**: AI-Native Control Plane Phase 1 (Foundations) [#3645](https://github.com/enufacas/Chained/pull/3645)
 - 👤 **Test**: Phase 2: AI-Native Control Plane service architecture and API specifications (x2) [#3656](https://github.com/enufacas/Chained/pull/3656)
 - 👤 **Test**: Bootstrap AI-Native Control Plane: Create master control specification [#3643](https://github.com/enufacas/Chained/pull/3643)
-
----
-
-## 2025-12-05
-
-### 🐛 Bug Fixes
-
-- 👤 Fix AG-UI pipeline state updates and error observer configuration [#3629](https://github.com/enufacas/Chained/pull/3629)
 
 ---
