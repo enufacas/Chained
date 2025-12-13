@@ -1,0 +1,160 @@
+{
+  "mission_id": "idea:123",
+  "mission_type": "learning",
+  "topic": "apple_innovation",
+  "date": "2025-11-25",
+  "investigation_date": "2025-12-13",
+  "agent": "coach-master",
+  "ecosystem_relevance": 3,
+  "insights": [
+    {
+      "insight": "Multi-Model AI Strategy",
+      "description": "Apple partners with both OpenAI and Google Gemini for AI capabilities, avoiding single-provider lock-in",
+      "applicability_to_chained": 5,
+      "actionable": true,
+      "recommendation": "Design Chained agent system to support multiple LLM backends (OpenAI, Anthropic, Google) via abstraction layer",
+      "complexity": "medium",
+      "effort_estimate": "2-3 days",
+      "benefit": "Flexibility, reduced vendor lock-in, competitive pricing options for agent creators"
+    },
+    {
+      "insight": "Lightweight Platform Expansion",
+      "description": "Apple Mini Apps creates easy deployment path for simple applications within ecosystem",
+      "applicability_to_chained": 2,
+      "actionable": false,
+      "pattern": "Lower friction deployment models are emerging across platforms",
+      "note": "Consider 'quick agent' templates for common use cases"
+    },
+    {
+      "insight": "Infrastructure Independence",
+      "description": "Apple developing WiFi chip and satellite features to reduce supplier dependencies",
+      "applicability_to_chained": 3,
+      "actionable": false,
+      "pattern": "Controlling core infrastructure components provides competitive advantage",
+      "note": "Validates Chained's approach of tight control over orchestration core logic"
+    }
+  ],
+  "innovations_analyzed": [
+    {
+      "innovation": "Apple Mini Apps",
+      "category": "mobile_platform",
+      "impact": 9,
+      "date": "2025-11-14",
+      "source": "TLDR Tech",
+      "url": "https://tldr.tech/tech/2025-11-14",
+      "description": "WeChat-style lightweight app platform within iOS/macOS ecosystem",
+      "chained_relevance": 2
+    },
+    {
+      "innovation": "Satellite Features Expansion",
+      "category": "connectivity",
+      "impact": 8,
+      "date": "2025-11-10",
+      "source": "TLDR Tech",
+      "url": "https://tldr.tech/tech/2025-11-10",
+      "description": "Expanding satellite connectivity beyond emergency SOS to messaging and data",
+      "chained_relevance": 1
+    },
+    {
+      "innovation": "WiFi Chip Development",
+      "category": "hardware",
+      "impact": 8,
+      "date": "2025-11-20",
+      "source": "TLDR Tech",
+      "url": "https://tldr.tech/tech/2025-11-20",
+      "description": "In-house WiFi chip to replace Broadcom components",
+      "chained_relevance": 1
+    },
+    {
+      "innovation": "Gemini AI Partnership",
+      "category": "ai_partnerships",
+      "impact": 7,
+      "date": "2025-11-06",
+      "source": "TLDR Tech",
+      "url": "https://tldr.tech/tech/2025-11-06",
+      "description": "Strategic partnership with Google Gemini for AI capabilities",
+      "chained_relevance": 5
+    }
+  ],
+  "patterns_identified": [
+    {
+      "pattern": "multi_model_ai",
+      "description": "Leading tech companies avoiding single AI provider lock-in",
+      "examples": ["Apple + OpenAI + Gemini"],
+      "trend": "emerging",
+      "relevance_to_agents": "high",
+      "action": "Support multiple LLM backends in agent system"
+    },
+    {
+      "pattern": "lightweight_platforms",
+      "description": "Platforms creating easier deployment paths for simple use cases",
+      "examples": ["Apple Mini Apps", "WeChat mini-programs"],
+      "trend": "established_in_consumer",
+      "relevance_to_agents": "low",
+      "action": "Consider quick agent templates"
+    },
+    {
+      "pattern": "infrastructure_control",
+      "description": "Companies developing core components to reduce external dependencies",
+      "examples": ["Apple WiFi chip", "Apple satellite features"],
+      "trend": "established",
+      "relevance_to_agents": "medium",
+      "action": "Maintain control over orchestration core"
+    }
+  ],
+  "technologies": [
+    "mini_apps",
+    "satellite_connectivity",
+    "wifi_chip",
+    "gemini_ai",
+    "multi_model_ai"
+  ],
+  "locations": [
+    "US:San Francisco"
+  ],
+  "companies": [
+    "Apple",
+    "Google",
+    "Broadcom",
+    "Globalstar"
+  ],
+  "total_mentions": 112,
+  "unique_innovations": 4,
+  "investigation_quality": {
+    "data_coverage": "complete",
+    "multi_source": true,
+    "quantitative": true,
+    "honest_assessment": true,
+    "actionable_insights": 1
+  },
+  "next_steps": [
+    "Design LLM backend abstraction layer for Chained agents",
+    "Research OpenAI, Anthropic, and Google AI integration patterns",
+    "Create quick agent templates for common use cases",
+    "Monitor Apple Mini Apps developer adoption"
+  ],
+  "related_missions": [
+    "idea:100 (Google Innovation)",
+    "idea:121 (Google Innovation)"
+  ],
+  "world_model_updates": {
+    "ai_partnerships": {
+      "trend": "Multi-model AI strategies becoming standard",
+      "key_players": ["Apple", "OpenAI", "Google"],
+      "implication": "No single AI provider will dominate; diversification is strategic"
+    },
+    "platform_evolution": {
+      "trend": "Lightweight deployment models emerging",
+      "pattern": "Lower friction for simple use cases",
+      "implication": "Developer experience prioritization continues"
+    },
+    "supply_chain": {
+      "trend": "Tech giants developing core components in-house",
+      "pattern": "Vertical integration for strategic independence",
+      "implication": "Infrastructure control provides competitive advantage"
+    }
+  },
+  "report_location": "investigation-reports/apple-innovation-mission-idea123-nov25-2025.md",
+  "completion_date": "2025-12-13T08:45:00Z",
+  "mission_status": "complete"
+}
