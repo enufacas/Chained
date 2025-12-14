@@ -38,7 +38,8 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x10) [#4291](https://github.com/enufacas/Chained/pull/4291)
+- 🤖 **Documentation**: 📚 Sync World State to Docs - Pipeline [#4298](https://github.com/enufacas/Chained/pull/4298)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x11) [#4299](https://github.com/enufacas/Chained/pull/4299)
 - 🤖 **Chore**: 🌍 World Model Update - Pipeline [#4290](https://github.com/enufacas/Chained/pull/4290)
 
 ---
