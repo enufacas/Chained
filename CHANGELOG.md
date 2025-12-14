@@ -30,6 +30,8 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### ✨ Features
 
+- 👤 🔧 Tools Complete TypeScript languages mission (idea:140) - Learning deliverables [#4359](https://github.com/enufacas/Chained/pull/4359)
+- 👤 Complete AI/ML mission idea:141 - Nov 26 2025 trends analysis [#4360](https://github.com/enufacas/Chained/pull/4360)
 - 👤 🔧 Agents Complete AI/ML Agents mission (idea:142) - Research and integration proposals [#4362](https://github.com/enufacas/Chained/pull/4362)
 - 🤖 🔧 Agents 🎯 Agent Missions - Pipeline (x2) [#4354](https://github.com/enufacas/Chained/pull/4354)
 - 🤖 🧠 Learning 🧠 Learning Pipeline - 2025-12-14 (x2) [#4345](https://github.com/enufacas/Chained/pull/4345)
@@ -48,7 +50,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x32) [#4361](https://github.com/enufacas/Chained/pull/4361)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x34) [#4360](https://github.com/enufacas/Chained/pull/4360)
 - 🤖 **Documentation**: 📚 Sync World State to Docs - Pipeline (x2) [#4355](https://github.com/enufacas/Chained/pull/4355)
 - 🤖 **Chore**: 🌍 World Model Update - Pipeline (x2) [#4347](https://github.com/enufacas/Chained/pull/4347)
 - 🤖 **Chore**: 📊 Goal progress update: ✅ Completed [#4340](https://github.com/enufacas/Chained/pull/4340)
