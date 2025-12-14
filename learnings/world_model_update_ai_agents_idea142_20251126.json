@@ -1,0 +1,366 @@
+{
+  "mission_id": "idea:142",
+  "mission_title": "AI/ML: Agents (2025-11-26)",
+  "update_date": "2025-12-14T20:35:00Z",
+  "investigation_date": "2025-11-26",
+  "ecosystem_relevance": 7,
+  "relevance_category": "high",
+  
+  "geographic_data": [
+    {
+      "location": "San Francisco, CA, USA",
+      "coordinates": {
+        "latitude": 37.7749,
+        "longitude": -122.4194
+      },
+      "significance": "Primary AI agent innovation hub",
+      "key_developments": [
+        "Cursor $29B valuation - validates agent-first development economics",
+        "OpenAI ChatGPT Group Chats - multi-agent consumer collaboration",
+        "Anthropic Claude agents - MCP protocol adoption"
+      ],
+      "ecosystem_advantages": [
+        "Concentration of AI talent",
+        "Venture capital access",
+        "Proximity to major tech companies",
+        "Early adopter market"
+      ],
+      "companies_present": [
+        "Cursor (AI coding agents)",
+        "OpenAI (ChatGPT)",
+        "Anthropic (Claude)",
+        "Apple (nearby Cupertino)"
+      ]
+    },
+    {
+      "location": "Redmond, WA, USA",
+      "coordinates": {
+        "latitude": 47.6740,
+        "longitude": -122.1215
+      },
+      "significance": "Enterprise AI agent infrastructure",
+      "key_developments": [
+        "Microsoft GitHub Copilot ecosystem",
+        "Azure AI agent services",
+        "Enterprise-grade agent deployment"
+      ],
+      "ecosystem_advantages": [
+        "Enterprise customer base",
+        "Cloud infrastructure (Azure)",
+        "GitHub integration",
+        "Developer tools expertise"
+      ],
+      "companies_present": [
+        "Microsoft (GitHub, Azure)",
+        "Amazon (nearby Seattle)"
+      ]
+    }
+  ],
+  
+  "technology_data": [
+    {
+      "name": "agents",
+      "category": "AI/ML",
+      "mention_count": 615,
+      "trend_direction": "up",
+      "momentum_score": 85.0,
+      "maturity_level": "maturing",
+      "sources": [
+        "Hacker News",
+        "TLDR",
+        "GitHub Trending"
+      ],
+      "key_developments": [
+        {
+          "development": "Cursor $29B Valuation",
+          "significance": "Market validation of agent-first development tools",
+          "impact": "Proves economic viability of AI coding agents at scale"
+        },
+        {
+          "development": "ChatGPT Group Chats",
+          "significance": "Multi-agent collaboration for end users",
+          "impact": "Mainstream adoption of multi-agent systems"
+        },
+        {
+          "development": "SIMA 2 Release",
+          "significance": "Embodied agents in 3D virtual worlds",
+          "impact": "Transition from research to production deployment"
+        },
+        {
+          "development": "RL Environment Growth",
+          "significance": "Scalable agent training infrastructure",
+          "impact": "Enables continuous agent improvement"
+        },
+        {
+          "development": "ElevenLabs Scribe v2",
+          "significance": "Voice-first agent interfaces",
+          "impact": "Natural language agent interaction"
+        }
+      ],
+      "architectural_patterns": [
+        "Agent-first development (Cursor pattern)",
+        "Multi-agent coordination (ChatGPT Groups pattern)",
+        "Edge-first processing (Apple satellite pattern)",
+        "Embodied agent reasoning (SIMA 2 pattern)",
+        "Continuous training (RL environment pattern)"
+      ],
+      "best_practices": [
+        "Deep contextual understanding beats shallow assistance",
+        "Multi-agent collaboration should be invisible to users",
+        "Edge-first architecture improves privacy and performance",
+        "Agents need environmental awareness to be effective",
+        "Training infrastructure critical for agent evolution"
+      ]
+    },
+    {
+      "name": "cursor",
+      "category": "Development Tools",
+      "mention_count": 25,
+      "trend_direction": "up",
+      "momentum_score": 95.0,
+      "maturity_level": "production",
+      "valuation": "$29B",
+      "significance": "AI coding agent achieving massive market validation",
+      "key_insights": [
+        "Context-aware agents create 10x value over simple autocomplete",
+        "Multi-file coordination essential for complex refactoring",
+        "Proactive suggestions more valuable than reactive responses",
+        "Codebase-wide understanding enables intelligent decisions"
+      ]
+    },
+    {
+      "name": "chatgpt_group_chats",
+      "category": "AI/ML",
+      "mention_count": 8,
+      "trend_direction": "up",
+      "momentum_score": 90.0,
+      "maturity_level": "emerging",
+      "significance": "Multi-agent collaboration for consumers",
+      "key_insights": [
+        "Multi-agent orchestration becoming mainstream",
+        "Coordination complexity must be hidden from users",
+        "Specialized agents more effective than generalists",
+        "Shared context enables agent collaboration"
+      ]
+    },
+    {
+      "name": "sima_2",
+      "category": "AI/ML",
+      "mention_count": 5,
+      "trend_direction": "up",
+      "momentum_score": 88.0,
+      "maturity_level": "emerging",
+      "significance": "Embodied agents in virtual 3D worlds",
+      "key_insights": [
+        "Embodied agents transitioning from research to production",
+        "Environmental awareness critical for agent effectiveness",
+        "Real-time learning enables adaptation",
+        "Goal-oriented behavior more useful than scripted actions"
+      ]
+    },
+    {
+      "name": "apple_satellite_features",
+      "category": "Edge AI",
+      "mention_count": 12,
+      "trend_direction": "up",
+      "momentum_score": 85.0,
+      "maturity_level": "emerging",
+      "significance": "Edge AI with satellite communication",
+      "key_insights": [
+        "Edge-first architecture validates local processing priority",
+        "Privacy preserved through on-device computation",
+        "Satellite provides global availability fallback",
+        "Hierarchical processing: local → edge → cloud"
+      ]
+    }
+  ],
+  
+  "industry_trends": [
+    {
+      "trend": "Agent-First Economics",
+      "description": "Shift from AI-as-feature to agents-as-products",
+      "evidence": "Cursor $29B valuation, ChatGPT Group Chats launch",
+      "timeline": "Accelerating 2025-2026",
+      "impact_on_chained": "Validates Chained's agent-first architecture"
+    },
+    {
+      "trend": "Multi-Agent Mainstream",
+      "description": "Multi-agent collaboration becoming standard UX",
+      "evidence": "ChatGPT Groups, notion agents, widespread adoption",
+      "timeline": "Rapid adoption 2025",
+      "impact_on_chained": "Opportunity to improve multi-agent UX"
+    },
+    {
+      "trend": "Edge AI Acceleration",
+      "description": "Processing moving to devices and edge nodes",
+      "evidence": "Apple satellite features, on-device models",
+      "timeline": "Growing 2025-2026",
+      "impact_on_chained": "Consider local agent execution"
+    },
+    {
+      "trend": "Embodied AI Maturity",
+      "description": "Agents understanding and acting in environments",
+      "evidence": "SIMA 2 production release",
+      "timeline": "Transitioning to production 2025",
+      "impact_on_chained": "Infrastructure-aware agents analogous to embodied agents"
+    },
+    {
+      "trend": "Continuous Agent Learning",
+      "description": "RL infrastructure enabling agent evolution",
+      "evidence": "RL environment growth mentions",
+      "timeline": "Infrastructure maturing 2025",
+      "impact_on_chained": "Future opportunity for agent self-improvement"
+    }
+  ],
+  
+  "integration_recommendations": [
+    {
+      "integration": "Codebase-Aware Agent Context System",
+      "priority": "CRITICAL",
+      "complexity": "medium",
+      "effort_estimate": "3-4 weeks",
+      "expected_benefit": "40% improvement in agent decision quality",
+      "inspiration": "Cursor's $29B valuation validates deep context",
+      "risk_level": "low-medium",
+      "dependencies": []
+    },
+    {
+      "integration": "Consumer-Grade Multi-Agent UX",
+      "priority": "HIGH",
+      "complexity": "medium",
+      "effort_estimate": "3 weeks",
+      "expected_benefit": "50% improvement in user satisfaction",
+      "inspiration": "ChatGPT Group Chats hides multi-agent complexity",
+      "risk_level": "low",
+      "dependencies": []
+    },
+    {
+      "integration": "Edge-First Agent Architecture",
+      "priority": "MEDIUM",
+      "complexity": "medium-high",
+      "effort_estimate": "4-6 weeks",
+      "expected_benefit": "30% cost reduction, 5x latency improvement",
+      "inspiration": "Apple satellite validates edge-first approach",
+      "risk_level": "medium",
+      "dependencies": []
+    },
+    {
+      "integration": "Agent Training Pipeline",
+      "priority": "FUTURE",
+      "complexity": "high",
+      "effort_estimate": "8-12 weeks",
+      "expected_benefit": "Continuous agent improvement",
+      "inspiration": "RL environment growth enables evolution",
+      "risk_level": "medium-high",
+      "dependencies": ["Codebase-Aware Context"]
+    }
+  ],
+  
+  "total_implementation_timeline": {
+    "priority_integrations": "8-12 weeks",
+    "all_integrations": "20-30 weeks",
+    "recommended_approach": "Sequential: Context → UX → Edge → Training"
+  },
+  
+  "quantitative_metrics": {
+    "total_learnings_analyzed": 10480,
+    "agent_mentions": 615,
+    "ai_general_mentions": 1920,
+    "gpt_mentions": 845,
+    "claude_mentions": 377,
+    "analysis_date": "2025-11-26",
+    "hot_themes_ranking": ["ai-agents", "go-specialist", "cloud-infrastructure"],
+    "agent_percentage_of_ai_mentions": 32
+  },
+  
+  "historical_context": {
+    "related_missions": [
+      "idea:125 - AI Agents Emerging Theme (Nov 25, 2025)",
+      "idea:104 - AI Agents Deep Dive (Dec 2025)",
+      "idea:83 - AI Agents Emerging Theme (Earlier)"
+    ],
+    "evolution": "November 26 shows maturation from research (SIMA 1) to production (SIMA 2), consumer adoption (ChatGPT Groups), and massive market validation (Cursor $29B)"
+  },
+  
+  "future_considerations": [
+    "Agent specialization will increase (more domain-specific agents)",
+    "Edge processing will become default (privacy and performance)",
+    "Multi-agent systems will be standard (not advanced feature)",
+    "Continuous learning will enable agent evolution",
+    "Embodied agents will expand beyond virtual worlds to infrastructure"
+  ],
+  
+  "competitive_landscape": {
+    "leaders": [
+      {
+        "company": "Cursor",
+        "valuation": "$29B",
+        "focus": "AI coding agents",
+        "differentiation": "Deep codebase context"
+      },
+      {
+        "company": "OpenAI",
+        "product": "ChatGPT",
+        "focus": "Multi-agent collaboration",
+        "differentiation": "Consumer-grade UX"
+      },
+      {
+        "company": "Google DeepMind",
+        "product": "SIMA 2",
+        "focus": "Embodied agents",
+        "differentiation": "3D world understanding"
+      },
+      {
+        "company": "Apple",
+        "product": "Satellite Features",
+        "focus": "Edge AI",
+        "differentiation": "Privacy-first, global availability"
+      }
+    ],
+    "market_dynamics": "Consolidation around agent platforms, not individual agent tools"
+  },
+  
+  "chained_positioning": {
+    "strengths": [
+      "Already multi-agent (ahead of curve)",
+      "Autonomous coordination (unique)",
+      "Performance tracking (differentiator)",
+      "Open ecosystem (vs closed platforms)"
+    ],
+    "opportunities": [
+      "Deep context system (Cursor pattern)",
+      "Consumer-grade UX (ChatGPT pattern)",
+      "Edge processing (Apple pattern)",
+      "Infrastructure embodiment (SIMA pattern)"
+    ],
+    "gaps": [
+      "Limited contextual awareness",
+      "Complex multi-agent UX",
+      "Cloud-only architecture",
+      "Static agents (no learning)"
+    ]
+  },
+  
+  "success_criteria": {
+    "agent_effectiveness": {
+      "decision_quality": "+40% improvement",
+      "breaking_changes": "<1% of PRs",
+      "context_awareness": "100% of agents"
+    },
+    "user_experience": {
+      "satisfaction": "+50% improvement",
+      "onboarding_time": "<10 minutes",
+      "perceived_complexity": "Simple (80%+ users)"
+    },
+    "performance": {
+      "simple_task_latency": "<100ms",
+      "cloud_cost_reduction": "-30%",
+      "agent_throughput": "+100%"
+    },
+    "system_quality": {
+      "coordination_success": "95%+",
+      "task_completion": "90%+",
+      "multi_agent_clarity": "95%+"
+    }
+  }
+}
