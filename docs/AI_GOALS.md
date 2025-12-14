@@ -4,11 +4,16 @@ This page tracks the daily goals set by the AI system and progress towards achie
 
 ## Current Goal
 
-**Date**: 2025-12-13  
-**Goal**: Reduce technical debt by 5 items  
+**Date**: 2025-12-14  
+**Goal**: Increase agent success rate to 25%  
 **Status**: 🔄 In Progress
 
 ## Goal History
+
+### 2025-12-14
+- **Goal**: Increase agent success rate to 25%
+- **Status**: 🔄 In Progress
+
 
 ### 2025-12-13
 - **Goal**: Reduce technical debt by 5 items
