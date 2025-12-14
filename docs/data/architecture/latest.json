@@ -1,11 +1,11 @@
 {
-  "timestamp": "2025-12-14T02:20:22.585773",
-  "commit": "d79da356ab368e27e8034a5d71f2244d466c207e",
+  "timestamp": "2025-12-14T12:51:49.246648",
+  "commit": "266fb3d3c09f8813f6127e7a6eb8298352db440f",
   "structure": {
     "directories": {
       "tools": {
-        "file_count": 432,
-        "line_count": 170921,
+        "file_count": 433,
+        "line_count": 171587,
         "files": [
           ".context.md",
           "AB_TESTING_README.md",
@@ -60,8 +60,8 @@
         ]
       },
       "docs": {
-        "file_count": 1038,
-        "line_count": 317491,
+        "file_count": 1041,
+        "line_count": 319271,
         "files": [
           ".nojekyll",
           "01_overview.md",
@@ -126,8 +126,8 @@
         "files": []
       },
       "analysis": {
-        "file_count": 10,
-        "line_count": 4982,
+        "file_count": 11,
+        "line_count": 5620,
         "files": [
           "architecture.mmd",
           "evolution.json",
@@ -138,12 +138,13 @@
           "snapshot_2025-12-12T02-08-02.json",
           "snapshot_2025-12-12T12-57-02.json",
           "snapshot_2025-12-13T02-01-14.json",
-          "snapshot_2025-12-13T12-51-39.json"
+          "snapshot_2025-12-13T12-51-39.json",
+          "snapshot_2025-12-14T02-20-22.json"
         ]
       },
       "learnings": {
-        "file_count": 494,
-        "line_count": 316675,
+        "file_count": 505,
+        "line_count": 332751,
         "files": [
           "AI_ML.md",
           "CLAUDE_AI_INVESTIGATION.md",
@@ -199,8 +200,8 @@
       }
     },
     "files_by_type": {},
-    "total_files": 1974,
-    "total_lines": 810069
+    "total_files": 1990,
+    "total_lines": 829229
   },
   "dependencies": {
     "internal_imports": {
@@ -350,6 +351,7 @@
       "demo_prompt_reinforcement.py": [],
       "fetch-github-copilot.py": [],
       "intelligent-content-parser.py": [],
+      "ai_spawning_orchestrator.py": [],
       "api_call_batcher.py": [],
       "example_self_documenting_ai.py": [],
       "archaeology-learner.py": [],
@@ -408,21 +410,21 @@
     },
     "external_imports": {
       "os": 119,
-      "sys": 156,
-      "json": 173,
+      "sys": 157,
+      "json": 174,
       "re": 76,
       "ast": 18,
-      "datetime": 137,
-      "pathlib": 163,
-      "typing": 150,
+      "datetime": 138,
+      "pathlib": 164,
+      "typing": 151,
       "collections": 78,
       "functools": 9,
-      "argparse": 138,
+      "argparse": 139,
       "math": 13,
       "random": 29,
       "time": 31,
       "statistics": 18,
-      "dataclasses": 83,
+      "dataclasses": 84,
       "adaptive_workload_monitor": 2,
       "agent_coordinator": 1,
       "workload_subagent_spawner": 2,
@@ -445,15 +447,15 @@
       "heapq": 1,
       "rl_resource_optimizer": 2,
       "workflow_execution_tracker": 2,
-      "registry_manager": 13,
+      "registry_manager": 14,
       "fcntl": 2,
       "contextlib": 1,
       "issue_clustering_system": 1,
       "prompt_learning_integration": 2,
       "contextual_prompt_adapter": 1,
-      "workload_monitor": 7,
-      "intelligent_parent_selector": 2,
-      "subagent_performance_learner": 2,
+      "workload_monitor": 8,
+      "intelligent_parent_selector": 3,
+      "subagent_performance_learner": 3,
       "autonomous_issue_prioritizer": 1,
       "hn_code_generator": 1,
       "unsupervised_pattern_learner": 5,
@@ -487,6 +489,7 @@
       "flask_cors": 1,
       "lazy_evaluation_system": 1,
       "unicodedata": 1,
+      "logging": 2,
       "queue": 1,
       "sqlite3": 1,
       "zipfile": 1,
@@ -495,7 +498,6 @@
       "psutil": 1,
       "abc": 1,
       "prompt_reinforcement": 1,
-      "logging": 1,
       "hmac": 1,
       "inspect": 1
     },
@@ -514,17 +516,17 @@
   },
   "metrics": {
     "total_components": 6,
-    "total_files": 1974,
-    "total_lines": 810069,
+    "total_files": 1990,
+    "total_lines": 829229,
     "total_dependencies": 2,
     "external_libraries": 91,
-    "coupling_score": 5.179736869367036e-05,
+    "coupling_score": 5.1274162949289855e-05,
     "complexity_score": 1.0
   },
   "components": {
     "learning_system": {
       "file_count": 46,
-      "line_count": 316675,
+      "line_count": 332751,
       "files": [
         "AI_ML.md",
         "CLAUDE_AI_INVESTIGATION.md",
@@ -549,8 +551,8 @@
       ]
     },
     "analysis_tools": {
-      "file_count": 10,
-      "line_count": 4982,
+      "file_count": 11,
+      "line_count": 5620,
       "files": [
         "architecture.mmd",
         "evolution.json",
@@ -561,12 +563,13 @@
         "snapshot_2025-12-12T02-08-02.json",
         "snapshot_2025-12-12T12-57-02.json",
         "snapshot_2025-12-13T02-01-14.json",
-        "snapshot_2025-12-13T12-51-39.json"
+        "snapshot_2025-12-13T12-51-39.json",
+        "snapshot_2025-12-14T02-20-22.json"
       ]
     },
     "documentation": {
       "file_count": 50,
-      "line_count": 317491,
+      "line_count": 319271,
       "files": [
         ".nojekyll",
         "01_overview.md",
@@ -592,7 +595,7 @@
     },
     "tools": {
       "file_count": 50,
-      "line_count": 170921,
+      "line_count": 171587,
       "files": [
         ".context.md",
         "AB_TESTING_README.md",
