@@ -1,0 +1,225 @@
+name: "AI Spawning: Intelligent Orchestrator"
+
+# AI-driven sub-agent spawning based on workload analysis
+# Created by @create-botter - Inventive and visionary infrastructure
+
+on:
+  schedule:
+    # Run every 4 hours for intelligent spawning
+    - cron: '0 */4 * * *'
+  
+  workflow_dispatch:
+    inputs:
+      max_spawns:
+        description: 'Maximum number of agents to spawn'
+        required: false
+        type: number
+        default: 5
+      
+      categories:
+        description: 'Force specific categories (comma-separated)'
+        required: false
+        type: string
+      
+      enable_learning:
+        description: 'Enable performance-based learning'
+        required: false
+        type: boolean
+        default: true
+      
+      dry_run:
+        description: 'Simulate without creating agents'
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+jobs:
+  ai-orchestrate:
+    name: "AI-Driven Spawning"
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install PyYAML requests beautifulsoup4 lxml psutil
+      
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+      
+      - name: Parse input parameters
+        id: parse_inputs
+        run: |
+          MAX_SPAWNS="${{ github.event.inputs.max_spawns || '5' }}"
+          CATEGORIES="${{ github.event.inputs.categories || '' }}"
+          ENABLE_LEARNING="${{ github.event.inputs.enable_learning || 'true' }}"
+          DRY_RUN="${{ github.event.inputs.dry_run || 'false' }}"
+          
+          echo "max_spawns=$MAX_SPAWNS" >> $GITHUB_OUTPUT
+          echo "categories=$CATEGORIES" >> $GITHUB_OUTPUT
+          echo "enable_learning=$ENABLE_LEARNING" >> $GITHUB_OUTPUT
+          echo "dry_run=$DRY_RUN" >> $GITHUB_OUTPUT
+          
+          echo "📋 Configuration:"
+          echo "  max_spawns: $MAX_SPAWNS"
+          echo "  categories: ${CATEGORIES:-all}"
+          echo "  learning: $ENABLE_LEARNING"
+          echo "  dry_run: $DRY_RUN"
+      
+      - name: Fetch current workload
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "📥 Fetching current issues and PRs..."
+          gh issue list --json number,title,labels,state --limit 200 > /tmp/issues.json
+          gh pr list --json number,title,labels,state --limit 200 > /tmp/prs.json
+          
+          ISSUE_COUNT=$(jq length /tmp/issues.json)
+          PR_COUNT=$(jq length /tmp/prs.json)
+          
+          echo "✅ Fetched $ISSUE_COUNT issues and $PR_COUNT PRs"
+      
+      - name: Run AI spawning orchestrator
+        id: orchestrate
+        run: |
+          echo "🤖 Running AI Spawning Orchestrator..."
+          
+          # Build command
+          CMD="python3 tools/ai_spawning_orchestrator.py"
+          CMD="$CMD --max-spawns ${{ steps.parse_inputs.outputs.max_spawns }}"
+          
+          if [ "${{ steps.parse_inputs.outputs.enable_learning }}" != "true" ]; then
+            CMD="$CMD --no-learning"
+          fi
+          
+          if [ "${{ steps.parse_inputs.outputs.dry_run }}" == "true" ]; then
+            CMD="$CMD --dry-run"
+          fi
+          
+          if [ -n "${{ steps.parse_inputs.outputs.categories }}" ]; then
+            # Convert comma-separated to space-separated
+            CATS=$(echo "${{ steps.parse_inputs.outputs.categories }}" | tr ',' ' ')
+            CMD="$CMD --categories $CATS"
+          fi
+          
+          CMD="$CMD --format json"
+          
+          echo "Running: $CMD"
+          
+          # Execute orchestrator
+          $CMD > /tmp/orchestration_results.json
+          
+          # Extract results
+          SPAWNED_COUNT=$(jq -r '.total_spawned' /tmp/orchestration_results.json)
+          DECISIONS_COUNT=$(jq -r '.decisions | length' /tmp/orchestration_results.json)
+          STATUS=$(jq -r '.summary.status' /tmp/orchestration_results.json)
+          
+          echo "spawned_count=$SPAWNED_COUNT" >> $GITHUB_OUTPUT
+          echo "decisions_count=$DECISIONS_COUNT" >> $GITHUB_OUTPUT
+          echo "status=$STATUS" >> $GITHUB_OUTPUT
+          
+          echo ""
+          echo "✅ Orchestration complete:"
+          echo "  Status: $STATUS"
+          echo "  Decisions: $DECISIONS_COUNT"
+          echo "  Spawned: $SPAWNED_COUNT"
+      
+      - name: Create PR for spawned agents
+        if: steps.orchestrate.outputs.spawned_count > 0 && steps.parse_inputs.outputs.dry_run != 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+          BRANCH_NAME="ai-spawn/${TIMESTAMP}-${{ github.run_id }}"
+          
+          echo "📝 Creating PR for spawned agents..."
+          
+          git checkout -b "$BRANCH_NAME"
+          
+          # Add changes
+          git add .github/agent-system/
+          
+          # Check if there are changes to commit
+          if git diff --staged --quiet; then
+            echo "⚠️  No changes to commit (registry may not have been updated)"
+          else
+            git commit -m "🤖 AI Orchestrator: Spawn ${{ steps.orchestrate.outputs.spawned_count }} sub-agents"
+            git push origin "$BRANCH_NAME"
+            
+            # Create PR body
+            PR_BODY="## 🤖 AI-Driven Sub-Agent Spawning
+            
+**Spawning Run**: $(date -u +'%Y-%m-%d %H:%M:%S UTC')  
+**Orchestrator**: AI Spawning Orchestrator  
+**Decisions Made**: ${{ steps.orchestrate.outputs.decisions_count }}  
+**Agents Spawned**: ${{ steps.orchestrate.outputs.spawned_count }}
+
+### 🎯 Orchestration Details
+
+This PR was created by the AI Spawning Orchestrator, which uses:
+- 🧠 **Performance-based learning** from historical sub-agent data
+- 📊 **Workload analysis** to identify bottlenecks
+- 👥 **Intelligent parent selection** using multi-criteria scoring
+- 🎯 **Adaptive thresholds** based on system state
+
+### 📋 Configuration
+
+- **Max Spawns**: ${{ steps.parse_inputs.outputs.max_spawns }}
+- **Learning Enabled**: ${{ steps.parse_inputs.outputs.enable_learning }}
+- **Categories**: ${{ steps.parse_inputs.outputs.categories || 'all' }}
+
+### 📊 Results
+
+See detailed results in \`.github/agent-system/ai_spawning_results.json\`
+
+---
+*🤖 Created by workflow: [ai-spawning-orchestrator.yml](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) - AI Orchestrator (@create-botter)*"
+            
+            PR_URL=$(gh pr create \
+              --title "🤖 AI Orchestrator: Spawn ${{ steps.orchestrate.outputs.spawned_count }} Sub-Agents" \
+              --body "$PR_BODY" \
+              --label "agent-system,automated,copilot" \
+              --base main \
+              --head "$BRANCH_NAME")
+            
+            echo "✅ PR created: $PR_URL"
+          fi
+      
+      - name: Summary
+        if: always()
+        run: |
+          echo "## 🤖 AI Spawning Orchestrator" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          if [ "${{ steps.orchestrate.outputs.status }}" == "balanced" ]; then
+            echo "✅ **System is balanced** - No spawning needed" >> $GITHUB_STEP_SUMMARY
+          elif [ "${{ steps.orchestrate.outputs.status }}" == "complete" ]; then
+            echo "✅ **Orchestration complete**" >> $GITHUB_STEP_SUMMARY
+            echo "- **Decisions**: ${{ steps.orchestrate.outputs.decisions_count }}" >> $GITHUB_STEP_SUMMARY
+            echo "- **Spawned**: ${{ steps.orchestrate.outputs.spawned_count }}" >> $GITHUB_STEP_SUMMARY
+            echo "- **Dry Run**: ${{ steps.parse_inputs.outputs.dry_run }}" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "⚠️ **Status**: ${{ steps.orchestrate.outputs.status }}" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Configuration" >> $GITHUB_STEP_SUMMARY
+          echo "- Max Spawns: ${{ steps.parse_inputs.outputs.max_spawns }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Learning: ${{ steps.parse_inputs.outputs.enable_learning }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Categories: ${{ steps.parse_inputs.outputs.categories || 'all' }}" >> $GITHUB_STEP_SUMMARY
