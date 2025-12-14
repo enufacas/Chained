@@ -310,7 +310,6 @@ class AISpawningOrchestrator:
         confidence_scores.append(base_confidence)
         
         # Apply learning insights
-        learned_adjustment = None
         if self.enable_learning and self.performance_learner:
             try:
                 learned_rec = self.performance_learner.get_spawning_recommendations(
@@ -406,7 +405,7 @@ class AISpawningOrchestrator:
         category_insights = [
             f"{i.description} (confidence: {i.confidence*100:.1f}%)"
             for i in learned_insights
-            if i.specialization == category
+            if hasattr(i, 'specialization') and i.specialization == category
         ]
         
         decision = SpawningDecision(
