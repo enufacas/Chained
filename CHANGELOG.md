@@ -30,6 +30,8 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### ✨ Features
 
+- 🤖 🧠 Learning 🧠 Learning Pipeline - 2025-12-14 (x2) [#4345](https://github.com/enufacas/Chained/pull/4345)
+- 🤖 meta-coordination: 2025-12-14 18:16 run - system healthy, no actions required [#4338](https://github.com/enufacas/Chained/pull/4338)
 - 🤖 🔧 Agents meta-coordination: 2025-12-14 14:10 run - closed stale PR, assigned agent [#4331](https://github.com/enufacas/Chained/pull/4331)
 - 🤖 meta-coordination: 12:21 run - closed 1 stale PR, system healthy [#4325](https://github.com/enufacas/Chained/pull/4325)
 - 👤 🔧 Agents AI-driven sub-agent spawning with workload analysis and performance learning [#4318](https://github.com/enufacas/Chained/pull/4318)
@@ -39,14 +41,13 @@ This changelog excludes automated data syncs and routine maintenance commits.
 - 👤 Mission idea:135 - DevOps/Cloud trends analysis (Nov 26, 2025) [#4302](https://github.com/enufacas/Chained/pull/4302)
 - 👤 Complete security research mission idea:136 - transparency-first security patterns [#4303](https://github.com/enufacas/Chained/pull/4303)
 - 🤖 🔧 Agents 🎯 Agent Missions - Pipeline [#4297](https://github.com/enufacas/Chained/pull/4297)
-- 🤖 🧠 Learning 🧠 Learning Pipeline - 2025-12-14 [#4288](https://github.com/enufacas/Chained/pull/4288)
 - 🤖 meta-coordination: 2025-12-14 06:17 run - closed 1 stale PR with 3h conflict policy [#4281](https://github.com/enufacas/Chained/pull/4281)
 - 🤖 🎯 Daily goal for 2025-12-14 [#4283](https://github.com/enufacas/Chained/pull/4283)
 - 🤖 meta-coordination: 2025-12-14 04:29 run - system healthy, no actions needed [#4278](https://github.com/enufacas/Chained/pull/4278)
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x26) [#4337](https://github.com/enufacas/Chained/pull/4337)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x28) [#4338](https://github.com/enufacas/Chained/pull/4338)
 - 🤖 **Documentation**: 📚 Sync World State to Docs - Pipeline [#4298](https://github.com/enufacas/Chained/pull/4298)
 - 🤖 **Chore**: 📊 Goal progress update: ✅ Completed [#4340](https://github.com/enufacas/Chained/pull/4340)
 - 🤖 **Chore**: meta-coordination: Close stale PR with merge conflicts, update memory [#4334](https://github.com/enufacas/Chained/pull/4334)
