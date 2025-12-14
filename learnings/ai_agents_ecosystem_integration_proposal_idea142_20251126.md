@@ -69,7 +69,10 @@ class AgentContextSystem:
     Provides comprehensive codebase context to agents
     """
     
-    def __init__(self, repo_path: str = "/home/runner/work/Chained/Chained"):
+    def __init__(self, repo_path: str = None):
+        # Auto-detect repository root or use provided path
+        if repo_path is None:
+            repo_path = self._detect_repo_root()
         self.repo_path = Path(repo_path)
         self.repo = git.Repo(repo_path)
         
@@ -346,6 +349,19 @@ class AgentContextSystem:
             match = re.search(r'@([\w-]+)', commit_message)
             return match.group(1) if match else 'unknown'
         return 'unknown'
+    
+    def _detect_repo_root(self) -> str:
+        """
+        Detect git repository root from current working directory
+        """
+        import os
+        current = Path.cwd()
+        while current != current.parent:
+            if (current / '.git').exists():
+                return str(current)
+            current = current.parent
+        # Fallback to current directory
+        return str(Path.cwd())
 
 
 # Integration with existing agents
