@@ -1,6 +1,6 @@
 {
-  "time": "2025-12-14T08:35:53Z",
-  "tick": 106,
+  "time": "2025-12-14T08:36:51Z",
+  "tick": 107,
   "agents": [
     {
       "id": "agent-1762910779",
@@ -31,11 +31,11 @@
       "label": "💭 Turing",
       "specialization": "coach-master",
       "location_region_id": "US:Charlotte",
-      "status": "exploring",
+      "status": "working",
       "path": [
         "US:San Francisco"
       ],
-      "current_idea_id": "idea:217",
+      "current_idea_id": "idea:134",
       "home_base": "US:Charlotte",
       "metrics": {
         "issues_resolved": 2,
@@ -48,6 +48,12 @@
         "creativity": 66,
         "caution": 81,
         "speed": 78
+      },
+      "current_mission": {
+        "mission_id": "idea:134",
+        "title": "Languages: Go (2025-11-26)",
+        "issue_number": null,
+        "assigned_at": "2025-12-14T08:36:51Z"
       }
     },
     {
