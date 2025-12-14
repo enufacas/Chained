@@ -402,6 +402,8 @@ class AISpawningOrchestrator:
         final_confidence = sum(confidence_scores) / len(confidence_scores) if confidence_scores else 0.5
         
         # Extract learned insights for this category
+        # Note: Using hasattr for defensive programming even though type is List[PerformanceInsight]
+        # to handle edge cases where learning might return unexpected types
         category_insights = [
             f"{i.description} (confidence: {i.confidence*100:.1f}%)"
             for i in learned_insights

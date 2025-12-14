@@ -186,7 +186,7 @@ This PR was created by the AI Spawning Orchestrator, which uses:
 
 ### 📊 Results
 
-See detailed results in \`.github/agent-system/ai_spawning_results.json\`
+See detailed results in .github/agent-system/ai_spawning_results.json
 
 ---
 *🤖 Created by workflow: [ai-spawning-orchestrator.yml](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) - AI Orchestrator (@create-botter)*"

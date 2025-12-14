@@ -9,25 +9,34 @@ Created by @create-botter
 import sys
 from pathlib import Path
 
-# Add tools to path
+# Add tools to path once at module level
 sys.path.insert(0, str(Path(__file__).parent.parent / 'tools'))
+
+# Now import after path is set
+try:
+    from ai_spawning_orchestrator import AISpawningOrchestrator
+except ImportError:
+    # If import fails, tests will fail gracefully
+    AISpawningOrchestrator = None
+
 
 def test_orchestrator_import():
     """Test that orchestrator can be imported"""
-    try:
-        from ai_spawning_orchestrator import AISpawningOrchestrator
-        print("✅ Orchestrator import successful")
-        return True
-    except ImportError as e:
-        print(f"❌ Import failed: {e}")
+    if AISpawningOrchestrator is None:
+        print("❌ Import failed: Module not found")
         return False
+    
+    print("✅ Orchestrator import successful")
+    return True
 
 
 def test_orchestrator_initialization():
     """Test that orchestrator can be initialized"""
+    if AISpawningOrchestrator is None:
+        print("❌ Cannot test - module not imported")
+        return False
+    
     try:
-        from ai_spawning_orchestrator import AISpawningOrchestrator
-        
         orchestrator = AISpawningOrchestrator(
             enable_learning=False,  # Disable for faster test
             enable_predictions=False
@@ -42,9 +51,11 @@ def test_orchestrator_initialization():
 
 def test_dry_run():
     """Test dry-run mode"""
+    if AISpawningOrchestrator is None:
+        print("❌ Cannot test - module not imported")
+        return False
+    
     try:
-        from ai_spawning_orchestrator import AISpawningOrchestrator
-        
         orchestrator = AISpawningOrchestrator(
             enable_learning=False,
             enable_predictions=False
@@ -78,9 +89,11 @@ def test_dry_run():
 
 def test_config_loading():
     """Test configuration loading"""
+    if AISpawningOrchestrator is None:
+        print("❌ Cannot test - module not imported")
+        return False
+    
     try:
-        from ai_spawning_orchestrator import AISpawningOrchestrator
-        
         orchestrator = AISpawningOrchestrator()
         
         # Check config exists
