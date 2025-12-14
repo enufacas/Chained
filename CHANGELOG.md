@@ -30,12 +30,14 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### ✨ Features
 
+- 🤖 🧠 Learning 🧠 Learning Pipeline - 2025-12-14 [#4288](https://github.com/enufacas/Chained/pull/4288)
+- 🤖 meta-coordination: 2025-12-14 06:17 run - closed 1 stale PR with 3h conflict policy [#4281](https://github.com/enufacas/Chained/pull/4281)
 - 🤖 🎯 Daily goal for 2025-12-14 [#4283](https://github.com/enufacas/Chained/pull/4283)
 - 🤖 meta-coordination: 2025-12-14 04:29 run - system healthy, no actions needed [#4278](https://github.com/enufacas/Chained/pull/4278)
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x6) [#4280](https://github.com/enufacas/Chained/pull/4280)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x8) [#4281](https://github.com/enufacas/Chained/pull/4281)
 
 ---
 
