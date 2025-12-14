@@ -14,9 +14,11 @@
 
 **Rating Scale:**
 - **0-3:** Not relevant (ignore)
-- **4-6:** Moderate relevance (monitor, document for future)
+- **4-6:** Moderate relevance (monitor, document for future) ← **This mission**
 - **7-8:** High relevance (integrate soon)
 - **9-10:** Critical relevance (integrate immediately)
+
+**Score Translation:** The weighted score of 4.0/10 falls in the "Moderate relevance" category (4-6), specifically at the lower end indicating low-medium applicability with primary value in documentation and future reference rather than immediate implementation.
 
 ### Scoring Breakdown
 
@@ -434,53 +436,35 @@ Create documentation capturing cost optimization patterns from this research.
 Prevents expensive mistakes when Chained scales beyond GitHub's free tier.
 
 **How:**
-```bash
-# Create infrastructure docs
-mkdir -p docs/infrastructure
 
-# Document cost framework
-cat > docs/infrastructure/cost-optimization-framework.md << 'EOF'
-# Infrastructure Cost Optimization Framework
+**Documentation Example:**
 
-## Lessons from AWS DevOps Research (idea:137)
+```markdown
+# Example structure for docs/infrastructure/cost-optimization-framework.md
 
-### Key Pattern: 90% Cost Reduction Case Study
+## Infrastructure Cost Optimization Framework
+
+### Lessons from AWS DevOps Research (idea:137)
+
+#### Key Pattern: 90% Cost Reduction Case Study
 Prosopo: $3,000/month (MongoDB Atlas on AWS) → $300/month (Hetzner)
 
-### TCO Analysis Checklist
-1. Calculate ALL costs
-   - Compute: $___
-   - Storage: $___
-   - Data transfer: $___  ← Often matches compute!
-   - Backup: $___
-   - Support: $___
-   - Total: $___
+#### TCO Analysis Checklist
+1. Calculate ALL costs (compute, storage, data transfer, backup, support)
+2. Include operational overhead (DevOps time × hourly rate)
+3. Compare alternatives (Managed vs. Self-hosted)
+4. Evaluate European cloud providers
+5. Model data egress in multi-cloud scenarios
 
-2. Include operational overhead
-   - DevOps time: ___ hours/month
-   - Cost: DevOps hours × $___/hour
-   - Total TCO: Infrastructure + Ops
-
-3. Compare alternatives
-   - Managed (AWS/GCP): Higher $, lower ops
-   - Self-hosted (Hetzner): Lower $, higher ops
-   - Break-even: When savings > ops cost
-
-### European Cloud Providers
-- Hetzner: 6x cheaper than AWS
-- GDPR-native compliance
-- Free internal data transfer
-- Requires operational capability
-
-### Decision Framework
-IF (monthly cost > $500) AND (team has ops expertise)
-  THEN evaluate Hetzner/EU providers
-ELSE
-  Use managed services
+#### Decision Framework
+- IF monthly cost > $500 AND team has ops expertise
+  - THEN evaluate Hetzner/EU providers for 6x cost savings
+- ELSE use managed services for convenience
 
 Reference: learnings/aws_devops_research_report_idea137.md
-EOF
 ```
+
+**Note:** This is a documentation template example, not an executable shell script. Implementation involves creating the markdown file with this content structure.
 
 **Expected Benefit:**
 - Informed infrastructure decisions
