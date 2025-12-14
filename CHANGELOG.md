@@ -30,6 +30,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### ✨ Features
 
+- 👤 🔧 Agents AI-driven sub-agent spawning with workload analysis and performance learning [#4318](https://github.com/enufacas/Chained/pull/4318)
 - 👤 🧠 Learning Daily Learning Reflection Verification - 2025-12-14 [#4319](https://github.com/enufacas/Chained/pull/4319)
 - 👤 Complete API-GPT integration research mission (idea:133) [#4300](https://github.com/enufacas/Chained/pull/4300)
 - 👤 🧠 Learning Complete Go languages learning mission (idea:134) - @coach-master [#4301](https://github.com/enufacas/Chained/pull/4301)
@@ -43,7 +44,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x20) [#4313](https://github.com/enufacas/Chained/pull/4313)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x22) [#4318](https://github.com/enufacas/Chained/pull/4318)
 - 🤖 **Documentation**: 📚 Sync World State to Docs - Pipeline [#4298](https://github.com/enufacas/Chained/pull/4298)
 - 🤖 **Chore**: meta-coordination: 2025-12-14 08:15 - system healthy, no cleanup needed [#4287](https://github.com/enufacas/Chained/pull/4287)
 - 🤖 **Chore**: 🌍 World Model Update - Pipeline [#4290](https://github.com/enufacas/Chained/pull/4290)
