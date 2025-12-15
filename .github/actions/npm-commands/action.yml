@@ -1,0 +1,196 @@
+name: 'NPM Command Runner'
+description: 'Reusable action for running any npm command with automatic package manager detection'
+author: '@create-botter'
+
+inputs:
+  command:
+    description: 'NPM command to run (install, run, test, build, publish, etc.)'
+    required: true
+  
+  args:
+    description: 'Additional arguments for the command'
+    required: false
+    default: ''
+  
+  working-directory:
+    description: 'Working directory for the command'
+    required: false
+    default: '.'
+  
+  package-manager:
+    description: 'Package manager to use (npm, yarn, pnpm, auto)'
+    required: false
+    default: 'auto'
+  
+  node-version:
+    description: 'Node.js version to use (set to empty to skip setup)'
+    required: false
+    default: '18'
+  
+  fail-on-error:
+    description: 'Whether to fail the action if command fails'
+    required: false
+    default: 'true'
+  
+  output-file:
+    description: 'File to save command output to'
+    required: false
+    default: ''
+
+outputs:
+  exit-code:
+    description: 'Exit code of the command'
+    value: ${{ steps.run-command.outputs.exit-code }}
+  
+  output:
+    description: 'Output from the command'
+    value: ${{ steps.run-command.outputs.output }}
+  
+  package-manager-used:
+    description: 'Package manager that was used'
+    value: ${{ steps.detect.outputs.package-manager }}
+
+runs:
+  using: composite
+  steps:
+    - name: 🔍 Detect package manager
+      id: detect
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: |
+        echo "🔍 Detecting package manager..."
+        
+        if [ "${{ inputs.package-manager }}" = "auto" ]; then
+          # Auto-detect based on lock files
+          if [ -f "pnpm-lock.yaml" ]; then
+            PM="pnpm"
+            echo "✅ Detected pnpm (pnpm-lock.yaml found)"
+          elif [ -f "yarn.lock" ]; then
+            PM="yarn"
+            echo "✅ Detected yarn (yarn.lock found)"
+          elif [ -f "package-lock.json" ]; then
+            PM="npm"
+            echo "✅ Detected npm (package-lock.json found)"
+          else
+            PM="npm"
+            echo "ℹ️  Defaulting to npm (no lock file found)"
+          fi
+        else
+          PM="${{ inputs.package-manager }}"
+          echo "✅ Using specified package manager: $PM"
+        fi
+        
+        echo "package-manager=$PM" >> $GITHUB_OUTPUT
+    
+    - name: 📦 Setup Node.js
+      if: inputs.node-version != ''
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ inputs.node-version }}
+        cache: ${{ steps.detect.outputs.package-manager }}
+        cache-dependency-path: ${{ inputs.working-directory }}/package-lock.json
+    
+    - name: 🚀 Run command
+      id: run-command
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: |
+        echo "🚀 Running command with ${{ steps.detect.outputs.package-manager }}..."
+        
+        PM="${{ steps.detect.outputs.package-manager }}"
+        CMD="${{ inputs.command }}"
+        ARGS="${{ inputs.args }}"
+        
+        # Construct the full command
+        if [ "$PM" = "npm" ]; then
+          if [ "$CMD" = "install" ] || [ "$CMD" = "i" ]; then
+            FULL_CMD="npm install $ARGS"
+          elif [ "$CMD" = "run" ]; then
+            FULL_CMD="npm run $ARGS"
+          elif [ "$CMD" = "test" ]; then
+            FULL_CMD="npm test $ARGS"
+          elif [ "$CMD" = "build" ]; then
+            FULL_CMD="npm run build $ARGS"
+          else
+            FULL_CMD="npm $CMD $ARGS"
+          fi
+        elif [ "$PM" = "yarn" ]; then
+          if [ "$CMD" = "install" ] || [ "$CMD" = "i" ]; then
+            FULL_CMD="yarn install $ARGS"
+          elif [ "$CMD" = "run" ]; then
+            FULL_CMD="yarn $ARGS"
+          elif [ "$CMD" = "test" ]; then
+            FULL_CMD="yarn test $ARGS"
+          elif [ "$CMD" = "build" ]; then
+            FULL_CMD="yarn build $ARGS"
+          else
+            FULL_CMD="yarn $CMD $ARGS"
+          fi
+        elif [ "$PM" = "pnpm" ]; then
+          if [ "$CMD" = "install" ] || [ "$CMD" = "i" ]; then
+            FULL_CMD="pnpm install $ARGS"
+          elif [ "$CMD" = "run" ]; then
+            FULL_CMD="pnpm run $ARGS"
+          elif [ "$CMD" = "test" ]; then
+            FULL_CMD="pnpm test $ARGS"
+          elif [ "$CMD" = "build" ]; then
+            FULL_CMD="pnpm build $ARGS"
+          else
+            FULL_CMD="pnpm $CMD $ARGS"
+          fi
+        fi
+        
+        echo "📝 Command: $FULL_CMD"
+        
+        # Run command and capture output
+        set +e  # Don't exit on error
+        if [ -n "${{ inputs.output-file }}" ]; then
+          OUTPUT=$($FULL_CMD 2>&1 | tee "${{ inputs.output-file }}")
+        else
+          OUTPUT=$($FULL_CMD 2>&1)
+        fi
+        EXIT_CODE=$?
+        set -e
+        
+        # Save outputs
+        echo "exit-code=$EXIT_CODE" >> $GITHUB_OUTPUT
+        
+        # Save output (multiline-safe)
+        {
+          echo "output<<EOF"
+          echo "$OUTPUT"
+          echo "EOF"
+        } >> $GITHUB_OUTPUT
+        
+        # Handle failure
+        if [ $EXIT_CODE -ne 0 ]; then
+          echo "❌ Command failed with exit code $EXIT_CODE"
+          if [ "${{ inputs.fail-on-error }}" = "true" ]; then
+            exit $EXIT_CODE
+          fi
+        else
+          echo "✅ Command completed successfully"
+        fi
+    
+    - name: 📊 Summary
+      shell: bash
+      run: |
+        echo "### 📦 NPM Command Summary" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "**Package Manager:** ${{ steps.detect.outputs.package-manager }}" >> $GITHUB_STEP_SUMMARY
+        echo "**Command:** ${{ inputs.command }} ${{ inputs.args }}" >> $GITHUB_STEP_SUMMARY
+        echo "**Exit Code:** ${{ steps.run-command.outputs.exit-code }}" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        
+        if [ "${{ steps.run-command.outputs.exit-code }}" = "0" ]; then
+          echo "✅ **Status:** Success" >> $GITHUB_STEP_SUMMARY
+        else
+          echo "❌ **Status:** Failed" >> $GITHUB_STEP_SUMMARY
+        fi
+        
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "*Created by @create-botter - Visionary automation inspired by Nikola Tesla* ⚡" >> $GITHUB_STEP_SUMMARY
+
+branding:
+  icon: 'package'
+  color: 'green'
