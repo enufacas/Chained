@@ -1,6 +1,6 @@
 {
-  "timestamp": "2025-12-15T02:11:50.544168",
-  "commit": "fee82e9e045439ed00c4a347f20908db11601457",
+  "timestamp": "2025-12-15T13:00:32.313163",
+  "commit": "aa60e11cee19cd06038a6b4b07313fd6059fd918",
   "structure": {
     "directories": {
       "tools": {
@@ -60,8 +60,8 @@
         ]
       },
       "docs": {
-        "file_count": 1042,
-        "line_count": 319851,
+        "file_count": 1043,
+        "line_count": 321056,
         "files": [
           ".nojekyll",
           "01_overview.md",
@@ -126,10 +126,11 @@
         "files": []
       },
       "analysis": {
-        "file_count": 12,
-        "line_count": 6262,
+        "file_count": 14,
+        "line_count": 13323,
         "files": [
           "architecture.mmd",
+          "clustering_results.json",
           "evolution.json",
           "latest.json",
           "snapshot_2025-12-10T12-58-44.json",
@@ -140,12 +141,13 @@
           "snapshot_2025-12-13T02-01-14.json",
           "snapshot_2025-12-13T12-51-39.json",
           "snapshot_2025-12-14T02-20-22.json",
-          "snapshot_2025-12-14T12-51-49.json"
+          "snapshot_2025-12-14T12-51-49.json",
+          "snapshot_2025-12-15T02-11-50.json"
         ]
       },
       "learnings": {
-        "file_count": 517,
-        "line_count": 338859,
+        "file_count": 522,
+        "line_count": 350970,
         "files": [
           "AI_ML.md",
           "CLAUDE_AI_INVESTIGATION.md",
@@ -201,8 +203,8 @@
       }
     },
     "files_by_type": {},
-    "total_files": 2004,
-    "total_lines": 836559
+    "total_files": 2012,
+    "total_lines": 856936
   },
   "dependencies": {
     "internal_imports": {
@@ -517,8 +519,8 @@
   },
   "metrics": {
     "total_components": 6,
-    "total_files": 2004,
-    "total_lines": 836559,
+    "total_files": 2012,
+    "total_lines": 856936,
     "total_dependencies": 2,
     "external_libraries": 91,
     "coupling_score": 5.1274162949289855e-05,
@@ -527,7 +529,7 @@
   "components": {
     "learning_system": {
       "file_count": 46,
-      "line_count": 338859,
+      "line_count": 350970,
       "files": [
         "AI_ML.md",
         "CLAUDE_AI_INVESTIGATION.md",
@@ -552,10 +554,11 @@
       ]
     },
     "analysis_tools": {
-      "file_count": 12,
-      "line_count": 6262,
+      "file_count": 14,
+      "line_count": 13323,
       "files": [
         "architecture.mmd",
+        "clustering_results.json",
         "evolution.json",
         "latest.json",
         "snapshot_2025-12-10T12-58-44.json",
@@ -566,12 +569,13 @@
         "snapshot_2025-12-13T02-01-14.json",
         "snapshot_2025-12-13T12-51-39.json",
         "snapshot_2025-12-14T02-20-22.json",
-        "snapshot_2025-12-14T12-51-49.json"
+        "snapshot_2025-12-14T12-51-49.json",
+        "snapshot_2025-12-15T02-11-50.json"
       ]
     },
     "documentation": {
       "file_count": 50,
-      "line_count": 319851,
+      "line_count": 321056,
       "files": [
         ".nojekyll",
         "01_overview.md",
