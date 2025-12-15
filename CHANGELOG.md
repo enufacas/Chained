@@ -30,7 +30,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x4) [#4381](https://github.com/enufacas/Chained/pull/4381)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x5) [#4383](https://github.com/enufacas/Chained/pull/4383)
 
 ---
 
@@ -38,6 +38,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### ✨ Features
 
+- 🤖 meta-coordination: 03:23 cycle - closed 2 stale PRs with merge conflicts [#4382](https://github.com/enufacas/Chained/pull/4382)
 - 🤖 meta-coordination: 2025-12-15 00:59 run - system health assessment [#4373](https://github.com/enufacas/Chained/pull/4373)
 - 🤖 meta-coordination: 2025-12-14 22:12 run - system orchestration complete [#4370](https://github.com/enufacas/Chained/pull/4370)
 - 🤖 meta-coordination: 2025-12-14 20:12 run - system stable [#4344](https://github.com/enufacas/Chained/pull/4344)
@@ -312,18 +313,6 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x4) [#3722](https://github.com/enufacas/Chained/pull/3722)
-
----
-
-## 2025-12-07
-
-### ✨ Features
-
-- 👤 🏗️ Infrastructure Separate AI control plane from base infrastructure deployment [#3704](https://github.com/enufacas/Chained/pull/3704)
-
-### 🧹 Chores & Maintenance
-
-- 👤 🏗️ Infrastructure **Documentation**: Add deployed AG-UI URLs reference + fix Terraform state import [#3703](https://github.com/enufacas/Chained/pull/3703)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x2) [#3722](https://github.com/enufacas/Chained/pull/3722)
 
 ---
