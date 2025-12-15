@@ -141,20 +141,20 @@ class PatternMatcher:
             'bash': [
                 # Only flag truly dangerous unquoted variable patterns
                 {
-                    'id': 'bash-unquoted-in-test',
-                    'name': 'Unquoted variable in test condition',
-                    'pattern': r'\[\s+\$\w+\s+[!=<>]',
+                    'id': 'bash-unquoted-in-single-bracket-test',
+                    'name': 'Unquoted variable in single-bracket test condition',
+                    'pattern': r'^\s*if\s+\[\s+\$\w+\s+[!=<>]',
                     'severity': 'warning',
                     'category': 'best-practices',
-                    'suggestion': 'Quote variables in test conditions: [ "$var" = "value" ]',
-                    'description': 'Unquoted variables in tests can cause syntax errors',
+                    'suggestion': 'Quote variables in single-bracket test conditions: [ "$var" = "value" ]',
+                    'description': 'Unquoted variables in [ ] tests can cause syntax errors (double-bracket [[ ]] is OK)',
                     'scope': 'line'
                 },
                 {
                     'id': 'bash-unquoted-in-command',
                     'name': 'Potentially unquoted variable as command argument',
                     # Match dangerous commands with unquoted variables: rm $file, cp $src $dst, etc.
-                    'pattern': r'^(rm|cp|mv|chmod|chown|cat|grep|sed|awk)\s+[^"\']*\$\w+',
+                    'pattern': r'^(rm|cp|mv|chmod|chown)\s+[^"\']*\$\w+',
                     'severity': 'info',
                     'category': 'best-practices',
                     'suggestion': 'Consider quoting variables in file operations: "$var"',
@@ -225,8 +225,55 @@ class PatternMatcher:
         ext = Path(file_path).suffix.lower()
         return ext_map.get(ext)
     
+    def should_skip_file(self, file_path: str) -> bool:
+        """Check if file should be skipped (test/example files)"""
+        path_lower = file_path.lower()
+        
+        # Skip test files
+        if 'test_' in path_lower or '_test.' in path_lower or '/tests/' in path_lower:
+            return True
+        
+        # Skip example files
+        if '/examples/' in path_lower or 'example' in path_lower.split('/')[-1]:
+            return True
+        
+        # Skip anti-pattern demonstration files
+        if 'anti-pattern' in path_lower or 'anti_pattern' in path_lower:
+            return True
+        
+        # Skip minified files (large generated files)
+        if '.min.' in path_lower:
+            return True
+        
+        # Skip pattern matcher files themselves (they contain examples)
+        if 'pattern-matcher' in path_lower or 'pattern_matcher' in path_lower:
+            return True
+            
+        return False
+    
+    def is_safe_placeholder(self, matched_text: str) -> bool:
+        """Check if matched text is a safe placeholder/documentation"""
+        safe_patterns = [
+            r'your[-_]?(token|key|secret|password|api[-_]?key)',
+            r'sk[-_]test[-_]',
+            r'test[-_](token|key|secret|password)',
+            r'example[-_](token|key)',
+            r'export\s+(GEMINI_API_KEY|GOOGLE_API_KEY|GH_TOKEN|ANTHROPIC_API_KEY)',
+            r'print\s*\(\s*["\'].*export',
+        ]
+        
+        text_lower = matched_text.lower()
+        for pattern in safe_patterns:
+            if re.search(pattern, text_lower, re.IGNORECASE):
+                return True
+        return False
+    
     def scan_file(self, file_path: str) -> List[PatternMatch]:
         """Scan a single file for pattern matches"""
+        # Skip test and example files
+        if self.should_skip_file(file_path):
+            return []
+        
         language = self.detect_language(file_path)
         if not language or language not in self.patterns:
             return []
@@ -248,6 +295,10 @@ class PatternMatcher:
                         continue
                         
                     if re.search(pattern_def['pattern'], line, re.IGNORECASE):
+                        # Skip safe placeholders for security patterns
+                        if pattern_def['category'] == 'security' and self.is_safe_placeholder(line):
+                            continue
+                        
                         match = PatternMatch(
                             pattern_id=pattern_def['id'],
                             pattern_name=pattern_def['name'],
