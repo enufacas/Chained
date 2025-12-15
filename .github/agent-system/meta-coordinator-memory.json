@@ -1,10 +1,10 @@
 {
   "version": "1.1",
   "created_at": "2025-11-24T05:17:32.537364",
-  "last_updated": "2025-12-15T12:32:16.914027",
+  "last_updated": "2025-12-15T14:22:57.091634",
   "runs": {
-    "total_runs": 169,
-    "successful_runs": 169,
+    "total_runs": 170,
+    "successful_runs": 170,
     "failed_runs": 0,
     "last_run": {
       "timestamp": "2025-12-13T12:27:10.784990",
@@ -23,24 +23,18 @@
     "approval_times": []
   },
   "issue_patterns": {
-    "total_issues_processed": 10,
+    "total_issues_processed": 11,
     "agents_assigned": {
-      "edge-cases-pro": 91343852333181432387730302044767688728495783936,
-      "coach-master": 91343852333181432387730302044767688728495783936,
-      "construct-specialist": 91343852333181432387730302044767688728495783936,
-      "create-botter": 274031556999544297163190908495486307620309958656,
-      "investigate-champion": 91343852333181432387730302044767688728495783936,
-      "troubleshoot-expert": 91343852333181432387730302044767688728495783936,
-      "align-wizard": 158456325028528675187087900672
+      "edge-cases-pro": 182687704666362864775460604089535377456991567872,
+      "coach-master": 182687704666362864775460604089535377456991567872,
+      "construct-specialist": 182687704666362864775460604089535377456991567872,
+      "create-botter": 548063113999088594326381816990972615240619917313,
+      "investigate-champion": 182687704666362864775460604089535377456991567872,
+      "troubleshoot-expert": 182687704666362864775460604089535377456991567872,
+      "align-wizard": 316912650057057350374175801344
     },
     "agent_success_rates": {},
     "assignment_times": [
-      {
-        "issue": 2712,
-        "agent": "troubleshoot-expert",
-        "timestamp": "2025-11-24T10:54:58.013037",
-        "score": 15
-      },
       {
         "issue": 2689,
         "agent": "create-botter",
@@ -634,6 +628,12 @@
         "agent": "create-botter",
         "timestamp": "2025-12-12T14:19:28.809591",
         "score": 12
+      },
+      {
+        "issue": 4447,
+        "agent": "create-botter",
+        "timestamp": "2025-12-15T14:22:57.090954",
+        "score": 12
       }
     ]
   },
@@ -650,17 +650,6 @@
   },
   "decisions": {
     "recent": [
-      {
-        "type": "issue_assignment",
-        "description": "Assigned issue #2715 to investigate-champion (score: 10.00)",
-        "context": {
-          "issue_number": 2715,
-          "agent": "investigate-champion",
-          "score": 10
-        },
-        "timestamp": "2025-11-24T10:54:58.013033",
-        "session_id": "a8f53e273f33a934"
-      },
       {
         "type": "issue_assignment",
         "description": "Assigned issue #2712 to troubleshoot-expert (score: 15.00)",
@@ -1727,6 +1716,17 @@
         },
         "timestamp": "2025-12-12T14:19:28.809602",
         "session_id": "dd73197487236183"
+      },
+      {
+        "type": "issue_assignment",
+        "description": "Assigned issue #4447 to create-botter (score: 12.00)",
+        "context": {
+          "issue_number": 4447,
+          "agent": "create-botter",
+          "score": 12
+        },
+        "timestamp": "2025-12-15T14:22:57.090964",
+        "session_id": "4d23f453b8064d62"
       }
     ],
     "patterns": {}
