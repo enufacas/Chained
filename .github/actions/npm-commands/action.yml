@@ -128,11 +128,11 @@ runs:
           if [ "$CMD" = "install" ] || [ "$CMD" = "i" ]; then
             FULL_CMD="yarn install $ARGS"
           elif [ "$CMD" = "run" ]; then
-            FULL_CMD="yarn $ARGS"
+            FULL_CMD="yarn run $ARGS"
           elif [ "$CMD" = "test" ]; then
             FULL_CMD="yarn test $ARGS"
           elif [ "$CMD" = "build" ]; then
-            FULL_CMD="yarn build $ARGS"
+            FULL_CMD="yarn run build $ARGS"
           else
             FULL_CMD="yarn $CMD $ARGS"
           fi
@@ -144,7 +144,7 @@ runs:
           elif [ "$CMD" = "test" ]; then
             FULL_CMD="pnpm test $ARGS"
           elif [ "$CMD" = "build" ]; then
-            FULL_CMD="pnpm build $ARGS"
+            FULL_CMD="pnpm run build $ARGS"
           else
             FULL_CMD="pnpm $CMD $ARGS"
           fi
