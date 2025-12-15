@@ -49,7 +49,7 @@ class TestPatternMatcher(unittest.TestCase):
     
     def test_python_bare_except(self):
         """Test detection of bare except clauses in Python"""
-        test_file = os.path.join(self.temp_dir, 'test.py')
+        test_file = os.path.join(self.temp_dir, 'sample.py')
         with open(test_file, 'w') as f:
             f.write("try:\n    pass\nexcept:\n    pass\n")
         
@@ -60,9 +60,9 @@ class TestPatternMatcher(unittest.TestCase):
     
     def test_python_hardcoded_secret(self):
         """Test detection of hardcoded secrets in Python"""
-        test_file = os.path.join(self.temp_dir, 'test.py')
+        test_file = os.path.join(self.temp_dir, 'config.py')
         with open(test_file, 'w') as f:
-            f.write('api_key = "sk_test_1234567890abcdefghijklmnop"\n')
+            f.write('api_key = "sk_prod_1234567890abcdefghijklmnop"\n')
         
         matches = self.matcher.scan_file(test_file)
         secret_matches = [m for m in matches if m.pattern_id == 'py-hardcoded-secrets']
@@ -228,12 +228,12 @@ if [ $var = "test" ]; then
   echo "bad"
 fi
 '''
-        temp_file = os.path.join(self.temp_dir, 'test_unquoted.sh')
+        temp_file = os.path.join(self.temp_dir, 'check_unquoted.sh')
         with open(temp_file, 'w') as f:
             f.write(code)
         
         matches = self.matcher.scan_file(temp_file)
-        test_warnings = [m for m in matches if m.pattern_id == 'bash-unquoted-in-test']
+        test_warnings = [m for m in matches if m.pattern_id == 'bash-unquoted-in-single-bracket-test']
         self.assertGreater(len(test_warnings), 0, "Should detect unquoted variable in test")
     
     def test_bash_shebang_first_line_only(self):
@@ -257,7 +257,7 @@ echo "line 3"
         code = '''echo "no shebang"
 set -e
 '''
-        temp_file = os.path.join(self.temp_dir, 'test_no_shebang.sh')
+        temp_file = os.path.join(self.temp_dir, 'script_no_shebang.sh')
         with open(temp_file, 'w') as f:
             f.write(code)
         
@@ -287,7 +287,7 @@ echo "line 3"
         code = '''#!/bin/bash
 echo "no set -e"
 '''
-        temp_file = os.path.join(self.temp_dir, 'test_no_set_e.sh')
+        temp_file = os.path.join(self.temp_dir, 'script_no_set_e.sh')
         with open(temp_file, 'w') as f:
             f.write(code)
         
