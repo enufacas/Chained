@@ -1,0 +1,307 @@
+name: 'JavaScript/TypeScript Project Automation'
+description: 'Automated JavaScript/TypeScript linting, building, testing, and quality checks'
+author: '@create-botter'
+
+inputs:
+  node-version:
+    description: 'Node.js version to use'
+    required: false
+    default: '18'
+  
+  package-manager:
+    description: 'Package manager to use (npm, yarn, pnpm)'
+    required: false
+    default: 'npm'
+  
+  install-dependencies:
+    description: 'Whether to install dependencies'
+    required: false
+    default: 'true'
+  
+  run-build:
+    description: 'Whether to run build command'
+    required: false
+    default: 'true'
+  
+  run-lint:
+    description: 'Whether to run linting'
+    required: false
+    default: 'true'
+  
+  run-tests:
+    description: 'Whether to run tests'
+    required: false
+    default: 'true'
+  
+  working-directory:
+    description: 'Working directory for the project'
+    required: false
+    default: '.'
+  
+  build-command:
+    description: 'Custom build command (overrides default)'
+    required: false
+    default: ''
+  
+  test-command:
+    description: 'Custom test command (overrides default)'
+    required: false
+    default: ''
+  
+  lint-command:
+    description: 'Custom lint command (overrides default)'
+    required: false
+    default: ''
+
+outputs:
+  build-status:
+    description: 'Build status (success/skipped/failed)'
+    value: ${{ steps.build.outputs.status }}
+  
+  test-status:
+    description: 'Test status (success/skipped/failed)'
+    value: ${{ steps.test.outputs.status }}
+  
+  lint-status:
+    description: 'Lint status (success/skipped/failed)'
+    value: ${{ steps.lint.outputs.status }}
+
+runs:
+  using: composite
+  steps:
+    - name: 🔍 Detect project type
+      id: detect
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: |
+        echo "🔍 Detecting project configuration..."
+        
+        # Check for package.json
+        if [ ! -f "package.json" ]; then
+          echo "❌ No package.json found in ${{ inputs.working-directory }}"
+          exit 1
+        fi
+        
+        # Detect package manager
+        if [ -f "pnpm-lock.yaml" ]; then
+          DETECTED_PM="pnpm"
+        elif [ -f "yarn.lock" ]; then
+          DETECTED_PM="yarn"
+        else
+          DETECTED_PM="npm"
+        fi
+        
+        # Use detected or specified package manager
+        if [ "${{ inputs.package-manager }}" = "npm" ] || [ "${{ inputs.package-manager }}" = "yarn" ] || [ "${{ inputs.package-manager }}" = "pnpm" ]; then
+          PM="${{ inputs.package-manager }}"
+        else
+          PM="$DETECTED_PM"
+        fi
+        
+        echo "package-manager=$PM" >> $GITHUB_OUTPUT
+        echo "✅ Using package manager: $PM"
+        
+        # Set cache dependency path based on package manager
+        if [ "$PM" = "pnpm" ]; then
+          CACHE_PATH="pnpm-lock.yaml"
+        elif [ "$PM" = "yarn" ]; then
+          CACHE_PATH="yarn.lock"
+        else
+          CACHE_PATH="package-lock.json"
+        fi
+        echo "cache-path=$CACHE_PATH" >> $GITHUB_OUTPUT
+        
+        # Check for TypeScript
+        if grep -q '"typescript"' package.json; then
+          echo "typescript=true" >> $GITHUB_OUTPUT
+          echo "✅ TypeScript project detected"
+        else
+          echo "typescript=false" >> $GITHUB_OUTPUT
+          echo "ℹ️  JavaScript project detected"
+        fi
+        
+        # Detect framework
+        if grep -q '"next"' package.json; then
+          echo "framework=nextjs" >> $GITHUB_OUTPUT
+          echo "✅ Next.js project detected"
+        elif grep -q '"@playwright/test"' package.json; then
+          echo "framework=playwright" >> $GITHUB_OUTPUT
+          echo "✅ Playwright test project detected"
+        elif grep -q '"react"' package.json; then
+          echo "framework=react" >> $GITHUB_OUTPUT
+          echo "✅ React project detected"
+        else
+          echo "framework=generic" >> $GITHUB_OUTPUT
+          echo "ℹ️  Generic Node.js project"
+        fi
+    
+    - name: 📦 Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ inputs.node-version }}
+        cache: ${{ steps.detect.outputs.package-manager }}
+        cache-dependency-path: ${{ inputs.working-directory }}/${{ steps.detect.outputs.cache-path }}
+    
+    - name: 📥 Install dependencies
+      if: inputs.install-dependencies == 'true'
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: |
+        echo "📥 Installing dependencies with ${{ steps.detect.outputs.package-manager }}..."
+        
+        PM="${{ steps.detect.outputs.package-manager }}"
+        
+        if [ "$PM" = "npm" ]; then
+          if [ -f "package-lock.json" ]; then
+            npm ci
+          else
+            npm install
+          fi
+        elif [ "$PM" = "yarn" ]; then
+          yarn install --frozen-lockfile || yarn install
+        elif [ "$PM" = "pnpm" ]; then
+          pnpm install --frozen-lockfile || pnpm install
+        fi
+        
+        echo "✅ Dependencies installed successfully"
+    
+    - name: 🔨 Build project
+      id: build
+      if: inputs.run-build == 'true'
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: |
+        echo "🔨 Building project..."
+        
+        PM="${{ steps.detect.outputs.package-manager }}"
+        
+        # Use custom build command if provided
+        if [ -n "${{ inputs.build-command }}" ]; then
+          BUILD_CMD="${{ inputs.build-command }}"
+        else
+          # Auto-detect build command from package.json
+          if grep -q '"build":' package.json; then
+            if [ "$PM" = "npm" ]; then
+              BUILD_CMD="npm run build"
+            elif [ "$PM" = "yarn" ]; then
+              BUILD_CMD="yarn build"
+            elif [ "$PM" = "pnpm" ]; then
+              BUILD_CMD="pnpm build"
+            fi
+          else
+            echo "ℹ️  No build script found in package.json"
+            echo "status=skipped" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+        fi
+        
+        # Run build
+        if eval "$BUILD_CMD"; then
+          echo "✅ Build completed successfully"
+          echo "status=success" >> $GITHUB_OUTPUT
+        else
+          echo "❌ Build failed"
+          echo "status=failed" >> $GITHUB_OUTPUT
+          exit 1
+        fi
+    
+    - name: 🧹 Lint code
+      id: lint
+      if: inputs.run-lint == 'true'
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: |
+        echo "🧹 Running linter..."
+        
+        PM="${{ steps.detect.outputs.package-manager }}"
+        
+        # Use custom lint command if provided
+        if [ -n "${{ inputs.lint-command }}" ]; then
+          LINT_CMD="${{ inputs.lint-command }}"
+        else
+          # Auto-detect lint command from package.json
+          if grep -q '"lint":' package.json; then
+            if [ "$PM" = "npm" ]; then
+              LINT_CMD="npm run lint"
+            elif [ "$PM" = "yarn" ]; then
+              LINT_CMD="yarn lint"
+            elif [ "$PM" = "pnpm" ]; then
+              LINT_CMD="pnpm lint"
+            fi
+          else
+            echo "ℹ️  No lint script found in package.json"
+            echo "status=skipped" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+        fi
+        
+        # Run linter
+        if eval "$LINT_CMD"; then
+          echo "✅ Linting passed"
+          echo "status=success" >> $GITHUB_OUTPUT
+        else
+          echo "⚠️  Linting found issues"
+          echo "status=failed" >> $GITHUB_OUTPUT
+          # Don't exit on lint failure to allow tests to run
+        fi
+    
+    - name: 🧪 Run tests
+      id: test
+      if: inputs.run-tests == 'true'
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: |
+        echo "🧪 Running tests..."
+        
+        PM="${{ steps.detect.outputs.package-manager }}"
+        
+        # Use custom test command if provided
+        if [ -n "${{ inputs.test-command }}" ]; then
+          TEST_CMD="${{ inputs.test-command }}"
+        else
+          # Auto-detect test command from package.json
+          if grep -q '"test":' package.json; then
+            if [ "$PM" = "npm" ]; then
+              TEST_CMD="npm test"
+            elif [ "$PM" = "yarn" ]; then
+              TEST_CMD="yarn test"
+            elif [ "$PM" = "pnpm" ]; then
+              TEST_CMD="pnpm test"
+            fi
+          else
+            echo "ℹ️  No test script found in package.json"
+            echo "status=skipped" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+        fi
+        
+        # Run tests
+        if eval "$TEST_CMD"; then
+          echo "✅ Tests passed"
+          echo "status=success" >> $GITHUB_OUTPUT
+        else
+          echo "❌ Tests failed"
+          echo "status=failed" >> $GITHUB_OUTPUT
+          exit 1
+        fi
+    
+    - name: 📊 Summary
+      shell: bash
+      run: |
+        echo "### 🎯 JavaScript/TypeScript Automation Summary" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "**Project:** ${{ steps.detect.outputs.framework }}" >> $GITHUB_STEP_SUMMARY
+        echo "**TypeScript:** ${{ steps.detect.outputs.typescript }}" >> $GITHUB_STEP_SUMMARY
+        echo "**Package Manager:** ${{ steps.detect.outputs.package-manager }}" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "| Task | Status |" >> $GITHUB_STEP_SUMMARY
+        echo "|------|--------|" >> $GITHUB_STEP_SUMMARY
+        echo "| Build | ${{ steps.build.outputs.status || 'skipped' }} |" >> $GITHUB_STEP_SUMMARY
+        echo "| Lint | ${{ steps.lint.outputs.status || 'skipped' }} |" >> $GITHUB_STEP_SUMMARY
+        echo "| Test | ${{ steps.test.outputs.status || 'skipped' }} |" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "*Created by @create-botter - Visionary automation inspired by Nikola Tesla* ⚡" >> $GITHUB_STEP_SUMMARY
+
+branding:
+  icon: 'code'
+  color: 'blue'

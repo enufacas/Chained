@@ -1,0 +1,100 @@
+name: Test New Custom Actions
+
+on:
+  workflow_dispatch:
+    inputs:
+      test-javascript:
+        description: 'Test JavaScript automation action'
+        required: false
+        type: boolean
+        default: true
+      test-npm:
+        description: 'Test NPM commands action'
+        required: false
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+jobs:
+  test-javascript-automation:
+    if: github.event.inputs.test-javascript == 'true'
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        project:
+          - path: 'infrastructure/docker/ag-ui-frontend'
+            name: 'Next.js AG-UI Frontend'
+          - path: 'tests/e2e'
+            name: 'Playwright E2E Tests'
+          - path: 'mcp-servers/chained-world-model'
+            name: 'MCP World Model Server'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Test ${{ matrix.project.name }}
+        uses: ./.github/actions/javascript-automation
+        with:
+          working-directory: ${{ matrix.project.path }}
+          node-version: '18'
+          run-build: 'true'
+          run-lint: 'false'  # Skip lint to focus on build
+          run-tests: 'false'  # Skip tests for workflow validation
+  
+  test-npm-commands:
+    if: github.event.inputs.test-npm == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Test npm install
+        uses: ./.github/actions/npm-commands
+        with:
+          command: 'install'
+          working-directory: 'infrastructure/docker/ag-ui-frontend'
+      
+      - name: Test custom npm script
+        uses: ./.github/actions/npm-commands
+        with:
+          command: 'run'
+          args: 'build'
+          working-directory: 'infrastructure/docker/ag-ui-frontend'
+      
+      - name: Test with auto-detect (will use npm as fallback)
+        uses: ./.github/actions/npm-commands
+        with:
+          command: 'install'
+          working-directory: 'mcp-servers/chained-world-model'
+          package-manager: 'auto'
+      
+      - name: Test output capture
+        id: test-output
+        uses: ./.github/actions/npm-commands
+        with:
+          command: 'run'
+          args: 'build'
+          working-directory: 'mcp-servers/chained-world-model'
+          output-file: 'build-output.txt'
+          fail-on-error: 'false'
+      
+      - name: Check exit code
+        run: |
+          echo "Exit code: ${{ steps.test-output.outputs.exit-code }}"
+          echo "Package manager used: ${{ steps.test-output.outputs.package-manager-used }}"
+  
+  summary:
+    needs: [test-javascript-automation, test-npm-commands]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Summary
+        run: |
+          echo "### ✅ New Custom Actions Test Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**JavaScript Automation:** ${{ needs.test-javascript-automation.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "**NPM Commands:** ${{ needs.test-npm-commands.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "*Created by @create-botter - Testing new automation actions* ⚡" >> $GITHUB_STEP_SUMMARY
