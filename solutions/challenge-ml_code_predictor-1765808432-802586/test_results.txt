@@ -1,0 +1,68 @@
+test_caching (__main__.TestCodeCompletionPredictor.test_caching)
+Test that caching improves performance ... ok
+test_complete_function (__main__.TestCodeCompletionPredictor.test_complete_function)
+Test Case 2: Completes functions ... ok
+test_confidence_scores (__main__.TestCodeCompletionPredictor.test_confidence_scores)
+Test that confidence scores are provided ... ok
+test_multi_language_support (__main__.TestCodeCompletionPredictor.test_multi_language_support)
+Test that multiple languages are supported ... ok
+test_predict_next_line_javascript (__main__.TestCodeCompletionPredictor.test_predict_next_line_javascript)
+Test predicting next line for JavaScript ... ok
+test_predict_next_line_python (__main__.TestCodeCompletionPredictor.test_predict_next_line_python)
+Test Case 1: Predicts next code line for Python ... ok
+test_real_time_inference (__main__.TestCodeCompletionPredictor.test_real_time_inference)
+Test that inference is optimized for real-time (<100ms target) ... ok
+test_save_load (__main__.TestCodeCompletionPredictor.test_save_load)
+Test model persistence ... ok
+test_training (__main__.TestCodeCompletionPredictor.test_training)
+Test training the complete model ... ok
+test_cpp_tokenization (__main__.TestCodeTokenizer.test_cpp_tokenization)
+Test C++ code tokenization ... ok
+test_detokenization (__main__.TestCodeTokenizer.test_detokenization)
+Test converting tokens back to code ... ok
+test_go_tokenization (__main__.TestCodeTokenizer.test_go_tokenization)
+Test Go code tokenization ... ok
+test_java_tokenization (__main__.TestCodeTokenizer.test_java_tokenization)
+Test Java code tokenization ... ok
+test_javascript_tokenization (__main__.TestCodeTokenizer.test_javascript_tokenization)
+Test JavaScript code tokenization ... ok
+test_normalizes_numbers (__main__.TestCodeTokenizer.test_normalizes_numbers)
+Test that numbers are normalized ... ok
+test_normalizes_strings (__main__.TestCodeTokenizer.test_normalizes_strings)
+Test that strings are normalized ... ok
+test_preserves_newlines (__main__.TestCodeTokenizer.test_preserves_newlines)
+Test that newlines are preserved as context markers ... ok
+test_python_tokenization (__main__.TestCodeTokenizer.test_python_tokenization)
+Test Python code tokenization ... ok
+test_requirement_1_sequence_prediction (__main__.TestRequirements.test_requirement_1_sequence_prediction)
+Requirement 1: Train a sequence prediction model ... ok
+test_requirement_2_multi_language (__main__.TestRequirements.test_requirement_2_multi_language)
+Requirement 2: Support multiple programming languages ... ok
+test_requirement_3_confidence_scores (__main__.TestRequirements.test_requirement_3_confidence_scores)
+Requirement 3: Provide confidence scores for predictions ... ok
+test_requirement_4_real_time_inference (__main__.TestRequirements.test_requirement_4_real_time_inference)
+Requirement 4: Optimize for real-time inference ... ok
+test_backoff (__main__.TestSequencePredictor.test_backoff)
+Test context backoff when exact match not found ... ok
+test_beam_search (__main__.TestSequencePredictor.test_beam_search)
+Test beam search for multiple candidates ... ok
+test_prediction (__main__.TestSequencePredictor.test_prediction)
+Test next token prediction ... ok
+test_save_load (__main__.TestSequencePredictor.test_save_load)
+Test model persistence ... ok
+test_training (__main__.TestSequencePredictor.test_training)
+Test basic training ... ok
+
+----------------------------------------------------------------------
+Ran 27 tests in 0.009s
+
+OK
+
+======================================================================
+TEST SUMMARY
+======================================================================
+Tests run: 27
+Successes: 27
+Failures: 0
+Errors: 0
+======================================================================
