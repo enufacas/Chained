@@ -1,5 +1,5 @@
 {
-  "timestamp": "2025-12-15T08:42:30.262917+00:00",
+  "timestamp": "2025-12-15T20:33:40.367064+00:00",
   "total_learnings": 1030,
   "sources": {
     "tldr": 20,
@@ -2348,163 +2348,163 @@
     },
     {
       "source": "hackernews",
+      "title": "\u201cSuper secure\u201d MAGA-themed messaging app leaks everyone's phone number",
+      "url": "https://ericdaigle.ca/posts/super-secure-maga-messaging-app-leaks-everyones-phone-number/",
+      "score": 229,
+      "comments": 75,
+      "collected_at": "2025-12-15T20:33:12.831611+00:00"
+    },
+    {
+      "source": "hackernews",
+      "title": "D-Bus is a disgrace to the Linux desktop",
+      "url": "https://blog.vaxry.net/articles/2025-dbusSucks",
+      "score": 165,
+      "comments": 90,
+      "collected_at": "2025-12-15T20:33:12.944469+00:00"
+    },
+    {
+      "source": "hackernews",
+      "title": "United 777-200 fleet faces an uncertain future after Dulles engine failure",
+      "url": "https://liveandletsfly.com/united-airlines-777-200-future/",
+      "score": 60,
+      "comments": 45,
+      "collected_at": "2025-12-15T20:33:13.054622+00:00"
+    },
+    {
+      "source": "hackernews",
+      "title": "Upcoming Changes to Let's Encrypt Certificates",
+      "url": "https://community.letsencrypt.org/t/upcoming-changes-to-let-s-encrypt-certificates/243873",
+      "score": 29,
+      "comments": 4,
+      "collected_at": "2025-12-15T20:33:13.165361+00:00"
+    },
+    {
+      "source": "hackernews",
+      "title": "Carrier Landing in Top Gun for the NES",
+      "url": "https://relaxing.run/blag/posts/top-gun-landing/",
+      "score": 308,
+      "comments": 119,
+      "collected_at": "2025-12-15T20:33:13.280678+00:00"
+    },
+    {
+      "source": "hackernews",
+      "title": "Umbrel \u2013 Personal Cloud",
+      "url": "https://umbrel.com",
+      "score": 36,
+      "comments": 16,
+      "collected_at": "2025-12-15T20:33:13.397074+00:00"
+    },
+    {
+      "source": "hackernews",
+      "title": "Cosmic-ray bath in a past supernova gives birth to Earth-like planets",
+      "url": "https://www.science.org/doi/10.1126/sciadv.adx7892",
+      "score": 53,
+      "comments": 10,
+      "collected_at": "2025-12-15T20:33:13.506243+00:00"
+    },
+    {
+      "source": "hackernews",
+      "title": "Essential Semiconductor Physics [pdf]",
+      "url": "https://nanohub.org/resources/43623/download/Essential_Semiconductor_Physics.pdf",
+      "score": 25,
+      "comments": 2,
+      "collected_at": "2025-12-15T20:33:13.618819+00:00"
+    },
+    {
+      "source": "hackernews",
+      "title": "In Defense of Matlab Code",
+      "url": "https://runmat.org/blog/in-defense-of-matlab-whiteboard-style-code",
+      "score": 29,
+      "comments": 15,
+      "collected_at": "2025-12-15T20:33:13.728804+00:00"
+    },
+    {
+      "source": "hackernews",
+      "title": "US TikTok investors in limbo as deal set to be delayed again",
+      "url": "https://www.bbc.com/news/articles/cp34442z25ko",
+      "score": 84,
+      "comments": 16,
+      "collected_at": "2025-12-15T20:33:13.841662+00:00"
+    },
+    {
+      "source": "hackernews",
+      "title": "Avoid UUID Version 4 Primary Keys in Postgres",
+      "url": "https://andyatkinson.com/avoid-uuid-version-4-primary-keys",
+      "score": 290,
+      "comments": 307,
+      "collected_at": "2025-12-15T20:33:13.955868+00:00"
+    },
+    {
+      "source": "hackernews",
+      "title": "Chafa: Terminal Graphics for the 21st Century",
+      "url": "https://hpjansson.org/chafa/",
+      "score": 27,
+      "comments": 2,
+      "collected_at": "2025-12-15T20:33:14.072197+00:00"
+    },
+    {
+      "source": "hackernews",
+      "title": "It seems that OpenAI is scraping [certificate transparency] logs",
+      "url": "https://benjojo.co.uk/u/benjojo/h/Gxy2qrCkn1Y327Y6D3",
+      "score": 150,
+      "comments": 85,
+      "collected_at": "2025-12-15T20:33:14.186283+00:00"
+    },
+    {
+      "source": "hackernews",
+      "title": "We architected an edge caching layer to eliminate cold starts",
+      "url": "https://www.mintlify.com/blog/page-speed-improvements",
+      "score": 12,
+      "comments": 5,
+      "collected_at": "2025-12-15T20:33:14.297057+00:00"
+    },
+    {
+      "source": "hackernews",
+      "title": "Taiwan May Restart Nuclear Power Plant in 2028, Minister Says",
+      "url": "https://www.energyconnects.com/news/utilities/2025/december/taiwan-may-restart-nuclear-power-plant-in-2028-minister-says/",
+      "score": 8,
+      "comments": 0,
+      "collected_at": "2025-12-15T20:33:14.409181+00:00"
+    },
+    {
+      "source": "hackernews",
       "title": "Adafruit: Arduino\u2019s Rules Are \u2018Incompatible With Open Source\u2019",
       "url": "https://thenewstack.io/adafruit-arduinos-rules-are-incompatible-with-open-source/",
-      "score": 153,
-      "comments": 68,
-      "collected_at": "2025-12-15T08:42:04.128214+00:00"
-    },
-    {
-      "source": "hackernews",
-      "title": "Arborium: Tree-sitter code highlighting with Native and WASM targets",
-      "url": "https://arborium.bearcove.eu/",
-      "score": 75,
-      "comments": 11,
-      "collected_at": "2025-12-15T08:42:04.278449+00:00"
-    },
-    {
-      "source": "hackernews",
-      "title": "Ask HN: What Are You Working On? (December 2025)",
-      "url": "",
-      "score": 250,
-      "comments": 804,
-      "collected_at": "2025-12-15T08:42:04.367063+00:00"
-    },
-    {
-      "source": "hackernews",
-      "title": "The Whole App is a Blob",
-      "url": "https://drobinin.com/posts/the-whole-app-is-a-blob/",
-      "score": 64,
-      "comments": 14,
-      "collected_at": "2025-12-15T08:42:04.451288+00:00"
-    },
-    {
-      "source": "hackernews",
-      "title": "Why proteins fold and how GPUs help us fold",
-      "url": "https://aval.bearblog.dev/nvidiaproteins/",
-      "score": 62,
-      "comments": 15,
-      "collected_at": "2025-12-15T08:42:04.537104+00:00"
-    },
-    {
-      "source": "hackernews",
-      "title": "Unscii",
-      "url": "http://viznut.fi/unscii/",
-      "score": 48,
-      "comments": 2,
-      "collected_at": "2025-12-15T08:42:04.640366+00:00"
-    },
-    {
-      "source": "hackernews",
-      "title": "How well do you know C++ auto type deduction?",
-      "url": "https://www.volatileint.dev/posts/auto-type-deduction-gauntlet/",
-      "score": 46,
-      "comments": 25,
-      "collected_at": "2025-12-15T08:42:04.745708+00:00"
-    },
-    {
-      "source": "hackernews",
-      "title": "John Varley has died",
-      "url": "http://floggingbabel.blogspot.com/2025/12/john-varley-1947-2025.html",
-      "score": 54,
-      "comments": 17,
-      "collected_at": "2025-12-15T08:42:04.821448+00:00"
-    },
-    {
-      "source": "hackernews",
-      "title": "The Problem of Teaching Physics in Latin America (1963)",
-      "url": "https://calteches.library.caltech.edu/46/2/LatinAmerica.htm",
-      "score": 35,
-      "comments": 14,
-      "collected_at": "2025-12-15T08:42:04.929796+00:00"
-    },
-    {
-      "source": "hackernews",
-      "title": "CapROS: Capability-Based Reliable Operating System",
-      "url": "https://www.capros.org/",
-      "score": 76,
-      "comments": 29,
-      "collected_at": "2025-12-15T08:42:05.033515+00:00"
-    },
-    {
-      "source": "hackernews",
-      "title": "Common Rust Lifetime Misconceptions",
-      "url": "https://github.com/pretzelhammer/rust-blog/blob/master/posts/common-rust-lifetime-misconceptions.md",
-      "score": 16,
-      "comments": 0,
-      "collected_at": "2025-12-15T08:42:05.138009+00:00"
-    },
-    {
-      "source": "hackernews",
-      "title": "Running on Empty: Copper",
-      "url": "https://thehonestsorcerer.substack.com/p/running-on-empty-copper",
-      "score": 55,
-      "comments": 43,
-      "collected_at": "2025-12-15T08:42:05.242917+00:00"
-    },
-    {
-      "source": "hackernews",
-      "title": "$5 whale listening hydrophone making workshop",
-      "url": "https://exclav.es/2025/08/03/dinacon-2025-passive-acoustic-listening/",
-      "score": 6,
-      "comments": 2,
-      "collected_at": "2025-12-15T08:42:05.329791+00:00"
+      "score": 405,
+      "comments": 216,
+      "collected_at": "2025-12-15T20:33:14.524851+00:00"
     },
     {
       "source": "hackernews",
       "title": "Roomba maker goes bankrupt, Chinese owner emerges",
       "url": "https://news.bloomberglaw.com/bankruptcy-law/robot-vacuum-roomba-maker-files-for-bankruptcy-after-35-years",
-      "score": 96,
-      "comments": 91,
-      "collected_at": "2025-12-15T08:42:05.423801+00:00"
+      "score": 586,
+      "comments": 708,
+      "collected_at": "2025-12-15T20:33:14.634673+00:00"
+    },
+    {
+      "source": "hackernews",
+      "title": "I'm Kenyan. I don't write like ChatGPT, ChatGPT writes like me",
+      "url": "https://marcusolang.substack.com/p/im-kenyan-i-dont-write-like-chatgpt",
+      "score": 325,
+      "comments": 219,
+      "collected_at": "2025-12-15T20:33:14.746377+00:00"
+    },
+    {
+      "source": "hackernews",
+      "title": "Google discontinuing their dark web report",
+      "url": "https://support.google.com/websearch/answer/16767242?hl=en&co=GENIE.Platform%3DAndroid",
+      "score": 19,
+      "comments": 2,
+      "collected_at": "2025-12-15T20:33:14.866315+00:00"
     },
     {
       "source": "hackernews",
       "title": "If AI replaces workers, should it also pay taxes?",
       "url": "https://english.elpais.com/technology/2025-11-30/if-ai-replaces-workers-should-it-also-pay-taxes.html",
-      "score": 69,
-      "comments": 110,
-      "collected_at": "2025-12-15T08:42:05.507283+00:00"
-    },
-    {
-      "source": "hackernews",
-      "title": "Read Something Wonderful",
-      "url": "https://readsomethingwonderful.com/",
-      "score": 94,
-      "comments": 15,
-      "collected_at": "2025-12-15T08:42:05.601027+00:00"
-    },
-    {
-      "source": "hackernews",
-      "title": "The History of Xerox",
-      "url": "https://www.abortretry.fail/p/the-history-of-xerox",
-      "score": 14,
-      "comments": 0,
-      "collected_at": "2025-12-15T08:42:05.704934+00:00"
-    },
-    {
-      "source": "hackernews",
-      "title": "Rio de Janeiro's talipot palm trees bloom for the first and only time",
-      "url": "https://apnews.com/article/brazil-rio-talipot-palm-flamengo-park-dcfb1ce237af7a10ab72205fc9bbdc02",
-      "score": 140,
-      "comments": 36,
-      "collected_at": "2025-12-15T08:42:05.809998+00:00"
-    },
-    {
-      "source": "hackernews",
-      "title": "Hashcards: A plain-text spaced repetition system",
-      "url": "https://borretti.me/article/hashcards-plain-text-spaced-repetition",
-      "score": 312,
-      "comments": 145,
-      "collected_at": "2025-12-15T08:42:05.914022+00:00"
-    },
-    {
-      "source": "hackernews",
-      "title": "JSDoc is TypeScript",
-      "url": "https://culi.bearblog.dev/jsdoc-is-typescript/",
-      "score": 159,
-      "comments": 188,
-      "collected_at": "2025-12-15T08:42:06.005364+00:00"
+      "score": 477,
+      "comments": 793,
+      "collected_at": "2025-12-15T20:33:14.975851+00:00"
     },
     {
       "title": "Tabloid: The Clickbait Headline Programming Language",
@@ -5686,7 +5686,7 @@
       "content": "About billing for GitHub Copilot in organizations and enterprises\nLearn about pricing and billing cycles for Copilot.\nWho can use this feature?\nOrganizations on a GitHub Free or GitHub Team plan, or organizations and enterprises on GitHub Enterprise Cloud\nIn this article\nAvailable plans\nGitHub offers the following plans for organization accounts:\nCopilot Business\nat $19 USD per user per month (Purchase additional premium requests at $0.04 USD per request)\nCopilot Enterprise\nat $39 USD per user per month (GitHub Enterprise Cloud only, purchase additional premium requests at $0.04 USD per request)\nWith GitHub Enterprise Cloud, an enterprise owner chooses the plan for each organization in the enterprise. For guidance on choosing a plan, see\nChoosing your enterprise's plan for GitHub Copilot\n.\nPremium requests\nPaid Copilot plans include premium requests. Premium requests use advanced models and features and are subject to monthly allowances or potential overage costs. See\nRequests in GitHub Copilot\n.\nSeat assignment\nA Copilot seat is a license to use GitHub Copilot for a user. Each month, your organization or enterprise is billed for the number of assigned seats.\nSeat assignment is managed by organization owners. With GitHub Enterprise Cloud, an enterprise owner must have enabled GitHub Copilot for the organization before an organization owner can assign seats. See\nGranting access to GitHub Copilot for members of your organization\n.\nIf a user receives a seat from multiple organizations in the same enterprise, the enterprise will be billed only once, and one organization is selected and billed for the seat. To determine which organization is billed for a given user, request a detailed usage report and refer to the\norganization\ncolumn for the user's Copilot license. See\nBilling reports reference\n.\nBilling cycles\nBilled users are calculated at the end of each billing cycle, based on the number of GitHub Copilot seats that are assigned. Although you can add or remove seats \n\n[Content truncated...]",
       "url": "https://docs.github.com/en/copilot/concepts/billing/organizations-and-enterprises",
       "source": "GitHub Copilot Docs",
-      "timestamp": "2025-12-15T08:42:02.591325+00:00"
+      "timestamp": "2025-12-15T20:33:12.859387+00:00"
     },
     {
       "title": "GitHub Copilot Docs: About billing for individual GitHub Copilot plans",
@@ -5694,7 +5694,7 @@
       "content": "About billing for individual GitHub Copilot plans\nLearn how billing works for Copilot Pro and Copilot Pro+.\nIn this article\nPricing for Copilot Pro and Copilot Pro+\nGitHub offers two paid plans for individuals: Copilot Pro and Copilot Pro+. Both plans are available on a monthly or yearly billing cycle.\nCopilot Pro\nIf you choose a monthly billing cycle\n, you will be billed $10 USD per calendar month.\nIf you choose a yearly billing cycle\n, you will be billed $100 USD per year.\nCopilot Pro+\nIf you choose a monthly billing cycle\n, you will be billed $39 USD per calendar month.\nIf you choose a yearly billing cycle\n, you will be billed $390 USD per year.\nYou can change to a monthly or yearly billing cycle at any time. The change will take effect from the start of your next billing cycle.\nNote that GitHub may apply a temporary authorization hold for the value of the usage-based costs in advance, which will appear as a pending charge in your account's payment method.\nAbout the 30-day trial for Copilot Pro\nNote\nCopilot Pro+ does not include a trial. You will be billed immediately upon subscribing.\nBefore starting a paid plan for a personal account, you can set up a one-time 30-day trial to evaluate Copilot. To begin a trial, you will need to choose a monthly or yearly billing cycle, and provide a payment method. If you do not cancel the trial before the end of the 30 days, the trial will automatically convert to a paid plan.\nYou can cancel your Copilot trial at any time during the 30 days and you won't be charged. If you cancel before the end of the trial, you will continue to have access to Copilot until the 30-day trial period ends. See\nViewing and changing your GitHub Copilot plan\n.\nNote\nIf you were part of the free GitHub Copilot technical preview that was run between July 2021 and June 2022, you are not eligible for a 30-day trial.\nAbout premium requests\nYour Copilot plan includes premium requests. Premium requests use more advanced models or features and count against \n\n[Content truncated...]",
       "url": "https://docs.github.com/en/copilot/concepts/billing/billing-for-individuals",
       "source": "GitHub Copilot Docs",
-      "timestamp": "2025-12-15T08:42:03.179449+00:00"
+      "timestamp": "2025-12-15T20:33:13.450650+00:00"
     },
     {
       "title": "GitHub Copilot Docs: About Copilot auto model selection",
@@ -5702,7 +5702,7 @@
       "content": "About Copilot auto model selection\nAutomatically select models for Copilot Chat and Copilot coding agent.\nWho can use this feature?\nAuto model selection for Copilot Chat is available with all GitHub Copilot plans.\nAuto model selection for Copilot coding agent is available for GitHub Copilot Pro and GitHub Copilot Pro+ plans.\nIn this article\nOverview\nExperience less rate limiting and reduce the mental load of choosing a model by letting Copilot auto model selection automatically choose the best available model on your behalf.\nCopilot auto model selection is currently optimized for model availability, choosing from a list of models that may change over time.\nWith Copilot auto model selection, you benefit from:\nReduced chances of rate limiting\nDiscounted multipliers for paid plans (Copilot Chat only)\nAuto model selection\nwon't\ninclude these models:\nModels excluded by administrator policies. See\nConfiguring access to AI models in GitHub Copilot\n.\nModels with premium request multipliers greater than one. See\nSupported AI models in GitHub Copilot\n.\nModels not available in your plan. See\nSupported AI models in GitHub Copilot\n.\nNote\nSoon Copilot auto model selection will choose the best model for you by taking into account both model availability and your task.\nAuto model selection in Copilot Chat\nAuto model selection is generally available in the following IDEs:\nVS Code\nAuto model selection is in public preview for the following IDEs:\nVisual Studio\nEclipse\nJetBrains IDEs\nXcode\nWhen you select\nAuto\nin Copilot Chat, Auto model selection may choose from the following list of models, subject to your policies and subscription type. Models may change over time.\nGPT-4.1\nGPT-5 mini\nGPT-5.1-Codex-Max\nClaude Haiku 4.5\nClaude Sonnet 4.5\nTip\nTo see which model was used for each response, hover over the response in Copilot Chat.\nWhile auto model selection is an option for Copilot Chat, you can manually choose a different model to override this selection. You can change the model Copilo\n\n[Content truncated...]",
       "url": "https://docs.github.com/en/copilot/concepts/auto-model-selection",
       "source": "GitHub Copilot Docs",
-      "timestamp": "2025-12-15T08:42:03.752589+00:00"
+      "timestamp": "2025-12-15T20:33:14.595925+00:00"
     },
     {
       "title": "GitHub Copilot Docs: About customizing GitHub Copilot responses",
@@ -5710,7 +5710,7 @@
       "content": "About customizing GitHub Copilot responses\nLearn about customizing the behavior of GitHub Copilot to fit with your preferences and requirements.\nTool navigation\nIn this article\nNote\nThis version of this article is about custom instructions on the GitHub website. Click the tabs above for other environments.\nAbout customizing Copilot responses\nGitHub Copilot can provide responses that are tailored to your personal preferences, the way your team works, the tools you use, or the specifics of your project, if you provide it with enough context to do so. Instead of repeatedly adding this contextual detail to your prompts, you can create custom instructions that automatically add this information for you. The additional information is not displayed, but is available to Copilot to allow it to generate higher quality responses.\nNote\nDue to the non-deterministic nature of AI, Copilot may not always follow your custom instructions in exactly the same way every time they are used.\nTypes of custom instructions\nThere are three main types of custom instructions that you can use to customize Copilot responses on the GitHub website:\nPersonal instructions\napply to all conversations you have with Copilot Chat across the GitHub website. They allow you to specify your individual preferences, such as preferred language or response style, ensuring that the responses are tailored to your personal needs.\nRepository custom instructions\napply to conversations within the context of a specific repository. They are useful for defining project-specific coding standards, frameworks, or tools. For example, you can specify that a repository uses TypeScript and a particular library, ensuring consistent responses for all contributors.\nOrganization custom instructions\n(public preview) apply to conversations within the context of an organization on the GitHub website. They are ideal for enforcing organization-wide preferences, such as a common language or security guidelines. Organization custom instruc\n\n[Content truncated...]",
       "url": "https://docs.github.com/en/copilot/concepts/prompting/response-customization",
       "source": "GitHub Copilot Docs",
-      "timestamp": "2025-12-15T08:42:04.376559+00:00"
+      "timestamp": "2025-12-15T20:33:15.699426+00:00"
     },
     {
       "title": "GitHub Copilot Docs: About GitHub Copilot Chat",
@@ -5718,7 +5718,7 @@
       "content": "About GitHub Copilot Chat\nLearn how you can use GitHub Copilot Chat to enhance your coding experience.\nIn this article\nOverview\nGitHub Copilot Chat is the AI-powered chat interface for GitHub Copilot. It allows you to interact with AI models to get coding assistance, explanations, and suggestions in a conversational format.\nCopilot Chat can help you with a variety of coding-related tasks, like offering you code suggestions, providing natural language descriptions of a piece of code's functionality and purpose, generating unit tests for your code, and proposing fixes for bugs in your code.\nGitHub Copilot Chat is available in various environments:\nGitHub (the website)\nA range of IDEs such as Visual Studio Code, Xcode, and JetBrains IDEs\nGitHub Mobile\nGitHub Copilot CLI\nDifferent environments may have different features and capabilities, but the core functionality remains consistent across platforms. To explore the functionality available in each environment, see the\nGitHub Copilot Chat\nhow-to guides and the\nTutorials for GitHub Copilot\n.\nLimitations\nCopilot Chat is designed to assist with coding tasks, but you remain responsible for reviewing and validating the code it generates. It may not always produce correct or optimal solutions, and it can sometimes generate code that contains security vulnerabilities or other issues. Always test and review the code before using it in production.\nCustomizing Copilot Chat responses\nGitHub Copilot in GitHub, Visual Studio Code, and Visual Studio can provide chat responses that are tailored to the way your team works, the tools you use, the specifics of your project, or your personal preferences, if you provide it with enough context to do so. Instead of repeating instructions in each prompt, you can create and save instructions for Copilot Chat to customize what responses you receive.\nThere are various ways you can create custom instructions for Copilot Chat. These fall into three main categories:\nPersonal instructions\n: You can a\n\n[Content truncated...]",
       "url": "https://docs.github.com/en/copilot/concepts/chat",
       "source": "GitHub Copilot Docs",
-      "timestamp": "2025-12-15T08:42:04.951201+00:00"
+      "timestamp": "2025-12-15T20:33:16.414019+00:00"
     },
     {
       "title": "GitHub Discussion: Copilot L1 Test generation",
@@ -5729,7 +5729,18 @@
       "metadata": {
         "comments": 2
       },
-      "timestamp": "2025-12-15T08:42:05.512359+00:00"
+      "timestamp": "2025-12-15T20:33:17.091784+00:00"
+    },
+    {
+      "title": "GitHub Discussion: Adding \"Copilot\" menu for users who already uninstalled Copilot is deeply offensive",
+      "description": "Long ago, I installed VS Code, and there was a \"Copilot\" extension. I uninstalled it immediately. I do not want to use Copilot, I do not want Copilot on my computer, I do not want to use software that is capable of integrating with Copilot. I want that trash completely off my computer.\n\nYet today I opened VSCode\u00b9 and found a new menu:\n\n![Image](https://github.com/user-attachments/assets/0e5d44b7-7abd-44bf-8a19-72f3890152ea)\n\nAfter poking around, I discovered I could disable it with a new checkbo",
+      "content": "Long ago, I installed VS Code, and there was a \"Copilot\" extension. I uninstalled it immediately. I do not want to use Copilot, I do not want Copilot on my computer, I do not want to use software that is capable of integrating with Copilot. I want that trash completely off my computer.\n\nYet today I opened VSCode\u00b9 and found a new menu:\n\n![Image](https://github.com/user-attachments/assets/0e5d44b7-7abd-44bf-8a19-72f3890152ea)\n\nAfter poking around, I discovered I could disable it with a new checkbox.\n\n![Image](https://github.com/user-attachments/assets/9fabaf0e-e340-4bc4-96d0-50b1393de3e2)\n\nBut that is not good enough for me.\n\nThere are two problems here:\n\n1. Those of us who have already uninstalled Copilot have already said no to Copilot. **We should not have to say no again.** This is the worst thing about Microsoft software these days\u2014 having to disable the same features over, and over, and over, as VPs get more desperate to juice metrics and software updates re-enable things we've already disabled. The checkbox should have been off by default for people who don't have the chatbot plugin installed, and for new users uninstalling the plugin should automatically uninstall the Copilot extension. You should respect our consent. Respect our humanity.\n\n2. Although I've disabled the Copilot menu, I am unsatisfied because my copy of VS Code *still contains the Copilot menu code*. Previously I could remove all Copilot code completely by simply uninstalling the Copilot extension. Now, there's this little bridgehead of Copilot on my computer, inactive (until you enable it again) but still there. I want the infection gone completely.\n\nMy \"**expected behavior**\" is that you should remove the Copilot menu from VS Code and move the code that adds the menu into the Copilot extension. Or, to put it a different way, if you're going to put explicit Copilot support code into VS Code proper rather than quarantining it in the removable extension, then I personally **will** uninstall VS C",
+      "url": "https://github.com/microsoft/vscode/issues/237819",
+      "source": "GitHub Community Discussions",
+      "metadata": {
+        "comments": 76
+      },
+      "timestamp": "2025-12-15T20:33:17.091822+00:00"
     },
     {
       "title": "GitHub Discussion: Feature: Add GitHub Copilot as model provider",
@@ -5740,18 +5751,7 @@
       "metadata": {
         "comments": 211
       },
-      "timestamp": "2025-12-15T08:42:05.512398+00:00"
-    },
-    {
-      "title": "GitHub Discussion: Ability to import docker-compose defintion and convert them as Copilot app and services",
-      "description": "Docker compose is commonly used for local development and testing. We need an ability for Copilot to import Docker Compose files and convert them as Copilot native app and svc objects, in a guide way. This will be a big boost for developers.",
-      "content": "Docker compose is commonly used for local development and testing. We need an ability for Copilot to import Docker Compose files and convert them as Copilot native app and svc objects, in a guide way. This will be a big boost for developers.",
-      "url": "https://github.com/aws/copilot-cli/issues/1612",
-      "source": "GitHub Community Discussions",
-      "metadata": {
-        "comments": 18
-      },
-      "timestamp": "2025-12-15T08:42:05.512407+00:00"
+      "timestamp": "2025-12-15T20:33:17.091831+00:00"
     },
     {
       "title": "GitHub Copilot Docs: About billing for GitHub Copilot in organizations and enterprises",
@@ -8914,143 +8914,143 @@
     },
     {
       "source": "tldr",
+      "title": "SpaceX IPO banks \ud83c\udfe6, Netflix House \ud83c\udfac, design is search \ud83d\udc69\ud83c\udffb\u200d\ud83c\udfa8",
+      "url": "https://tldr.tech/tech/2025-12-15",
+      "summary": "",
+      "collected_at": "2025-12-15T20:33:10.543330+00:00"
+    },
+    {
+      "source": "tldr",
       "title": "GPT-5.2 \ud83e\udd16, Rivian autonomy \ud83d\udefb, compound engineering \ud83d\udc68\u200d\ud83d\udcbb",
       "url": "https://tldr.tech/tech/2025-12-12",
       "summary": "",
-      "collected_at": "2025-12-15T08:42:05.617896+00:00"
+      "collected_at": "2025-12-15T20:33:10.543349+00:00"
     },
     {
       "source": "tldr",
       "title": "Musk Bezos space race \ud83d\ude80, why AGI won't happen \ud83e\udd16, writing engineering blogs \ud83d\udc68\u200d\ud83d\udcbb",
       "url": "https://tldr.tech/tech/2025-12-11",
       "summary": "",
-      "collected_at": "2025-12-15T08:42:05.617917+00:00"
+      "collected_at": "2025-12-15T20:33:10.543354+00:00"
     },
     {
       "source": "tldr",
       "title": "SpaceX $1.5T target \ud83d\udcb0, Meta AI internal confusion \ud83e\udd16, the 0.1x engineer \ud83d\udc68\u200d\ud83d\udcbb",
       "url": "https://tldr.tech/tech/2025-12-10",
       "summary": "",
-      "collected_at": "2025-12-15T08:42:05.617922+00:00"
+      "collected_at": "2025-12-15T20:33:10.543359+00:00"
     },
     {
       "source": "tldr",
       "title": "Inside OpenAI's code red \ud83e\udd16, Google's AI glasses \ud83d\udc53, cost of software declines \ud83d\udcc9",
       "url": "https://tldr.tech/tech/2025-12-09",
       "summary": "",
-      "collected_at": "2025-12-15T08:42:05.617926+00:00"
+      "collected_at": "2025-12-15T20:33:10.543363+00:00"
     },
     {
       "source": "tldr",
       "title": "SpaceX IPO plans \ud83d\ude80, inside Netflix's WB bid \ud83d\udcb0, ByteDance's AI OS \ud83d\udcf1",
       "url": "https://tldr.tech/tech/2025-12-08",
       "summary": "",
-      "collected_at": "2025-12-15T08:42:05.617930+00:00"
+      "collected_at": "2025-12-15T20:33:10.543367+00:00"
     },
     {
       "source": "tldr",
       "title": "Netflix wins Warner Bros \ud83c\udfac, Meta cuts Metaverse \ud83c\udf0e, SoftBank industrial cities \ud83c\udfd9\ufe0f",
       "url": "https://tldr.tech/tech/2025-12-05",
       "summary": "",
-      "collected_at": "2025-12-15T08:42:05.617935+00:00"
+      "collected_at": "2025-12-15T20:33:10.543370+00:00"
     },
     {
       "source": "tldr",
       "title": "Sam Altman's SpaceX rival \ud83d\ude80, Spotify Wrapped \ud83c\udfb5, critical RSC vulnerability \ud83d\udcbb",
       "url": "https://tldr.tech/tech/2025-12-04",
       "summary": "",
-      "collected_at": "2025-12-15T08:42:05.617939+00:00"
+      "collected_at": "2025-12-15T20:33:10.543374+00:00"
     },
     {
       "source": "tldr",
       "title": "OpenAI's code red \ud83d\udea8, Blue Origin races SpaceX \ud83d\ude80, AWS re:Invent \ud83d\udc68\u200d\ud83d\udcbb",
       "url": "https://tldr.tech/tech/2025-12-03",
       "summary": "",
-      "collected_at": "2025-12-15T08:42:05.617942+00:00"
+      "collected_at": "2025-12-15T20:33:10.543378+00:00"
     },
     {
       "source": "tldr",
       "title": "DeepSeek returns \ud83d\udc0b, Apple AI chief quits \ud83d\udcf1, Neuralink upgrades \ud83e\udde0",
       "url": "https://tldr.tech/tech/2025-12-02",
       "summary": "",
-      "collected_at": "2025-12-15T08:42:05.617946+00:00"
+      "collected_at": "2025-12-15T20:33:10.543381+00:00"
     },
     {
       "source": "tldr",
-      "title": "ChatGPT ads \ud83d\udcf0, Tesla ride \ud83d\ude97, opinionated agents \ud83e\udd16",
-      "url": "https://tldr.tech/tech/2025-12-01",
+      "title": "OpenAI adopts Skills \ud83e\udd1d, Tinker GA \ud83d\udcbb, reverse engineering Claude \ud83d\udc68\u200d\ud83d\udcbb",
+      "url": "https://tldr.tech/ai/2025-12-15",
       "summary": "",
-      "collected_at": "2025-12-15T08:42:05.617950+00:00"
+      "collected_at": "2025-12-15T20:33:10.543385+00:00"
     },
     {
       "source": "tldr",
       "title": "Disney + OpenAI \ud83e\udd1d, GPT-5.2 \ud83e\udd16, Gemini Deep Research API \ud83d\udcbb",
       "url": "https://tldr.tech/ai/2025-12-12",
       "summary": "",
-      "collected_at": "2025-12-15T08:42:05.617953+00:00"
+      "collected_at": "2025-12-15T20:33:10.543389+00:00"
     },
     {
       "source": "tldr",
       "title": "DeepMind\u2019s automated lab \ud83e\uddea, reverse engineering ChatGPT \ud83e\udd16, Cursor Debug Mode \ud83d\udc1e",
       "url": "https://tldr.tech/ai/2025-12-11",
       "summary": "",
-      "collected_at": "2025-12-15T08:42:05.617957+00:00"
+      "collected_at": "2025-12-15T20:33:10.543392+00:00"
     },
     {
       "source": "tldr",
       "title": "OpenAI Image-2 \ud83d\uddbc\ufe0f, Devstral2 \ud83d\udcbb, no data generating distribution \ud83d\udcca",
       "url": "https://tldr.tech/ai/2025-12-10",
       "summary": "",
-      "collected_at": "2025-12-15T08:42:05.617961+00:00"
+      "collected_at": "2025-12-15T20:33:10.543396+00:00"
     },
     {
       "source": "tldr",
       "title": "State of enterprise AI \ud83d\udcbc, Claude Code in Slack \ud83d\udcbb, alignment is capability \u2696\ufe0f",
       "url": "https://tldr.tech/ai/2025-12-09",
       "summary": "",
-      "collected_at": "2025-12-15T08:42:05.617964+00:00"
+      "collected_at": "2025-12-15T20:33:10.543399+00:00"
     },
     {
       "source": "tldr",
       "title": "Meta acquires Limitless \ud83e\udd1d, Gemini Nano Banana 2 Flash \ud83c\udf4c, OpenAI GPT-5.2 5\ufe0f\u20e3",
       "url": "https://tldr.tech/ai/2025-12-08",
       "summary": "",
-      "collected_at": "2025-12-15T08:42:05.617968+00:00"
+      "collected_at": "2025-12-15T20:33:10.543403+00:00"
     },
     {
       "source": "tldr",
       "title": "Anthropic Interviewer \ud83e\uddd1\u200d\ud83c\udfeb, Gemini 3 Deep Think \ud83e\udde0, Google & Replit partnership \ud83e\udd1d",
       "url": "https://tldr.tech/ai/2025-12-05",
       "summary": "",
-      "collected_at": "2025-12-15T08:42:05.617971+00:00"
+      "collected_at": "2025-12-15T20:33:10.543406+00:00"
     },
     {
       "source": "tldr",
       "title": "Nvidia\u2019s leap \ud83d\udcc8, understanding TPUs \ud83d\udcbb, Google Workspace Studio \u270f\ufe0f",
       "url": "https://tldr.tech/ai/2025-12-04",
       "summary": "",
-      "collected_at": "2025-12-15T08:42:05.617975+00:00"
+      "collected_at": "2025-12-15T20:33:10.543410+00:00"
     },
     {
       "source": "tldr",
       "title": "Anthropic IPO \ud83d\udcb0, AWS Nova Forge \ud83e\udd16, Mistral 3 3\ufe0f\u20e3",
       "url": "https://tldr.tech/ai/2025-12-03",
       "summary": "",
-      "collected_at": "2025-12-15T08:42:05.617978+00:00"
+      "collected_at": "2025-12-15T20:33:10.543414+00:00"
     },
     {
       "source": "tldr",
       "title": "DeepSeek-V3.2 \ud83e\udd16, Runway Gen-4.5 \ud83d\udcf9, Gemini Projects \ud83d\udcbc",
       "url": "https://tldr.tech/ai/2025-12-02",
       "summary": "",
-      "collected_at": "2025-12-15T08:42:05.617982+00:00"
-    },
-    {
-      "source": "tldr",
-      "title": "OpenAI ads \ud83d\udcf0, how prompt caching works \ud83d\udcbb, context plumbing \ud83d\udcc4",
-      "url": "https://tldr.tech/ai/2025-12-01",
-      "summary": "",
-      "collected_at": "2025-12-15T08:42:05.617985+00:00"
+      "collected_at": "2025-12-15T20:33:10.543417+00:00"
     },
     {
       "title": "Apple Mini Apps \ud83d\udcf1, Blue Origin lands rocket \ud83d\ude80, GPT-5.1 for devs \ud83d\udc68\u200d\ud83d\udcbb\u00a0",
@@ -9515,46 +9515,18 @@
       }
     },
     {
-      "url": "https://github.com/Mebus/cupp",
-      "owner": "Mebus",
-      "name": "cupp",
-      "full_name": "Mebus/cupp",
-      "description": "Common User Passwords Profiler (CUPP)",
+      "url": "https://github.com/HKUDS/DeepCode",
+      "owner": "HKUDS",
+      "name": "DeepCode",
+      "full_name": "HKUDS/DeepCode",
+      "description": "\"DeepCode: Open Agentic Coding (Paper2Code & Text2Web & Text2Backend)\"",
       "language": "Python",
       "stars": 0,
       "stars_text": "Star",
-      "forks": 1345,
-      "forks_text": "1,345",
-      "stars_period": "19 stars today",
-      "stars_period_count": 19
-    },
-    {
-      "url": "https://github.com/datawhalechina/hello-agents",
-      "owner": "datawhalechina",
-      "name": "hello-agents",
-      "full_name": "datawhalechina/hello-agents",
-      "description": "\ud83d\udcda \u300a\u4ece\u96f6\u5f00\u59cb\u6784\u5efa\u667a\u80fd\u4f53\u300b\u2014\u2014\u4ece\u96f6\u5f00\u59cb\u7684\u667a\u80fd\u4f53\u539f\u7406\u4e0e\u5b9e\u8df5\u6559\u7a0b",
-      "language": "Python",
-      "stars": 0,
-      "stars_text": "Star",
-      "forks": 987,
-      "forks_text": "987",
-      "stars_period": "354 stars today",
-      "stars_period_count": 354
-    },
-    {
-      "url": "https://github.com/thinking-machines-lab/tinker-cookbook",
-      "owner": "thinking-machines-lab",
-      "name": "tinker-cookbook",
-      "full_name": "thinking-machines-lab/tinker-cookbook",
-      "description": "Post-training with Tinker",
-      "language": "Python",
-      "stars": 0,
-      "stars_text": "Star",
-      "forks": 234,
-      "forks_text": "234",
-      "stars_period": "38 stars today",
-      "stars_period_count": 38
+      "forks": 1649,
+      "forks_text": "1,649",
+      "stars_period": "246 stars today",
+      "stars_period_count": 246
     },
     {
       "url": "https://github.com/virattt/ai-hedge-fund",
@@ -9565,80 +9537,108 @@
       "language": "Python",
       "stars": 0,
       "stars_text": "Star",
-      "forks": 7619,
-      "forks_text": "7,619",
-      "stars_period": "31 stars today",
-      "stars_period_count": 31
+      "forks": 7632,
+      "forks_text": "7,632",
+      "stars_period": "187 stars today",
+      "stars_period_count": 187
     },
     {
-      "url": "https://github.com/spipm/Depixelization_poc",
-      "owner": "spipm",
-      "name": "Depixelization_poc",
-      "full_name": "spipm/Depixelization_poc",
-      "description": "Depix is a PoC for a technique to recover plaintext from pixelized screenshots.",
+      "url": "https://github.com/theOehrly/Fast-F1",
+      "owner": "theOehrly",
+      "name": "Fast-F1",
+      "full_name": "theOehrly/Fast-F1",
+      "description": "FastF1 is a python package for accessing and analyzing Formula 1 results, schedules, timing data and telemetry",
       "language": "Python",
       "stars": 0,
       "stars_text": "Star",
-      "forks": 276,
-      "forks_text": "276",
-      "stars_period": "129 stars today",
-      "stars_period_count": 129
+      "forks": 378,
+      "forks_text": "378",
+      "stars_period": "17 stars today",
+      "stars_period_count": 17
     },
     {
-      "url": "https://github.com/harvard-edge/cs249r_book",
-      "owner": "harvard-edge",
-      "name": "cs249r_book",
-      "full_name": "harvard-edge/cs249r_book",
-      "description": "Introduction to Machine Learning Systems",
+      "url": "https://github.com/public-apis/public-apis",
+      "owner": "public-apis",
+      "name": "public-apis",
+      "full_name": "public-apis/public-apis",
+      "description": "A collective list of free APIs",
+      "language": "Python",
+      "stars": 0,
+      "stars_text": "Star",
+      "forks": 41048,
+      "forks_text": "41,048",
+      "stars_period": "320 stars today",
+      "stars_period_count": 320
+    },
+    {
+      "url": "https://github.com/Asabeneh/30-Days-Of-Python",
+      "owner": "Asabeneh",
+      "name": "30-Days-Of-Python",
+      "full_name": "Asabeneh/30-Days-Of-Python",
+      "description": "30 days of Python programming challenge is a step-by-step guide to learn the Python programming language in 30 days. This challenge may take more than 100 days, follow your own pace. These videos may help too:https://www.youtube.com/channel/UC7PNRuno1rzYPb1xLa4yktw",
+      "language": "Python",
+      "stars": 0,
+      "stars_text": "Star",
+      "forks": 10349,
+      "forks_text": "10,349",
+      "stars_period": "78 stars today",
+      "stars_period_count": 78
+    },
+    {
+      "url": "https://github.com/jellyfin/jellyfin-web",
+      "owner": "jellyfin",
+      "name": "jellyfin-web",
+      "full_name": "jellyfin/jellyfin-web",
+      "description": "The Free Software Media System - Official Web Client",
       "language": "JavaScript",
       "stars": 0,
       "stars_text": "Star",
-      "forks": 1206,
-      "forks_text": "1,206",
-      "stars_period": "60 stars today",
-      "stars_period_count": 60
-    },
-    {
-      "url": "https://github.com/pedroslopez/whatsapp-web.js",
-      "owner": "pedroslopez",
-      "name": "whatsapp-web.js",
-      "full_name": "pedroslopez/whatsapp-web.js",
-      "description": "A WhatsApp client library for NodeJS that connects through the WhatsApp Web browser app",
-      "language": "JavaScript",
-      "stars": 0,
-      "stars_text": "Star",
-      "forks": 4706,
-      "forks_text": "4,706",
+      "forks": 1721,
+      "forks_text": "1,721",
       "stars_period": "5 stars today",
       "stars_period_count": 5
     },
     {
-      "url": "https://github.com/7Sageer/sublink-worker",
-      "owner": "7Sageer",
-      "name": "sublink-worker",
-      "full_name": "7Sageer/sublink-worker",
-      "description": "One Worker, All Subscriptions",
+      "url": "https://github.com/nodejs/node",
+      "owner": "nodejs",
+      "name": "node",
+      "full_name": "nodejs/node",
+      "description": "Node.js JavaScript runtime \u2728\ud83d\udc22\ud83d\ude80\u2728",
       "language": "JavaScript",
       "stars": 0,
       "stars_text": "Star",
-      "forks": 7351,
-      "forks_text": "7,351",
-      "stars_period": "12 stars today",
-      "stars_period_count": 12
+      "forks": 34066,
+      "forks_text": "34,066",
+      "stars_period": "30 stars today",
+      "stars_period_count": 30
     },
     {
-      "url": "https://github.com/qist/tvbox",
-      "owner": "qist",
-      "name": "tvbox",
-      "full_name": "qist/tvbox",
-      "description": "OK\u5f71\u89c6\u3001tvbox\u914d\u7f6e\u6587\u4ef6\uff0c\u5982\u679c\u559c\u6b22\uff0c\u8bf7Fork\u81ea\u7528\u3002\u4f7f\u7528\u524d\u8bf7\u4ed4\u7ec6\u9605\u8bfb\u4ed3\u5e93\u8bf4\u660e\uff0c\u4e00\u65e6\u4f7f\u7528\u5c06\u88ab\u89c6\u4e3a\u4f60\u5df2\u4e86\u89e3\u3002",
+      "url": "https://github.com/SillyTavern/SillyTavern",
+      "owner": "SillyTavern",
+      "name": "SillyTavern",
+      "full_name": "SillyTavern/SillyTavern",
+      "description": "LLM Frontend for Power Users.",
       "language": "JavaScript",
       "stars": 0,
       "stars_text": "Star",
-      "forks": 2702,
-      "forks_text": "2,702",
-      "stars_period": "11 stars today",
-      "stars_period_count": 11
+      "forks": 4413,
+      "forks_text": "4,413",
+      "stars_period": "33 stars today",
+      "stars_period_count": 33
+    },
+    {
+      "url": "https://github.com/remoteintech/remote-jobs",
+      "owner": "remoteintech",
+      "name": "remote-jobs",
+      "full_name": "remoteintech/remote-jobs",
+      "description": "A list of semi to fully remote-friendly companies (jobs) in tech.",
+      "language": "JavaScript",
+      "stars": 0,
+      "stars_text": "Star",
+      "forks": 3909,
+      "forks_text": "3,909",
+      "stars_period": "33 stars today",
+      "stars_period_count": 33
     },
     {
       "url": "https://github.com/GitSquared/edex-ui",
@@ -9651,36 +9651,22 @@
       "stars_text": "Star",
       "forks": 2920,
       "forks_text": "2,920",
-      "stars_period": "9 stars today",
-      "stars_period_count": 9
+      "stars_period": "13 stars today",
+      "stars_period_count": 13
     },
     {
-      "url": "https://github.com/Tencent/WeKnora",
-      "owner": "Tencent",
-      "name": "WeKnora",
-      "full_name": "Tencent/WeKnora",
-      "description": "LLM-powered framework for deep document understanding, semantic retrieval, and context-aware answers using RAG paradigm.",
+      "url": "https://github.com/wavetermdev/waveterm",
+      "owner": "wavetermdev",
+      "name": "waveterm",
+      "full_name": "wavetermdev/waveterm",
+      "description": "An open-source, cross-platform terminal for seamless workflows",
       "language": "Go",
       "stars": 0,
       "stars_text": "Star",
-      "forks": 964,
-      "forks_text": "964",
-      "stars_period": "212 stars today",
-      "stars_period_count": 212
-    },
-    {
-      "url": "https://github.com/SagerNet/sing-box",
-      "owner": "SagerNet",
-      "name": "sing-box",
-      "full_name": "SagerNet/sing-box",
-      "description": "The universal proxy platform",
-      "language": "Go",
-      "stars": 0,
-      "stars_text": "Star",
-      "forks": 3386,
-      "forks_text": "3,386",
-      "stars_period": "25 stars today",
-      "stars_period_count": 25
+      "forks": 637,
+      "forks_text": "637",
+      "stars_period": "163 stars today",
+      "stars_period_count": 163
     },
     {
       "url": "https://github.com/VictoriaMetrics/VictoriaLogs",
@@ -9691,52 +9677,52 @@
       "language": "Go",
       "stars": 0,
       "stars_text": "Star",
-      "forks": 63,
-      "forks_text": "63",
-      "stars_period": "100 stars today",
-      "stars_period_count": 100
-    },
-    {
-      "url": "https://github.com/heroiclabs/nakama",
-      "owner": "heroiclabs",
-      "name": "nakama",
-      "full_name": "heroiclabs/nakama",
-      "description": "Distributed server for social and realtime games and apps.",
-      "language": "Go",
-      "stars": 0,
-      "stars_text": "Star",
-      "forks": 1318,
-      "forks_text": "1,318",
-      "stars_period": "46 stars today",
-      "stars_period_count": 46
-    },
-    {
-      "url": "https://github.com/XTLS/Xray-core",
-      "owner": "XTLS",
-      "name": "Xray-core",
-      "full_name": "XTLS/Xray-core",
-      "description": "Xray, Penetrates Everything. Also the best v2ray-core. Where the magic happens. An open platform for various uses.",
-      "language": "Go",
-      "stars": 0,
-      "stars_text": "Star",
-      "forks": 4802,
-      "forks_text": "4,802",
+      "forks": 65,
+      "forks_text": "65",
       "stars_period": "33 stars today",
       "stars_period_count": 33
     },
     {
-      "url": "https://github.com/openai/codex",
-      "owner": "openai",
-      "name": "codex",
-      "full_name": "openai/codex",
-      "description": "Lightweight coding agent that runs in your terminal",
-      "language": "Rust",
+      "url": "https://github.com/zyedidia/micro",
+      "owner": "zyedidia",
+      "name": "micro",
+      "full_name": "zyedidia/micro",
+      "description": "A modern and intuitive terminal-based text editor",
+      "language": "Go",
       "stars": 0,
       "stars_text": "Star",
-      "forks": 6778,
-      "forks_text": "6,778",
-      "stars_period": "121 stars today",
-      "stars_period_count": 121
+      "forks": 1261,
+      "forks_text": "1,261",
+      "stars_period": "12 stars today",
+      "stars_period_count": 12
+    },
+    {
+      "url": "https://github.com/Tencent/WeKnora",
+      "owner": "Tencent",
+      "name": "WeKnora",
+      "full_name": "Tencent/WeKnora",
+      "description": "LLM-powered framework for deep document understanding, semantic retrieval, and context-aware answers using RAG paradigm.",
+      "language": "Go",
+      "stars": 0,
+      "stars_text": "Star",
+      "forks": 968,
+      "forks_text": "968",
+      "stars_period": "311 stars today",
+      "stars_period_count": 311
+    },
+    {
+      "url": "https://github.com/Jguer/yay",
+      "owner": "Jguer",
+      "name": "yay",
+      "full_name": "Jguer/yay",
+      "description": "Yet another Yogurt - An AUR Helper written in Go",
+      "language": "Go",
+      "stars": 0,
+      "stars_text": "Star",
+      "forks": 390,
+      "forks_text": "390",
+      "stars_period": "22 stars today",
+      "stars_period_count": 22
     },
     {
       "url": "https://github.com/Morganamilo/paru",
@@ -9747,38 +9733,38 @@
       "language": "Rust",
       "stars": 0,
       "stars_text": "Star",
-      "forks": 289,
-      "forks_text": "289",
-      "stars_period": "45 stars today",
-      "stars_period_count": 45
+      "forks": 292,
+      "forks_text": "292",
+      "stars_period": "88 stars today",
+      "stars_period_count": 88
     },
     {
-      "url": "https://github.com/tursodatabase/turso",
-      "owner": "tursodatabase",
-      "name": "turso",
-      "full_name": "tursodatabase/turso",
-      "description": "Turso is an in-process SQL database, compatible with SQLite.",
+      "url": "https://github.com/openai/codex",
+      "owner": "openai",
+      "name": "codex",
+      "full_name": "openai/codex",
+      "description": "Lightweight coding agent that runs in your terminal",
       "language": "Rust",
       "stars": 0,
       "stars_text": "Star",
-      "forks": 636,
-      "forks_text": "636",
-      "stars_period": "143 stars today",
-      "stars_period_count": 143
+      "forks": 6798,
+      "forks_text": "6,798",
+      "stars_period": "1,174 stars today",
+      "stars_period_count": 1174
     },
     {
-      "url": "https://github.com/bevyengine/bevy",
-      "owner": "bevyengine",
-      "name": "bevy",
-      "full_name": "bevyengine/bevy",
-      "description": "A refreshingly simple data-driven game engine built in Rust",
+      "url": "https://github.com/uutils/coreutils",
+      "owner": "uutils",
+      "name": "coreutils",
+      "full_name": "uutils/coreutils",
+      "description": "Cross-platform Rust rewrite of the GNU coreutils",
       "language": "Rust",
       "stars": 0,
       "stars_text": "Star",
-      "forks": 4273,
-      "forks_text": "4,273",
-      "stars_period": "14 stars today",
-      "stars_period_count": 14
+      "forks": 1671,
+      "forks_text": "1,671",
+      "stars_period": "38 stars today",
+      "stars_period_count": 38
     },
     {
       "url": "https://github.com/reacherhq/check-if-email-exists",
@@ -9789,10 +9775,24 @@
       "language": "Rust",
       "stars": 0,
       "stars_text": "Star",
-      "forks": 452,
-      "forks_text": "452",
-      "stars_period": "351 stars today",
-      "stars_period_count": 351
+      "forks": 469,
+      "forks_text": "469",
+      "stars_period": "485 stars today",
+      "stars_period_count": 485
+    },
+    {
+      "url": "https://github.com/rust-lang/rust",
+      "owner": "rust-lang",
+      "name": "rust",
+      "full_name": "rust-lang/rust",
+      "description": "Empowering everyone to build reliable and efficient software.",
+      "language": "Rust",
+      "stars": 0,
+      "stars_text": "Star",
+      "forks": 14170,
+      "forks_text": "14,170",
+      "stars_period": "51 stars today",
+      "stars_period_count": 51
     },
     {
       "url": "https://github.com/simstudioai/sim",
@@ -9803,24 +9803,10 @@
       "language": "TypeScript",
       "stars": 0,
       "stars_text": "Star",
-      "forks": 2670,
-      "forks_text": "2,670",
-      "stars_period": "235 stars today",
-      "stars_period_count": 235
-    },
-    {
-      "url": "https://github.com/daytonaio/daytona",
-      "owner": "daytonaio",
-      "name": "daytona",
-      "full_name": "daytonaio/daytona",
-      "description": "Daytona is a Secure and Elastic Infrastructure for Running AI-Generated Code",
-      "language": "TypeScript",
-      "stars": 0,
-      "stars_text": "Star",
-      "forks": 2788,
-      "forks_text": "2,788",
-      "stars_period": "482 stars today",
-      "stars_period_count": 482
+      "forks": 2736,
+      "forks_text": "2,736",
+      "stars_period": "1,463 stars today",
+      "stars_period_count": 1463
     },
     {
       "url": "https://github.com/shadcn-ui/ui",
@@ -9831,38 +9817,52 @@
       "language": "TypeScript",
       "stars": 0,
       "stars_text": "Star",
-      "forks": 7451,
-      "forks_text": "7,451",
-      "stars_period": "388 stars today",
-      "stars_period_count": 388
+      "forks": 7458,
+      "forks_text": "7,458",
+      "stars_period": "378 stars today",
+      "stars_period_count": 378
     },
     {
-      "url": "https://github.com/thedotmack/claude-mem",
-      "owner": "thedotmack",
-      "name": "claude-mem",
-      "full_name": "thedotmack/claude-mem",
-      "description": "A Claude Code plugin that automatically captures everything Claude does during your coding sessions, compresses it with AI (using Claude's agent-sdk), and injects relevant context back into future sessions.",
+      "url": "https://github.com/CopilotKit/CopilotKit",
+      "owner": "CopilotKit",
+      "name": "CopilotKit",
+      "full_name": "CopilotKit/CopilotKit",
+      "description": "React UI + elegant infrastructure for AI Copilots, AI chatbots, and in-app AI agents. The Agentic Frontend \ud83e\ude81",
       "language": "TypeScript",
       "stars": 0,
       "stars_text": "Star",
-      "forks": 356,
-      "forks_text": "356",
-      "stars_period": "334 stars today",
-      "stars_period_count": 334
+      "forks": 3481,
+      "forks_text": "3,481",
+      "stars_period": "147 stars today",
+      "stars_period_count": 147
     },
     {
-      "url": "https://github.com/winfunc/opcode",
-      "owner": "winfunc",
-      "name": "opcode",
-      "full_name": "winfunc/opcode",
-      "description": "A powerful GUI app and Toolkit for Claude Code - Create custom agents, manage interactive Claude Code sessions, run secure background agents, and more.",
+      "url": "https://github.com/C4illin/ConvertX",
+      "owner": "C4illin",
+      "name": "ConvertX",
+      "full_name": "C4illin/ConvertX",
+      "description": "\ud83d\udcbe Self-hosted online file converter. Supports 1000+ formats \u2699\ufe0f",
       "language": "TypeScript",
       "stars": 0,
       "stars_text": "Star",
-      "forks": 1483,
-      "forks_text": "1,483",
-      "stars_period": "24 stars today",
-      "stars_period_count": 24
+      "forks": 545,
+      "forks_text": "545",
+      "stars_period": "193 stars today",
+      "stars_period_count": 193
+    },
+    {
+      "url": "https://github.com/daytonaio/daytona",
+      "owner": "daytonaio",
+      "name": "daytona",
+      "full_name": "daytonaio/daytona",
+      "description": "Daytona is a Secure and Elastic Infrastructure for Running AI-Generated Code",
+      "language": "TypeScript",
+      "stars": 0,
+      "stars_text": "Star",
+      "forks": 2797,
+      "forks_text": "2,797",
+      "stars_period": "337 stars today",
+      "stars_period_count": 337
     },
     {
       "title": "sansan0/TrendRadar - \ud83c\udfaf \u544a\u522b\u4fe1\u606f\u8fc7\u8f7d\uff0cAI \u52a9\u4f60\u770b\u61c2\u65b0\u95fb\u8d44\u8baf\u70ed\u70b9\uff0c\u7b80\u5355\u7684\u8206\u60c5\u76d1\u63a7\u5206\u6790 - \u591a\u5e73\u53f0\u70ed\u70b9\u805a\u5408+\u57fa\u4e8e MCP \u7684AI\u5206\u6790\u5de5\u5177\u3002\u76d1\u63a735\u4e2a\u5e73\u53f0\uff08\u6296\u97f3\u3001\u77e5\u4e4e\u3001B\u7ad9\u3001\u534e\u5c14\u8857\u89c1\u95fb\u3001\u8d22\u8054\u793e\u7b49\uff09\uff0c\u667a\u80fd\u7b5b\u9009+\u81ea\u52a8\u63a8\u9001+AI\u5bf9",
