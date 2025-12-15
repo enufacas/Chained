@@ -30,6 +30,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### ✨ Features
 
+- 👤 🧠 Learning Complete Apple Innovation learning mission (idea:147) - Multi-model AI strategy analysis [#4414](https://github.com/enufacas/Chained/pull/4414)
 - 🤖 🔧 Agents 🎯 Agent Missions - Pipeline [#4406](https://github.com/enufacas/Chained/pull/4406)
 - 🤖 🧠 Learning 🧠 Learning Pipeline - 2025-12-15 [#4397](https://github.com/enufacas/Chained/pull/4397)
 - 🤖 meta-coordination: 2025-12-15 06:21 run - closed 1 stale PR [#4389](https://github.com/enufacas/Chained/pull/4389)
@@ -38,8 +39,8 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x14) [#4416](https://github.com/enufacas/Chained/pull/4416)
 - 🤖 **Documentation**: 📚 Sync World State to Docs - Pipeline [#4408](https://github.com/enufacas/Chained/pull/4408)
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x12) [#4407](https://github.com/enufacas/Chained/pull/4407)
 - 🤖 **Chore**: 🌍 World Model Update - Pipeline [#4399](https://github.com/enufacas/Chained/pull/4399)
 
 ---
@@ -311,10 +312,6 @@ This changelog excludes automated data syncs and routine maintenance commits.
 ---
 
 ## 2025-12-08
-
-### ✨ Features
-
-- 🤖 🧠 Learning 🧠 Learn from GitHub Copilot sources - 2025-12-08 [#3714](https://github.com/enufacas/Chained/pull/3714)
 
 ### 🐛 Bug Fixes
 
