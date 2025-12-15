@@ -36,6 +36,17 @@ class PatternMatcher:
         self.patterns = self._load_patterns()
         self.matches = []
         
+        # Compile file exclusion patterns for better performance
+        self._exclusion_patterns = [
+            re.compile(r'test_'),
+            re.compile(r'_test\.'),
+            re.compile(r'/tests/'),
+            re.compile(r'/examples/'),
+            re.compile(r'anti[-_]pattern'),
+            re.compile(r'\.min\.'),
+            re.compile(r'pattern[-_]matcher'),
+        ]
+        
     def _load_patterns(self) -> Dict:
         """Load pattern definitions
         
@@ -143,7 +154,7 @@ class PatternMatcher:
                 {
                     'id': 'bash-unquoted-in-single-bracket-test',
                     'name': 'Unquoted variable in single-bracket test condition',
-                    'pattern': r'^\s*if\s+\[\s+\$\w+\s+[!=<>]',
+                    'pattern': r'^\s*(?:if|while|until)?\s*\[\s+\$\w+\s+[!=<>]',
                     'severity': 'warning',
                     'category': 'best-practices',
                     'suggestion': 'Quote variables in single-bracket test conditions: [ "$var" = "value" ]',
@@ -229,24 +240,13 @@ class PatternMatcher:
         """Check if file should be skipped (test/example files)"""
         path_lower = file_path.lower()
         
-        # Skip test files
-        if 'test_' in path_lower or '_test.' in path_lower or '/tests/' in path_lower:
-            return True
+        # Use pre-compiled patterns for performance
+        for pattern in self._exclusion_patterns:
+            if pattern.search(path_lower):
+                return True
         
-        # Skip example files
-        if '/examples/' in path_lower or 'example' in path_lower.split('/')[-1]:
-            return True
-        
-        # Skip anti-pattern demonstration files
-        if 'anti-pattern' in path_lower or 'anti_pattern' in path_lower:
-            return True
-        
-        # Skip minified files (large generated files)
-        if '.min.' in path_lower:
-            return True
-        
-        # Skip pattern matcher files themselves (they contain examples)
-        if 'pattern-matcher' in path_lower or 'pattern_matcher' in path_lower:
+        # Check for 'example' in just the filename (optimization)
+        if 'example' in path_lower.split('/')[-1]:
             return True
             
         return False
