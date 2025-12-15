@@ -1,6 +1,6 @@
 {
-  "timestamp": "2025-12-14T12:51:49.246648",
-  "commit": "266fb3d3c09f8813f6127e7a6eb8298352db440f",
+  "timestamp": "2025-12-15T02:11:50.544168",
+  "commit": "fee82e9e045439ed00c4a347f20908db11601457",
   "structure": {
     "directories": {
       "tools": {
@@ -60,8 +60,8 @@
         ]
       },
       "docs": {
-        "file_count": 1041,
-        "line_count": 319271,
+        "file_count": 1042,
+        "line_count": 319851,
         "files": [
           ".nojekyll",
           "01_overview.md",
@@ -126,8 +126,8 @@
         "files": []
       },
       "analysis": {
-        "file_count": 11,
-        "line_count": 5620,
+        "file_count": 12,
+        "line_count": 6262,
         "files": [
           "architecture.mmd",
           "evolution.json",
@@ -139,12 +139,13 @@
           "snapshot_2025-12-12T12-57-02.json",
           "snapshot_2025-12-13T02-01-14.json",
           "snapshot_2025-12-13T12-51-39.json",
-          "snapshot_2025-12-14T02-20-22.json"
+          "snapshot_2025-12-14T02-20-22.json",
+          "snapshot_2025-12-14T12-51-49.json"
         ]
       },
       "learnings": {
-        "file_count": 505,
-        "line_count": 332751,
+        "file_count": 517,
+        "line_count": 338859,
         "files": [
           "AI_ML.md",
           "CLAUDE_AI_INVESTIGATION.md",
@@ -180,28 +181,28 @@
           "ai_agents_ecosystem_integration_proposal_20251124.md",
           "ai_agents_ecosystem_integration_proposal_20251211_idea104.md",
           "ai_agents_ecosystem_integration_proposal_idea125_20251125.md",
+          "ai_agents_ecosystem_integration_proposal_idea142_20251126.md",
           "ai_agents_emerging_theme_research_report_20251124.md",
           "ai_agents_emerging_theme_research_report_20251211_idea104.md",
           "ai_agents_emerging_theme_research_report_idea125_20251125.md",
           "ai_agents_innovation_deep_dive_nov16_2025.md",
+          "ai_agents_research_report_idea142_20251126.md",
           "ai_ml_agents_investigation_20251116.md",
+          "ai_ml_ecosystem_integration_proposal_idea141_20251126.md",
           "ai_ml_innovation_research_report_coach_master.md",
           "ai_ml_innovation_summary.md",
+          "ai_ml_research_report_idea141_20251126.md",
           "analysis_20251110_071202.md",
           "analysis_20251111_202712.md",
           "analysis_20251113_071144.json",
           "analysis_20251113_083312.json",
-          "analysis_20251113_190909.json",
-          "analysis_20251113_202801.json",
-          "analysis_20251114_071139.json",
-          "analysis_20251114_083243.json",
-          "analysis_20251114_132406.json"
+          "analysis_20251113_190909.json"
         ]
       }
     },
     "files_by_type": {},
-    "total_files": 1990,
-    "total_lines": 829229
+    "total_files": 2004,
+    "total_lines": 836559
   },
   "dependencies": {
     "internal_imports": {
@@ -516,8 +517,8 @@
   },
   "metrics": {
     "total_components": 6,
-    "total_files": 1990,
-    "total_lines": 829229,
+    "total_files": 2004,
+    "total_lines": 836559,
     "total_dependencies": 2,
     "external_libraries": 91,
     "coupling_score": 5.1274162949289855e-05,
@@ -526,7 +527,7 @@
   "components": {
     "learning_system": {
       "file_count": 46,
-      "line_count": 332751,
+      "line_count": 338859,
       "files": [
         "AI_ML.md",
         "CLAUDE_AI_INVESTIGATION.md",
@@ -551,8 +552,8 @@
       ]
     },
     "analysis_tools": {
-      "file_count": 11,
-      "line_count": 5620,
+      "file_count": 12,
+      "line_count": 6262,
       "files": [
         "architecture.mmd",
         "evolution.json",
@@ -564,12 +565,13 @@
         "snapshot_2025-12-12T12-57-02.json",
         "snapshot_2025-12-13T02-01-14.json",
         "snapshot_2025-12-13T12-51-39.json",
-        "snapshot_2025-12-14T02-20-22.json"
+        "snapshot_2025-12-14T02-20-22.json",
+        "snapshot_2025-12-14T12-51-49.json"
       ]
     },
     "documentation": {
       "file_count": 50,
-      "line_count": 319271,
+      "line_count": 319851,
       "files": [
         ".nojekyll",
         "01_overview.md",
