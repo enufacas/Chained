@@ -23,14 +23,17 @@
 
 **Directory**: `.github/workflow-history/meta-learning/`
 
-**Files Created**:
+**Note**: This directory is gitignored (runtime data) - it will be created automatically by the workflow.
+
+**Files Generated at Runtime**:
 - `learned_strategies.json` - Stores learned scheduling strategies
-- `README.md` - Complete documentation for the data directory
+- `learning_log.json` - Event log of all learning activities
+- `report_latest.json` - Most recent performance report
 
 **Initial State**:
-- Default strategy initialized with baseline parameters
-- Performance history tracking started
-- Ready to begin collecting execution data
+- Default strategy initialized with baseline parameters on first run
+- Performance history tracking starts automatically
+- Directory created by `meta_learning_scheduler.py` when needed
 
 ### 3. Verified Existing Tools
 
@@ -90,6 +93,31 @@ Maintains multiple strategies simultaneously:
 - `default` - Baseline conservative approach
 - `evolved_*` - Automatically generated variations
 - Custom strategies can be added manually
+
+## Quick Start
+
+### One-Time Initialization
+
+Run the initialization script (optional - workflow will auto-initialize):
+
+```bash
+./scripts/init-meta-learning.sh
+```
+
+This script:
+1. Creates the meta-learning directory structure
+2. Initializes baseline strategies
+3. Runs the test suite (12 tests)
+4. Generates an initial report
+
+### Verification
+
+Check that the system is ready:
+
+```bash
+# Should show default strategy initialized
+python3 tools/meta_learning_scheduler.py --report
+```
 
 ## Usage
 
