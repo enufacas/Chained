@@ -92,14 +92,24 @@ runs:
         fi
         
         # Use detected or specified package manager
-        if [ "${{ inputs.package-manager }}" != "npm" ] && [ "${{ inputs.package-manager }}" != "yarn" ] && [ "${{ inputs.package-manager }}" != "pnpm" ]; then
-          PM="$DETECTED_PM"
-        else
+        if [ "${{ inputs.package-manager }}" = "npm" ] || [ "${{ inputs.package-manager }}" = "yarn" ] || [ "${{ inputs.package-manager }}" = "pnpm" ]; then
           PM="${{ inputs.package-manager }}"
+        else
+          PM="$DETECTED_PM"
         fi
         
         echo "package-manager=$PM" >> $GITHUB_OUTPUT
         echo "✅ Using package manager: $PM"
+        
+        # Set cache dependency path based on package manager
+        if [ "$PM" = "pnpm" ]; then
+          CACHE_PATH="pnpm-lock.yaml"
+        elif [ "$PM" = "yarn" ]; then
+          CACHE_PATH="yarn.lock"
+        else
+          CACHE_PATH="package-lock.json"
+        fi
+        echo "cache-path=$CACHE_PATH" >> $GITHUB_OUTPUT
         
         # Check for TypeScript
         if grep -q '"typescript"' package.json; then
@@ -130,7 +140,7 @@ runs:
       with:
         node-version: ${{ inputs.node-version }}
         cache: ${{ steps.detect.outputs.package-manager }}
-        cache-dependency-path: ${{ inputs.working-directory }}/package-lock.json
+        cache-dependency-path: ${{ inputs.working-directory }}/${{ steps.detect.outputs.cache-path }}
     
     - name: 📥 Install dependencies
       if: inputs.install-dependencies == 'true'

@@ -81,6 +81,16 @@ runs:
         fi
         
         echo "package-manager=$PM" >> $GITHUB_OUTPUT
+        
+        # Set cache dependency path based on package manager
+        if [ "$PM" = "pnpm" ]; then
+          CACHE_PATH="pnpm-lock.yaml"
+        elif [ "$PM" = "yarn" ]; then
+          CACHE_PATH="yarn.lock"
+        else
+          CACHE_PATH="package-lock.json"
+        fi
+        echo "cache-path=$CACHE_PATH" >> $GITHUB_OUTPUT
     
     - name: 📦 Setup Node.js
       if: inputs.node-version != ''
@@ -88,7 +98,7 @@ runs:
       with:
         node-version: ${{ inputs.node-version }}
         cache: ${{ steps.detect.outputs.package-manager }}
-        cache-dependency-path: ${{ inputs.working-directory }}/package-lock.json
+        cache-dependency-path: ${{ inputs.working-directory }}/${{ steps.detect.outputs.cache-path }}
     
     - name: 🚀 Run command
       id: run-command
