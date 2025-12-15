@@ -26,6 +26,14 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ---
 
+## 2025-12-15
+
+### 🧹 Chores & Maintenance
+
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge [#4372](https://github.com/enufacas/Chained/pull/4372)
+
+---
+
 ## 2025-12-14
 
 ### ✨ Features
@@ -302,7 +310,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x6) [#3722](https://github.com/enufacas/Chained/pull/3722)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x4) [#3722](https://github.com/enufacas/Chained/pull/3722)
 
 ---
 
@@ -311,11 +319,6 @@ This changelog excludes automated data syncs and routine maintenance commits.
 ### ✨ Features
 
 - 👤 🏗️ Infrastructure Separate AI control plane from base infrastructure deployment [#3704](https://github.com/enufacas/Chained/pull/3704)
-- 👤 🏗️ Infrastructure Complete AI-Native Control Plane with Terraform, CI/CD, and production GCP integration [#3679](https://github.com/enufacas/Chained/pull/3679)
-
-### 🐛 Bug Fixes
-
-- 👤 Replace Three.js 3D rendering with Canvas 2D to fix camera crash [#3700](https://github.com/enufacas/Chained/pull/3700)
 
 ### 🧹 Chores & Maintenance
 
