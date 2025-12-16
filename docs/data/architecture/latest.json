@@ -1,11 +1,11 @@
 {
-  "timestamp": "2025-12-15T13:00:32.313163",
-  "commit": "aa60e11cee19cd06038a6b4b07313fd6059fd918",
+  "timestamp": "2025-12-16T02:08:45.748699",
+  "commit": "62012361759f0209ed42ac5bb173d57f4768929e",
   "structure": {
     "directories": {
       "tools": {
         "file_count": 433,
-        "line_count": 171587,
+        "line_count": 171638,
         "files": [
           ".context.md",
           "AB_TESTING_README.md",
@@ -60,8 +60,8 @@
         ]
       },
       "docs": {
-        "file_count": 1043,
-        "line_count": 321056,
+        "file_count": 1046,
+        "line_count": 322138,
         "files": [
           ".nojekyll",
           "01_overview.md",
@@ -126,8 +126,8 @@
         "files": []
       },
       "analysis": {
-        "file_count": 14,
-        "line_count": 13323,
+        "file_count": 15,
+        "line_count": 13972,
         "files": [
           "architecture.mmd",
           "clustering_results.json",
@@ -142,12 +142,13 @@
           "snapshot_2025-12-13T12-51-39.json",
           "snapshot_2025-12-14T02-20-22.json",
           "snapshot_2025-12-14T12-51-49.json",
-          "snapshot_2025-12-15T02-11-50.json"
+          "snapshot_2025-12-15T02-11-50.json",
+          "snapshot_2025-12-15T13-00-32.json"
         ]
       },
       "learnings": {
-        "file_count": 522,
-        "line_count": 350970,
+        "file_count": 527,
+        "line_count": 353259,
         "files": [
           "AI_ML.md",
           "CLAUDE_AI_INVESTIGATION.md",
@@ -161,6 +162,7 @@
           "ISSUE_SUMMARY_20251119.md",
           "MISSION_COMPLETE.md",
           "MISSION_COMPLETE_idea124_nvidia_innovation.md",
+          "MISSION_COMPLETE_idea148_nvidia_innovation.md",
           "OpenSource.md",
           "Other.md",
           "Performance.md",
@@ -197,14 +199,13 @@
           "analysis_20251110_071202.md",
           "analysis_20251111_202712.md",
           "analysis_20251113_071144.json",
-          "analysis_20251113_083312.json",
-          "analysis_20251113_190909.json"
+          "analysis_20251113_083312.json"
         ]
       }
     },
     "files_by_type": {},
-    "total_files": 2012,
-    "total_lines": 856936
+    "total_files": 2021,
+    "total_lines": 861007
   },
   "dependencies": {
     "internal_imports": {
@@ -519,8 +520,8 @@
   },
   "metrics": {
     "total_components": 6,
-    "total_files": 2012,
-    "total_lines": 856936,
+    "total_files": 2021,
+    "total_lines": 861007,
     "total_dependencies": 2,
     "external_libraries": 91,
     "coupling_score": 5.1274162949289855e-05,
@@ -529,7 +530,7 @@
   "components": {
     "learning_system": {
       "file_count": 46,
-      "line_count": 350970,
+      "line_count": 353259,
       "files": [
         "AI_ML.md",
         "CLAUDE_AI_INVESTIGATION.md",
@@ -543,19 +544,19 @@
         "ISSUE_SUMMARY_20251119.md",
         "MISSION_COMPLETE.md",
         "MISSION_COMPLETE_idea124_nvidia_innovation.md",
+        "MISSION_COMPLETE_idea148_nvidia_innovation.md",
         "OpenSource.md",
         "Other.md",
         "Performance.md",
         "Programming.md",
         "QUICK_REFERENCE.md",
         "README.md",
-        "RESEARCH_REPORT.md",
-        "Security.md"
+        "RESEARCH_REPORT.md"
       ]
     },
     "analysis_tools": {
-      "file_count": 14,
-      "line_count": 13323,
+      "file_count": 15,
+      "line_count": 13972,
       "files": [
         "architecture.mmd",
         "clustering_results.json",
@@ -570,12 +571,13 @@
         "snapshot_2025-12-13T12-51-39.json",
         "snapshot_2025-12-14T02-20-22.json",
         "snapshot_2025-12-14T12-51-49.json",
-        "snapshot_2025-12-15T02-11-50.json"
+        "snapshot_2025-12-15T02-11-50.json",
+        "snapshot_2025-12-15T13-00-32.json"
       ]
     },
     "documentation": {
       "file_count": 50,
-      "line_count": 321056,
+      "line_count": 322138,
       "files": [
         ".nojekyll",
         "01_overview.md",
@@ -601,7 +603,7 @@
     },
     "tools": {
       "file_count": 50,
-      "line_count": 171587,
+      "line_count": 171638,
       "files": [
         ".context.md",
         "AB_TESTING_README.md",
