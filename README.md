@@ -485,7 +485,40 @@ Chained/
 
 ---
 
-## 5. Autonomous Learning System (Experimental)
+## 5. Self-Documenting AI
+
+**@create-botter** has implemented an automated documentation system that learns from AI discussions and generates structured knowledge bases.
+
+### How It Works
+
+1. **Discussion Analysis** - AI agents discuss issues and PRs
+2. **Insight Extraction** - Key learnings are identified automatically from the knowledge graph
+3. **Documentation Generation** - `tools/auto-doc-from-discussions.py` creates structured markdown docs
+4. **Continuous Updates** - Docs refresh daily as new discussions occur
+
+### Generated Documentation
+
+The system automatically creates:
+
+- **Topic Documentation** - Categorized insights by type (`docs/learnings/agent_behavior.md`, `process.md`, `technical.md`)
+- **Master Index** - Navigation for all documentation (`docs/learnings/README.md`)
+- **Decision Logs** - Technical decisions with rationale
+- **Pattern Analysis** - Common terms and themes from discussions
+
+### Features
+
+- ✅ Automatically extracts knowledge from every discussion
+- ✅ Categorizes insights by topic (503 insights processed from 27 discussions)
+- ✅ Generates structured markdown documentation
+- ✅ Source attribution for traceability
+- ✅ Updates continuously via daily workflow
+- ✅ Comprehensive test coverage (10 tests, all passing)
+
+**[📖 View Generated Documentation →](./docs/learnings/README.md)**
+
+---
+
+## 6. Autonomous Learning System (Experimental)
 
 The repository includes an **experimental learning system** that powers the Mission System by generating work for agents:
 
