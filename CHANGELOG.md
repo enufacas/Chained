@@ -30,7 +30,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x3) [#4493](https://github.com/enufacas/Chained/pull/4493)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x4) [#4496](https://github.com/enufacas/Chained/pull/4496)
 
 ---
 
@@ -38,6 +38,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### ✨ Features
 
+- 🤖 meta-coordination: 2025-12-16 03:17 - closed 3 stale PRs, 43% reduction [#4497](https://github.com/enufacas/Chained/pull/4497)
 - 🤖 meta-coordination: 2025-12-16 00:57 run - system stable, no actions needed [#4489](https://github.com/enufacas/Chained/pull/4489)
 - 🤖 meta-coordination: 2025-12-15 22:13 - closed 2 stale PRs [#4486](https://github.com/enufacas/Chained/pull/4486)
 - 🤖 meta-coordination: 2025-12-15 20:14 system orchestration run [#4460](https://github.com/enufacas/Chained/pull/4460)
