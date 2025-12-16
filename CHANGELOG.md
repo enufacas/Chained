@@ -36,8 +36,8 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x11) [#4525](https://github.com/enufacas/Chained/pull/4525)
 - 🤖 **Documentation**: 📚 Sync World State to Docs - Pipeline [#4519](https://github.com/enufacas/Chained/pull/4519)
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x10) [#4520](https://github.com/enufacas/Chained/pull/4520)
 - 🤖 **Chore**: 🌍 World Model Update - Pipeline [#4511](https://github.com/enufacas/Chained/pull/4511)
 - 🤖 **Chore**: meta-coordination: 2025-12-16 06:19 system assessment and memory update [#4502](https://github.com/enufacas/Chained/pull/4502)
 
@@ -332,7 +332,6 @@ This changelog excludes automated data syncs and routine maintenance commits.
 - 🤖 🧠 Learning 🧠 Learning Pipeline - 2025-12-10 [#3765](https://github.com/enufacas/Chained/pull/3765)
 - 👤 📚 Docs Elevate AI-Native Control Plane and Mission System in README [#3761](https://github.com/enufacas/Chained/pull/3761)
 - 🤖 🎯 Daily goal for 2025-12-09 [#3729](https://github.com/enufacas/Chained/pull/3729)
-- 🤖 🧠 Learning 🧠 Learn from GitHub Copilot sources - 2025-12-09 [#3731](https://github.com/enufacas/Chained/pull/3731)
 
 ### 🐛 Bug Fixes
 
