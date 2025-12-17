@@ -315,6 +315,29 @@ jobs:
           ISSUE_BODY="${ISSUE_BODY//\$\{RUN_ID\}/${RUN_ID}}"
           ISSUE_BODY="${ISSUE_BODY//\$\{DRY_RUN\}/${DRY_RUN}}"
           
+          # Substitute workflow output variables (from earlier phases)
+          # Phase 1 - Auto-Merge
+          ISSUE_BODY="${ISSUE_BODY//\$\{AUTOMERGE_PROCESSED\}/${AUTOMERGE_PROCESSED:-0}}"
+          ISSUE_BODY="${ISSUE_BODY//\$\{AUTOMERGE_MERGED\}/${AUTOMERGE_MERGED:-0}}"
+          ISSUE_BODY="${ISSUE_BODY//\$\{AUTOMERGE_FAILED\}/${AUTOMERGE_FAILED:-0}}"
+          
+          # Phase 0 - Cleanup
+          ISSUE_BODY="${ISSUE_BODY//\$\{CLEANUP_TOTAL\}/${CLEANUP_TOTAL:-0}}"
+          ISSUE_BODY="${ISSUE_BODY//\$\{CLEANUP_CONFLICTS\}/${CLEANUP_CONFLICTS:-0}}"
+          ISSUE_BODY="${ISSUE_BODY//\$\{CLEANUP_NO_ACTIVITY\}/${CLEANUP_NO_ACTIVITY:-0}}"
+          ISSUE_BODY="${ISSUE_BODY//\$\{CLEANUP_ORPHANED\}/${CLEANUP_ORPHANED:-0}}"
+          ISSUE_BODY="${ISSUE_BODY//\$\{CLEANUP_DRAFT\}/${CLEANUP_DRAFT:-0}}"
+          
+          # Phase 2 - PR State Monitoring
+          ISSUE_BODY="${ISSUE_BODY//\$\{MERGEABLE_PRS\}/${MERGEABLE_PRS:-0}}"
+          ISSUE_BODY="${ISSUE_BODY//\$\{CONFLICTING_PRS\}/${CONFLICTING_PRS:-0}}"
+          ISSUE_BODY="${ISSUE_BODY//\$\{DRAFT_PRS\}/${DRAFT_PRS:-0}}"
+          ISSUE_BODY="${ISSUE_BODY//\$\{UNKNOWN_PRS\}/${UNKNOWN_PRS:-0}}"
+          
+          # Starting counts
+          ISSUE_BODY="${ISSUE_BODY//\$\{OPEN_PRS_START\}/${OPEN_PRS_START:-0}}"
+          ISSUE_BODY="${ISSUE_BODY//\$\{OPEN_ISSUES_START\}/${OPEN_ISSUES_START:-0}}"
+          
           # Write issue body to file to handle large content reliably
           echo "$ISSUE_BODY" > /tmp/issue_body.md
           
