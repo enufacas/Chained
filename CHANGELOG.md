@@ -30,7 +30,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x3) [#4597](https://github.com/enufacas/Chained/pull/4597)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x4) [#4603](https://github.com/enufacas/Chained/pull/4603)
 
 ---
 
@@ -57,6 +57,10 @@ This changelog excludes automated data syncs and routine maintenance commits.
 - 👤 🏗️ Infrastructure Complete Claude-Docker integration research (idea:156) - 5/10 relevance, DEFER recommendation [#4524](https://github.com/enufacas/Chained/pull/4524)
 - 👤 🏗️ Infrastructure Complete cloud-infrastructure-security learning mission (idea:157) [#4526](https://github.com/enufacas/Chained/pull/4526)
 - 🤖 🎯 Daily goal for 2025-12-16 [#4504](https://github.com/enufacas/Chained/pull/4504)
+
+### 🐛 Bug Fixes
+
+- 🤖 meta-coordination: 2025-12-17 03:14 run - closed 2 stale PRs, re-assigned 4 issues [#4604](https://github.com/enufacas/Chained/pull/4604)
 
 ### 🧹 Chores & Maintenance
 
@@ -330,11 +334,10 @@ This changelog excludes automated data syncs and routine maintenance commits.
 - 👤 🔧 Agents Replace non-existent create-guru fallback agent with create-botter [#3830](https://github.com/enufacas/Chained/pull/3830)
 - 👤 🏗️ Infrastructure Fix Cloud Run startup failures with lazy Vertex AI initialization and tolerant probes [#3814](https://github.com/enufacas/Chained/pull/3814)
 - 👤 Add E2E tests, document deployment URLs, fix Firestore permissions [#3815](https://github.com/enufacas/Chained/pull/3815)
-- 👤 📋 Instructions Regenerate AG-UI Frontend package-lock.json and add package management instructions [#20086950265](https://github.com/enufacas/Chained/pull/20086950265)
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x56) [#3927](https://github.com/enufacas/Chained/pull/3927)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x46) [#3927](https://github.com/enufacas/Chained/pull/3927)
 - 🤖 **Documentation**: 📚 Sync World State to Docs - Pipeline (x2) [#3911](https://github.com/enufacas/Chained/pull/3911)
 - 👤 🧠 Learning **Documentation**: Validate GitHub Copilot learning session 2025-12-10 [#3866](https://github.com/enufacas/Chained/pull/3866)
 - 👤 **Documentation**: Document deployed URL for PR 3D organism implementation [#3816](https://github.com/enufacas/Chained/pull/3816)
@@ -350,24 +353,11 @@ This changelog excludes automated data syncs and routine maintenance commits.
 ### ✨ Features
 
 - 🤖 meta-coordination: 03:17 run - merged 1 PR, 8 stale PRs cleaned [#3796](https://github.com/enufacas/Chained/pull/3796)
-- 👤 📋 Instructions Add interactive 3D visualization of multi-tiered instruction architecture [#3802](https://github.com/enufacas/Chained/pull/3802)
-- 👤 3D AG-UI organism with react-three-fiber and standard theme [#3800](https://github.com/enufacas/Chained/pull/3800)
-- 🤖 meta-coordination: 2025-12-10 02:04 run - closed 22 PRs, merged 2, reduced open count 55% [#3756](https://github.com/enufacas/Chained/pull/3756)
-- 👤 🔧 Agents Research: API-Claude integration patterns for agent-to-service bridges [#3778](https://github.com/enufacas/Chained/pull/3778)
-- 👤 🧠 Learning Complete learning mission idea:89 - Go language trends (2025-11-24) [#3779](https://github.com/enufacas/Chained/pull/3779)
-- 👤 🧠 Learning Complete DevOps Cloud learning mission (idea:90) - @cloud-architect [#3780](https://github.com/enufacas/Chained/pull/3780)
-- 👤 Research: AWS DevOps cost optimization and bot defense patterns (idea:92) [#3783](https://github.com/enufacas/Chained/pull/3783)
 
 ### 🐛 Bug Fixes
 
 - 👤 AG-UI: Add error recovery and root cause analysis for update reliability [#3812](https://github.com/enufacas/Chained/pull/3812)
 - 👤 📋 Instructions Sync package-lock.json and add npm dependency management instructions [#3806](https://github.com/enufacas/Chained/pull/3806)
 - 👤 Fix AG-UI: unify historical/active displays, improve polling frequency [#3803](https://github.com/enufacas/Chained/pull/3803)
-- 👤 Restore truncated lifecycle.html and ai-knowledge-graph.html [#3789](https://github.com/enufacas/Chained/pull/3789)
-- 👤 Remove ESLint violations blocking AG-UI Frontend build [#3788](https://github.com/enufacas/Chained/pull/3788)
-
-### 🧹 Chores & Maintenance
-
-- 👤 📚 Docs **Documentation**: Elevate changelog visibility in README and refresh documentation index [#3790](https://github.com/enufacas/Chained/pull/3790)
 
 ---
