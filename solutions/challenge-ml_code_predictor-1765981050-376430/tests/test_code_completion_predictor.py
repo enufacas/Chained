@@ -395,7 +395,7 @@ class TestEdgeCases(unittest.TestCase):
     def test_unicode_support(self):
         """Test Unicode character support"""
         model = CodeCompletionPredictor('python')
-        samples = ['# Comment with émojis 🚀', 'text = "café"']
+        samples = ['# Comment with emojis 🚀', 'text = "café"']
         model.train(samples)
         
         # Should not crash

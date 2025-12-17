@@ -318,9 +318,7 @@ class SequencePredictor:
         
         # Try to use cache
         cache_key = self._get_cache_key(context)
-        cache_hit = False
         if top_k == 1 and cache_key in self._prediction_cache:
-            cache_hit = True
             result = self._prediction_cache[cache_key]
             return [result]
         
@@ -455,7 +453,6 @@ class CodeCompletionPredictor:
             ('return data.strip()', 0.72)
         """
         self._predictions_count += 1
-        initial_cache_size = len(self.predictor._prediction_cache)
         
         # Tokenize context
         context_tokens = self.tokenizer.tokenize(code_context)
@@ -467,8 +464,14 @@ class CodeCompletionPredictor:
         predicted_tokens = []
         current_context = context_tokens.copy()
         total_confidence = 0.0
+        cache_used = False
         
         for _ in range(max_tokens):
+            # Check if prediction will use cache
+            cache_key = self.predictor._get_cache_key(current_context)
+            if cache_key in self.predictor._prediction_cache:
+                cache_used = True
+            
             predictions = self.predictor.predict(current_context, top_k=1)
             
             if not predictions or predictions[0][0] == '':
@@ -494,9 +497,7 @@ class CodeCompletionPredictor:
         avg_confidence = total_confidence / len(predicted_tokens) if predicted_tokens else 0.0
         
         # Track cache hits
-        final_cache_size = len(self.predictor._prediction_cache)
-        if final_cache_size == initial_cache_size:
-            # Cache was used (no new entries)
+        if cache_used:
             self._cache_hits += 1
         
         # Detokenize
@@ -602,10 +603,11 @@ class CodeCompletionPredictor:
         }
         
         # Convert ngrams to JSON-serializable format
+        # Use JSON arrays for context to safely handle any character (including '|', quotes, etc.)
         for order, contexts in self.predictor.ngrams.items():
             model_data['ngrams'][str(order)] = {}
             for context, counts in contexts.items():
-                # Use JSON array for context to handle any character safely
+                # JSON array handles escaping automatically and supports any Unicode
                 context_key = json.dumps(list(context))
                 model_data['ngrams'][str(order)][context_key] = dict(counts)
         
