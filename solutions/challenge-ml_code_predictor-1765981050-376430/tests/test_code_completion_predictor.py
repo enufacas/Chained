@@ -547,7 +547,8 @@ class TestCaseValidation(unittest.TestCase):
         self.assertGreater(confidence, 0.0)
         
         print(f"✓ Test Case 2: Successfully completes functions")
-        print(f"  Partial: {partial_function.split(chr(10))[-1]}")
+        last_line = partial_function.split('\n')[-1]
+        print(f"  Partial: {last_line}")
         print(f"  Completion: {completion} (confidence: {confidence:.0%})")
 
 

@@ -313,14 +313,14 @@ class SequencePredictor:
             [(':', 0.85), ('{', 0.10), ('and', 0.05)]
         """
         if not context:
-            # No context - return most common token
-            if self.vocabulary:
-                return [(list(self.vocabulary)[0], 0.1)]
+            # No context - return empty (deterministic behavior)
             return [('', 0.0)]
         
         # Try to use cache
         cache_key = self._get_cache_key(context)
+        cache_hit = False
         if top_k == 1 and cache_key in self._prediction_cache:
+            cache_hit = True
             result = self._prediction_cache[cache_key]
             return [result]
         
@@ -455,6 +455,7 @@ class CodeCompletionPredictor:
             ('return data.strip()', 0.72)
         """
         self._predictions_count += 1
+        initial_cache_size = len(self.predictor._prediction_cache)
         
         # Tokenize context
         context_tokens = self.tokenizer.tokenize(code_context)
@@ -491,6 +492,12 @@ class CodeCompletionPredictor:
         
         # Calculate average confidence
         avg_confidence = total_confidence / len(predicted_tokens) if predicted_tokens else 0.0
+        
+        # Track cache hits
+        final_cache_size = len(self.predictor._prediction_cache)
+        if final_cache_size == initial_cache_size:
+            # Cache was used (no new entries)
+            self._cache_hits += 1
         
         # Detokenize
         predicted_line = self.tokenizer.detokenize(predicted_tokens)
@@ -598,7 +605,8 @@ class CodeCompletionPredictor:
         for order, contexts in self.predictor.ngrams.items():
             model_data['ngrams'][str(order)] = {}
             for context, counts in contexts.items():
-                context_key = '|'.join(context)
+                # Use JSON array for context to handle any character safely
+                context_key = json.dumps(list(context))
                 model_data['ngrams'][str(order)][context_key] = dict(counts)
         
         with open(filepath, 'w') as f:
@@ -626,7 +634,8 @@ class CodeCompletionPredictor:
         for order_str, contexts in model_data['ngrams'].items():
             order = int(order_str)
             for context_key, counts in contexts.items():
-                context = tuple(context_key.split('|'))
+                # Deserialize context from JSON array
+                context = tuple(json.loads(context_key))
                 self.predictor.ngrams[order][context] = Counter(counts)
     
     def get_stats(self) -> Dict:
