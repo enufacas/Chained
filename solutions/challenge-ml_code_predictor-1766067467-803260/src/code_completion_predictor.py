@@ -242,9 +242,10 @@ class SequencePredictor:
     
     def _get_cache_key(self, context: List[str]) -> str:
         """Generate cache key from context"""
+        # Use first 16 chars of SHA256 for efficiency (still highly unique)
         return hashlib.sha256(
-            '|'.join(context[-self.n:]).encode()
-        ).hexdigest()
+            json.dumps(context[-self.n:]).encode()
+        ).hexdigest()[:16]
     
     def get_stats(self) -> Dict:
         """Get model statistics"""
@@ -400,7 +401,7 @@ class CodeCompletionPredictor:
             'n': self.n,
             'vocabulary': list(self.predictor.vocabulary),
             'ngrams': {
-                '|'.join(ctx): dict(counter)
+                json.dumps(list(ctx)): dict(counter)
                 for ctx, counter in self.predictor.ngrams.items()
             }
         }
@@ -429,7 +430,7 @@ class CodeCompletionPredictor:
         
         # Restore N-grams
         for ctx_str, counter_dict in model_data['ngrams'].items():
-            ctx = tuple(ctx_str.split('|'))
+            ctx = tuple(json.loads(ctx_str))
             self.predictor.ngrams[ctx] = Counter(counter_dict)
     
     def get_stats(self) -> Dict:
@@ -452,11 +453,16 @@ class CodeCompletionPredictor:
         }
     
     def _calculate_cache_hit_rate(self) -> float:
-        """Calculate cache hit rate (simplified)"""
+        """
+        Calculate cache hit rate
+        
+        Note: This is an approximation based on cache size.
+        For accurate metrics, track hits/misses during prediction.
+        """
         cache_size = len(self.predictor.prediction_cache)
         if cache_size == 0:
             return 0.0
-        # Estimate based on cache size
+        # Approximation: cache_size / theoretical_max (100)
         return min(cache_size / 100, 1.0)
 
 
