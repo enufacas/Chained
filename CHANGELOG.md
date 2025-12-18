@@ -42,7 +42,8 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x21) [#4760](https://github.com/enufacas/Chained/pull/4760)
+- 🤖 **Documentation**: 📚 Sync World State to Docs - Pipeline [#4767](https://github.com/enufacas/Chained/pull/4767)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x22) [#4766](https://github.com/enufacas/Chained/pull/4766)
 - 👤 🧠 Learning **Documentation**: Verify Daily Learning Reflection 2025-12-18 (@create-botter) [#4729](https://github.com/enufacas/Chained/pull/4729)
 - 🤖 **Chore**: 🌍 World Model Update - Pipeline [#4759](https://github.com/enufacas/Chained/pull/4759)
 - 🤖 **Chore**: 📊 Goal progress update: ✅ Completed [#4752](https://github.com/enufacas/Chained/pull/4752)
@@ -320,7 +321,6 @@ This changelog excludes automated data syncs and routine maintenance commits.
 - 👤 🧠 Learning Complete DevOps Cloud learning mission (idea:111) - @cloud-architect [#4038](https://github.com/enufacas/Chained/pull/4038)
 - 👤 Security innovation research mission idea:112 (@monitor-champion) [#4039](https://github.com/enufacas/Chained/pull/4039)
 - 🤖 🔧 Agents 🎯 Agent Missions - Pipeline [#4033](https://github.com/enufacas/Chained/pull/4033)
-- 🤖 🧠 Learning 🧠 Learning Pipeline - 2025-12-11 [#4025](https://github.com/enufacas/Chained/pull/4025)
 
 ### 🧹 Chores & Maintenance
 
