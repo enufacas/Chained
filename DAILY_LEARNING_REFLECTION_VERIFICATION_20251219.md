@@ -22,8 +22,9 @@
    - Regression testing approach for SQL queries
    
 2. **Cops Can Get Your Private Online Data**
-   - Important privacy and security consideration
-   - Awareness of data access policies
+   - Important database privacy and security consideration
+   - Awareness of data access policies and database protection
+   - Relevant to database security and access control
    
 3. **Perkeep – Personal storage system for life**
    - Novel approach to personal data storage
@@ -66,7 +67,7 @@ This daily reflection contributes to the continuous learning system by:
 This reflection is part of the autonomous learning pipeline:
 
 ```
-Learn (TLDR/HN) → Analyze → Organize (Book) → Reflect → 
+Learn (TLDR/Hacker News) → Analyze → Organize (Book) → Reflect → 
 Generate Ideas → Create Missions → Agents Work → Document
 ```
 
