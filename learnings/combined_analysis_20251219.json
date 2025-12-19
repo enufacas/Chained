@@ -1,5 +1,5 @@
 {
-  "timestamp": "2025-12-19T08:39:12.009458+00:00",
+  "timestamp": "2025-12-19T20:31:58.015650+00:00",
   "total_learnings": 1030,
   "sources": {
     "tldr": 20,
@@ -1839,163 +1839,163 @@
     },
     {
       "source": "hackernews",
-      "title": "Beginning January 2026, all ACM publications will be made open access",
-      "url": "https://dl.acm.org/openaccess",
-      "score": 1647,
-      "comments": 190,
-      "collected_at": "2025-12-19T08:38:40.919631+00:00"
+      "title": "You can now play Grand Theft Auto Vice City in the browser",
+      "url": "https://dos.zone/grand-theft-auto-vice-city/",
+      "score": 98,
+      "comments": 26,
+      "collected_at": "2025-12-19T20:31:31.856016+00:00"
     },
     {
       "source": "hackernews",
-      "title": "Getting bitten by Intel's poor naming schemes",
-      "url": "https://lorendb.dev/posts/getting-bitten-by-poor-naming-schemes/",
-      "score": 76,
-      "comments": 36,
-      "collected_at": "2025-12-19T08:38:41.008335+00:00"
+      "title": "TP-Link Tapo C200: Hardcoded Keys, Buffer Overflows and Privacy",
+      "url": "https://www.evilsocket.net/2025/12/18/TP-Link-Tapo-C200-Hardcoded-Keys-Buffer-Overflows-and-Privacy-in-the-Era-of-AI-Assisted-Reverse-Engineering/",
+      "score": 123,
+      "comments": 24,
+      "collected_at": "2025-12-19T20:31:31.958054+00:00"
     },
     {
       "source": "hackernews",
-      "title": "1.5 TB of VRAM on Mac Studio \u2013 RDMA over Thunderbolt 5",
-      "url": "https://www.jeffgeerling.com/blog/2025/15-tb-vram-on-mac-studio-rdma-over-thunderbolt-5",
-      "score": 364,
-      "comments": 114,
-      "collected_at": "2025-12-19T08:38:41.095278+00:00"
+      "title": "Garage \u2013 An S3 object store so reliable you can run it outside datacenters",
+      "url": "https://garagehq.deuxfleurs.fr/",
+      "score": 300,
+      "comments": 60,
+      "collected_at": "2025-12-19T20:31:32.037960+00:00"
     },
     {
       "source": "hackernews",
-      "title": "History LLMs: Models trained exclusively on pre-1913 texts",
-      "url": "https://github.com/DGoettlich/history-llms",
-      "score": 457,
-      "comments": 180,
-      "collected_at": "2025-12-19T08:38:41.186773+00:00"
+      "title": "Mistral OCR 3",
+      "url": "https://mistral.ai/news/mistral-ocr-3",
+      "score": 59,
+      "comments": 0,
+      "collected_at": "2025-12-19T20:31:32.120862+00:00"
     },
     {
       "source": "hackernews",
-      "title": "We pwned X, Vercel, Cursor, and Discord through a supply-chain attack",
-      "url": "https://gist.github.com/hackermondev/5e2cdc32849405fff6b46957747a2d28",
-      "score": 800,
-      "comments": 313,
-      "collected_at": "2025-12-19T08:38:41.273445+00:00"
+      "title": "GotaTun -- Mullvad's WireGuard Implementation in Rust",
+      "url": "https://mullvad.net/en/blog/announcing-gotatun-the-future-of-wireguard-at-mullvad-vpn",
+      "score": 455,
+      "comments": 99,
+      "collected_at": "2025-12-19T20:31:32.217235+00:00"
     },
     {
       "source": "hackernews",
-      "title": "Texas is suing all of the big TV makers for spying on what you watch",
-      "url": "https://www.theverge.com/news/845400/texas-tv-makers-lawsuit-samsung-sony-lg-hisense-tcl-spying",
-      "score": 758,
-      "comments": 372,
-      "collected_at": "2025-12-19T08:38:41.362619+00:00"
+      "title": "Amazon will allow ePub and PDF downloads for DRM-free eBooks",
+      "url": "https://www.kdpcommunity.com/s/article/New-eBook-Download-Options-for-Readers-Coming-in-2026?language=en_US",
+      "score": 433,
+      "comments": 237,
+      "collected_at": "2025-12-19T20:31:32.302439+00:00"
     },
     {
       "source": "hackernews",
-      "title": "Making Google Sans Flex",
-      "url": "https://design.google/library/google-sans-flex-font",
+      "title": "Vm.overcommit_memory=2 is always the right setting for servers",
+      "url": "https://ariadne.space/2025/12/16/vmovercommitmemory-is-always-the-right.html",
+      "score": 22,
+      "comments": 18,
+      "collected_at": "2025-12-19T20:31:32.390177+00:00"
+    },
+    {
+      "source": "hackernews",
+      "title": "Show HN: Stickerbox, a kid-safe, AI-powered voice to sticker printer",
+      "url": "https://stickerbox.com/",
+      "score": 10,
+      "comments": 4,
+      "collected_at": "2025-12-19T20:31:32.475310+00:00"
+    },
+    {
+      "source": "hackernews",
+      "title": "The FreeBSD Foundation's Laptop Support and Usability Project",
+      "url": "https://github.com/FreeBSDFoundation/proj-laptop",
+      "score": 102,
+      "comments": 40,
+      "collected_at": "2025-12-19T20:31:32.554857+00:00"
+    },
+    {
+      "source": "hackernews",
+      "title": "Believe the Checkbook",
+      "url": "https://robertgreiner.com/believe-the-checkbook/",
+      "score": 72,
+      "comments": 30,
+      "collected_at": "2025-12-19T20:31:32.641764+00:00"
+    },
+    {
+      "source": "hackernews",
+      "title": "Where Is GPT in the Chomsky Hierarchy?",
+      "url": "https://fi-le.net/chomsky/",
+      "score": 38,
+      "comments": 30,
+      "collected_at": "2025-12-19T20:31:32.723006+00:00"
+    },
+    {
+      "source": "hackernews",
+      "title": "Performance Hints \u2013 Jeff Dean and Sanjay Ghemawat",
+      "url": "https://abseil.io/fast/hints.html",
+      "score": 13,
+      "comments": 0,
+      "collected_at": "2025-12-19T20:31:32.803073+00:00"
+    },
+    {
+      "source": "hackernews",
+      "title": "Reverse Engineering US Airline's PNR System and Accessing All Reservations",
+      "url": "https://alexschapiro.com/security/vulnerability/2025/11/20/avelo-airline-reservation-api-vulnerability",
+      "score": 51,
+      "comments": 23,
+      "collected_at": "2025-12-19T20:31:32.887981+00:00"
+    },
+    {
+      "source": "hackernews",
+      "title": "8-bit Bol\u00e9ro",
+      "url": "https://linusakesson.net/music/bolero/index.php",
+      "score": 14,
+      "comments": 2,
+      "collected_at": "2025-12-19T20:31:32.971447+00:00"
+    },
+    {
+      "source": "hackernews",
+      "title": "Graphite Is Joining Cursor",
+      "url": "https://cursor.com/blog/graphite",
+      "score": 88,
+      "comments": 128,
+      "collected_at": "2025-12-19T20:31:33.055277+00:00"
+    },
+    {
+      "source": "hackernews",
+      "title": "Rust's Block Pattern",
+      "url": "https://notgull.net/block-pattern/",
       "score": 27,
       "comments": 5,
-      "collected_at": "2025-12-19T08:38:41.451323+00:00"
+      "collected_at": "2025-12-19T20:31:33.134774+00:00"
     },
     {
       "source": "hackernews",
-      "title": "Noclip.website \u2013 A digital museum of video game levels",
-      "url": "https://noclip.website/",
-      "score": 163,
-      "comments": 20,
-      "collected_at": "2025-12-19T08:38:41.540062+00:00"
+      "title": "Lite^3, a JSON-compatible zero-copy serialization format",
+      "url": "https://github.com/fastserial/lite3",
+      "score": 82,
+      "comments": 27,
+      "collected_at": "2025-12-19T20:31:33.219010+00:00"
     },
     {
       "source": "hackernews",
-      "title": "From Zero to QED: An informal introduction to formality with Lean 4",
-      "url": "https://sdiehl.github.io/zero-to-qed/01_introduction.html",
-      "score": 17,
+      "title": "NOAA deploys new generation of AI-driven global weather models",
+      "url": "https://www.noaa.gov/news-release/noaa-deploys-new-generation-of-ai-driven-global-weather-models",
+      "score": 14,
       "comments": 0,
-      "collected_at": "2025-12-19T08:38:41.627667+00:00"
+      "collected_at": "2025-12-19T20:31:33.302964+00:00"
     },
     {
       "source": "hackernews",
-      "title": "The state of the kernel Rust experiment",
-      "url": "https://lwn.net/SubscriberLink/1050174/63aa7da43214c3ce/",
-      "score": 79,
-      "comments": 24,
-      "collected_at": "2025-12-19T08:38:41.718123+00:00"
+      "title": "Show HN: MCPShark Viewer (VS Code/Cursor extension)- view MCP traffic in-editor",
+      "url": "",
+      "score": 19,
+      "comments": 0,
+      "collected_at": "2025-12-19T20:31:33.384473+00:00"
     },
     {
       "source": "hackernews",
-      "title": "GPT-5.2-Codex",
-      "url": "https://openai.com/index/introducing-gpt-5-2-codex/",
-      "score": 469,
-      "comments": 242,
-      "collected_at": "2025-12-19T08:38:41.812972+00:00"
-    },
-    {
-      "source": "hackernews",
-      "title": "2026 Apple introducing more ads to increase opportunity in search results",
-      "url": "https://ads.apple.com/app-store/help/ad-placements/0082-search-results",
-      "score": 130,
-      "comments": 113,
-      "collected_at": "2025-12-19T08:38:41.915384+00:00"
-    },
-    {
-      "source": "hackernews",
-      "title": "Reconstructed Commander Keen 1-3 Source Code",
-      "url": "https://pckf.com/viewtopic.php?t=18248",
-      "score": 60,
-      "comments": 8,
-      "collected_at": "2025-12-19T08:38:41.998595+00:00"
-    },
-    {
-      "source": "hackernews",
-      "title": "How China built its \u2018Manhattan Project\u2019 to rival the West in AI chips",
-      "url": "https://www.japantimes.co.jp/business/2025/12/18/tech/china-west-ai-chips/",
-      "score": 323,
-      "comments": 357,
-      "collected_at": "2025-12-19T08:38:42.084561+00:00"
-    },
-    {
-      "source": "hackernews",
-      "title": "SMB Direct \u2013 SMB3 over RDMA \u2013 The Linux Kernel Documentation",
-      "url": "https://docs.kernel.org/filesystems/smb/smbdirect.html",
-      "score": 23,
-      "comments": 4,
-      "collected_at": "2025-12-19T08:38:42.174938+00:00"
-    },
-    {
-      "source": "hackernews",
-      "title": "Prompt caching: 10x cheaper LLM tokens, but how?",
-      "url": "https://ngrok.com/blog/prompt-caching/",
-      "score": 77,
-      "comments": 5,
-      "collected_at": "2025-12-19T08:38:42.264632+00:00"
-    },
-    {
-      "source": "hackernews",
-      "title": "Property-Based Testing Caught a Security Bug I Never Would Have Found",
-      "url": "https://kiro.dev/blog/property-based-testing-fixed-security-bug/",
-      "score": 16,
-      "comments": 1,
-      "collected_at": "2025-12-19T08:38:42.357302+00:00"
-    },
-    {
-      "source": "hackernews",
-      "title": "Show HN: Picknplace.js, an alternative to drag-and-drop",
-      "url": "https://jgthms.com/picknplace.js/",
-      "score": 272,
-      "comments": 107,
-      "collected_at": "2025-12-19T08:38:42.442309+00:00"
-    },
-    {
-      "source": "hackernews",
-      "title": "Skills for organizations, partners, the ecosystem",
-      "url": "https://claude.com/blog/organization-skills-and-directory",
-      "score": 261,
-      "comments": 143,
-      "collected_at": "2025-12-19T08:38:42.529359+00:00"
-    },
-    {
-      "source": "hackernews",
-      "title": "Telegraph chess: A 19th century tech marvel",
-      "url": "https://spectrum.ieee.org/telegraph-chess",
-      "score": 29,
-      "comments": 8,
-      "collected_at": "2025-12-19T08:38:42.617344+00:00"
+      "title": "Show HN: TinyPDF \u2013 3kb pdf library (70x smaller than jsPDF)",
+      "url": "https://github.com/Lulzx/tinypdf",
+      "score": 18,
+      "comments": 3,
+      "collected_at": "2025-12-19T20:31:33.470247+00:00"
     },
     {
       "title": "Operating Margins",
@@ -5831,7 +5831,7 @@
       "content": "About billing for GitHub Copilot in organizations and enterprises\nLearn about pricing and billing cycles for Copilot.\nWho can use this feature?\nOrganizations on a GitHub Free or GitHub Team plan, or organizations and enterprises on GitHub Enterprise Cloud\nIn this article\nAvailable plans\nGitHub offers the following plans for organization accounts:\nCopilot Business\nat $19 USD per user per month (Purchase additional premium requests at $0.04 USD per request)\nCopilot Enterprise\nat $39 USD per user per month (GitHub Enterprise Cloud only, purchase additional premium requests at $0.04 USD per request)\nWith GitHub Enterprise Cloud, an enterprise owner chooses the plan for each organization in the enterprise. For guidance on choosing a plan, see\nChoosing your enterprise's plan for GitHub Copilot\n.\nPremium requests\nPaid Copilot plans include premium requests. Premium requests use advanced models and features and are subject to monthly allowances or potential overage costs. See\nRequests in GitHub Copilot\n.\nSeat assignment\nA Copilot seat is a license to use GitHub Copilot for a user. Each month, your organization or enterprise is billed for the number of assigned seats.\nSeat assignment is managed by organization owners. With GitHub Enterprise Cloud, an enterprise owner must have enabled GitHub Copilot for the organization before an organization owner can assign seats. See\nGranting access to GitHub Copilot for members of your organization\n.\nIf a user receives a seat from multiple organizations in the same enterprise, the enterprise will be billed only once, and one organization is selected and billed for the seat. To determine which organization is billed for a given user, request a detailed usage report and refer to the\norganization\ncolumn for the user's Copilot license. See\nBilling reports reference\n.\nBilling cycles\nBilled users are calculated at the end of each billing cycle, based on the number of GitHub Copilot seats that are assigned. Although you can add or remove seats \n\n[Content truncated...]",
       "url": "https://docs.github.com/en/copilot/concepts/billing/organizations-and-enterprises",
       "source": "GitHub Copilot Docs",
-      "timestamp": "2025-12-19T08:38:43.617874+00:00"
+      "timestamp": "2025-12-19T20:31:38.682643+00:00"
     },
     {
       "title": "GitHub Copilot Docs: About billing for individual GitHub Copilot plans",
@@ -5839,7 +5839,7 @@
       "content": "About billing for individual GitHub Copilot plans\nLearn how billing works for Copilot Pro and Copilot Pro+.\nIn this article\nPricing for Copilot Pro and Copilot Pro+\nGitHub offers two paid plans for individuals: Copilot Pro and Copilot Pro+. Both plans are available on a monthly or yearly billing cycle.\nCopilot Pro\nIf you choose a monthly billing cycle\n, you will be billed $10 USD per calendar month.\nIf you choose a yearly billing cycle\n, you will be billed $100 USD per year.\nCopilot Pro+\nIf you choose a monthly billing cycle\n, you will be billed $39 USD per calendar month.\nIf you choose a yearly billing cycle\n, you will be billed $390 USD per year.\nYou can change to a monthly or yearly billing cycle at any time. The change will take effect from the start of your next billing cycle.\nNote that GitHub may apply a temporary authorization hold for the value of the usage-based costs in advance, which will appear as a pending charge in your account's payment method.\nAbout the 30-day trial for Copilot Pro\nNote\nCopilot Pro+ does not include a trial. You will be billed immediately upon subscribing.\nBefore starting a paid plan for a personal account, you can set up a one-time 30-day trial to evaluate Copilot. To begin a trial, you will need to choose a monthly or yearly billing cycle, and provide a payment method. If you do not cancel the trial before the end of the 30 days, the trial will automatically convert to a paid plan.\nYou can cancel your Copilot trial at any time during the 30 days and you won't be charged. If you cancel before the end of the trial, you will continue to have access to Copilot until the 30-day trial period ends. See\nViewing and changing your GitHub Copilot plan\n.\nNote\nIf you were part of the free GitHub Copilot technical preview that was run between July 2021 and June 2022, you are not eligible for a 30-day trial.\nAbout premium requests\nYour Copilot plan includes premium requests. Premium requests use more advanced models or features and count against \n\n[Content truncated...]",
       "url": "https://docs.github.com/en/copilot/concepts/billing/billing-for-individuals",
       "source": "GitHub Copilot Docs",
-      "timestamp": "2025-12-19T08:38:44.870693+00:00"
+      "timestamp": "2025-12-19T20:31:39.992695+00:00"
     },
     {
       "title": "GitHub Copilot Docs: About Copilot auto model selection",
@@ -5847,7 +5847,7 @@
       "content": "About Copilot auto model selection\nAutomatically select models for Copilot Chat and Copilot coding agent.\nWho can use this feature?\nAuto model selection for Copilot Chat is available with all GitHub Copilot plans.\nAuto model selection for Copilot coding agent is available for GitHub Copilot Pro and GitHub Copilot Pro+ plans.\nIn this article\nOverview\nExperience less rate limiting and reduce the mental load of choosing a model by letting Copilot auto model selection automatically choose the best available model on your behalf.\nCopilot auto model selection is currently optimized for model availability, choosing from a list of models that may change over time.\nWith Copilot auto model selection, you benefit from:\nReduced chances of rate limiting\nDiscounted multipliers for paid plans (Copilot Chat only)\nAuto model selection\nwon't\ninclude these models:\nModels excluded by administrator policies. See\nConfiguring access to AI models in GitHub Copilot\n.\nModels with premium request multipliers greater than one. See\nSupported AI models in GitHub Copilot\n.\nModels not available in your plan. See\nSupported AI models in GitHub Copilot\n.\nNote\nSoon Copilot auto model selection will choose the best model for you by taking into account both model availability and your task.\nAuto model selection in Copilot Chat\nAuto model selection is generally available in the following IDEs:\nVS Code\nAuto model selection is in public preview for the following IDEs:\nVisual Studio\nEclipse\nJetBrains IDEs\nXcode\nWhen you select\nAuto\nin Copilot Chat, Auto model selection may choose from the following list of models, subject to your policies and subscription type. Models may change over time.\nGPT-4.1\nGPT-5 mini\nGPT-5.1-Codex-Max\nClaude Haiku 4.5\nClaude Sonnet 4.5\nTip\nTo see which model was used for each response, hover over the response in Copilot Chat.\nWhile auto model selection is an option for Copilot Chat, you can manually choose a different model to override this selection. You can change the model Copilo\n\n[Content truncated...]",
       "url": "https://docs.github.com/en/copilot/concepts/auto-model-selection",
       "source": "GitHub Copilot Docs",
-      "timestamp": "2025-12-19T08:38:46.160715+00:00"
+      "timestamp": "2025-12-19T20:31:40.892858+00:00"
     },
     {
       "title": "GitHub Copilot Docs: About customizing GitHub Copilot responses",
@@ -5855,7 +5855,7 @@
       "content": "About customizing GitHub Copilot responses\nLearn about customizing the behavior of GitHub Copilot to fit with your preferences and requirements.\nTool navigation\nIn this article\nNote\nThis version of this article is about custom instructions on the GitHub website. Click the tabs above for other environments.\nAbout customizing Copilot responses\nGitHub Copilot can provide responses that are tailored to your personal preferences, the way your team works, the tools you use, or the specifics of your project, if you provide it with enough context to do so. Instead of repeatedly adding this contextual detail to your prompts, you can create custom instructions that automatically add this information for you. The additional information is not displayed, but is available to Copilot to allow it to generate higher quality responses.\nNote\nDue to the non-deterministic nature of AI, Copilot may not always follow your custom instructions in exactly the same way every time they are used.\nTypes of custom instructions\nThere are three main types of custom instructions that you can use to customize Copilot responses on the GitHub website:\nPersonal instructions\napply to all conversations you have with Copilot Chat across the GitHub website. They allow you to specify your individual preferences, such as preferred language or response style, ensuring that the responses are tailored to your personal needs.\nRepository custom instructions\napply to conversations within the context of a specific repository. They are useful for defining project-specific coding standards, frameworks, or tools. For example, you can specify that a repository uses TypeScript and a particular library, ensuring consistent responses for all contributors.\nOrganization custom instructions\n(public preview) apply to conversations within the context of an organization on the GitHub website. They are ideal for enforcing organization-wide preferences, such as a common language or security guidelines. Organization custom instruc\n\n[Content truncated...]",
       "url": "https://docs.github.com/en/copilot/concepts/prompting/response-customization",
       "source": "GitHub Copilot Docs",
-      "timestamp": "2025-12-19T08:38:48.087697+00:00"
+      "timestamp": "2025-12-19T20:31:42.471740+00:00"
     },
     {
       "title": "GitHub Copilot Docs: About GitHub Copilot Chat",
@@ -5863,7 +5863,7 @@
       "content": "About GitHub Copilot Chat\nLearn how you can use GitHub Copilot Chat to enhance your coding experience.\nIn this article\nOverview\nGitHub Copilot Chat is the AI-powered chat interface for GitHub Copilot. It allows you to interact with AI models to get coding assistance, explanations, and suggestions in a conversational format.\nCopilot Chat can help you with a variety of coding-related tasks, like offering you code suggestions, providing natural language descriptions of a piece of code's functionality and purpose, generating unit tests for your code, and proposing fixes for bugs in your code.\nGitHub Copilot Chat is available in various environments:\nGitHub (the website)\nA range of IDEs such as Visual Studio Code, Xcode, and JetBrains IDEs\nGitHub Mobile\nGitHub Copilot CLI\nDifferent environments may have different features and capabilities, but the core functionality remains consistent across platforms. To explore the functionality available in each environment, see the\nGitHub Copilot Chat\nhow-to guides and the\nTutorials for GitHub Copilot\n.\nLimitations\nCopilot Chat is designed to assist with coding tasks, but you remain responsible for reviewing and validating the code it generates. It may not always produce correct or optimal solutions, and it can sometimes generate code that contains security vulnerabilities or other issues. Always test and review the code before using it in production.\nCustomizing Copilot Chat responses\nGitHub Copilot in GitHub, Visual Studio Code, and Visual Studio can provide chat responses that are tailored to the way your team works, the tools you use, the specifics of your project, or your personal preferences, if you provide it with enough context to do so. Instead of repeating instructions in each prompt, you can create and save instructions for Copilot Chat to customize what responses you receive.\nThere are various ways you can create custom instructions for Copilot Chat. These fall into three main categories:\nPersonal instructions\n: You can a\n\n[Content truncated...]",
       "url": "https://docs.github.com/en/copilot/concepts/chat",
       "source": "GitHub Copilot Docs",
-      "timestamp": "2025-12-19T08:38:49.414821+00:00"
+      "timestamp": "2025-12-19T20:31:43.764780+00:00"
     },
     {
       "title": "GitHub Discussion: Copilot L1 Test generation",
@@ -5874,7 +5874,7 @@
       "metadata": {
         "comments": 2
       },
-      "timestamp": "2025-12-19T08:38:50.380377+00:00"
+      "timestamp": "2025-12-19T20:31:44.434271+00:00"
     },
     {
       "title": "GitHub Discussion: Adding \"Copilot\" menu for users who already uninstalled Copilot is deeply offensive",
@@ -5885,7 +5885,7 @@
       "metadata": {
         "comments": 76
       },
-      "timestamp": "2025-12-19T08:38:50.380416+00:00"
+      "timestamp": "2025-12-19T20:31:44.434313+00:00"
     },
     {
       "title": "GitHub Discussion: Feature: Add GitHub Copilot as model provider",
@@ -5896,7 +5896,7 @@
       "metadata": {
         "comments": 212
       },
-      "timestamp": "2025-12-19T08:38:50.380427+00:00"
+      "timestamp": "2025-12-19T20:31:44.434321+00:00"
     },
     {
       "title": "GitHub Copilot Docs: About billing for GitHub Copilot in organizations and enterprises",
@@ -8839,143 +8839,143 @@
     },
     {
       "source": "tldr",
+      "title": "TikTok signs deal \ud83d\udcf1, GPT-5.2-Codex \ud83e\udd16, 2025 tech salaries \ud83d\udcb0",
+      "url": "https://tldr.tech/tech/2025-12-19",
+      "summary": "",
+      "collected_at": "2025-12-19T20:31:35.055942+00:00"
+    },
+    {
+      "source": "tldr",
       "title": "Gemini 3 Flash \u26a1, ChatGPT app store \ud83e\udd16, StackOverflow survey results \ud83d\udc68\u200d\ud83d\udcbb",
       "url": "https://tldr.tech/tech/2025-12-18",
       "summary": "",
-      "collected_at": "2025-12-19T08:38:43.151307+00:00"
+      "collected_at": "2025-12-19T20:31:35.055956+00:00"
     },
     {
       "source": "tldr",
       "title": "ChatGPT Image upgrade \ud83d\uddbc\ufe0f, WB rejects Paramount \ud83c\udfac, faciliting AI dev adoption \ud83d\udc68\u200d\ud83d\udcbb",
       "url": "https://tldr.tech/tech/2025-12-17",
       "summary": "",
-      "collected_at": "2025-12-19T08:38:43.151328+00:00"
+      "collected_at": "2025-12-19T20:31:35.055961+00:00"
     },
     {
       "source": "tldr",
       "title": "Apple lineup leaks \ud83d\udcf1, PayPal bank \ud83c\udfe6, Cloudflare year in review \ud83c\udf10",
       "url": "https://tldr.tech/tech/2025-12-16",
       "summary": "",
-      "collected_at": "2025-12-19T08:38:43.151333+00:00"
+      "collected_at": "2025-12-19T20:31:35.055965+00:00"
     },
     {
       "source": "tldr",
       "title": "SpaceX IPO banks \ud83c\udfe6, Netflix House \ud83c\udfac, design is search \ud83d\udc69\ud83c\udffb\u200d\ud83c\udfa8",
       "url": "https://tldr.tech/tech/2025-12-15",
       "summary": "",
-      "collected_at": "2025-12-19T08:38:43.151337+00:00"
+      "collected_at": "2025-12-19T20:31:35.055969+00:00"
     },
     {
       "source": "tldr",
       "title": "GPT-5.2 \ud83e\udd16, Rivian autonomy \ud83d\udefb, compound engineering \ud83d\udc68\u200d\ud83d\udcbb",
       "url": "https://tldr.tech/tech/2025-12-12",
       "summary": "",
-      "collected_at": "2025-12-19T08:38:43.151340+00:00"
+      "collected_at": "2025-12-19T20:31:35.055973+00:00"
     },
     {
       "source": "tldr",
       "title": "Musk Bezos space race \ud83d\ude80, why AGI won't happen \ud83e\udd16, writing engineering blogs \ud83d\udc68\u200d\ud83d\udcbb",
       "url": "https://tldr.tech/tech/2025-12-11",
       "summary": "",
-      "collected_at": "2025-12-19T08:38:43.151344+00:00"
+      "collected_at": "2025-12-19T20:31:35.055976+00:00"
     },
     {
       "source": "tldr",
       "title": "SpaceX $1.5T target \ud83d\udcb0, Meta AI internal confusion \ud83e\udd16, the 0.1x engineer \ud83d\udc68\u200d\ud83d\udcbb",
       "url": "https://tldr.tech/tech/2025-12-10",
       "summary": "",
-      "collected_at": "2025-12-19T08:38:43.151348+00:00"
+      "collected_at": "2025-12-19T20:31:35.055980+00:00"
     },
     {
       "source": "tldr",
       "title": "Inside OpenAI's code red \ud83e\udd16, Google's AI glasses \ud83d\udc53, cost of software declines \ud83d\udcc9",
       "url": "https://tldr.tech/tech/2025-12-09",
       "summary": "",
-      "collected_at": "2025-12-19T08:38:43.151352+00:00"
+      "collected_at": "2025-12-19T20:31:35.055984+00:00"
     },
     {
       "source": "tldr",
       "title": "SpaceX IPO plans \ud83d\ude80, inside Netflix's WB bid \ud83d\udcb0, ByteDance's AI OS \ud83d\udcf1",
       "url": "https://tldr.tech/tech/2025-12-08",
       "summary": "",
-      "collected_at": "2025-12-19T08:38:43.151356+00:00"
+      "collected_at": "2025-12-19T20:31:35.055988+00:00"
     },
     {
       "source": "tldr",
-      "title": "Netflix wins Warner Bros \ud83c\udfac, Meta cuts Metaverse \ud83c\udf0e, SoftBank industrial cities \ud83c\udfd9\ufe0f",
-      "url": "https://tldr.tech/tech/2025-12-05",
+      "title": "OpenAI eyes $830M \ud83d\udcb0, GPT-5.2-Codex \ud83d\udcbb, Anthropic opens Agent Skills \ud83e\udd16",
+      "url": "https://tldr.tech/ai/2025-12-19",
       "summary": "",
-      "collected_at": "2025-12-19T08:38:43.151359+00:00"
+      "collected_at": "2025-12-19T20:31:35.055992+00:00"
     },
     {
       "source": "tldr",
       "title": "Gemini 3 Flash \ud83d\udd26, TPU PyTorch support \ud83d\udc68\u200d\ud83d\udcbb, Grok Voice Agent API \ud83d\udcbb",
       "url": "https://tldr.tech/ai/2025-12-18",
       "summary": "",
-      "collected_at": "2025-12-19T08:38:43.151364+00:00"
+      "collected_at": "2025-12-19T20:31:35.055995+00:00"
     },
     {
       "source": "tldr",
       "title": "ChatGPT removes router \ud83d\uddfa\ufe0f, GPT-Image-1.5 \ud83d\udcf7, Meta SAM Audio \ud83c\udfb5",
       "url": "https://tldr.tech/ai/2025-12-17",
       "summary": "",
-      "collected_at": "2025-12-19T08:38:43.151367+00:00"
+      "collected_at": "2025-12-19T20:31:35.055999+00:00"
     },
     {
       "source": "tldr",
       "title": "Nvidia Nemotron 3 3\ufe0f\u20e3, Claude agentic tasks \ud83e\udd16, OLMo 3 deep dive \ud83d\udcda",
       "url": "https://tldr.tech/ai/2025-12-16",
       "summary": "",
-      "collected_at": "2025-12-19T08:38:43.151371+00:00"
+      "collected_at": "2025-12-19T20:31:35.056003+00:00"
     },
     {
       "source": "tldr",
       "title": "OpenAI adopts Skills \ud83e\udd1d, Tinker GA \ud83d\udcbb, reverse engineering Claude \ud83d\udc68\u200d\ud83d\udcbb",
       "url": "https://tldr.tech/ai/2025-12-15",
       "summary": "",
-      "collected_at": "2025-12-19T08:38:43.151375+00:00"
+      "collected_at": "2025-12-19T20:31:35.056006+00:00"
     },
     {
       "source": "tldr",
       "title": "Disney + OpenAI \ud83e\udd1d, GPT-5.2 \ud83e\udd16, Gemini Deep Research API \ud83d\udcbb",
       "url": "https://tldr.tech/ai/2025-12-12",
       "summary": "",
-      "collected_at": "2025-12-19T08:38:43.151378+00:00"
+      "collected_at": "2025-12-19T20:31:35.056010+00:00"
     },
     {
       "source": "tldr",
       "title": "DeepMind\u2019s automated lab \ud83e\uddea, reverse engineering ChatGPT \ud83e\udd16, Cursor Debug Mode \ud83d\udc1e",
       "url": "https://tldr.tech/ai/2025-12-11",
       "summary": "",
-      "collected_at": "2025-12-19T08:38:43.151382+00:00"
+      "collected_at": "2025-12-19T20:31:35.056013+00:00"
     },
     {
       "source": "tldr",
       "title": "OpenAI Image-2 \ud83d\uddbc\ufe0f, Devstral2 \ud83d\udcbb, no data generating distribution \ud83d\udcca",
       "url": "https://tldr.tech/ai/2025-12-10",
       "summary": "",
-      "collected_at": "2025-12-19T08:38:43.151385+00:00"
+      "collected_at": "2025-12-19T20:31:35.056017+00:00"
     },
     {
       "source": "tldr",
       "title": "State of enterprise AI \ud83d\udcbc, Claude Code in Slack \ud83d\udcbb, alignment is capability \u2696\ufe0f",
       "url": "https://tldr.tech/ai/2025-12-09",
       "summary": "",
-      "collected_at": "2025-12-19T08:38:43.151389+00:00"
+      "collected_at": "2025-12-19T20:31:35.056021+00:00"
     },
     {
       "source": "tldr",
       "title": "Meta acquires Limitless \ud83e\udd1d, Gemini Nano Banana 2 Flash \ud83c\udf4c, OpenAI GPT-5.2 5\ufe0f\u20e3",
       "url": "https://tldr.tech/ai/2025-12-08",
       "summary": "",
-      "collected_at": "2025-12-19T08:38:43.151393+00:00"
-    },
-    {
-      "source": "tldr",
-      "title": "Anthropic Interviewer \ud83e\uddd1\u200d\ud83c\udfeb, Gemini 3 Deep Think \ud83e\udde0, Google & Replit partnership \ud83e\udd1d",
-      "url": "https://tldr.tech/ai/2025-12-05",
-      "summary": "",
-      "collected_at": "2025-12-19T08:38:43.151396+00:00"
+      "collected_at": "2025-12-19T20:31:35.056024+00:00"
     },
     {
       "title": "iPhone Air flops \ud83d\udcf1, Anthropic OpenAI financials leak \ud83d\udcb0, becoming a compiler engineer \ud83d\udc68\u200d\ud83d\udcbb",
@@ -10299,74 +10299,74 @@
       }
     },
     {
-      "url": "https://github.com/virattt/ai-hedge-fund",
-      "owner": "virattt",
-      "name": "ai-hedge-fund",
-      "full_name": "virattt/ai-hedge-fund",
-      "description": "An AI Hedge Fund Team",
+      "url": "https://github.com/NVIDIA-NeMo/Gym",
+      "owner": "NVIDIA-NeMo",
+      "name": "Gym",
+      "full_name": "NVIDIA-NeMo/Gym",
+      "description": "Build RL environments for LLM training",
       "language": "Python",
       "stars": 0,
       "stars_text": "Star",
-      "forks": 7735,
-      "forks_text": "7,735",
-      "stars_period": "256 stars today",
-      "stars_period_count": 256
+      "forks": 27,
+      "forks_text": "27",
+      "stars_period": "26 stars today",
+      "stars_period_count": 26
     },
     {
-      "url": "https://github.com/astral-sh/ty",
-      "owner": "astral-sh",
-      "name": "ty",
-      "full_name": "astral-sh/ty",
-      "description": "An extremely fast Python type checker and language server, written in Rust.",
+      "url": "https://github.com/GreyDGL/PentestGPT",
+      "owner": "GreyDGL",
+      "name": "PentestGPT",
+      "full_name": "GreyDGL/PentestGPT",
+      "description": "A GPT-empowered penetration testing tool",
       "language": "Python",
       "stars": 0,
       "stars_text": "Star",
-      "forks": 157,
-      "forks_text": "157",
-      "stars_period": "251 stars today",
-      "stars_period_count": 251
+      "forks": 1395,
+      "forks_text": "1,395",
+      "stars_period": "26 stars today",
+      "stars_period_count": 26
     },
     {
-      "url": "https://github.com/letta-ai/letta",
-      "owner": "letta-ai",
-      "name": "letta",
-      "full_name": "letta-ai/letta",
-      "description": "Letta is the platform for building stateful agents: open AI with advanced memory that can learn and self-improve over time.",
+      "url": "https://github.com/exo-explore/exo",
+      "owner": "exo-explore",
+      "name": "exo",
+      "full_name": "exo-explore/exo",
+      "description": "Run your own AI cluster at home with everyday devices \ud83d\udcf1\ud83d\udcbb \ud83d\udda5\ufe0f\u231a",
       "language": "Python",
       "stars": 0,
       "stars_text": "Star",
-      "forks": 2091,
-      "forks_text": "2,091",
-      "stars_period": "102 stars today",
-      "stars_period_count": 102
+      "forks": 2283,
+      "forks_text": "2,283",
+      "stars_period": "437 stars today",
+      "stars_period_count": 437
     },
     {
-      "url": "https://github.com/resemble-ai/chatterbox",
-      "owner": "resemble-ai",
-      "name": "chatterbox",
-      "full_name": "resemble-ai/chatterbox",
-      "description": "SoTA open-source TTS",
+      "url": "https://github.com/swisskyrepo/PayloadsAllTheThings",
+      "owner": "swisskyrepo",
+      "name": "PayloadsAllTheThings",
+      "full_name": "swisskyrepo/PayloadsAllTheThings",
+      "description": "A list of useful payloads and bypass for Web Application Security and Pentest/CTF",
       "language": "Python",
       "stars": 0,
       "stars_text": "Star",
-      "forks": 2234,
-      "forks_text": "2,234",
-      "stars_period": "477 stars today",
-      "stars_period_count": 477
+      "forks": 16346,
+      "forks_text": "16,346",
+      "stars_period": "32 stars today",
+      "stars_period_count": 32
     },
     {
-      "url": "https://github.com/FunAudioLLM/CosyVoice",
-      "owner": "FunAudioLLM",
-      "name": "CosyVoice",
-      "full_name": "FunAudioLLM/CosyVoice",
-      "description": "Multi-lingual large voice generation model, providing inference, training and deployment full-stack ability.",
+      "url": "https://github.com/sgl-project/mini-sglang",
+      "owner": "sgl-project",
+      "name": "mini-sglang",
+      "full_name": "sgl-project/mini-sglang",
+      "description": "",
       "language": "Python",
       "stars": 0,
       "stars_text": "Star",
-      "forks": 2008,
-      "forks_text": "2,008",
-      "stars_period": "69 stars today",
-      "stars_period_count": 69
+      "forks": 103,
+      "forks_text": "103",
+      "stars_period": "501 stars today",
+      "stars_period_count": 501
     },
     {
       "url": "https://github.com/jaywcjlove/awesome-mac",
@@ -10377,10 +10377,24 @@
       "language": "JavaScript",
       "stars": 0,
       "stars_text": "Star",
-      "forks": 7217,
-      "forks_text": "7,217",
-      "stars_period": "218 stars today",
-      "stars_period_count": 218
+      "forks": 7231,
+      "forks_text": "7,231",
+      "stars_period": "136 stars today",
+      "stars_period_count": 136
+    },
+    {
+      "url": "https://github.com/github/awesome-copilot",
+      "owner": "github",
+      "name": "awesome-copilot",
+      "full_name": "github/awesome-copilot",
+      "description": "Community-contributed instructions, prompts, and configurations to help you make the most of GitHub Copilot.",
+      "language": "JavaScript",
+      "stars": 0,
+      "stars_text": "Star",
+      "forks": 1751,
+      "forks_text": "1,751",
+      "stars_period": "172 stars today",
+      "stars_period_count": 172
     },
     {
       "url": "https://github.com/zen-browser/desktop",
@@ -10391,262 +10405,248 @@
       "language": "JavaScript",
       "stars": 0,
       "stars_text": "Star",
-      "forks": 1212,
-      "forks_text": "1,212",
-      "stars_period": "44 stars today",
-      "stars_period_count": 44
+      "forks": 1213,
+      "forks_text": "1,213",
+      "stars_period": "46 stars today",
+      "stars_period_count": 46
     },
     {
-      "url": "https://github.com/chartjs/Chart.js",
-      "owner": "chartjs",
-      "name": "Chart.js",
-      "full_name": "chartjs/Chart.js",
-      "description": "Simple HTML5 Charts using the <canvas> tag",
+      "url": "https://github.com/jiawanlong/Cesium-Examples",
+      "owner": "jiawanlong",
+      "name": "Cesium-Examples",
+      "full_name": "jiawanlong/Cesium-Examples",
+      "description": "CesiumJS2025\u5e74\u6700\u65b0Examples\uff0c200\u591a\u4e2a\u539f\u751f\u793a\u4f8b\uff1a\u81ea\u5b9a\u4e49\u7eb9\u7406\u3001\u5730\u5f62\u5f00\u6316\u3001\u53ef\u89c6\u57df\u5206\u6790\u3001\u6d2a\u6c34\u6df9\u6ca1\u3001\u7f13\u51b2\u5206\u6790\u3001\u65e5\u7167\u5206\u6790\u3001\u65b9\u91cf\u5206\u6790\u3001\u901a\u900f\u5206\u6790\u3001\u5256\u9762\u3001\u5355\u4f53\u5316\u3001\u89c6\u9891\u878d\u5408\u3001\u89c6\u9891\u6295\u5c04\u3001\u96e8\u96ea\u96fe\u3001\u5929\u7a7a\u76d2\u3001\u573a\u666f\u51fa\u56fe\u3001\u4f53\u79ef\u4e91\u3001\u95ea\u7535\u3001\u89c6\u9525\u4f53\u3001\u96f7\u8fbe\u626b\u63cf\u3001\u6c34\u6ce2\u7eb9\u3001\u52a8\u6001\u6269\u6563\u70b9\u3001\u7535\u5b50\u56f4\u680f\u3001\u7c92\u5b50\u6548\u679c\u3001\u7269\u7406\u5f15\u64ce\u3001\u514b\u91cc\u91d1\u3001\u6d77\u6d41\u3001\u5927\u6570\u636e\u53ef\u89c6\u5316\u3001\u5750\u6807\u8f6c\u6362\u3001\u76f8\u673a\u3001\u98de\u884c\u6f2b\u6e38\u3001\u74e6\u7247\u52a0\u8f7d\u3001xyz\u3001tms\u3001wms\u3001wmts\u3001\u5929\u5730\u56fe\u3001\u9ad8\u5fb7\u3001\u767e\u5ea6\u3001wkt\u3001shp\u3001geojson\u3001pbf\u3001\u5730\u5f62\u3001entity\u3001\u6a21\u578b\u3001\u6d77\u91cf\u6570\u636e\u3001Primitive\u3001gif\u3001\u805a\u5408\u3001czml\u3001\u5b57\u4f53\u56fe\u6807\u3001\u8fd0\u52a8\u30013Dtiles\u3001\u6a21\u578b\u504f\u79fb\u3001\u7b49\u7b49\u3002\u3002",
       "language": "JavaScript",
       "stars": 0,
       "stars_text": "Star",
-      "forks": 11990,
-      "forks_text": "11,990",
-      "stars_period": "5 stars today",
-      "stars_period_count": 5
+      "forks": 371,
+      "forks_text": "371",
+      "stars_period": "24 stars today",
+      "stars_period_count": 24
     },
     {
-      "url": "https://github.com/vercel/next.js",
-      "owner": "vercel",
-      "name": "next.js",
-      "full_name": "vercel/next.js",
-      "description": "The React Framework",
+      "url": "https://github.com/bigskysoftware/htmx",
+      "owner": "bigskysoftware",
+      "name": "htmx",
+      "full_name": "bigskysoftware/htmx",
+      "description": "</> htmx - high power tools for HTML",
       "language": "JavaScript",
       "stars": 0,
       "stars_text": "Star",
-      "forks": 30077,
-      "forks_text": "30,077",
+      "forks": 1555,
+      "forks_text": "1,555",
       "stars_period": "32 stars today",
       "stars_period_count": 32
     },
     {
-      "url": "https://github.com/swagger-api/swagger-ui",
-      "owner": "swagger-api",
-      "name": "swagger-ui",
-      "full_name": "swagger-api/swagger-ui",
-      "description": "Swagger UI is a collection of HTML, JavaScript, and CSS assets that dynamically generate beautiful documentation from a Swagger-compliant API.",
-      "language": "JavaScript",
-      "stars": 0,
-      "stars_text": "Star",
-      "forks": 9250,
-      "forks_text": "9,250",
-      "stars_period": "7 stars today",
-      "stars_period_count": 7
-    },
-    {
-      "url": "https://github.com/schollz/croc",
-      "owner": "schollz",
-      "name": "croc",
-      "full_name": "schollz/croc",
-      "description": "Easily and securely send things from one computer to another \ud83d\udc0a \ud83d\udce6",
+      "url": "https://github.com/go-gitea/gitea",
+      "owner": "go-gitea",
+      "name": "gitea",
+      "full_name": "go-gitea/gitea",
+      "description": "Git with a cup of tea! Painless self-hosted all-in-one software development service, including Git hosting, code review, team collaboration, package registry and CI/CD",
       "language": "Go",
       "stars": 0,
       "stars_text": "Star",
-      "forks": 1305,
-      "forks_text": "1,305",
-      "stars_period": "130 stars today",
-      "stars_period_count": 130
+      "forks": 6267,
+      "forks_text": "6,267",
+      "stars_period": "15 stars today",
+      "stars_period_count": 15
     },
     {
-      "url": "https://github.com/alibaba/higress",
-      "owner": "alibaba",
-      "name": "higress",
-      "full_name": "alibaba/higress",
-      "description": "\ud83e\udd16 AI Gateway | AI Native API Gateway",
+      "url": "https://github.com/danielmiessler/Fabric",
+      "owner": "danielmiessler",
+      "name": "Fabric",
+      "full_name": "danielmiessler/Fabric",
+      "description": "Fabric is an open-source framework for augmenting humans using AI. It provides a modular system for solving specific problems using a crowdsourced set of AI prompts that can be used anywhere.",
       "language": "Go",
       "stars": 0,
       "stars_text": "Star",
-      "forks": 925,
-      "forks_text": "925",
-      "stars_period": "7 stars today",
-      "stars_period_count": 7
+      "forks": 3602,
+      "forks_text": "3,602",
+      "stars_period": "24 stars today",
+      "stars_period_count": 24
     },
     {
-      "url": "https://github.com/vllm-project/semantic-router",
-      "owner": "vllm-project",
-      "name": "semantic-router",
-      "full_name": "vllm-project/semantic-router",
-      "description": "Intelligent Router for Mixture-of-Models",
+      "url": "https://github.com/containers/kubernetes-mcp-server",
+      "owner": "containers",
+      "name": "kubernetes-mcp-server",
+      "full_name": "containers/kubernetes-mcp-server",
+      "description": "Model Context Protocol (MCP) server for Kubernetes and OpenShift",
       "language": "Go",
       "stars": 0,
       "stars_text": "Star",
-      "forks": 333,
-      "forks_text": "333",
-      "stars_period": "20 stars today",
-      "stars_period_count": 20
-    },
-    {
-      "url": "https://github.com/prometheus/prometheus",
-      "owner": "prometheus",
-      "name": "prometheus",
-      "full_name": "prometheus/prometheus",
-      "description": "The Prometheus monitoring system and time series database.",
-      "language": "Go",
-      "stars": 0,
-      "stars_text": "Star",
-      "forks": 10009,
-      "forks_text": "10,009",
-      "stars_period": "20 stars today",
-      "stars_period_count": 20
-    },
-    {
-      "url": "https://github.com/hashicorp/terraform-provider-aws",
-      "owner": "hashicorp",
-      "name": "terraform-provider-aws",
-      "full_name": "hashicorp/terraform-provider-aws",
-      "description": "The AWS Provider enables Terraform to manage AWS resources.",
-      "language": "Go",
-      "stars": 0,
-      "stars_text": "Star",
-      "forks": 9866,
-      "forks_text": "9,866",
+      "forks": 198,
+      "forks_text": "198",
       "stars_period": "2 stars today",
       "stars_period_count": 2
     },
     {
-      "url": "https://github.com/servo/servo",
-      "owner": "servo",
-      "name": "servo",
-      "full_name": "servo/servo",
-      "description": "Servo aims to empower developers with a lightweight, high-performance alternative for embedding web technologies in applications.",
-      "language": "Rust",
-      "stars": 0,
-      "stars_text": "Star",
-      "forks": 3409,
-      "forks_text": "3,409",
-      "stars_period": "54 stars today",
-      "stars_period_count": 54
-    },
-    {
-      "url": "https://github.com/cocoindex-io/cocoindex",
-      "owner": "cocoindex-io",
-      "name": "cocoindex",
-      "full_name": "cocoindex-io/cocoindex",
-      "description": "Data transformation framework for AI. Ultra performant, with incremental processing. \ud83c\udf1f Star if you like it!",
-      "language": "Rust",
-      "stars": 0,
-      "stars_text": "Star",
-      "forks": 325,
-      "forks_text": "325",
-      "stars_period": "86 stars today",
-      "stars_period_count": 86
-    },
-    {
-      "url": "https://github.com/juspay/hyperswitch",
-      "owner": "juspay",
-      "name": "hyperswitch",
-      "full_name": "juspay/hyperswitch",
-      "description": "An open source payments switch written in Rust to make payments fast, reliable and affordable",
-      "language": "Rust",
-      "stars": 0,
-      "stars_text": "Star",
-      "forks": 4555,
-      "forks_text": "4,555",
-      "stars_period": "13 stars today",
-      "stars_period_count": 13
-    },
-    {
-      "url": "https://github.com/surrealdb/surrealdb",
-      "owner": "surrealdb",
-      "name": "surrealdb",
-      "full_name": "surrealdb/surrealdb",
-      "description": "A scalable, distributed, collaborative, document-graph database, for the realtime web",
-      "language": "Rust",
-      "stars": 0,
-      "stars_text": "Star",
-      "forks": 1087,
-      "forks_text": "1,087",
-      "stars_period": "7 stars today",
-      "stars_period_count": 7
-    },
-    {
-      "url": "https://github.com/ArthurBrussee/brush",
-      "owner": "ArthurBrussee",
-      "name": "brush",
-      "full_name": "ArthurBrussee/brush",
-      "description": "3D Reconstruction for all",
-      "language": "Rust",
-      "stars": 0,
-      "stars_text": "Star",
-      "forks": 160,
-      "forks_text": "160",
-      "stars_period": "12 stars today",
-      "stars_period_count": 12
-    },
-    {
-      "url": "https://github.com/strapi/strapi",
-      "owner": "strapi",
-      "name": "strapi",
-      "full_name": "strapi/strapi",
-      "description": "\ud83d\ude80 Strapi is the leading open-source headless CMS. It\u2019s 100% JavaScript/TypeScript, fully customizable, and developer-first.",
-      "language": "TypeScript",
-      "stars": 0,
-      "stars_text": "Star",
-      "forks": 9315,
-      "forks_text": "9,315",
-      "stars_period": "12 stars today",
-      "stars_period_count": 12
-    },
-    {
-      "url": "https://github.com/ant-design/x",
-      "owner": "ant-design",
-      "name": "x",
-      "full_name": "ant-design/x",
-      "description": "Craft AI-driven interface effortlessly\ud83e\udd16",
-      "language": "TypeScript",
-      "stars": 0,
-      "stars_text": "Star",
-      "forks": 952,
-      "forks_text": "952",
-      "stars_period": "26 stars today",
-      "stars_period_count": 26
-    },
-    {
-      "url": "https://github.com/grafana/grafana",
+      "url": "https://github.com/grafana/k6",
       "owner": "grafana",
-      "name": "grafana",
-      "full_name": "grafana/grafana",
-      "description": "The open and composable observability and data visualization platform. Visualize metrics, logs, and traces from multiple sources like Prometheus, Loki, Elasticsearch, InfluxDB, Postgres and many more.",
-      "language": "TypeScript",
+      "name": "k6",
+      "full_name": "grafana/k6",
+      "description": "A modern load testing tool, using Go and JavaScript",
+      "language": "Go",
       "stars": 0,
       "stars_text": "Star",
-      "forks": 13284,
-      "forks_text": "13,284",
-      "stars_period": "18 stars today",
-      "stars_period_count": 18
+      "forks": 1467,
+      "forks_text": "1,467",
+      "stars_period": "10 stars today",
+      "stars_period_count": 10
     },
     {
-      "url": "https://github.com/ChromeDevTools/chrome-devtools-mcp",
-      "owner": "ChromeDevTools",
-      "name": "chrome-devtools-mcp",
-      "full_name": "ChromeDevTools/chrome-devtools-mcp",
-      "description": "Chrome DevTools for coding agents",
-      "language": "TypeScript",
+      "url": "https://github.com/wailsapp/wails",
+      "owner": "wailsapp",
+      "name": "wails",
+      "full_name": "wailsapp/wails",
+      "description": "Create beautiful applications using Go",
+      "language": "Go",
       "stars": 0,
       "stars_text": "Star",
-      "forks": 1059,
-      "forks_text": "1,059",
-      "stars_period": "135 stars today",
-      "stars_period_count": 135
+      "forks": 1545,
+      "forks_text": "1,545",
+      "stars_period": "25 stars today",
+      "stars_period_count": 25
     },
     {
-      "url": "https://github.com/github/docs",
-      "owner": "github",
-      "name": "docs",
-      "full_name": "github/docs",
-      "description": "The open-source repo for docs.github.com",
+      "url": "https://github.com/emilk/egui",
+      "owner": "emilk",
+      "name": "egui",
+      "full_name": "emilk/egui",
+      "description": "egui: an easy-to-use immediate mode GUI in Rust that runs on both web and native",
+      "language": "Rust",
+      "stars": 0,
+      "stars_text": "Star",
+      "forks": 1905,
+      "forks_text": "1,905",
+      "stars_period": "12 stars today",
+      "stars_period_count": 12
+    },
+    {
+      "url": "https://github.com/Eventual-Inc/Daft",
+      "owner": "Eventual-Inc",
+      "name": "Daft",
+      "full_name": "Eventual-Inc/Daft",
+      "description": "High-performance data engine for AI and multimodal workloads. Process images, audio, video, and structured data at any scale",
+      "language": "Rust",
+      "stars": 0,
+      "stars_text": "Star",
+      "forks": 365,
+      "forks_text": "365",
+      "stars_period": "24 stars today",
+      "stars_period_count": 24
+    },
+    {
+      "url": "https://github.com/cube-js/cube",
+      "owner": "cube-js",
+      "name": "cube",
+      "full_name": "cube-js/cube",
+      "description": "\ud83d\udcca Cube Core is open-source semantic layer and LookML alternative for AI, BI and embedded analytics",
+      "language": "Rust",
+      "stars": 0,
+      "stars_text": "Star",
+      "forks": 1929,
+      "forks_text": "1,929",
+      "stars_period": "4 stars today",
+      "stars_period_count": 4
+    },
+    {
+      "url": "https://github.com/alloy-rs/alloy",
+      "owner": "alloy-rs",
+      "name": "alloy",
+      "full_name": "alloy-rs/alloy",
+      "description": "Transports, Middleware, and Networks for the Alloy project",
+      "language": "Rust",
+      "stars": 0,
+      "stars_text": "Star",
+      "forks": 534,
+      "forks_text": "534",
+      "stars_period": "2 stars today",
+      "stars_period_count": 2
+    },
+    {
+      "url": "https://github.com/apache/iggy",
+      "owner": "apache",
+      "name": "iggy",
+      "full_name": "apache/iggy",
+      "description": "Apache Iggy: Hyper-Efficient Message Streaming at Laser Speed",
+      "language": "Rust",
+      "stars": 0,
+      "stars_text": "Star",
+      "forks": 242,
+      "forks_text": "242",
+      "stars_period": "23 stars today",
+      "stars_period_count": 23
+    },
+    {
+      "url": "https://github.com/google/adk-js",
+      "owner": "google",
+      "name": "adk-js",
+      "full_name": "google/adk-js",
+      "description": "An open-source, code-first Typescript toolkit for building, evaluating, and deploying sophisticated AI agents with flexibility and control.",
       "language": "TypeScript",
       "stars": 0,
       "stars_text": "Star",
-      "forks": 65028,
-      "forks_text": "65,028",
-      "stars_period": "14 stars today",
-      "stars_period_count": 14
+      "forks": 28,
+      "forks_text": "28",
+      "stars_period": "46 stars today",
+      "stars_period_count": 46
+    },
+    {
+      "url": "https://github.com/nocobase/nocobase",
+      "owner": "nocobase",
+      "name": "nocobase",
+      "full_name": "nocobase/nocobase",
+      "description": "NocoBase is the most extensible AI-powered no-code/low-code platform for building business applications and enterprise solutions.",
+      "language": "TypeScript",
+      "stars": 0,
+      "stars_text": "Star",
+      "forks": 2326,
+      "forks_text": "2,326",
+      "stars_period": "16 stars today",
+      "stars_period_count": 16
+    },
+    {
+      "url": "https://github.com/iptv-org/iptv",
+      "owner": "iptv-org",
+      "name": "iptv",
+      "full_name": "iptv-org/iptv",
+      "description": "Collection of publicly available IPTV channels from all over the world",
+      "language": "TypeScript",
+      "stars": 0,
+      "stars_text": "Star",
+      "forks": 4804,
+      "forks_text": "4,804",
+      "stars_period": "269 stars today",
+      "stars_period_count": 269
+    },
+    {
+      "url": "https://github.com/C4illin/ConvertX",
+      "owner": "C4illin",
+      "name": "ConvertX",
+      "full_name": "C4illin/ConvertX",
+      "description": "\ud83d\udcbe Self-hosted online file converter. Supports 1000+ formats \u2699\ufe0f",
+      "language": "TypeScript",
+      "stars": 0,
+      "stars_text": "Star",
+      "forks": 633,
+      "forks_text": "633",
+      "stars_period": "102 stars today",
+      "stars_period_count": 102
+    },
+    {
+      "url": "https://github.com/danielmiessler/Personal_AI_Infrastructure",
+      "owner": "danielmiessler",
+      "name": "Personal_AI_Infrastructure",
+      "full_name": "danielmiessler/Personal_AI_Infrastructure",
+      "description": "Personal AI Infrastructure for upgrading humans.",
+      "language": "TypeScript",
+      "stars": 0,
+      "stars_text": "Star",
+      "forks": 352,
+      "forks_text": "352",
+      "stars_period": "52 stars today",
+      "stars_period_count": 52
     },
     {
       "title": "sansan0/TrendRadar - \ud83c\udfaf \u544a\u522b\u4fe1\u606f\u8fc7\u8f7d\uff0cAI \u52a9\u4f60\u770b\u61c2\u65b0\u95fb\u8d44\u8baf\u70ed\u70b9\uff0c\u7b80\u5355\u7684\u8206\u60c5\u76d1\u63a7\u5206\u6790 - \u591a\u5e73\u53f0\u70ed\u70b9\u805a\u5408+\u57fa\u4e8e MCP \u7684AI\u5206\u6790\u5de5\u5177\u3002\u76d1\u63a735\u4e2a\u5e73\u53f0\uff08\u6296\u97f3\u3001\u77e5\u4e4e\u3001B\u7ad9\u3001\u534e\u5c14\u8857\u89c1\u95fb\u3001\u8d22\u8054\u793e\u7b49\uff09\uff0c\u667a\u80fd\u7b5b\u9009+\u81ea\u52a8\u63a8\u9001+AI\u5bf9",
