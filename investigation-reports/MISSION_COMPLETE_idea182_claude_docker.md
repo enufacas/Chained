@@ -462,7 +462,7 @@ The Warp + Claude + Docker trend **validates Chained's strategic direction**:
 
 1. **TLDR Tech Newsletter (Dec 10, 2025)**
    - Title: "Apple satellite features 🛰️, inside Cursor 👨‍💻, becoming full stack 💼"
-   - URL: https://tldr.tech/tech/2025-11-10
+   - URL: https://tldr.tech/tech/2025-12-10
    - Key Finding: Warp Terminal sponsor message (6 mentions)
    - Quote: "600k+ developers, ranks ahead of Claude Code and Gemini CLI"
 

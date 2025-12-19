@@ -421,6 +421,7 @@ Features:
 
 import anthropic
 import json
+import os
 import sys
 
 def analyze_docker_error(error_log: str) -> dict:
@@ -616,7 +617,7 @@ While immediate applicability is Medium-Low (4/10), the **strategic validation**
 
 1. **TLDR Tech Newsletter (Dec 10, 2025)**
    - Title: "Apple satellite features 🛰️, inside Cursor 👨‍💻, becoming full stack 💼"
-   - URL: https://tldr.tech/tech/2025-11-10
+   - URL: https://tldr.tech/tech/2025-12-10
    - Content: Warp Terminal sponsor message
    - Key Quote: "Warp ranks ahead of Claude Code and Gemini CLI on Terminal-Bench"
 
