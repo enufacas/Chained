@@ -285,7 +285,7 @@
       "title": "Checkout.com Security Incident",
       "url": "https://www.checkout.com/blog/protecting-our-merchants-standing-up-to-extortion",
       "source": "Hacker News",
-      "score": 425-596,
+      "score_range": "425-596",
       "date": "2025-11-12",
       "key_finding": "Legacy third-party cloud storage not decommissioned properly"
     },
