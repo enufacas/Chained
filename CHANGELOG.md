@@ -48,13 +48,13 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x28) [#4969](https://github.com/enufacas/Chained/pull/4969)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x29) [#4971](https://github.com/enufacas/Chained/pull/4971)
 - 👤 🧠 Learning **Documentation**: Daily learning reflection verification for 2025-12-20 [#4943](https://github.com/enufacas/Chained/pull/4943)
 - 🤖 **Documentation**: 📚 Sync World State to Docs - Pipeline [#4921](https://github.com/enufacas/Chained/pull/4921)
+- 🤖 **Chore**: 🌍 World Model Update - Pipeline (x2) [#4972](https://github.com/enufacas/Chained/pull/4972)
 - 🤖 **Chore**: 📊 Goal progress update: ✅ Completed [#4965](https://github.com/enufacas/Chained/pull/4965)
 - 🤖 **Chore**: meta-coordination: 2025-12-20 18:15 run - system health check, memory update [#4962](https://github.com/enufacas/Chained/pull/4962)
 - 👤 🧠 Learning **Chore**: Complete Claude AI/ML learning mission (idea:189) - Research, analysis, and world model update [#4924](https://github.com/enufacas/Chained/pull/4924)
-- 🤖 **Chore**: 🌍 World Model Update - Pipeline [#4913](https://github.com/enufacas/Chained/pull/4913)
 
 ---
 
@@ -322,11 +322,10 @@ This changelog excludes automated data syncs and routine maintenance commits.
 - 👤 Complete API-Claude integration research mission (idea:130) [#4256](https://github.com/enufacas/Chained/pull/4256)
 - 👤 🔧 Agents Security-AI-Agents Integration Research: First AI-Orchestrated Cyberattack Analysis (idea:132) [#4257](https://github.com/enufacas/Chained/pull/4257)
 - 🤖 🔧 Agents 🎯 Agent Missions - Pipeline [#4250](https://github.com/enufacas/Chained/pull/4250)
-- 🤖 🧠 Learning 🧠 Learning Pipeline - 2025-12-13 [#4242](https://github.com/enufacas/Chained/pull/4242)
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x9) [#4264](https://github.com/enufacas/Chained/pull/4264)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x8) [#4264](https://github.com/enufacas/Chained/pull/4264)
 - 🤖 **Documentation**: 📚 Sync World State to Docs - Pipeline [#4251](https://github.com/enufacas/Chained/pull/4251)
 - 🤖 **Chore**: meta-coordination: 2025-12-14 01:01 run - system assessment and memory updates [#4267](https://github.com/enufacas/Chained/pull/4267)
 - 🤖 **Chore**: 🌍 World Model Update - Pipeline [#4244](https://github.com/enufacas/Chained/pull/4244)
