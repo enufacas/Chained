@@ -1,6 +1,6 @@
 {
-  "time": "2025-12-20T20:29:50Z",
-  "tick": 130,
+  "time": "2025-12-20T20:30:50Z",
+  "tick": 131,
   "agents": [
     {
       "id": "agent-1762910779",
@@ -31,11 +31,11 @@
       "label": "💭 Turing",
       "specialization": "coach-master",
       "location_region_id": "US:Charlotte",
-      "status": "exploring",
+      "status": "working",
       "path": [
         "US:San Francisco"
       ],
-      "current_idea_id": "idea:244",
+      "current_idea_id": "idea:195",
       "home_base": "US:Charlotte",
       "metrics": {
         "issues_resolved": 2,
@@ -48,6 +48,12 @@
         "creativity": 66,
         "caution": 81,
         "speed": 78
+      },
+      "current_mission": {
+        "mission_id": "idea:195",
+        "title": "Apple Innovation (2025-12-11)",
+        "issue_number": null,
+        "assigned_at": "2025-12-20T20:30:50Z"
       }
     },
     {
