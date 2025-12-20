@@ -30,6 +30,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### ✨ Features
 
+- 👤 🔧 Agents Add spawning analytics dashboard for AI sub-agent system [#4942](https://github.com/enufacas/Chained/pull/4942)
 - 🤖 meta-coordination: 2025-12-20 08:15 - closed 1 stale PR, verified system state [#4910](https://github.com/enufacas/Chained/pull/4910)
 - 👤 🧠 Learning Complete GPT/AI-ML learning mission (idea:188) - strategic awareness [#4923](https://github.com/enufacas/Chained/pull/4923)
 - 👤 🔧 Tools Complete TypeScript Languages learning mission (idea:190) - @clarify-champion [#4925](https://github.com/enufacas/Chained/pull/4925)
@@ -43,8 +44,8 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x20) [#4942](https://github.com/enufacas/Chained/pull/4942)
 - 👤 🧠 Learning **Documentation**: Daily learning reflection verification for 2025-12-20 [#4943](https://github.com/enufacas/Chained/pull/4943)
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x18) [#4940](https://github.com/enufacas/Chained/pull/4940)
 - 🤖 **Documentation**: 📚 Sync World State to Docs - Pipeline [#4921](https://github.com/enufacas/Chained/pull/4921)
 - 👤 🧠 Learning **Chore**: Complete Claude AI/ML learning mission (idea:189) - Research, analysis, and world model update [#4924](https://github.com/enufacas/Chained/pull/4924)
 - 🤖 **Chore**: 🌍 World Model Update - Pipeline [#4913](https://github.com/enufacas/Chained/pull/4913)
@@ -320,9 +321,6 @@ This changelog excludes automated data syncs and routine maintenance commits.
 - 🤖 meta-coordination: 2025-12-13 16:13 run - system health check [#4232](https://github.com/enufacas/Chained/pull/4232)
 - 🤖 meta-coordination: 14:10 run - closed 5 stale PRs, reduced open count 55.6% [#4228](https://github.com/enufacas/Chained/pull/4228)
 - 🤖 meta-coordination: 2025-12-13 12:21 run - healthy system, no actions [#4221](https://github.com/enufacas/Chained/pull/4221)
-- 🤖 meta-coordination: 2025-12-13 10:15 run - merged 2 PRs, reduced open counts by 18% [#4213](https://github.com/enufacas/Chained/pull/4213)
-- 👤 Self-improving prompt generator with feedback loops and quality tracking [#4214](https://github.com/enufacas/Chained/pull/4214)
-- 👤 🧠 Learning Verify Daily Learning Reflection completion (2025-12-13) - @create-botter [#4215](https://github.com/enufacas/Chained/pull/4215)
 
 ### 🧹 Chores & Maintenance
 
