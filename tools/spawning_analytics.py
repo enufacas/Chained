@@ -88,6 +88,13 @@ class SpawningAnalytics:
     - Pattern recognition
     - Predictive insights
     - Actionable recommendations
+    
+    Note: Some metrics are currently placeholders pending additional data:
+    - avg_workload_per_agent: Requires historical workload tracking
+    - workload_reduction_rate: Requires before/after workload comparisons
+    - parent_child_performance_correlation: Requires performance metrics
+    
+    These will be fully implemented in future enhancements.
     """
     
     def __init__(self, registry_path: str = ".github/agent-system"):
@@ -104,6 +111,23 @@ class SpawningAnalytics:
         except Exception as e:
             print(f"Warning: Could not initialize registry: {e}")
             self.registry = None
+    
+    def _parse_timestamp(self, timestamp_str: str) -> Optional[datetime]:
+        """
+        Parse timestamp string with error handling.
+        
+        Args:
+            timestamp_str: ISO format timestamp string
+            
+        Returns:
+            datetime object or None if parsing fails
+        """
+        try:
+            return datetime.fromisoformat(
+                timestamp_str.replace('Z', '+00:00')
+            )
+        except (ValueError, AttributeError):
+            return None
     
     def collect_spawning_history(self) -> List[SpawningEvent]:
         """
@@ -124,11 +148,8 @@ class SpawningAnalytics:
             for agent in all_agents:
                 # Only include spawned agents (not original agents)
                 if agent.get('spawned_at'):
-                    try:
-                        timestamp = datetime.fromisoformat(
-                            agent['spawned_at'].replace('Z', '+00:00')
-                        )
-                    except (ValueError, AttributeError):
+                    timestamp = self._parse_timestamp(agent['spawned_at'])
+                    if not timestamp:
                         # Skip if timestamp invalid
                         continue
                     
@@ -201,17 +222,12 @@ class SpawningAnalytics:
                             
                             # Calculate lifetime
                             if agent.get('spawned_at') and agent.get('deactivated_at'):
-                                try:
-                                    spawned = datetime.fromisoformat(
-                                        agent['spawned_at'].replace('Z', '+00:00')
-                                    )
-                                    deactivated = datetime.fromisoformat(
-                                        agent['deactivated_at'].replace('Z', '+00:00')
-                                    )
+                                spawned = self._parse_timestamp(agent['spawned_at'])
+                                deactivated = self._parse_timestamp(agent['deactivated_at'])
+                                
+                                if spawned and deactivated:
                                     lifetime = (deactivated - spawned).total_seconds() / 3600
                                     lifetimes.append(lifetime)
-                                except (ValueError, AttributeError):
-                                    pass
             except Exception as e:
                 print(f"Warning: Could not analyze sub-agents: {e}")
         
@@ -222,10 +238,11 @@ class SpawningAnalytics:
         else:
             spawning_frequency = 0.0
         
-        # Calculate effectiveness (placeholder - could be enhanced)
+        # Calculate effectiveness (simplified version - focuses on retention)
+        # Future enhancement: Could incorporate workload reduction, performance gains
         effectiveness = 0.5  # Default neutral score
         if active_sub_agents + deactivated_sub_agents > 0:
-            # Higher score if more are still active
+            # Higher score if more are still active (indicates good utilization)
             effectiveness = active_sub_agents / (active_sub_agents + deactivated_sub_agents)
         
         return SpawningMetrics(
@@ -235,9 +252,9 @@ class SpawningAnalytics:
             active_sub_agents=active_sub_agents,
             deactivated_sub_agents=deactivated_sub_agents,
             avg_sub_agent_lifetime_hours=sum(lifetimes) / len(lifetimes) if lifetimes else 0.0,
-            avg_workload_per_agent=0.0,  # Would need workload data
+            avg_workload_per_agent=0.0,  # TODO: Requires workload tracking integration
             most_spawned_specialization=specializations.most_common(1)[0][0] if specializations else "none",
-            least_spawned_specialization=specializations.most_common()[-1][0] if len(specializations) > 1 else "none",
+            least_spawned_specialization=specializations.most_common()[-1][0] if len(specializations) > 1 else specializations.most_common(1)[0][0] if specializations else "none",
             spawning_frequency_per_day=spawning_frequency,
             effectiveness_score=effectiveness
         )
@@ -403,20 +420,17 @@ class SpawningAnalytics:
             List of (date, count) tuples
         """
         events = self.collect_spawning_history()
-        cutoff = datetime.now() - timedelta(days=days)
+        cutoff = datetime.now()
         
-        # Filter recent events (handle timezone-aware comparisons)
-        recent = []
-        for e in events:
-            # Make cutoff timezone-aware if event timestamp is timezone-aware
-            if e.timestamp.tzinfo is not None and cutoff.tzinfo is None:
-                from datetime import timezone
-                cutoff = cutoff.replace(tzinfo=timezone.utc)
-            elif e.timestamp.tzinfo is None and cutoff.tzinfo is not None:
-                cutoff = cutoff.replace(tzinfo=None)
-            
-            if e.timestamp >= cutoff:
-                recent.append(e)
+        # Make cutoff timezone-aware if needed (do this once, not in loop)
+        if events and events[0].timestamp.tzinfo is not None:
+            from datetime import timezone
+            cutoff = cutoff.replace(tzinfo=timezone.utc)
+        
+        cutoff = cutoff - timedelta(days=days)
+        
+        # Filter recent events
+        recent = [e for e in events if e.timestamp >= cutoff]
         
         # Group by date
         by_date = defaultdict(int)
