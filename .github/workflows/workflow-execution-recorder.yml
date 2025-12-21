@@ -1,0 +1,164 @@
+name: "Workflow Execution Recorder"
+# Created by @create-botter - Real execution tracking for AI orchestrator
+
+on:
+  workflow_run:
+    workflows: ["*"]  # Track all workflows
+    types:
+      - completed
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  record-execution:
+    runs-on: ubuntu-latest
+    # Skip recording for this workflow itself to avoid infinite loops
+    if: github.event.workflow_run.name != 'Workflow Execution Recorder'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Record workflow execution
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "📊 Recording execution for: ${{ github.event.workflow_run.name }}"
+          
+          # Create history directory if it doesn't exist
+          mkdir -p .github/workflow-history
+          
+          # Create Python script to record execution
+          cat > /tmp/record_execution.py << 'SCRIPT'
+          import json
+          import os
+          from datetime import datetime, timezone
+          from pathlib import Path
+          
+          # Workflow execution data from GitHub
+          workflow_name = os.environ.get('WORKFLOW_NAME', 'unknown')
+          conclusion = os.environ.get('CONCLUSION', 'unknown')
+          started_at = os.environ.get('STARTED_AT', '')
+          completed_at = os.environ.get('COMPLETED_AT', '')
+          run_id = os.environ.get('RUN_ID', '')
+          run_number = os.environ.get('RUN_NUMBER', '')
+          
+          # Calculate duration
+          try:
+              start = datetime.fromisoformat(started_at.replace('Z', '+00:00'))
+              end = datetime.fromisoformat(completed_at.replace('Z', '+00:00'))
+              duration_seconds = (end - start).total_seconds()
+          except:
+              duration_seconds = 0
+          
+          # Determine success
+          success = conclusion == 'success'
+          
+          # Create execution record
+          execution = {
+              'workflow_name': workflow_name,
+              'start_time': started_at,
+              'duration_seconds': duration_seconds,
+              'success': success,
+              'resource_usage': {
+                  'cpu_percent': 0,  # Not available from GitHub
+                  'memory_mb': 0,    # Not available from GitHub
+                  'api_calls': 0     # Not available from GitHub
+              },
+              'day_of_week': start.weekday() if started_at else 0,
+              'hour_of_day': start.hour if started_at else 0,
+              'run_id': run_id,
+              'run_number': run_number,
+              'conclusion': conclusion,
+              'recorded_at': datetime.now(timezone.utc).isoformat()
+          }
+          
+          # Load existing data
+          history_file = Path('.github/workflow-history/executions.json')
+          if history_file.exists():
+              with open(history_file, 'r') as f:
+                  data = json.load(f)
+          else:
+              data = {
+                  'last_updated': datetime.now(timezone.utc).isoformat(),
+                  'total_executions': 0,
+                  'executions': []
+              }
+          
+          # Add new execution
+          data['executions'].append(execution)
+          data['total_executions'] = len(data['executions'])
+          data['last_updated'] = datetime.now(timezone.utc).isoformat()
+          
+          # Keep only last 500 executions to avoid file size issues
+          if len(data['executions']) > 500:
+              data['executions'] = data['executions'][-500:]
+              data['total_executions'] = 500
+          
+          # Save updated data
+          history_file.parent.mkdir(parents=True, exist_ok=True)
+          with open(history_file, 'w') as f:
+              json.dump(data, f, indent=2)
+          
+          print(f"✓ Recorded execution: {workflow_name}")
+          print(f"  Duration: {duration_seconds:.1f}s")
+          print(f"  Success: {success}")
+          print(f"  Total executions tracked: {data['total_executions']}")
+          SCRIPT
+          
+          # Run the recording script
+          python3 /tmp/record_execution.py
+        env:
+          WORKFLOW_NAME: ${{ github.event.workflow_run.name }}
+          CONCLUSION: ${{ github.event.workflow_run.conclusion }}
+          STARTED_AT: ${{ github.event.workflow_run.run_started_at }}
+          COMPLETED_AT: ${{ github.event.workflow_run.updated_at }}
+          RUN_ID: ${{ github.event.workflow_run.id }}
+          RUN_NUMBER: ${{ github.event.workflow_run.run_number }}
+      
+      - name: Check for changes
+        id: check_changes
+        run: |
+          git add .github/workflow-history/executions.json
+          if git diff --staged --quiet; then
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+          else
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Commit and push execution data
+        if: steps.check_changes.outputs.has_changes == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+          BRANCH_NAME="workflow-execution-data/${TIMESTAMP}-${{ github.run_id }}"
+          
+          git checkout -b "$BRANCH_NAME"
+          git add .github/workflow-history/executions.json
+          git commit -m "chore: Record workflow execution data for ${{ github.event.workflow_run.name }} (@create-botter)"
+          git push origin "$BRANCH_NAME"
+          
+          # Create PR for data updates
+          gh pr create \
+            --title "📊 Workflow Execution Data Update" \
+            --body "**@create-botter** has recorded new workflow execution data for AI learning."$'\n\n'"## Recorded Execution"$'\n\n'"- **Workflow**: ${{ github.event.workflow_run.name }}"$'\n'"- **Conclusion**: ${{ github.event.workflow_run.conclusion }}"$'\n'"- **Run**: #${{ github.event.workflow_run.run_number }}"$'\n\n'"This data will be used by the AI workflow orchestrator to improve execution time predictions."$'\n\n'"---"$'\n\n'"*🤖 Created by workflow: [Workflow Execution Recorder](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})*" \
+            --label "automated,workflow-data" \
+            --base main \
+            --head "$BRANCH_NAME" || {
+              echo "⚠️ PR creation with labels failed, retrying without labels..."
+              gh pr create \
+                --title "📊 Workflow Execution Data Update" \
+                --body "**@create-botter** has recorded workflow execution data." \
+                --base main \
+                --head "$BRANCH_NAME"
+            }
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
