@@ -22,6 +22,7 @@ Architecture: Hybrid N-gram predictor with contextual weighting
 import re
 import json
 import hashlib
+import ast
 from collections import Counter, defaultdict
 from typing import List, Tuple, Dict, Optional
 
@@ -438,7 +439,7 @@ class CodeCompletionPredictor:
         for order_str, ngrams in model_data['ngrams'].items():
             order = int(order_str)
             for context_str, counter_dict in ngrams.items():
-                context = eval(context_str)  # Safe here as we control the format
+                context = ast.literal_eval(context_str)  # Safe literal evaluation
                 self.predictor.ngrams[order][context] = Counter(counter_dict)
     
     def get_stats(self) -> Dict:
