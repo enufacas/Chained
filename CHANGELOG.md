@@ -38,7 +38,8 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x10) [#5022](https://github.com/enufacas/Chained/pull/5022)
+- 🤖 **Documentation**: 📚 Sync World State to Docs - Pipeline [#5028](https://github.com/enufacas/Chained/pull/5028)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x11) [#5029](https://github.com/enufacas/Chained/pull/5029)
 - 🤖 **Chore**: 🌍 World Model Update - Pipeline [#5021](https://github.com/enufacas/Chained/pull/5021)
 
 ---
@@ -322,8 +323,8 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x27) [#4369](https://github.com/enufacas/Chained/pull/4369)
-- 🤖 **Documentation**: 📚 Sync World State to Docs - Pipeline (x2) [#4355](https://github.com/enufacas/Chained/pull/4355)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x26) [#4369](https://github.com/enufacas/Chained/pull/4369)
+- 🤖 **Documentation**: 📚 Sync World State to Docs - Pipeline [#4355](https://github.com/enufacas/Chained/pull/4355)
 - 🤖 **Chore**: update issue clustering analysis (@engineer-master) [#4375](https://github.com/enufacas/Chained/pull/4375)
 - 🤖 **Chore**: 🌍 World Model Update - Pipeline [#4347](https://github.com/enufacas/Chained/pull/4347)
 - 🤖 **Chore**: 📊 Goal progress update: ✅ Completed [#4340](https://github.com/enufacas/Chained/pull/4340)
