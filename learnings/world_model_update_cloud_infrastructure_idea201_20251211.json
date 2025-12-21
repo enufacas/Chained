@@ -100,7 +100,7 @@
     {
       "trend_name": "Single-Region Cloud Architecture",
       "description": "Organizations benefiting from same-region deployments to avoid multi-cloud data transfer costs",
-      "evidence": "Prosopo's $1K/month data transfer costs from multi-cloud (mission idea:178 reference)",
+      "evidence": "Prosopo.io reduced MongoDB costs by 90% (from $3K to $300/month) by moving from multi-cloud to single-provider Hetzner deployment, eliminating $1K/month in internet data transfer costs - Dec 2025 case study",
       "timeline": "validated_pattern",
       "impact_on_chained": "high",
       "confidence": "very_high",

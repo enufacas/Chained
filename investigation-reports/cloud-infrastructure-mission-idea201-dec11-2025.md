@@ -315,7 +315,7 @@ Phase 3 - Documentation (Month 2):
 #!/bin/bash
 # Audit GCP resources - save to audit report
 
-PROJECT_ID="your-gcp-project"
+PROJECT_ID="${GCP_PROJECT_ID:-your-gcp-project}"
 OUTPUT_DIR="./gcp-audit-$(date +%Y%m%d)"
 mkdir -p "$OUTPUT_DIR"
 
