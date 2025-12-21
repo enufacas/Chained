@@ -30,6 +30,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### ✨ Features
 
+- 👤 🏗️ Infrastructure Complete cloud infrastructure learning mission (idea:201) - Security findings and GCP recommendations [#5033](https://github.com/enufacas/Chained/pull/5033)
 - 🤖 🔧 Agents 🎯 Agent Missions - Pipeline [#5027](https://github.com/enufacas/Chained/pull/5027)
 - 🤖 🧠 Learning 🧠 Learning Pipeline - 2025-12-21 [#5019](https://github.com/enufacas/Chained/pull/5019)
 - 🤖 ⚙️ Workflows meta-coordination: 06:17 run - workflow automation integration and system state verification [#5012](https://github.com/enufacas/Chained/pull/5012)
@@ -38,8 +39,8 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x13) [#5036](https://github.com/enufacas/Chained/pull/5036)
 - 🤖 **Documentation**: 📚 Sync World State to Docs - Pipeline [#5028](https://github.com/enufacas/Chained/pull/5028)
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x11) [#5029](https://github.com/enufacas/Chained/pull/5029)
 - 🤖 **Chore**: 🌍 World Model Update - Pipeline [#5021](https://github.com/enufacas/Chained/pull/5021)
 
 ---
@@ -318,18 +319,15 @@ This changelog excludes automated data syncs and routine maintenance commits.
 - 👤 🧠 Learning Daily Learning Reflection Verification - 2025-12-14 [#4319](https://github.com/enufacas/Chained/pull/4319)
 - 👤 Complete API-GPT integration research mission (idea:133) [#4300](https://github.com/enufacas/Chained/pull/4300)
 - 👤 🧠 Learning Complete Go languages learning mission (idea:134) - @coach-master [#4301](https://github.com/enufacas/Chained/pull/4301)
-- 👤 Mission idea:135 - DevOps/Cloud trends analysis (Nov 26, 2025) [#4302](https://github.com/enufacas/Chained/pull/4302)
-- 👤 Complete security research mission idea:136 - transparency-first security patterns [#4303](https://github.com/enufacas/Chained/pull/4303)
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x26) [#4369](https://github.com/enufacas/Chained/pull/4369)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x24) [#4369](https://github.com/enufacas/Chained/pull/4369)
 - 🤖 **Documentation**: 📚 Sync World State to Docs - Pipeline [#4355](https://github.com/enufacas/Chained/pull/4355)
 - 🤖 **Chore**: update issue clustering analysis (@engineer-master) [#4375](https://github.com/enufacas/Chained/pull/4375)
 - 🤖 **Chore**: 🌍 World Model Update - Pipeline [#4347](https://github.com/enufacas/Chained/pull/4347)
 - 🤖 **Chore**: 📊 Goal progress update: ✅ Completed [#4340](https://github.com/enufacas/Chained/pull/4340)
 - 🤖 **Chore**: meta-coordination: Close stale PR with merge conflicts, update memory [#4334](https://github.com/enufacas/Chained/pull/4334)
 - 🤖 **Chore**: meta-coordination: 2025-12-14 08:15 - system healthy, no cleanup needed [#4287](https://github.com/enufacas/Chained/pull/4287)
-- 👤 🏗️ Infrastructure **Test**: Complete DevOps AWS learning mission (idea:137) - @infrastructure-specialist [#4305](https://github.com/enufacas/Chained/pull/4305)
 
 ---
