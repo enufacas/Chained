@@ -1,6 +1,6 @@
 {
-  "timestamp": "2025-12-20T12:51:20.905635",
-  "commit": "104722a8c39ba868befd150bc1715da1ddf81b08",
+  "timestamp": "2025-12-21T02:20:26.832285",
+  "commit": "93b3404f3506b1fe26f9480cc95196a850ec6ce1",
   "structure": {
     "directories": {
       "tools": {
@@ -60,8 +60,8 @@
         ]
       },
       "docs": {
-        "file_count": 1059,
-        "line_count": 332055,
+        "file_count": 1060,
+        "line_count": 332633,
         "files": [
           ".nojekyll",
           "01_overview.md",
@@ -126,8 +126,8 @@
         "files": []
       },
       "analysis": {
-        "file_count": 24,
-        "line_count": 19899,
+        "file_count": 25,
+        "line_count": 20566,
         "files": [
           "architecture.mmd",
           "clustering_results.json",
@@ -152,12 +152,13 @@
           "snapshot_2025-12-18T12-57-14.json",
           "snapshot_2025-12-19T02-07-32.json",
           "snapshot_2025-12-19T12-55-29.json",
-          "snapshot_2025-12-20T02-00-55.json"
+          "snapshot_2025-12-20T02-00-55.json",
+          "snapshot_2025-12-20T12-51-20.json"
         ]
       },
       "learnings": {
-        "file_count": 582,
-        "line_count": 428706,
+        "file_count": 587,
+        "line_count": 430559,
         "files": [
           "AI_ML.md",
           "CLAUDE_AI_INVESTIGATION.md",
@@ -172,6 +173,7 @@
           "MISSION_COMPLETE.md",
           "MISSION_COMPLETE_idea124_nvidia_innovation.md",
           "MISSION_COMPLETE_idea148_nvidia_innovation.md",
+          "MISSION_COMPLETE_idea196_nvidia_innovation.md",
           "OpenSource.md",
           "Other.md",
           "Performance.md",
@@ -207,14 +209,13 @@
           "ai_ml_ecosystem_integration_proposal_idea141_20251126.md",
           "ai_ml_innovation_research_report_coach_master.md",
           "ai_ml_innovation_summary.md",
-          "ai_ml_research_report_idea141_20251126.md",
-          "analysis_20251110_071202.md"
+          "ai_ml_research_report_idea141_20251126.md"
         ]
       }
     },
     "files_by_type": {},
-    "total_files": 2101,
-    "total_lines": 953460
+    "total_files": 2108,
+    "total_lines": 956558
   },
   "dependencies": {
     "internal_imports": {
@@ -533,8 +534,8 @@
   },
   "metrics": {
     "total_components": 6,
-    "total_files": 2101,
-    "total_lines": 953460,
+    "total_files": 2108,
+    "total_lines": 956558,
     "total_dependencies": 2,
     "external_libraries": 92,
     "coupling_score": 4.9751243781094526e-05,
@@ -543,7 +544,7 @@
   "components": {
     "learning_system": {
       "file_count": 46,
-      "line_count": 428706,
+      "line_count": 430559,
       "files": [
         "AI_ML.md",
         "CLAUDE_AI_INVESTIGATION.md",
@@ -558,18 +559,18 @@
         "MISSION_COMPLETE.md",
         "MISSION_COMPLETE_idea124_nvidia_innovation.md",
         "MISSION_COMPLETE_idea148_nvidia_innovation.md",
+        "MISSION_COMPLETE_idea196_nvidia_innovation.md",
         "OpenSource.md",
         "Other.md",
         "Performance.md",
         "Programming.md",
         "QUICK_REFERENCE.md",
-        "README.md",
-        "RESEARCH_REPORT.md"
+        "README.md"
       ]
     },
     "analysis_tools": {
-      "file_count": 24,
-      "line_count": 19899,
+      "file_count": 25,
+      "line_count": 20566,
       "files": [
         "architecture.mmd",
         "clustering_results.json",
@@ -595,7 +596,7 @@
     },
     "documentation": {
       "file_count": 50,
-      "line_count": 332055,
+      "line_count": 332633,
       "files": [
         ".nojekyll",
         "01_overview.md",
