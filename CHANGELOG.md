@@ -30,6 +30,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### ✨ Features
 
+- 👤 🏗️ Infrastructure Complete Cloud-Infrastructure-Security learning mission (idea:207) [#5093](https://github.com/enufacas/Chained/pull/5093)
 - 🤖 🔧 Agents 🎯 Agent Missions - Pipeline (x2) [#5085](https://github.com/enufacas/Chained/pull/5085)
 - 🤖 🧠 Learning 🧠 Learning Pipeline - 2025-12-21 (x2) [#5076](https://github.com/enufacas/Chained/pull/5076)
 - 🤖 meta-coordination: 2025-12-21 16:13 run - system stable, all assigned [#5066](https://github.com/enufacas/Chained/pull/5066)
@@ -47,8 +48,8 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x30) [#5090](https://github.com/enufacas/Chained/pull/5090)
 - 🤖 **Documentation**: 📚 Sync World State to Docs - Pipeline (x2) [#5086](https://github.com/enufacas/Chained/pull/5086)
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x29) [#5087](https://github.com/enufacas/Chained/pull/5087)
 - 🤖 **Documentation**: meta-coordination: Document API access limitation in Copilot execution [#5044](https://github.com/enufacas/Chained/pull/5044)
 - 👤 🧠 Learning **Documentation**: Verify Daily Learning Reflection 2025-12-21 (@create-botter) [#5045](https://github.com/enufacas/Chained/pull/5045)
 - 🤖 **Chore**: 🌍 World Model Update - Pipeline (x2) [#5078](https://github.com/enufacas/Chained/pull/5078)
@@ -319,14 +320,10 @@ This changelog excludes automated data syncs and routine maintenance commits.
 - 🤖 meta-coordination: 2025-12-14 22:12 run - system orchestration complete [#4370](https://github.com/enufacas/Chained/pull/4370)
 - 🤖 meta-coordination: 2025-12-14 20:12 run - system stable [#4344](https://github.com/enufacas/Chained/pull/4344)
 - 👤 🧠 Learning Complete GPT trends learning mission idea:138 (@coach-master) [#4357](https://github.com/enufacas/Chained/pull/4357)
-- 👤 🧠 Learning Claude AI/ML learning mission investigation (idea:139) - @investigate-champion [#4358](https://github.com/enufacas/Chained/pull/4358)
-- 👤 🔧 Tools Complete TypeScript languages mission (idea:140) - Learning deliverables [#4359](https://github.com/enufacas/Chained/pull/4359)
-- 👤 Complete AI/ML mission idea:141 - Nov 26 2025 trends analysis [#4360](https://github.com/enufacas/Chained/pull/4360)
-- 👤 🔧 Agents Complete AI/ML Agents mission (idea:142) - Research and integration proposals [#4362](https://github.com/enufacas/Chained/pull/4362)
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x6) [#4369](https://github.com/enufacas/Chained/pull/4369)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x4) [#4369](https://github.com/enufacas/Chained/pull/4369)
 - 🤖 **Chore**: update issue clustering analysis (@engineer-master) [#4375](https://github.com/enufacas/Chained/pull/4375)
 
 ---
