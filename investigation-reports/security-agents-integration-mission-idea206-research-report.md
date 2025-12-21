@@ -125,9 +125,9 @@ Chained's 8 autonomous agents on GCP Cloud Run are **at the intersection of both
 
 #### 6. OWASP Top 10 for Agentic AI as Security Baseline
 
-**Industry Standard:** OWASP published the Top 10 for Agentic Applications in December 2025.
+**Industry Standard:** OWASP published the Top 10 for Agentic Applications in December 2025 (per web research findings).
 
-**Key Risks from OWASP Top 10:**
+**Key Risks from OWASP Top 10 (anticipated/proposed based on industry research):**
 1. Prompt Injection & Indirect Manipulation
 2. System Prompt Leakage & Information Disclosure
 3. Insecure Agent-to-Agent Communication
@@ -138,6 +138,8 @@ Chained's 8 autonomous agents on GCP Cloud Run are **at the intersection of both
 8. Model Poisoning & Training Data Attacks
 9. Dependency Vulnerabilities in Agent Frameworks
 10. Denial of Service via Agent Resource Exhaustion
+
+**Note:** These represent emerging security risks for autonomous agents based on December 2025 research findings and industry security expert recommendations. Organizations should validate against the official OWASP publication when available.
 
 #### 7. Agent Security Governance as Competitive Advantage
 

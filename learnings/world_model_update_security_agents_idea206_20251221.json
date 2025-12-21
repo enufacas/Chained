@@ -94,7 +94,7 @@
       "opportunity": "Agent Permission Policies",
       "description": "Define what each of 8 Chained agents can and cannot access",
       "complexity": "medium",
-      "effort_days": -2,
+      "effort_days": 6,
       "expected_benefit": "Prevent identity flattening, enable precise access control",
       "phase": 1
     },
@@ -102,7 +102,7 @@
       "opportunity": "Per-Agent GCP Identities",
       "description": "Create service account per agent, implement IAM with least privilege",
       "complexity": "medium-high",
-      "effort_days": -2,
+      "effort_days": 6,
       "expected_benefit": "Enable precise tracking, prevent lateral movement attacks",
       "phase": 2
     },
@@ -110,7 +110,7 @@
       "opportunity": "Automated Security Scanning",
       "description": "Integrate CodeQL, dependency scanning, security incident detection",
       "complexity": "medium",
-      "effort_days": -1,
+      "effort_days": 5,
       "expected_benefit": "90% faster vulnerability detection, automated incident response",
       "phase": 3
     }
