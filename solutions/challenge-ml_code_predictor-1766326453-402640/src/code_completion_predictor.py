@@ -21,7 +21,6 @@ Architecture: Hybrid N-gram predictor with contextual weighting
 
 import re
 import json
-import hashlib
 import ast
 from collections import Counter, defaultdict
 from typing import List, Tuple, Dict, Optional
@@ -84,6 +83,9 @@ class CodeTokenizer:
         '::', '->', '??', '?.', '**'
     ]
     
+    # C-style comments (JavaScript, TypeScript, Java, Go)
+    C_STYLE_COMMENTS = r'//.*$|/\*.*?\*/'
+    
     def __init__(self, language: str = 'python'):
         """
         Initialize tokenizer for a specific language.
@@ -97,10 +99,10 @@ class CodeTokenizer:
         # Comment patterns per language
         self.comment_patterns = {
             'python': r'#.*$',
-            'javascript': r'//.*$|/\*.*?\*/',
-            'typescript': r'//.*$|/\*.*?\*/',
-            'java': r'//.*$|/\*.*?\*/',
-            'go': r'//.*$|/\*.*?\*/'
+            'javascript': self.C_STYLE_COMMENTS,
+            'typescript': self.C_STYLE_COMMENTS,
+            'java': self.C_STYLE_COMMENTS,
+            'go': self.C_STYLE_COMMENTS
         }
     
     def tokenize(self, code: str) -> List[str]:
