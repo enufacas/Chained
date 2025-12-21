@@ -30,6 +30,8 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### ✨ Features
 
+- 👤 🏗️ Infrastructure AI-Cloud-Infrastructure integration research and implementation proposal (idea:205) [#5091](https://github.com/enufacas/Chained/pull/5091)
+- 👤 Complete Security-GPT integration research mission (idea:203) [#5088](https://github.com/enufacas/Chained/pull/5088)
 - 👤 🔧 Agents Security-Agents Integration Research & Proposal (idea:206) [#5092](https://github.com/enufacas/Chained/pull/5092)
 - 👤 🏗️ Infrastructure Complete Cloud-Infrastructure-Security learning mission (idea:207) [#5093](https://github.com/enufacas/Chained/pull/5093)
 - 🤖 🔧 Agents 🎯 Agent Missions - Pipeline (x2) [#5085](https://github.com/enufacas/Chained/pull/5085)
@@ -49,8 +51,8 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x34) [#5088](https://github.com/enufacas/Chained/pull/5088)
 - 👤 🏗️ Infrastructure **Documentation**: Research: Docker-Security integration governance framework (idea:204) [#5089](https://github.com/enufacas/Chained/pull/5089)
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x32) [#5092](https://github.com/enufacas/Chained/pull/5092)
 - 🤖 **Documentation**: 📚 Sync World State to Docs - Pipeline (x2) [#5086](https://github.com/enufacas/Chained/pull/5086)
 - 🤖 **Documentation**: meta-coordination: Document API access limitation in Copilot execution [#5044](https://github.com/enufacas/Chained/pull/5044)
 - 👤 🧠 Learning **Documentation**: Verify Daily Learning Reflection 2025-12-21 (@create-botter) [#5045](https://github.com/enufacas/Chained/pull/5045)
@@ -323,7 +325,6 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge [#4369](https://github.com/enufacas/Chained/pull/4369)
 - 🤖 **Chore**: update issue clustering analysis (@engineer-master) [#4375](https://github.com/enufacas/Chained/pull/4375)
 
 ---
