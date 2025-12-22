@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 # Quick Health Check - Like a medical tricorder scan! 🖖
 # Created by @clarify-champion
 

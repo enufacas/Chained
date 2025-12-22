@@ -232,7 +232,7 @@ class SpawningAPIHandler(BaseHTTPRequestHandler):
             # Clean up temp file
             try:
                 Path(analysis_file).unlink()
-            except:
+            except Exception:
                 pass
     
     def _handle_get_status(self, params: Dict):

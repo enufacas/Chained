@@ -121,7 +121,7 @@ class GitHubBranchTransport:
                 params={"ref": branch_name}
             )
             sha = response.json()["sha"]
-        except:
+        except Exception:
             sha = None
         
         # Write file
@@ -157,7 +157,7 @@ class GitHubBranchTransport:
             
             encoded = response.json()["content"]
             return base64.b64decode(encoded).decode()
-        except:
+        except Exception:
             return None
     
     async def _delete_branch(self, branch_name: str) -> None:
@@ -166,7 +166,7 @@ class GitHubBranchTransport:
             await self.client.delete(
                 f"{self.base_url}/git/refs/heads/{branch_name}"
             )
-        except:
+        except Exception:
             pass  # Branch may not exist
     
     async def create_task(
@@ -225,7 +225,7 @@ class GitHubBranchTransport:
         # Trigger workflow (optional - can also poll branches)
         try:
             await self._trigger_agent_workflow(agent_name, branch_name)
-        except:
+        except Exception:
             pass  # Workflow trigger is optional
         
         return BranchA2ATask(
@@ -408,7 +408,7 @@ class GitHubBranchTransport:
                 task = await self.get_task_status(branch_name)
                 if task.status in ["submitted", "working"]:
                     task_branches.append(branch_name)
-            except:
+            except Exception:
                 continue
         
         return task_branches

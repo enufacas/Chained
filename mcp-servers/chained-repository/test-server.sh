@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 # Test script for Chained Repository MCP Server
 # Created by @investigate-champion

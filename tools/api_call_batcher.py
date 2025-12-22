@@ -281,7 +281,7 @@ class BatchedAPIClient:
             # Add to priority queue
             try:
                 self.request_queue.put_nowait((request, future))
-            except:
+            except Exception:
                 # Queue is full, reject request
                 future.set_error(Exception("Request queue is full"))
                 del self.pending_requests[request.request_id]
@@ -297,7 +297,7 @@ class BatchedAPIClient:
                 with self.lock:
                     self.current_batch.append((request, future))
                     self.batched_requests += 1
-            except:
+            except Exception:
                 break
         
         with self.lock:
@@ -328,7 +328,7 @@ class BatchedAPIClient:
                         if should_flush_size or should_flush_time:
                             self._execute_batch()
                 
-                except:
+                except Exception:
                     # Queue timeout or empty
                     if should_flush_time:
                         with self.lock:

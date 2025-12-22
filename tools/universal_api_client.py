@@ -252,7 +252,7 @@ class UniversalAPIClient:
                     # Try to parse JSON response
                     try:
                         response_data = await response.json()
-                    except:
+                    except Exception:
                         response_data = await response.text()
                     
                     # Create response object

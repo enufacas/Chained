@@ -146,7 +146,7 @@ echo -e "${YELLOW}Warnings (late but tolerable): $warning_count${NC}"
 echo -e "${RED}Errors (overdue): $error_count${NC}"
 echo ""
 
-if [ $all_healthy = true ]; then
+if [ "$all_healthy" = true ]; then
     echo -e "${GREEN}✅ All scheduled workflows are running on time!${NC}"
     echo ""
     echo "Your cron schedules are working properly. The autonomous system"

@@ -269,7 +269,7 @@ class ThematicAnalyzer:
                         recent.append(mention)
                     else:
                         older.append(mention)
-                except:
+                except Exception:
                     pass
         
         # Calculate momentum

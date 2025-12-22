@@ -338,7 +338,7 @@ class DashboardGenerator:
             # Get detailed information
             try:
                 details = self.engine.get_experiment_details(exp["id"])
-            except:
+            except Exception:
                 details = exp
             
             winner_variant = None
@@ -400,7 +400,7 @@ class DashboardGenerator:
                 details = self.engine.get_experiment_details(exp["id"])
                 if details.get("results") and "winner" in details["results"]:
                     count += 1
-            except:
+            except Exception:
                 pass
         return count
     
@@ -412,7 +412,7 @@ class DashboardGenerator:
         try:
             dt = datetime.fromisoformat(date_str.replace('Z', '+00:00'))
             return dt.strftime('%Y-%m-%d')
-        except:
+        except Exception:
             return date_str
 
 

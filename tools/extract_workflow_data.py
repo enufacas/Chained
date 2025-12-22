@@ -177,7 +177,7 @@ def get_24hr_schedule(workflows):
                         try:
                             hour_int = int(hour)
                             hourly_schedule[hour_int].append(wf['name'])
-                        except:
+                        except Exception:
                             pass
     
     return dict(sorted(hourly_schedule.items()))

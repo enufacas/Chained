@@ -442,7 +442,7 @@ class AgentMemory:
         """Parse ISO format timestamp"""
         try:
             return datetime.fromisoformat(timestamp_str.replace('Z', '+00:00'))
-        except:
+        except Exception:
             return datetime.utcnow()
     
     @staticmethod

@@ -144,7 +144,7 @@ class DynamicAgentSpawner:
         try:
             with open(self.tracking_file, 'r') as f:
                 return json.load(f)
-        except:
+        except Exception:
             return {'spawned': {}, 'last_updated': None}
     
     def _save_spawned_agents(self):

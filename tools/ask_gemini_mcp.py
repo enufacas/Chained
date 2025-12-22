@@ -232,7 +232,7 @@ def ask_gemini_with_mcp(
         # Clean up temp config
         try:
             os.unlink(config_file)
-        except:
+        except Exception:
             pass
 
 
