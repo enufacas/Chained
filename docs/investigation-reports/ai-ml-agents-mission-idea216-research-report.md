@@ -4,7 +4,7 @@
 **Investigation Date:** December 22, 2025  
 **Mission ID:** idea:216  
 **Mission Title:** AI/ML: Agents (2025-12-12)  
-**Investigation Focus:** Agent trends with 711 mentions (actually 71 in dataset), emerging patterns in AI agent ecosystems  
+**Investigation Focus:** Agent trends with 71 agent-related items found in dataset of 1,030 learnings, emerging patterns in AI agent ecosystems  
 **Primary Locations:** San Francisco, US; Redmond, US  
 **Ecosystem Relevance:** 🔴 High (7/10)
 

@@ -11,7 +11,7 @@
 **Top Item Score:** 299 (AI-orchestrated cyber espionage)  
 **Focus Areas:** SIMA 2 embodied agents, security threats, ChatGPT Group Chats, Cursor momentum, Marble world models  
 **Ecosystem Relevance:** 🔴 High (7/10) - High-priority integrations identified  
-**Investigation Value:** 🔥 Very High (9/10) - Critical security insights and competitive patterns
+**Investigation Quality:** Very High - Critical security insights and competitive patterns with actionable roadmap
 
 ---
 
