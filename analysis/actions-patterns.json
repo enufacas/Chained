@@ -1,0 +1,559 @@
+{
+  "timestamp": "2025-12-22T10:18:21.718192+00:00",
+  "repo_path": ".",
+  "file_statistics": {
+    ".md": 1957,
+    ".txt": 144,
+    ".json": 1875,
+    ".py": 571,
+    ".sh": 49,
+    ".ts": 40,
+    ".sql": 4,
+    ".yml": 133,
+    ".lock": 160,
+    ".backup": 1,
+    ".toml": 1,
+    ".js": 18,
+    ".html": 29,
+    ".css": 11,
+    ".png": 3,
+    ".mmd": 2,
+    ".example": 3,
+    ".tsx": 31,
+    ".jsx": 17,
+    ".tf": 9
+  },
+  "existing_workflows_count": 118,
+  "patterns_detected": 7,
+  "patterns": {
+    "testing_frameworks": [
+      {
+        "file": "tools/test_api_call_batcher.py",
+        "framework": "unittest"
+      },
+      {
+        "file": "tools/test_autonomous_issue_prioritizer.py",
+        "framework": "unittest"
+      },
+      {
+        "file": "tools/test_enhanced_discussion_learner.py",
+        "framework": "pytest"
+      },
+      {
+        "file": "tools/test_issue_clustering_system.py",
+        "framework": "unittest"
+      },
+      {
+        "file": "tools/actions-pattern-analyzer.py",
+        "framework": "pytest"
+      },
+      {
+        "file": "tools/test_api_coordination_hub.py",
+        "framework": "unittest"
+      },
+      {
+        "file": "tools/test_discussion_learning_query.py",
+        "framework": "pytest"
+      },
+      {
+        "file": "tools/test_ab_testing_engine.py",
+        "framework": "unittest"
+      },
+      {
+        "file": "tools/nl-to-code-translator.py",
+        "framework": "unittest"
+      },
+      {
+        "file": "tools/test_issue_discussion_learner.py",
+        "framework": "pytest"
+      },
+      {
+        "file": "tools/test_semantic_similarity_engine.py",
+        "framework": "unittest"
+      },
+      {
+        "file": "tools/test_fetch_web_content_security.py",
+        "framework": "unittest"
+      },
+      {
+        "file": "tools/test_commit_strategy_learner.py",
+        "framework": "unittest"
+      },
+      {
+        "file": "tools/test_pattern_matcher.py",
+        "framework": "unittest"
+      },
+      {
+        "file": "solutions/challenge-ml_code_predictor-1766153790-580706/tests/test_code_completion_predictor.py",
+        "framework": "unittest"
+      },
+      {
+        "file": "solutions/challenge-ml_code_predictor-1766240020-319351/tests/test_code_completion_predictor.py",
+        "framework": "unittest"
+      },
+      {
+        "file": "solutions/challenge-ml_code_predictor-1766067467-803260/tests/test_code_completion_predictor.py",
+        "framework": "unittest"
+      },
+      {
+        "file": "solutions/challenge-ml_code_predictor-1764080154-287095/tests/test_code_completion_predictor.py",
+        "framework": "unittest"
+      },
+      {
+        "file": "solutions/challenge-ml_code_predictor-1763820767-74822/tests/test_code_completion_predictor.py",
+        "framework": "unittest"
+      },
+      {
+        "file": "solutions/challenge-ml_code_predictor-1765894773-622314/tests/test_code_completion_predictor.py",
+        "framework": "unittest"
+      },
+      {
+        "file": "solutions/challenge-ml_code_predictor-1763561712-697305/tests/test_code_completion_predictor.py",
+        "framework": "unittest"
+      },
+      {
+        "file": "solutions/challenge-ml_code_predictor-1763648145-636844/tests/test_code_completion_predictor.py",
+        "framework": "unittest"
+      },
+      {
+        "file": "solutions/challenge-ml_code_predictor-1763993757-895907/tests/test_code_completion_predictor.py",
+        "framework": "unittest"
+      },
+      {
+        "file": "solutions/challenge-ml_code_predictor-1765548927-748724/tests/test_code_completion_predictor.py",
+        "framework": "unittest"
+      },
+      {
+        "file": "solutions/challenge-ml_code_predictor-1765981050-376430/tests/test_code_completion_predictor.py",
+        "framework": "unittest"
+      },
+      {
+        "file": "solutions/challenge-ml_code_predictor-1766326453-402640/tests/test_code_completion_predictor.py",
+        "framework": "unittest"
+      },
+      {
+        "file": "solutions/challenge-ml_code_predictor-1765808432-802586/tests/test_code_completion_predictor.py",
+        "framework": "unittest"
+      },
+      {
+        "file": "solutions/challenge-ml_code_predictor-1765376288-931464/tests/test_code_completion_predictor.py",
+        "framework": "unittest"
+      },
+      {
+        "file": "solutions/challenge-ml_code_predictor-1764166597-967186/tests/test_code_completion_predictor.py",
+        "framework": "unittest"
+      },
+      {
+        "file": "tests/test_pr_failure_learner.py",
+        "framework": "pytest"
+      },
+      {
+        "file": "tests/test_agent_system_refactored.py",
+        "framework": "pytest"
+      },
+      {
+        "file": "tests/test_protected_agents.py",
+        "framework": "pytest"
+      },
+      {
+        "file": "tests/test_dynamic_agent_spawner.py",
+        "framework": "unittest"
+      },
+      {
+        "file": "tests/test_universal_truth_evaluator.py",
+        "framework": "unittest"
+      },
+      {
+        "file": "tests/test_agent_learning_api.py",
+        "framework": "unittest"
+      },
+      {
+        "file": "tests/test_knowledge_graph_query.py",
+        "framework": "unittest"
+      },
+      {
+        "file": "tests/test_rl_optimizer_enhanced.py",
+        "framework": "unittest"
+      },
+      {
+        "file": "tests/test_thematic_analyzer.py",
+        "framework": "unittest"
+      },
+      {
+        "file": "tests/test_a2a_discovery.py",
+        "framework": "pytest"
+      },
+      {
+        "file": "tests/test_github_trending_fetcher.py",
+        "framework": "unittest"
+      },
+      {
+        "file": "tests/test_rl_resource_optimizer.py",
+        "framework": "unittest"
+      },
+      {
+        "file": "tests/test_spawning_apis.py",
+        "framework": "pytest"
+      },
+      {
+        "file": "tests/test_actions_generator.py",
+        "framework": "pytest"
+      },
+      {
+        "file": "tests/test_workflow_config_generator.py",
+        "framework": "unittest"
+      },
+      {
+        "file": "tests/test_last_spawn_fix.py",
+        "framework": "unittest"
+      },
+      {
+        "file": "tests/test_lazy_evaluation_system.py",
+        "framework": "unittest"
+      },
+      {
+        "file": "tests/test_github_integration.py",
+        "framework": "unittest"
+      },
+      {
+        "file": "tests/test_autonomous_code_reviewer.py",
+        "framework": "unittest"
+      },
+      {
+        "file": "tests/test_exception_handling_fixes.py",
+        "framework": "unittest"
+      },
+      {
+        "file": "tests/test_self_evolving_neural_architecture.py",
+        "framework": "pytest"
+      },
+      {
+        "file": "tests/test_intelligent_content_parser.py",
+        "framework": "unittest"
+      },
+      {
+        "file": "tests/test_chained_tv.py",
+        "framework": "unittest"
+      },
+      {
+        "file": "tests/test_self_improving_prompt_generator.py",
+        "framework": "unittest"
+      },
+      {
+        "file": "tests/test_code_reviewer_intentional_bug.py",
+        "framework": "pytest"
+      },
+      {
+        "file": "tests/test_code_pattern_hypothesis_workflow.py",
+        "framework": "unittest"
+      },
+      {
+        "file": "tests/test_ab_testing_api.py",
+        "framework": "unittest"
+      },
+      {
+        "file": "tests/test_pr_failure_learning_integration.py",
+        "framework": "pytest"
+      },
+      {
+        "file": "tests/test_rl_optimizer_api.py",
+        "framework": "unittest"
+      },
+      {
+        "file": "tests/test_a2a_tier1.py",
+        "framework": "pytest"
+      },
+      {
+        "file": "tests/test_template_engine.py",
+        "framework": "unittest"
+      },
+      {
+        "file": "tests/test_spawning_analytics.py",
+        "framework": "unittest"
+      },
+      {
+        "file": "tests/test_knowledge_graph_builder.py",
+        "framework": "unittest"
+      },
+      {
+        "file": "tests/test_mission_issue_creation.py",
+        "framework": "unittest"
+      },
+      {
+        "file": "tests/test_ask_gemini.py",
+        "framework": "unittest"
+      },
+      {
+        "file": "tests/test_hypothesis_testing_engine.py",
+        "framework": "unittest"
+      },
+      {
+        "file": "tests/test_mentorship_system.py",
+        "framework": "unittest"
+      },
+      {
+        "file": "tests/test_meta_agent_coordinator.py",
+        "framework": "unittest"
+      },
+      {
+        "file": "tests/test_spawn_sequence.py",
+        "framework": "unittest"
+      },
+      {
+        "file": "tests/test_workflow_harmonizer.py",
+        "framework": "unittest"
+      },
+      {
+        "file": "tests/test_atomic_registry_updater.py",
+        "framework": "unittest"
+      },
+      {
+        "file": "tests/test_adk_blog_pipeline.py",
+        "framework": "pytest"
+      },
+      {
+        "file": "tests/test_auto_doc_from_discussions.py",
+        "framework": "unittest"
+      },
+      {
+        "file": "tests/test_prompt_reinforcement.py",
+        "framework": "unittest"
+      },
+      {
+        "file": "tests/test_nl_to_code_translator.py",
+        "framework": "unittest"
+      },
+      {
+        "file": "tests/test_autonomous_ab_testing.py",
+        "framework": "unittest"
+      },
+      {
+        "file": "tests/test_creative_coding_challenge_generator.py",
+        "framework": "unittest"
+      },
+      {
+        "file": "tests/test_prompt_generator_integration.py",
+        "framework": "unittest"
+      },
+      {
+        "file": "tests/test_code_style_transfer.py",
+        "framework": "pytest"
+      },
+      {
+        "file": "tests/test_prompt_generator.py",
+        "framework": "unittest"
+      },
+      {
+        "file": "tests/e2e/specs/ag-ui-live.spec.ts",
+        "framework": "jest"
+      },
+      {
+        "file": "infrastructure/docker/ag-ui-frontend/jest.setup.ts",
+        "framework": "jest"
+      },
+      {
+        "file": "infrastructure/docker/ag-ui-frontend/jest.config.js",
+        "framework": "jest"
+      },
+      {
+        "file": "infrastructure/docker/ag-ui-frontend/__tests__/api/team.test.ts",
+        "framework": "jest"
+      },
+      {
+        "file": "infrastructure/docker/ag-ui-frontend/__tests__/api/activity.test.ts",
+        "framework": "jest"
+      },
+      {
+        "file": "infrastructure/docker/ag-ui-frontend/__tests__/api/agent.test.ts",
+        "framework": "jest"
+      },
+      {
+        "file": "infrastructure/docker/ag-ui-frontend/__tests__/api/error-observer.test.ts",
+        "framework": "jest"
+      },
+      {
+        "file": "infrastructure/docker/ag-ui-frontend/__tests__/api/pipeline.test.ts",
+        "framework": "jest"
+      },
+      {
+        "file": "infrastructure/docker/ag-ui-frontend/__tests__/e2e/custom-team-e2e.test.ts",
+        "framework": "jest"
+      },
+      {
+        "file": "infrastructure/docker/ag-ui-frontend/__tests__/lib/storage-metadata-stripping.test.ts",
+        "framework": "jest"
+      },
+      {
+        "file": "infrastructure/docker/ag-ui-frontend/__tests__/lib/storage.test.ts",
+        "framework": "jest"
+      },
+      {
+        "file": "infrastructure/docker/ag-ui-frontend/__tests__/lib/storage-session-artifacts.test.ts",
+        "framework": "jest"
+      },
+      {
+        "file": "infrastructure/docker/ag-ui-frontend/__tests__/lib/storage-session-timestamp.test.ts",
+        "framework": "jest"
+      },
+      {
+        "file": "infrastructure/docker/ag-ui-frontend/__tests__/lib/storage-cleanup.test.ts",
+        "framework": "jest"
+      },
+      {
+        "file": "world/test_agent_investment_tracker.py",
+        "framework": "unittest"
+      },
+      {
+        "file": "world/test_agent_collaboration_manager.py",
+        "framework": "unittest"
+      }
+    ],
+    "build_tools": [
+      "rollup",
+      "rollup",
+      "rollup"
+    ],
+    "workflow_triggers": {},
+    "repeated_operations": {
+      "json_operations": 329,
+      "regex_operations": 114,
+      "http_requests": 16,
+      "action:actions/checkout": 177,
+      "action:actions/setup-python": 127,
+      "python_scripts": 332,
+      "git_operations": 285,
+      "action:actions/upload-artifact": 17,
+      "action:actions/download-artifact": 5,
+      "action:google-github-actions/run-gemini-cli": 10,
+      "action:actions/github-script": 7,
+      "action:./.github/actions/npm-commands": 4,
+      "npm_commands": 4,
+      "action:google-github-actions/auth": 14,
+      "action:google-github-actions/setup-gcloud": 12,
+      "action:docker/build-push-action": 3,
+      "action:hashicorp/setup-terraform": 3,
+      "action:actions/setup-node": 5,
+      "action:./.github/actions/reusable-json-operations": 4,
+      "action:./.github/actions/reusable-regex-operations": 3,
+      "action:./.github/actions/reusable-http-requests": 3,
+      "action:./.github/actions/reusable-python-scripts": 4,
+      "action:./.github/actions/reusable-git-operations": 4
+    },
+    "test_directories": [
+      "tests"
+    ],
+    "test_files_count": 195,
+    "deployment_types": [
+      "pip"
+    ]
+  },
+  "recommendations": [
+    {
+      "priority": "high",
+      "title": "Abstract repeated json_operations operation",
+      "description": "The operation \"json_operations\" appears 329 times. Consider creating a reusable action.",
+      "pattern": "json_operations",
+      "occurrences": 329,
+      "action_type": "composite"
+    },
+    {
+      "priority": "high",
+      "title": "Abstract repeated regex_operations operation",
+      "description": "The operation \"regex_operations\" appears 114 times. Consider creating a reusable action.",
+      "pattern": "regex_operations",
+      "occurrences": 114,
+      "action_type": "composite"
+    },
+    {
+      "priority": "high",
+      "title": "Abstract repeated http_requests operation",
+      "description": "The operation \"http_requests\" appears 16 times. Consider creating a reusable action.",
+      "pattern": "http_requests",
+      "occurrences": 16,
+      "action_type": "composite"
+    },
+    {
+      "priority": "high",
+      "title": "Abstract repeated python_scripts operation",
+      "description": "The operation \"python_scripts\" appears 332 times. Consider creating a reusable action.",
+      "pattern": "python_scripts",
+      "occurrences": 332,
+      "action_type": "composite"
+    },
+    {
+      "priority": "high",
+      "title": "Abstract repeated git_operations operation",
+      "description": "The operation \"git_operations\" appears 285 times. Consider creating a reusable action.",
+      "pattern": "git_operations",
+      "occurrences": 285,
+      "action_type": "composite"
+    },
+    {
+      "priority": "high",
+      "title": "Automated testing action",
+      "description": "Found 195 test files. Create a comprehensive testing action.",
+      "pattern": "testing",
+      "action_type": "composite"
+    },
+    {
+      "priority": "high",
+      "title": "Python project automation",
+      "description": "Create actions for Python linting, testing, and packaging.",
+      "pattern": "python_automation",
+      "action_type": "composite"
+    },
+    {
+      "priority": "high",
+      "title": "JavaScript/TypeScript automation",
+      "description": "Create actions for JS/TS building, testing, and deployment.",
+      "pattern": "javascript_automation",
+      "action_type": "composite"
+    },
+    {
+      "priority": "medium",
+      "title": "Abstract repeated npm_commands operation",
+      "description": "The operation \"npm_commands\" appears 4 times. Consider creating a reusable action.",
+      "pattern": "npm_commands",
+      "occurrences": 4,
+      "action_type": "composite"
+    },
+    {
+      "priority": "medium",
+      "title": "Deployment action for pip",
+      "description": "Automate pip deployment process.",
+      "pattern": "deployment_pip",
+      "action_type": "composite"
+    }
+  ],
+  "common_operations": {
+    "json_operations": 329,
+    "regex_operations": 114,
+    "http_requests": 16,
+    "action:actions/checkout": 177,
+    "action:actions/setup-python": 127,
+    "python_scripts": 332,
+    "git_operations": 285,
+    "action:actions/upload-artifact": 17,
+    "action:actions/download-artifact": 5,
+    "action:google-github-actions/run-gemini-cli": 10,
+    "action:actions/github-script": 7,
+    "action:./.github/actions/javascript-automation": 1,
+    "action:./.github/actions/npm-commands": 4,
+    "npm_commands": 4,
+    "action:google-github-actions/auth": 14,
+    "action:google-github-actions/setup-gcloud": 12,
+    "action:docker/setup-buildx-action": 2,
+    "action:docker/build-push-action": 3,
+    "action:hashicorp/setup-terraform": 3,
+    "action:actions/setup-node": 5,
+    "action:actions/cache": 2,
+    "action:stefanzweifel/git-auto-commit-action": 1,
+    "action:./.github/actions/setup-mcp-server": 1,
+    "action:./.github/actions/reusable-json-operations": 4,
+    "action:./.github/actions/reusable-regex-operations": 3,
+    "action:./.github/actions/reusable-http-requests": 3,
+    "action:./.github/actions/reusable-python-scripts": 4,
+    "action:./.github/actions/reusable-git-operations": 4,
+    "action:./.github/actions/python-automation": 1
+  }
+}
