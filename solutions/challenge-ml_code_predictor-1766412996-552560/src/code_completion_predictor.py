@@ -21,6 +21,7 @@ Architecture: Hybrid N-gram predictor with contextual weighting
 
 import re
 import json
+import ast
 from collections import Counter, defaultdict
 from typing import List, Tuple, Dict, Optional
 
@@ -75,12 +76,15 @@ class CodeTokenizer:
         }
     }
     
-    # Multi-character operators
-    MULTI_CHAR_OPS = [
+    # Multi-character operators (convert to set for O(1) lookup)
+    MULTI_CHAR_OPS = {
         '==', '!=', '<=', '>=', '&&', '||', '++', '--', '+=', '-=',
         '*=', '/=', '%=', '<<', '>>', '&=', '|=', '^=', '=>', '...',
         '::', '->', '??', '?.', '**'
-    ]
+    }
+    
+    # Common delimiters (as set for O(1) lookup)
+    DELIMITERS = {'(', ')', '[', ']', '{', '}', ',', ':', ';'}
     
     def __init__(self, language: str = 'python'):
         """
@@ -130,7 +134,7 @@ class CodeTokenizer:
                 if current_token:
                     tokens.append(current_token)
                     current_token = ''
-            elif char in '()[]{},:;':
+            elif char in self.DELIMITERS:
                 if current_token:
                     tokens.append(current_token)
                     current_token = ''
@@ -158,8 +162,8 @@ class CodeTokenizer:
         for i, token in enumerate(tokens):
             if i > 0:
                 prev_token = tokens[i - 1]
-                # Add space if needed
-                if not (token in '()[]{},:;' or prev_token in '()[]{},:;'):
+                # Add space if needed (use sets for O(1) lookup)
+                if not (token in self.DELIMITERS or prev_token in self.DELIMITERS):
                     if token not in self.MULTI_CHAR_OPS and prev_token not in self.MULTI_CHAR_OPS:
                         result.append(' ')
             result.append(token)
@@ -407,8 +411,8 @@ class CodeCompletionPredictor:
         for order_str, ngrams in model_data['ngrams'].items():
             order = int(order_str)
             for context_str, counter_dict in ngrams.items():
-                # Parse context tuple from string
-                context = eval(context_str)
+                # Parse context tuple from string using ast.literal_eval for safety
+                context = ast.literal_eval(context_str)
                 self.predictor.ngrams[order][context] = Counter(counter_dict)
     
     def get_stats(self) -> Dict:
