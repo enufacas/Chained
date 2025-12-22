@@ -230,190 +230,6 @@
       "id": "idea:33"
     },
     {
-      "id": "idea:198",
-      "title": "Cloudflare Innovation (2025-12-11)",
-      "summary": "Exploring cloudflare trends with 169 mentions. serverless-dns/serverless-dns - The RethinkDNS resolver that deploys to Cloudflare Workers, Deno Dep Also: Cloudflare error page generator",
-      "patterns": [
-        "company_innovation",
-        "cloudflare",
-        "topic:e17b59bb",
-        "date:2025-12-11"
-      ],
-      "companies": [
-        {
-          "name": "Tech Hub",
-          "city": "San Francisco",
-          "country": "US",
-          "lat": 37.7749,
-          "lng": -122.4194
-        }
-      ],
-      "inspiration_regions": [
-        {
-          "region_id": "US:San Francisco",
-          "lat": 37.7749,
-          "lng": -122.4194,
-          "weight": 1.0
-        }
-      ],
-      "source": "learning_analysis",
-      "mention_count": 157,
-      "category": "Company Innovation",
-      "analysis_date": "2025-12-11",
-      "created_at": "2025-12-11T08:40:31Z",
-      "updated_at": "2025-12-11T20:32:56Z",
-      "mission_created": true,
-      "mission_created_at": "2025-12-21T20:32:08.344606+00:00"
-    },
-    {
-      "id": "idea:199",
-      "title": "Emerging Theme: Ai Agents (2025-12-11)",
-      "summary": "Exploring ai-agents trends with 10 mentions. Explore Ai Agents innovations",
-      "patterns": [
-        "ai",
-        "emerging_theme",
-        "agents",
-        "ai-agents",
-        "topic:513e9258",
-        "date:2025-12-11"
-      ],
-      "companies": [
-        {
-          "name": "Tech Hub",
-          "city": "San Francisco",
-          "country": "US",
-          "lat": 37.7749,
-          "lng": -122.4194
-        }
-      ],
-      "inspiration_regions": [
-        {
-          "region_id": "US:San Francisco",
-          "lat": 37.7749,
-          "lng": -122.4194,
-          "weight": 1.0
-        }
-      ],
-      "source": "learning_analysis",
-      "mention_count": 10,
-      "category": "Emerging Theme",
-      "analysis_date": "2025-12-11",
-      "created_at": "2025-12-11T08:40:31Z",
-      "mission_created": true,
-      "mission_created_at": "2025-12-21T20:32:08.344622+00:00"
-    },
-    {
-      "id": "idea:200",
-      "title": "Emerging Theme: Go Specialist (2025-12-11)",
-      "summary": "Exploring go-specialist trends with 10 mentions. Explore Go Specialist innovations",
-      "patterns": [
-        "go",
-        "specialist",
-        "emerging_theme",
-        "go-specialist",
-        "topic:19368490",
-        "date:2025-12-11"
-      ],
-      "companies": [
-        {
-          "name": "Tech Hub",
-          "city": "San Francisco",
-          "country": "US",
-          "lat": 37.7749,
-          "lng": -122.4194
-        }
-      ],
-      "inspiration_regions": [
-        {
-          "region_id": "US:San Francisco",
-          "lat": 37.7749,
-          "lng": -122.4194,
-          "weight": 1.0
-        }
-      ],
-      "source": "learning_analysis",
-      "mention_count": 10,
-      "category": "Emerging Theme",
-      "analysis_date": "2025-12-11",
-      "created_at": "2025-12-11T08:40:31Z",
-      "mission_created": true,
-      "mission_created_at": "2025-12-21T20:32:08.344635+00:00"
-    },
-    {
-      "id": "idea:201",
-      "title": "Emerging Theme: Cloud Infrastructure (2025-12-11)",
-      "summary": "Exploring cloud-infrastructure trends with 10 mentions. Explore Cloud Infrastructure innovations",
-      "patterns": [
-        "infrastructure",
-        "cloud",
-        "cloud-infrastructure",
-        "emerging_theme",
-        "topic:e63a2b93",
-        "date:2025-12-11"
-      ],
-      "companies": [
-        {
-          "name": "Tech Hub",
-          "city": "San Francisco",
-          "country": "US",
-          "lat": 37.7749,
-          "lng": -122.4194
-        }
-      ],
-      "inspiration_regions": [
-        {
-          "region_id": "US:San Francisco",
-          "lat": 37.7749,
-          "lng": -122.4194,
-          "weight": 1.0
-        }
-      ],
-      "source": "learning_analysis",
-      "mention_count": 10,
-      "category": "Emerging Theme",
-      "analysis_date": "2025-12-11",
-      "created_at": "2025-12-11T08:40:31Z",
-      "mission_created": true,
-      "mission_created_at": "2025-12-21T20:32:08.344642+00:00"
-    },
-    {
-      "id": "idea:202",
-      "title": "Integration: Claude-Cloud (2025-12-11)",
-      "summary": "Exploring claude-cloud trends with 592 mentions. AI + Infrastructure: Integrate AI capabilities with cloud infrastructure Also: Combining Claude and Cloud for better solutions",
-      "patterns": [
-        "cloud",
-        "integration",
-        "claude",
-        "claude-cloud",
-        "topic:f5a2956b",
-        "date:2025-12-11"
-      ],
-      "companies": [
-        {
-          "name": "Tech Hub",
-          "city": "San Francisco",
-          "country": "US",
-          "lat": 37.7749,
-          "lng": -122.4194
-        }
-      ],
-      "inspiration_regions": [
-        {
-          "region_id": "US:San Francisco",
-          "lat": 37.7749,
-          "lng": -122.4194,
-          "weight": 1.0
-        }
-      ],
-      "source": "learning_analysis",
-      "mention_count": 592,
-      "category": "Integration",
-      "analysis_date": "2025-12-11",
-      "created_at": "2025-12-11T08:40:31Z",
-      "mission_created": true,
-      "mission_created_at": "2025-12-21T20:32:08.344647+00:00"
-    },
-    {
       "id": "idea:203",
       "title": "Integration: Security-Gpt (2025-12-11)",
       "summary": "Exploring security-gpt trends with 918 mentions. Security + AI: Apply AI/ML to enhance security systems Also: Combining Security and Gpt for better solutions",
@@ -767,7 +583,7 @@
     {
       "id": "idea:212",
       "title": "AI/ML: Gpt (2025-12-12)",
-      "summary": "Exploring gpt trends with 1022 mentions. GPT-5.1: A smarter, more conversational ChatGPT Also: Apple Mini Apps \ud83d\udcf1, Blue Origin lands rocket \ud83d\ude80, GPT-5.1 for devs \ud83d\udc68\u200d\ud83d\udcbb\u00a0",
+      "summary": "Exploring gpt trends with 1022 mentions. GPT-5.1: A smarter, more conversational ChatGPT Also: Apple Mini Apps 📱, Blue Origin lands rocket 🚀, GPT-5.1 for devs 👨‍💻 ",
       "patterns": [
         "ai/ml",
         "gpt",
@@ -801,7 +617,7 @@
     {
       "id": "idea:213",
       "title": "AI/ML: Claude (2025-12-12)",
-      "summary": "Exploring claude trends with 483 mentions. GPT-5.1 \ud83e\udd16, Waymo hits highways \ud83d\ude97, Homebrew 5 \ud83d\udc68\u200d\ud83d\udcbb Also: Apple satellite features \ud83d\udef0\ufe0f, inside Cursor \ud83d\udc68\u200d\ud83d\udcbb, becoming full stack \ud83d\udcbc\u00a0",
+      "summary": "Exploring claude trends with 483 mentions. GPT-5.1 🤖, Waymo hits highways 🚗, Homebrew 5 👨‍💻 Also: Apple satellite features 🛰️, inside Cursor 👨‍💻, becoming full stack 💼 ",
       "patterns": [
         "ai/ml",
         "claude",
@@ -835,7 +651,7 @@
     {
       "id": "idea:214",
       "title": "Languages: Typescript (2025-12-12)",
-      "summary": "Exploring typescript trends with 249 mentions. GPT-5.1 \ud83e\udd16, Waymo hits highways \ud83d\ude97, Homebrew 5 \ud83d\udc68\u200d\ud83d\udcbb Also: GitHub Copilot Docs: About customizing GitHub Copilot responses",
+      "summary": "Exploring typescript trends with 249 mentions. GPT-5.1 🤖, Waymo hits highways 🚗, Homebrew 5 👨‍💻 Also: GitHub Copilot Docs: About customizing GitHub Copilot responses",
       "patterns": [
         "languages",
         "typescript",
@@ -869,7 +685,7 @@
     {
       "id": "idea:215",
       "title": "AI/ML: Ai (2025-12-12)",
-      "summary": "Exploring ai trends with 2389 mentions. iPhone Air flops \ud83d\udcf1, Anthropic OpenAI financials leak \ud83d\udcb0, becoming a compiler engineer \ud83d\udc68\u200d\ud83d\udcbb Also: Apple satellite features \ud83d\udef0\ufe0f, inside Cursor \ud83d\udc68\u200d\ud83d\udcbb, becoming full stack \ud83d\udcbc\u00a0",
+      "summary": "Exploring ai trends with 2389 mentions. iPhone Air flops 📱, Anthropic OpenAI financials leak 💰, becoming a compiler engineer 👨‍💻 Also: Apple satellite features 🛰️, inside Cursor 👨‍💻, becoming full stack 💼 ",
       "patterns": [
         "ai/ml",
         "ai",
@@ -923,7 +739,7 @@
     {
       "id": "idea:216",
       "title": "AI/ML: Agents (2025-12-12)",
-      "summary": "Exploring agents trends with 711 mentions. Apple satellite features \ud83d\udef0\ufe0f, inside Cursor \ud83d\udc68\u200d\ud83d\udcbb, becoming full stack \ud83d\udcbc\u00a0 Also: ChatGPT Group Chats \ud83d\udcac, growing an RL environment \ud83c\udf0d, ElevenLabs Scribe v2 \ud83d\udde3",
+      "summary": "Exploring agents trends with 711 mentions. Apple satellite features 🛰️, inside Cursor 👨‍💻, becoming full stack 💼  Also: ChatGPT Group Chats 💬, growing an RL environment 🌍, ElevenLabs Scribe v2 🗣",
       "patterns": [
         "agents",
         "ai/ml",
@@ -970,7 +786,7 @@
     {
       "id": "idea:217",
       "title": "DevOps: Docker (2025-12-12)",
-      "summary": "Exploring docker trends with 263 mentions. Apple satellite features \ud83d\udef0\ufe0f, inside Cursor \ud83d\udc68\u200d\ud83d\udcbb, becoming full stack \ud83d\udcbc\u00a0 Also: GitHub Discussion: Ability to import docker-compose defintion and convert them a",
+      "summary": "Exploring docker trends with 263 mentions. Apple satellite features 🛰️, inside Cursor 👨‍💻, becoming full stack 💼  Also: GitHub Discussion: Ability to import docker-compose defintion and convert them a",
       "patterns": [
         "devops",
         "docker",
@@ -1038,7 +854,7 @@
     {
       "id": "idea:219",
       "title": "Apple Innovation (2025-12-12)",
-      "summary": "Exploring apple trends with 336 mentions. Apple Mini Apps \ud83d\udcf1, Blue Origin lands rocket \ud83d\ude80, GPT-5.1 for devs \ud83d\udc68\u200d\ud83d\udcbb\u00a0 Also: Apple satellite features \ud83d\udef0\ufe0f, inside Cursor \ud83d\udc68\u200d\ud83d\udcbb, becoming full stack \ud83d\udcbc\u00a0",
+      "summary": "Exploring apple trends with 336 mentions. Apple Mini Apps 📱, Blue Origin lands rocket 🚀, GPT-5.1 for devs 👨‍💻  Also: Apple satellite features 🛰️, inside Cursor 👨‍💻, becoming full stack 💼 ",
       "patterns": [
         "apple",
         "company_innovation",
@@ -1072,7 +888,7 @@
     {
       "id": "idea:220",
       "title": "Nvidia Innovation (2025-12-12)",
-      "summary": "Exploring nvidia trends with 268 mentions. SoftBank dumps Nvidia \ud83d\udcb0, SpaceX GigaBay \ud83d\ude80, devtool integration \ud83d\udc68\u200d\ud83d\udcbb Also: DeepSeek uses banned Nvidia chips for AI model, report says",
+      "summary": "Exploring nvidia trends with 268 mentions. SoftBank dumps Nvidia 💰, SpaceX GigaBay 🚀, devtool integration 👨‍💻 Also: DeepSeek uses banned Nvidia chips for AI model, report says",
       "patterns": [
         "company_innovation",
         "nvidia",
@@ -1106,7 +922,7 @@
     {
       "id": "idea:221",
       "title": "Google Innovation (2025-12-12)",
-      "summary": "Exploring google trends with 513 mentions. Cursor $29B valuation \ud83d\udcb0, Google Code Wiki \ud83d\udc68\u200d\ud83d\udcbb, advanced Nano Banana tips \ud83c\udf4c Also: A new Google model is nearly perfect on automated handwriting recognition",
+      "summary": "Exploring google trends with 513 mentions. Cursor $29B valuation 💰, Google Code Wiki 👨‍💻, advanced Nano Banana tips 🍌 Also: A new Google model is nearly perfect on automated handwriting recognition",
       "patterns": [
         "company_innovation",
         "google",
@@ -1624,7 +1440,7 @@
     {
       "id": "idea:235",
       "title": "AI/ML: Gpt (2025-12-13)",
-      "summary": "Exploring gpt trends with 848 mentions. GPT-5.1: A smarter, more conversational ChatGPT Also: Apple Mini Apps \ud83d\udcf1, Blue Origin lands rocket \ud83d\ude80, GPT-5.1 for devs \ud83d\udc68\u200d\ud83d\udcbb\u00a0",
+      "summary": "Exploring gpt trends with 848 mentions. GPT-5.1: A smarter, more conversational ChatGPT Also: Apple Mini Apps 📱, Blue Origin lands rocket 🚀, GPT-5.1 for devs 👨‍💻 ",
       "patterns": [
         "ai/ml",
         "gpt",
@@ -1657,7 +1473,7 @@
     {
       "id": "idea:236",
       "title": "AI/ML: Claude (2025-12-13)",
-      "summary": "Exploring claude trends with 381 mentions. GPT-5.1 \ud83e\udd16, Waymo hits highways \ud83d\ude97, Homebrew 5 \ud83d\udc68\u200d\ud83d\udcbb Also: Apple satellite features \ud83d\udef0\ufe0f, inside Cursor \ud83d\udc68\u200d\ud83d\udcbb, becoming full stack \ud83d\udcbc\u00a0",
+      "summary": "Exploring claude trends with 381 mentions. GPT-5.1 🤖, Waymo hits highways 🚗, Homebrew 5 👨‍💻 Also: Apple satellite features 🛰️, inside Cursor 👨‍💻, becoming full stack 💼 ",
       "patterns": [
         "claude",
         "ai/ml",
@@ -1690,7 +1506,7 @@
     {
       "id": "idea:237",
       "title": "Languages: Typescript (2025-12-13)",
-      "summary": "Exploring typescript trends with 169 mentions. GPT-5.1 \ud83e\udd16, Waymo hits highways \ud83d\ude97, Homebrew 5 \ud83d\udc68\u200d\ud83d\udcbb Also: Unofficial Microsoft Teams client for Linux",
+      "summary": "Exploring typescript trends with 169 mentions. GPT-5.1 🤖, Waymo hits highways 🚗, Homebrew 5 👨‍💻 Also: Unofficial Microsoft Teams client for Linux",
       "patterns": [
         "languages",
         "typescript",
@@ -1723,7 +1539,7 @@
     {
       "id": "idea:238",
       "title": "AI/ML: Ai (2025-12-13)",
-      "summary": "Exploring ai trends with 1931 mentions. iPhone Air flops \ud83d\udcf1, Anthropic OpenAI financials leak \ud83d\udcb0, becoming a compiler engineer \ud83d\udc68\u200d\ud83d\udcbb Also: Apple satellite features \ud83d\udef0\ufe0f, inside Cursor \ud83d\udc68\u200d\ud83d\udcbb, becoming full stack \ud83d\udcbc\u00a0",
+      "summary": "Exploring ai trends with 1931 mentions. iPhone Air flops 📱, Anthropic OpenAI financials leak 💰, becoming a compiler engineer 👨‍💻 Also: Apple satellite features 🛰️, inside Cursor 👨‍💻, becoming full stack 💼 ",
       "patterns": [
         "ai",
         "ai/ml",
@@ -1776,7 +1592,7 @@
     {
       "id": "idea:239",
       "title": "AI/ML: Agents (2025-12-13)",
-      "summary": "Exploring agents trends with 615 mentions. Apple satellite features \ud83d\udef0\ufe0f, inside Cursor \ud83d\udc68\u200d\ud83d\udcbb, becoming full stack \ud83d\udcbc\u00a0 Also: ChatGPT Group Chats \ud83d\udcac, growing an RL environment \ud83c\udf0d, ElevenLabs Scribe v2 \ud83d\udde3",
+      "summary": "Exploring agents trends with 615 mentions. Apple satellite features 🛰️, inside Cursor 👨‍💻, becoming full stack 💼  Also: ChatGPT Group Chats 💬, growing an RL environment 🌍, ElevenLabs Scribe v2 🗣",
       "patterns": [
         "agents",
         "ai/ml",
@@ -1822,7 +1638,7 @@
     {
       "id": "idea:240",
       "title": "DevOps: Docker (2025-12-13)",
-      "summary": "Exploring docker trends with 181 mentions. Apple satellite features \ud83d\udef0\ufe0f, inside Cursor \ud83d\udc68\u200d\ud83d\udcbb, becoming full stack \ud83d\udcbc\u00a0 Also: GitHub Discussion: Ability to import docker-compose defintion and convert them a",
+      "summary": "Exploring docker trends with 181 mentions. Apple satellite features 🛰️, inside Cursor 👨‍💻, becoming full stack 💼  Also: GitHub Discussion: Ability to import docker-compose defintion and convert them a",
       "patterns": [
         "devops",
         "docker",
@@ -1888,7 +1704,7 @@
     {
       "id": "idea:242",
       "title": "Apple Innovation (2025-12-13)",
-      "summary": "Exploring apple trends with 294 mentions. Apple Mini Apps \ud83d\udcf1, Blue Origin lands rocket \ud83d\ude80, GPT-5.1 for devs \ud83d\udc68\u200d\ud83d\udcbb\u00a0 Also: Apple satellite features \ud83d\udef0\ufe0f, inside Cursor \ud83d\udc68\u200d\ud83d\udcbb, becoming full stack \ud83d\udcbc\u00a0",
+      "summary": "Exploring apple trends with 294 mentions. Apple Mini Apps 📱, Blue Origin lands rocket 🚀, GPT-5.1 for devs 👨‍💻  Also: Apple satellite features 🛰️, inside Cursor 👨‍💻, becoming full stack 💼 ",
       "patterns": [
         "company_innovation",
         "apple",
@@ -1921,7 +1737,7 @@
     {
       "id": "idea:243",
       "title": "Google Innovation (2025-12-13)",
-      "summary": "Exploring google trends with 444 mentions. Cursor $29B valuation \ud83d\udcb0, Google Code Wiki \ud83d\udc68\u200d\ud83d\udcbb, advanced Nano Banana tips \ud83c\udf4c Also: A new Google model is nearly perfect on automated handwriting recognition",
+      "summary": "Exploring google trends with 444 mentions. Cursor $29B valuation 💰, Google Code Wiki 👨‍💻, advanced Nano Banana tips 🍌 Also: A new Google model is nearly perfect on automated handwriting recognition",
       "patterns": [
         "company_innovation",
         "google",
@@ -1954,7 +1770,7 @@
     {
       "id": "idea:244",
       "title": "Cloudflare Innovation (2025-12-13)",
-      "summary": "Exploring cloudflare trends with 157 mentions. serverless-dns/serverless-dns - The RethinkDNS resolver that deploys to Cloudflare Workers, Deno Dep Also: Cloudflare\u2019s BYOIP API \u2601\ufe0f, Self-Service LLM Deployment \u2728, State of Rust Dependen",
+      "summary": "Exploring cloudflare trends with 157 mentions. serverless-dns/serverless-dns - The RethinkDNS resolver that deploys to Cloudflare Workers, Deno Dep Also: Cloudflare’s BYOIP API ☁️, Self-Service LLM Deployment ✨, State of Rust Dependen",
       "patterns": [
         "cloudflare",
         "company_innovation",
@@ -1987,7 +1803,7 @@
     {
       "id": "idea:245",
       "title": "Nvidia Innovation (2025-12-13)",
-      "summary": "Exploring nvidia trends with 233 mentions. SoftBank dumps Nvidia \ud83d\udcb0, SpaceX GigaBay \ud83d\ude80, devtool integration \ud83d\udc68\u200d\ud83d\udcbb Also: Elon $1T comp approved \ud83d\udcb0, Google TPUs threaten Nvidia \u26a1, agents from scratch \ud83d\udc68\u200d\ud83d\udcbb",
+      "summary": "Exploring nvidia trends with 233 mentions. SoftBank dumps Nvidia 💰, SpaceX GigaBay 🚀, devtool integration 👨‍💻 Also: Elon $1T comp approved 💰, Google TPUs threaten Nvidia ⚡, agents from scratch 👨‍💻",
       "patterns": [
         "company_innovation",
         "nvidia",
@@ -2438,7 +2254,7 @@
     {
       "id": "idea:257",
       "title": "AI/ML: Gpt (2025-12-14)",
-      "summary": "Exploring gpt trends with 1022 mentions. GPT-5.1: A smarter, more conversational ChatGPT Also: Apple Mini Apps \ud83d\udcf1, Blue Origin lands rocket \ud83d\ude80, GPT-5.1 for devs \ud83d\udc68\u200d\ud83d\udcbb\u00a0",
+      "summary": "Exploring gpt trends with 1022 mentions. GPT-5.1: A smarter, more conversational ChatGPT Also: Apple Mini Apps 📱, Blue Origin lands rocket 🚀, GPT-5.1 for devs 👨‍💻 ",
       "patterns": [
         "gpt",
         "ai/ml",
@@ -2471,7 +2287,7 @@
     {
       "id": "idea:258",
       "title": "AI/ML: Claude (2025-12-14)",
-      "summary": "Exploring claude trends with 483 mentions. GPT-5.1 \ud83e\udd16, Waymo hits highways \ud83d\ude97, Homebrew 5 \ud83d\udc68\u200d\ud83d\udcbb Also: Apple satellite features \ud83d\udef0\ufe0f, inside Cursor \ud83d\udc68\u200d\ud83d\udcbb, becoming full stack \ud83d\udcbc\u00a0",
+      "summary": "Exploring claude trends with 483 mentions. GPT-5.1 🤖, Waymo hits highways 🚗, Homebrew 5 👨‍💻 Also: Apple satellite features 🛰️, inside Cursor 👨‍💻, becoming full stack 💼 ",
       "patterns": [
         "ai/ml",
         "claude",
@@ -2504,7 +2320,7 @@
     {
       "id": "idea:259",
       "title": "Languages: Typescript (2025-12-14)",
-      "summary": "Exploring typescript trends with 249 mentions. GPT-5.1 \ud83e\udd16, Waymo hits highways \ud83d\ude97, Homebrew 5 \ud83d\udc68\u200d\ud83d\udcbb Also: GitHub Copilot Docs: About customizing GitHub Copilot responses",
+      "summary": "Exploring typescript trends with 249 mentions. GPT-5.1 🤖, Waymo hits highways 🚗, Homebrew 5 👨‍💻 Also: GitHub Copilot Docs: About customizing GitHub Copilot responses",
       "patterns": [
         "typescript",
         "languages",
@@ -2537,7 +2353,7 @@
     {
       "id": "idea:260",
       "title": "AI/ML: Ai (2025-12-14)",
-      "summary": "Exploring ai trends with 2389 mentions. iPhone Air flops \ud83d\udcf1, Anthropic OpenAI financials leak \ud83d\udcb0, becoming a compiler engineer \ud83d\udc68\u200d\ud83d\udcbb Also: Apple satellite features \ud83d\udef0\ufe0f, inside Cursor \ud83d\udc68\u200d\ud83d\udcbb, becoming full stack \ud83d\udcbc\u00a0",
+      "summary": "Exploring ai trends with 2389 mentions. iPhone Air flops 📱, Anthropic OpenAI financials leak 💰, becoming a compiler engineer 👨‍💻 Also: Apple satellite features 🛰️, inside Cursor 👨‍💻, becoming full stack 💼 ",
       "patterns": [
         "ai",
         "ai/ml",
@@ -2590,7 +2406,7 @@
     {
       "id": "idea:261",
       "title": "AI/ML: Agents (2025-12-14)",
-      "summary": "Exploring agents trends with 711 mentions. Apple satellite features \ud83d\udef0\ufe0f, inside Cursor \ud83d\udc68\u200d\ud83d\udcbb, becoming full stack \ud83d\udcbc\u00a0 Also: ChatGPT Group Chats \ud83d\udcac, growing an RL environment \ud83c\udf0d, ElevenLabs Scribe v2 \ud83d\udde3",
+      "summary": "Exploring agents trends with 711 mentions. Apple satellite features 🛰️, inside Cursor 👨‍💻, becoming full stack 💼  Also: ChatGPT Group Chats 💬, growing an RL environment 🌍, ElevenLabs Scribe v2 🗣",
       "patterns": [
         "agents",
         "ai/ml",
@@ -2636,7 +2452,7 @@
     {
       "id": "idea:262",
       "title": "DevOps: Docker (2025-12-14)",
-      "summary": "Exploring docker trends with 263 mentions. Apple satellite features \ud83d\udef0\ufe0f, inside Cursor \ud83d\udc68\u200d\ud83d\udcbb, becoming full stack \ud83d\udcbc\u00a0 Also: GitHub Discussion: Ability to import docker-compose defintion and convert them a",
+      "summary": "Exploring docker trends with 263 mentions. Apple satellite features 🛰️, inside Cursor 👨‍💻, becoming full stack 💼  Also: GitHub Discussion: Ability to import docker-compose defintion and convert them a",
       "patterns": [
         "devops",
         "docker",
@@ -2702,7 +2518,7 @@
     {
       "id": "idea:264",
       "title": "Apple Innovation (2025-12-14)",
-      "summary": "Exploring apple trends with 336 mentions. Apple Mini Apps \ud83d\udcf1, Blue Origin lands rocket \ud83d\ude80, GPT-5.1 for devs \ud83d\udc68\u200d\ud83d\udcbb\u00a0 Also: Apple satellite features \ud83d\udef0\ufe0f, inside Cursor \ud83d\udc68\u200d\ud83d\udcbb, becoming full stack \ud83d\udcbc\u00a0",
+      "summary": "Exploring apple trends with 336 mentions. Apple Mini Apps 📱, Blue Origin lands rocket 🚀, GPT-5.1 for devs 👨‍💻  Also: Apple satellite features 🛰️, inside Cursor 👨‍💻, becoming full stack 💼 ",
       "patterns": [
         "company_innovation",
         "apple",
@@ -2735,7 +2551,7 @@
     {
       "id": "idea:265",
       "title": "Nvidia Innovation (2025-12-14)",
-      "summary": "Exploring nvidia trends with 268 mentions. SoftBank dumps Nvidia \ud83d\udcb0, SpaceX GigaBay \ud83d\ude80, devtool integration \ud83d\udc68\u200d\ud83d\udcbb Also: DeepSeek uses banned Nvidia chips for AI model, report says",
+      "summary": "Exploring nvidia trends with 268 mentions. SoftBank dumps Nvidia 💰, SpaceX GigaBay 🚀, devtool integration 👨‍💻 Also: DeepSeek uses banned Nvidia chips for AI model, report says",
       "patterns": [
         "company_innovation",
         "nvidia",
@@ -2768,7 +2584,7 @@
     {
       "id": "idea:266",
       "title": "Google Innovation (2025-12-14)",
-      "summary": "Exploring google trends with 513 mentions. Cursor $29B valuation \ud83d\udcb0, Google Code Wiki \ud83d\udc68\u200d\ud83d\udcbb, advanced Nano Banana tips \ud83c\udf4c Also: A new Google model is nearly perfect on automated handwriting recognition",
+      "summary": "Exploring google trends with 513 mentions. Cursor $29B valuation 💰, Google Code Wiki 👨‍💻, advanced Nano Banana tips 🍌 Also: A new Google model is nearly perfect on automated handwriting recognition",
       "patterns": [
         "company_innovation",
         "google",
@@ -3321,7 +3137,7 @@
     {
       "id": "idea:281",
       "title": "AI/ML: Gpt (2025-12-15)",
-      "summary": "Exploring gpt trends with 1022 mentions. GPT-5.1: A smarter, more conversational ChatGPT Also: Apple Mini Apps \ud83d\udcf1, Blue Origin lands rocket \ud83d\ude80, GPT-5.1 for devs \ud83d\udc68\u200d\ud83d\udcbb\u00a0",
+      "summary": "Exploring gpt trends with 1022 mentions. GPT-5.1: A smarter, more conversational ChatGPT Also: Apple Mini Apps 📱, Blue Origin lands rocket 🚀, GPT-5.1 for devs 👨‍💻 ",
       "patterns": [
         "gpt",
         "ai/ml",
@@ -3354,7 +3170,7 @@
     {
       "id": "idea:282",
       "title": "AI/ML: Claude (2025-12-15)",
-      "summary": "Exploring claude trends with 483 mentions. GPT-5.1 \ud83e\udd16, Waymo hits highways \ud83d\ude97, Homebrew 5 \ud83d\udc68\u200d\ud83d\udcbb Also: Apple satellite features \ud83d\udef0\ufe0f, inside Cursor \ud83d\udc68\u200d\ud83d\udcbb, becoming full stack \ud83d\udcbc\u00a0",
+      "summary": "Exploring claude trends with 483 mentions. GPT-5.1 🤖, Waymo hits highways 🚗, Homebrew 5 👨‍💻 Also: Apple satellite features 🛰️, inside Cursor 👨‍💻, becoming full stack 💼 ",
       "patterns": [
         "ai/ml",
         "claude",
@@ -3387,7 +3203,7 @@
     {
       "id": "idea:283",
       "title": "Languages: Typescript (2025-12-15)",
-      "summary": "Exploring typescript trends with 249 mentions. GPT-5.1 \ud83e\udd16, Waymo hits highways \ud83d\ude97, Homebrew 5 \ud83d\udc68\u200d\ud83d\udcbb Also: GitHub Copilot Docs: About customizing GitHub Copilot responses",
+      "summary": "Exploring typescript trends with 249 mentions. GPT-5.1 🤖, Waymo hits highways 🚗, Homebrew 5 👨‍💻 Also: GitHub Copilot Docs: About customizing GitHub Copilot responses",
       "patterns": [
         "languages",
         "typescript",
@@ -3420,7 +3236,7 @@
     {
       "id": "idea:284",
       "title": "AI/ML: Ai (2025-12-15)",
-      "summary": "Exploring ai trends with 2389 mentions. iPhone Air flops \ud83d\udcf1, Anthropic OpenAI financials leak \ud83d\udcb0, becoming a compiler engineer \ud83d\udc68\u200d\ud83d\udcbb Also: Apple satellite features \ud83d\udef0\ufe0f, inside Cursor \ud83d\udc68\u200d\ud83d\udcbb, becoming full stack \ud83d\udcbc\u00a0",
+      "summary": "Exploring ai trends with 2389 mentions. iPhone Air flops 📱, Anthropic OpenAI financials leak 💰, becoming a compiler engineer 👨‍💻 Also: Apple satellite features 🛰️, inside Cursor 👨‍💻, becoming full stack 💼 ",
       "patterns": [
         "ai/ml",
         "ai",
@@ -3473,7 +3289,7 @@
     {
       "id": "idea:285",
       "title": "AI/ML: Agents (2025-12-15)",
-      "summary": "Exploring agents trends with 711 mentions. Apple satellite features \ud83d\udef0\ufe0f, inside Cursor \ud83d\udc68\u200d\ud83d\udcbb, becoming full stack \ud83d\udcbc\u00a0 Also: ChatGPT Group Chats \ud83d\udcac, growing an RL environment \ud83c\udf0d, ElevenLabs Scribe v2 \ud83d\udde3",
+      "summary": "Exploring agents trends with 711 mentions. Apple satellite features 🛰️, inside Cursor 👨‍💻, becoming full stack 💼  Also: ChatGPT Group Chats 💬, growing an RL environment 🌍, ElevenLabs Scribe v2 🗣",
       "patterns": [
         "ai/ml",
         "agents",
@@ -3519,7 +3335,7 @@
     {
       "id": "idea:286",
       "title": "DevOps: Docker (2025-12-15)",
-      "summary": "Exploring docker trends with 263 mentions. Apple satellite features \ud83d\udef0\ufe0f, inside Cursor \ud83d\udc68\u200d\ud83d\udcbb, becoming full stack \ud83d\udcbc\u00a0 Also: GitHub Discussion: Ability to import docker-compose defintion and convert them a",
+      "summary": "Exploring docker trends with 263 mentions. Apple satellite features 🛰️, inside Cursor 👨‍💻, becoming full stack 💼  Also: GitHub Discussion: Ability to import docker-compose defintion and convert them a",
       "patterns": [
         "devops",
         "docker",
@@ -3585,7 +3401,7 @@
     {
       "id": "idea:288",
       "title": "Apple Innovation (2025-12-15)",
-      "summary": "Exploring apple trends with 336 mentions. Apple Mini Apps \ud83d\udcf1, Blue Origin lands rocket \ud83d\ude80, GPT-5.1 for devs \ud83d\udc68\u200d\ud83d\udcbb\u00a0 Also: Apple satellite features \ud83d\udef0\ufe0f, inside Cursor \ud83d\udc68\u200d\ud83d\udcbb, becoming full stack \ud83d\udcbc\u00a0",
+      "summary": "Exploring apple trends with 336 mentions. Apple Mini Apps 📱, Blue Origin lands rocket 🚀, GPT-5.1 for devs 👨‍💻  Also: Apple satellite features 🛰️, inside Cursor 👨‍💻, becoming full stack 💼 ",
       "patterns": [
         "company_innovation",
         "apple",
@@ -3618,7 +3434,7 @@
     {
       "id": "idea:289",
       "title": "Nvidia Innovation (2025-12-15)",
-      "summary": "Exploring nvidia trends with 268 mentions. SoftBank dumps Nvidia \ud83d\udcb0, SpaceX GigaBay \ud83d\ude80, devtool integration \ud83d\udc68\u200d\ud83d\udcbb Also: DeepSeek uses banned Nvidia chips for AI model, report says",
+      "summary": "Exploring nvidia trends with 268 mentions. SoftBank dumps Nvidia 💰, SpaceX GigaBay 🚀, devtool integration 👨‍💻 Also: DeepSeek uses banned Nvidia chips for AI model, report says",
       "patterns": [
         "company_innovation",
         "nvidia",
@@ -3651,7 +3467,7 @@
     {
       "id": "idea:290",
       "title": "Google Innovation (2025-12-15)",
-      "summary": "Exploring google trends with 513 mentions. Cursor $29B valuation \ud83d\udcb0, Google Code Wiki \ud83d\udc68\u200d\ud83d\udcbb, advanced Nano Banana tips \ud83c\udf4c Also: A new Google model is nearly perfect on automated handwriting recognition",
+      "summary": "Exploring google trends with 513 mentions. Cursor $29B valuation 💰, Google Code Wiki 👨‍💻, advanced Nano Banana tips 🍌 Also: A new Google model is nearly perfect on automated handwriting recognition",
       "patterns": [
         "company_innovation",
         "google",
@@ -4204,7 +4020,7 @@
     {
       "id": "idea:305",
       "title": "AI/ML: Gpt (2025-12-16)",
-      "summary": "Exploring gpt trends with 1022 mentions. GPT-5.1: A smarter, more conversational ChatGPT Also: Apple Mini Apps \ud83d\udcf1, Blue Origin lands rocket \ud83d\ude80, GPT-5.1 for devs \ud83d\udc68\u200d\ud83d\udcbb\u00a0",
+      "summary": "Exploring gpt trends with 1022 mentions. GPT-5.1: A smarter, more conversational ChatGPT Also: Apple Mini Apps 📱, Blue Origin lands rocket 🚀, GPT-5.1 for devs 👨‍💻 ",
       "patterns": [
         "ai/ml",
         "gpt",
@@ -4237,7 +4053,7 @@
     {
       "id": "idea:306",
       "title": "AI/ML: Claude (2025-12-16)",
-      "summary": "Exploring claude trends with 483 mentions. GPT-5.1 \ud83e\udd16, Waymo hits highways \ud83d\ude97, Homebrew 5 \ud83d\udc68\u200d\ud83d\udcbb Also: Apple satellite features \ud83d\udef0\ufe0f, inside Cursor \ud83d\udc68\u200d\ud83d\udcbb, becoming full stack \ud83d\udcbc\u00a0",
+      "summary": "Exploring claude trends with 483 mentions. GPT-5.1 🤖, Waymo hits highways 🚗, Homebrew 5 👨‍💻 Also: Apple satellite features 🛰️, inside Cursor 👨‍💻, becoming full stack 💼 ",
       "patterns": [
         "ai/ml",
         "claude",
@@ -4270,7 +4086,7 @@
     {
       "id": "idea:307",
       "title": "Languages: Typescript (2025-12-16)",
-      "summary": "Exploring typescript trends with 249 mentions. GPT-5.1 \ud83e\udd16, Waymo hits highways \ud83d\ude97, Homebrew 5 \ud83d\udc68\u200d\ud83d\udcbb Also: GitHub Copilot Docs: About customizing GitHub Copilot responses",
+      "summary": "Exploring typescript trends with 249 mentions. GPT-5.1 🤖, Waymo hits highways 🚗, Homebrew 5 👨‍💻 Also: GitHub Copilot Docs: About customizing GitHub Copilot responses",
       "patterns": [
         "typescript",
         "languages",
@@ -4303,7 +4119,7 @@
     {
       "id": "idea:308",
       "title": "AI/ML: Ai (2025-12-16)",
-      "summary": "Exploring ai trends with 2389 mentions. iPhone Air flops \ud83d\udcf1, Anthropic OpenAI financials leak \ud83d\udcb0, becoming a compiler engineer \ud83d\udc68\u200d\ud83d\udcbb Also: Apple satellite features \ud83d\udef0\ufe0f, inside Cursor \ud83d\udc68\u200d\ud83d\udcbb, becoming full stack \ud83d\udcbc\u00a0",
+      "summary": "Exploring ai trends with 2389 mentions. iPhone Air flops 📱, Anthropic OpenAI financials leak 💰, becoming a compiler engineer 👨‍💻 Also: Apple satellite features 🛰️, inside Cursor 👨‍💻, becoming full stack 💼 ",
       "patterns": [
         "ai",
         "ai/ml",
@@ -4356,7 +4172,7 @@
     {
       "id": "idea:309",
       "title": "AI/ML: Agents (2025-12-16)",
-      "summary": "Exploring agents trends with 711 mentions. Apple satellite features \ud83d\udef0\ufe0f, inside Cursor \ud83d\udc68\u200d\ud83d\udcbb, becoming full stack \ud83d\udcbc\u00a0 Also: ChatGPT Group Chats \ud83d\udcac, growing an RL environment \ud83c\udf0d, ElevenLabs Scribe v2 \ud83d\udde3",
+      "summary": "Exploring agents trends with 711 mentions. Apple satellite features 🛰️, inside Cursor 👨‍💻, becoming full stack 💼  Also: ChatGPT Group Chats 💬, growing an RL environment 🌍, ElevenLabs Scribe v2 🗣",
       "patterns": [
         "ai/ml",
         "agents",
@@ -4402,7 +4218,7 @@
     {
       "id": "idea:310",
       "title": "DevOps: Docker (2025-12-16)",
-      "summary": "Exploring docker trends with 263 mentions. Apple satellite features \ud83d\udef0\ufe0f, inside Cursor \ud83d\udc68\u200d\ud83d\udcbb, becoming full stack \ud83d\udcbc\u00a0 Also: GitHub Discussion: Ability to import docker-compose defintion and convert them a",
+      "summary": "Exploring docker trends with 263 mentions. Apple satellite features 🛰️, inside Cursor 👨‍💻, becoming full stack 💼  Also: GitHub Discussion: Ability to import docker-compose defintion and convert them a",
       "patterns": [
         "devops",
         "docker",
@@ -4468,7 +4284,7 @@
     {
       "id": "idea:312",
       "title": "Apple Innovation (2025-12-16)",
-      "summary": "Exploring apple trends with 336 mentions. Apple Mini Apps \ud83d\udcf1, Blue Origin lands rocket \ud83d\ude80, GPT-5.1 for devs \ud83d\udc68\u200d\ud83d\udcbb\u00a0 Also: Apple satellite features \ud83d\udef0\ufe0f, inside Cursor \ud83d\udc68\u200d\ud83d\udcbb, becoming full stack \ud83d\udcbc\u00a0",
+      "summary": "Exploring apple trends with 336 mentions. Apple Mini Apps 📱, Blue Origin lands rocket 🚀, GPT-5.1 for devs 👨‍💻  Also: Apple satellite features 🛰️, inside Cursor 👨‍💻, becoming full stack 💼 ",
       "patterns": [
         "apple",
         "company_innovation",
@@ -4501,7 +4317,7 @@
     {
       "id": "idea:313",
       "title": "Nvidia Innovation (2025-12-16)",
-      "summary": "Exploring nvidia trends with 268 mentions. SoftBank dumps Nvidia \ud83d\udcb0, SpaceX GigaBay \ud83d\ude80, devtool integration \ud83d\udc68\u200d\ud83d\udcbb Also: DeepSeek uses banned Nvidia chips for AI model, report says",
+      "summary": "Exploring nvidia trends with 268 mentions. SoftBank dumps Nvidia 💰, SpaceX GigaBay 🚀, devtool integration 👨‍💻 Also: DeepSeek uses banned Nvidia chips for AI model, report says",
       "patterns": [
         "nvidia",
         "company_innovation",
@@ -4534,7 +4350,7 @@
     {
       "id": "idea:314",
       "title": "Google Innovation (2025-12-16)",
-      "summary": "Exploring google trends with 513 mentions. Cursor $29B valuation \ud83d\udcb0, Google Code Wiki \ud83d\udc68\u200d\ud83d\udcbb, advanced Nano Banana tips \ud83c\udf4c Also: A new Google model is nearly perfect on automated handwriting recognition",
+      "summary": "Exploring google trends with 513 mentions. Cursor $29B valuation 💰, Google Code Wiki 👨‍💻, advanced Nano Banana tips 🍌 Also: A new Google model is nearly perfect on automated handwriting recognition",
       "patterns": [
         "google",
         "company_innovation",
@@ -5050,7 +4866,7 @@
     {
       "id": "idea:328",
       "title": "AI/ML: Gpt (2025-12-17)",
-      "summary": "Exploring gpt trends with 848 mentions. GPT-5.1: A smarter, more conversational ChatGPT Also: Apple Mini Apps \ud83d\udcf1, Blue Origin lands rocket \ud83d\ude80, GPT-5.1 for devs \ud83d\udc68\u200d\ud83d\udcbb\u00a0",
+      "summary": "Exploring gpt trends with 848 mentions. GPT-5.1: A smarter, more conversational ChatGPT Also: Apple Mini Apps 📱, Blue Origin lands rocket 🚀, GPT-5.1 for devs 👨‍💻 ",
       "patterns": [
         "gpt",
         "ai/ml",
@@ -5083,7 +4899,7 @@
     {
       "id": "idea:329",
       "title": "AI/ML: Claude (2025-12-17)",
-      "summary": "Exploring claude trends with 381 mentions. GPT-5.1 \ud83e\udd16, Waymo hits highways \ud83d\ude97, Homebrew 5 \ud83d\udc68\u200d\ud83d\udcbb Also: Apple satellite features \ud83d\udef0\ufe0f, inside Cursor \ud83d\udc68\u200d\ud83d\udcbb, becoming full stack \ud83d\udcbc\u00a0",
+      "summary": "Exploring claude trends with 381 mentions. GPT-5.1 🤖, Waymo hits highways 🚗, Homebrew 5 👨‍💻 Also: Apple satellite features 🛰️, inside Cursor 👨‍💻, becoming full stack 💼 ",
       "patterns": [
         "claude",
         "ai/ml",
@@ -5116,7 +4932,7 @@
     {
       "id": "idea:330",
       "title": "Languages: Typescript (2025-12-17)",
-      "summary": "Exploring typescript trends with 169 mentions. GPT-5.1 \ud83e\udd16, Waymo hits highways \ud83d\ude97, Homebrew 5 \ud83d\udc68\u200d\ud83d\udcbb Also: Unofficial Microsoft Teams client for Linux",
+      "summary": "Exploring typescript trends with 169 mentions. GPT-5.1 🤖, Waymo hits highways 🚗, Homebrew 5 👨‍💻 Also: Unofficial Microsoft Teams client for Linux",
       "patterns": [
         "typescript",
         "languages",
@@ -5149,7 +4965,7 @@
     {
       "id": "idea:331",
       "title": "AI/ML: Ai (2025-12-17)",
-      "summary": "Exploring ai trends with 1931 mentions. iPhone Air flops \ud83d\udcf1, Anthropic OpenAI financials leak \ud83d\udcb0, becoming a compiler engineer \ud83d\udc68\u200d\ud83d\udcbb Also: Apple satellite features \ud83d\udef0\ufe0f, inside Cursor \ud83d\udc68\u200d\ud83d\udcbb, becoming full stack \ud83d\udcbc\u00a0",
+      "summary": "Exploring ai trends with 1931 mentions. iPhone Air flops 📱, Anthropic OpenAI financials leak 💰, becoming a compiler engineer 👨‍💻 Also: Apple satellite features 🛰️, inside Cursor 👨‍💻, becoming full stack 💼 ",
       "patterns": [
         "ai/ml",
         "ai",
@@ -5202,7 +5018,7 @@
     {
       "id": "idea:332",
       "title": "AI/ML: Agents (2025-12-17)",
-      "summary": "Exploring agents trends with 615 mentions. Apple satellite features \ud83d\udef0\ufe0f, inside Cursor \ud83d\udc68\u200d\ud83d\udcbb, becoming full stack \ud83d\udcbc\u00a0 Also: ChatGPT Group Chats \ud83d\udcac, growing an RL environment \ud83c\udf0d, ElevenLabs Scribe v2 \ud83d\udde3",
+      "summary": "Exploring agents trends with 615 mentions. Apple satellite features 🛰️, inside Cursor 👨‍💻, becoming full stack 💼  Also: ChatGPT Group Chats 💬, growing an RL environment 🌍, ElevenLabs Scribe v2 🗣",
       "patterns": [
         "agents",
         "ai/ml",
@@ -5248,7 +5064,7 @@
     {
       "id": "idea:333",
       "title": "DevOps: Docker (2025-12-17)",
-      "summary": "Exploring docker trends with 181 mentions. Apple satellite features \ud83d\udef0\ufe0f, inside Cursor \ud83d\udc68\u200d\ud83d\udcbb, becoming full stack \ud83d\udcbc\u00a0 Also: GitHub Discussion: Ability to import docker-compose defintion and convert them a",
+      "summary": "Exploring docker trends with 181 mentions. Apple satellite features 🛰️, inside Cursor 👨‍💻, becoming full stack 💼  Also: GitHub Discussion: Ability to import docker-compose defintion and convert them a",
       "patterns": [
         "docker",
         "devops",
@@ -5314,7 +5130,7 @@
     {
       "id": "idea:335",
       "title": "Apple Innovation (2025-12-17)",
-      "summary": "Exploring apple trends with 294 mentions. Apple Mini Apps \ud83d\udcf1, Blue Origin lands rocket \ud83d\ude80, GPT-5.1 for devs \ud83d\udc68\u200d\ud83d\udcbb\u00a0 Also: Apple satellite features \ud83d\udef0\ufe0f, inside Cursor \ud83d\udc68\u200d\ud83d\udcbb, becoming full stack \ud83d\udcbc\u00a0",
+      "summary": "Exploring apple trends with 294 mentions. Apple Mini Apps 📱, Blue Origin lands rocket 🚀, GPT-5.1 for devs 👨‍💻  Also: Apple satellite features 🛰️, inside Cursor 👨‍💻, becoming full stack 💼 ",
       "patterns": [
         "apple",
         "company_innovation",
@@ -5347,7 +5163,7 @@
     {
       "id": "idea:336",
       "title": "Google Innovation (2025-12-17)",
-      "summary": "Exploring google trends with 444 mentions. Cursor $29B valuation \ud83d\udcb0, Google Code Wiki \ud83d\udc68\u200d\ud83d\udcbb, advanced Nano Banana tips \ud83c\udf4c Also: A new Google model is nearly perfect on automated handwriting recognition",
+      "summary": "Exploring google trends with 444 mentions. Cursor $29B valuation 💰, Google Code Wiki 👨‍💻, advanced Nano Banana tips 🍌 Also: A new Google model is nearly perfect on automated handwriting recognition",
       "patterns": [
         "company_innovation",
         "google",
@@ -5380,7 +5196,7 @@
     {
       "id": "idea:337",
       "title": "Cloudflare Innovation (2025-12-17)",
-      "summary": "Exploring cloudflare trends with 157 mentions. serverless-dns/serverless-dns - The RethinkDNS resolver that deploys to Cloudflare Workers, Deno Dep Also: Cloudflare\u2019s BYOIP API \u2601\ufe0f, Self-Service LLM Deployment \u2728, State of Rust Dependen",
+      "summary": "Exploring cloudflare trends with 157 mentions. serverless-dns/serverless-dns - The RethinkDNS resolver that deploys to Cloudflare Workers, Deno Dep Also: Cloudflare’s BYOIP API ☁️, Self-Service LLM Deployment ✨, State of Rust Dependen",
       "patterns": [
         "cloudflare",
         "company_innovation",
@@ -5413,7 +5229,7 @@
     {
       "id": "idea:338",
       "title": "Nvidia Innovation (2025-12-17)",
-      "summary": "Exploring nvidia trends with 233 mentions. SoftBank dumps Nvidia \ud83d\udcb0, SpaceX GigaBay \ud83d\ude80, devtool integration \ud83d\udc68\u200d\ud83d\udcbb Also: Elon $1T comp approved \ud83d\udcb0, Google TPUs threaten Nvidia \u26a1, agents from scratch \ud83d\udc68\u200d\ud83d\udcbb",
+      "summary": "Exploring nvidia trends with 233 mentions. SoftBank dumps Nvidia 💰, SpaceX GigaBay 🚀, devtool integration 👨‍💻 Also: Elon $1T comp approved 💰, Google TPUs threaten Nvidia ⚡, agents from scratch 👨‍💻",
       "patterns": [
         "company_innovation",
         "nvidia",
@@ -5933,7 +5749,7 @@
     {
       "id": "idea:352",
       "title": "AI/ML: Gpt (2025-12-18)",
-      "summary": "Exploring gpt trends with 848 mentions. GPT-5.1: A smarter, more conversational ChatGPT Also: Apple Mini Apps \ud83d\udcf1, Blue Origin lands rocket \ud83d\ude80, GPT-5.1 for devs \ud83d\udc68\u200d\ud83d\udcbb\u00a0",
+      "summary": "Exploring gpt trends with 848 mentions. GPT-5.1: A smarter, more conversational ChatGPT Also: Apple Mini Apps 📱, Blue Origin lands rocket 🚀, GPT-5.1 for devs 👨‍💻 ",
       "patterns": [
         "ai/ml",
         "gpt",
@@ -5966,7 +5782,7 @@
     {
       "id": "idea:353",
       "title": "AI/ML: Claude (2025-12-18)",
-      "summary": "Exploring claude trends with 381 mentions. GPT-5.1 \ud83e\udd16, Waymo hits highways \ud83d\ude97, Homebrew 5 \ud83d\udc68\u200d\ud83d\udcbb Also: Apple satellite features \ud83d\udef0\ufe0f, inside Cursor \ud83d\udc68\u200d\ud83d\udcbb, becoming full stack \ud83d\udcbc\u00a0",
+      "summary": "Exploring claude trends with 381 mentions. GPT-5.1 🤖, Waymo hits highways 🚗, Homebrew 5 👨‍💻 Also: Apple satellite features 🛰️, inside Cursor 👨‍💻, becoming full stack 💼 ",
       "patterns": [
         "claude",
         "ai/ml",
@@ -5999,7 +5815,7 @@
     {
       "id": "idea:354",
       "title": "Languages: Typescript (2025-12-18)",
-      "summary": "Exploring typescript trends with 169 mentions. GPT-5.1 \ud83e\udd16, Waymo hits highways \ud83d\ude97, Homebrew 5 \ud83d\udc68\u200d\ud83d\udcbb Also: Unofficial Microsoft Teams client for Linux",
+      "summary": "Exploring typescript trends with 169 mentions. GPT-5.1 🤖, Waymo hits highways 🚗, Homebrew 5 👨‍💻 Also: Unofficial Microsoft Teams client for Linux",
       "patterns": [
         "languages",
         "typescript",
@@ -6032,7 +5848,7 @@
     {
       "id": "idea:355",
       "title": "AI/ML: Ai (2025-12-18)",
-      "summary": "Exploring ai trends with 1931 mentions. iPhone Air flops \ud83d\udcf1, Anthropic OpenAI financials leak \ud83d\udcb0, becoming a compiler engineer \ud83d\udc68\u200d\ud83d\udcbb Also: Apple satellite features \ud83d\udef0\ufe0f, inside Cursor \ud83d\udc68\u200d\ud83d\udcbb, becoming full stack \ud83d\udcbc\u00a0",
+      "summary": "Exploring ai trends with 1931 mentions. iPhone Air flops 📱, Anthropic OpenAI financials leak 💰, becoming a compiler engineer 👨‍💻 Also: Apple satellite features 🛰️, inside Cursor 👨‍💻, becoming full stack 💼 ",
       "patterns": [
         "ai/ml",
         "ai",
@@ -6085,7 +5901,7 @@
     {
       "id": "idea:356",
       "title": "AI/ML: Agents (2025-12-18)",
-      "summary": "Exploring agents trends with 615 mentions. Apple satellite features \ud83d\udef0\ufe0f, inside Cursor \ud83d\udc68\u200d\ud83d\udcbb, becoming full stack \ud83d\udcbc\u00a0 Also: ChatGPT Group Chats \ud83d\udcac, growing an RL environment \ud83c\udf0d, ElevenLabs Scribe v2 \ud83d\udde3",
+      "summary": "Exploring agents trends with 615 mentions. Apple satellite features 🛰️, inside Cursor 👨‍💻, becoming full stack 💼  Also: ChatGPT Group Chats 💬, growing an RL environment 🌍, ElevenLabs Scribe v2 🗣",
       "patterns": [
         "ai/ml",
         "agents",
@@ -6131,7 +5947,7 @@
     {
       "id": "idea:357",
       "title": "DevOps: Docker (2025-12-18)",
-      "summary": "Exploring docker trends with 181 mentions. Apple satellite features \ud83d\udef0\ufe0f, inside Cursor \ud83d\udc68\u200d\ud83d\udcbb, becoming full stack \ud83d\udcbc\u00a0 Also: GitHub Discussion: Ability to import docker-compose defintion and convert them a",
+      "summary": "Exploring docker trends with 181 mentions. Apple satellite features 🛰️, inside Cursor 👨‍💻, becoming full stack 💼  Also: GitHub Discussion: Ability to import docker-compose defintion and convert them a",
       "patterns": [
         "docker",
         "devops",
@@ -6197,7 +6013,7 @@
     {
       "id": "idea:359",
       "title": "Apple Innovation (2025-12-18)",
-      "summary": "Exploring apple trends with 294 mentions. Apple Mini Apps \ud83d\udcf1, Blue Origin lands rocket \ud83d\ude80, GPT-5.1 for devs \ud83d\udc68\u200d\ud83d\udcbb\u00a0 Also: Apple satellite features \ud83d\udef0\ufe0f, inside Cursor \ud83d\udc68\u200d\ud83d\udcbb, becoming full stack \ud83d\udcbc\u00a0",
+      "summary": "Exploring apple trends with 294 mentions. Apple Mini Apps 📱, Blue Origin lands rocket 🚀, GPT-5.1 for devs 👨‍💻  Also: Apple satellite features 🛰️, inside Cursor 👨‍💻, becoming full stack 💼 ",
       "patterns": [
         "apple",
         "company_innovation",
@@ -6230,7 +6046,7 @@
     {
       "id": "idea:360",
       "title": "Google Innovation (2025-12-18)",
-      "summary": "Exploring google trends with 444 mentions. Cursor $29B valuation \ud83d\udcb0, Google Code Wiki \ud83d\udc68\u200d\ud83d\udcbb, advanced Nano Banana tips \ud83c\udf4c Also: A new Google model is nearly perfect on automated handwriting recognition",
+      "summary": "Exploring google trends with 444 mentions. Cursor $29B valuation 💰, Google Code Wiki 👨‍💻, advanced Nano Banana tips 🍌 Also: A new Google model is nearly perfect on automated handwriting recognition",
       "patterns": [
         "google",
         "company_innovation",
@@ -6263,7 +6079,7 @@
     {
       "id": "idea:361",
       "title": "Cloudflare Innovation (2025-12-18)",
-      "summary": "Exploring cloudflare trends with 157 mentions. serverless-dns/serverless-dns - The RethinkDNS resolver that deploys to Cloudflare Workers, Deno Dep Also: Cloudflare\u2019s BYOIP API \u2601\ufe0f, Self-Service LLM Deployment \u2728, State of Rust Dependen",
+      "summary": "Exploring cloudflare trends with 157 mentions. serverless-dns/serverless-dns - The RethinkDNS resolver that deploys to Cloudflare Workers, Deno Dep Also: Cloudflare’s BYOIP API ☁️, Self-Service LLM Deployment ✨, State of Rust Dependen",
       "patterns": [
         "cloudflare",
         "company_innovation",
@@ -6296,7 +6112,7 @@
     {
       "id": "idea:362",
       "title": "Nvidia Innovation (2025-12-18)",
-      "summary": "Exploring nvidia trends with 233 mentions. SoftBank dumps Nvidia \ud83d\udcb0, SpaceX GigaBay \ud83d\ude80, devtool integration \ud83d\udc68\u200d\ud83d\udcbb Also: Elon $1T comp approved \ud83d\udcb0, Google TPUs threaten Nvidia \u26a1, agents from scratch \ud83d\udc68\u200d\ud83d\udcbb",
+      "summary": "Exploring nvidia trends with 233 mentions. SoftBank dumps Nvidia 💰, SpaceX GigaBay 🚀, devtool integration 👨‍💻 Also: Elon $1T comp approved 💰, Google TPUs threaten Nvidia ⚡, agents from scratch 👨‍💻",
       "patterns": [
         "nvidia",
         "company_innovation",
@@ -6713,7 +6529,7 @@
     {
       "id": "idea:373",
       "title": "AI/ML: Gpt (2025-12-19)",
-      "summary": "Exploring gpt trends with 1022 mentions. GPT-5.1: A smarter, more conversational ChatGPT Also: Apple Mini Apps \ud83d\udcf1, Blue Origin lands rocket \ud83d\ude80, GPT-5.1 for devs \ud83d\udc68\u200d\ud83d\udcbb\u00a0",
+      "summary": "Exploring gpt trends with 1022 mentions. GPT-5.1: A smarter, more conversational ChatGPT Also: Apple Mini Apps 📱, Blue Origin lands rocket 🚀, GPT-5.1 for devs 👨‍💻 ",
       "patterns": [
         "ai/ml",
         "gpt",
@@ -6747,7 +6563,7 @@
     {
       "id": "idea:374",
       "title": "AI/ML: Claude (2025-12-19)",
-      "summary": "Exploring claude trends with 483 mentions. GPT-5.1 \ud83e\udd16, Waymo hits highways \ud83d\ude97, Homebrew 5 \ud83d\udc68\u200d\ud83d\udcbb Also: Apple satellite features \ud83d\udef0\ufe0f, inside Cursor \ud83d\udc68\u200d\ud83d\udcbb, becoming full stack \ud83d\udcbc\u00a0",
+      "summary": "Exploring claude trends with 483 mentions. GPT-5.1 🤖, Waymo hits highways 🚗, Homebrew 5 👨‍💻 Also: Apple satellite features 🛰️, inside Cursor 👨‍💻, becoming full stack 💼 ",
       "patterns": [
         "claude",
         "ai/ml",
@@ -6781,7 +6597,7 @@
     {
       "id": "idea:375",
       "title": "Languages: Typescript (2025-12-19)",
-      "summary": "Exploring typescript trends with 249 mentions. GPT-5.1 \ud83e\udd16, Waymo hits highways \ud83d\ude97, Homebrew 5 \ud83d\udc68\u200d\ud83d\udcbb Also: GitHub Copilot Docs: About customizing GitHub Copilot responses",
+      "summary": "Exploring typescript trends with 249 mentions. GPT-5.1 🤖, Waymo hits highways 🚗, Homebrew 5 👨‍💻 Also: GitHub Copilot Docs: About customizing GitHub Copilot responses",
       "patterns": [
         "typescript",
         "languages",
@@ -6815,7 +6631,7 @@
     {
       "id": "idea:376",
       "title": "AI/ML: Ai (2025-12-19)",
-      "summary": "Exploring ai trends with 2389 mentions. iPhone Air flops \ud83d\udcf1, Anthropic OpenAI financials leak \ud83d\udcb0, becoming a compiler engineer \ud83d\udc68\u200d\ud83d\udcbb Also: Apple satellite features \ud83d\udef0\ufe0f, inside Cursor \ud83d\udc68\u200d\ud83d\udcbb, becoming full stack \ud83d\udcbc\u00a0",
+      "summary": "Exploring ai trends with 2389 mentions. iPhone Air flops 📱, Anthropic OpenAI financials leak 💰, becoming a compiler engineer 👨‍💻 Also: Apple satellite features 🛰️, inside Cursor 👨‍💻, becoming full stack 💼 ",
       "patterns": [
         "ai",
         "ai/ml",
@@ -6869,7 +6685,7 @@
     {
       "id": "idea:377",
       "title": "AI/ML: Agents (2025-12-19)",
-      "summary": "Exploring agents trends with 711 mentions. Apple satellite features \ud83d\udef0\ufe0f, inside Cursor \ud83d\udc68\u200d\ud83d\udcbb, becoming full stack \ud83d\udcbc\u00a0 Also: ChatGPT Group Chats \ud83d\udcac, growing an RL environment \ud83c\udf0d, ElevenLabs Scribe v2 \ud83d\udde3",
+      "summary": "Exploring agents trends with 711 mentions. Apple satellite features 🛰️, inside Cursor 👨‍💻, becoming full stack 💼  Also: ChatGPT Group Chats 💬, growing an RL environment 🌍, ElevenLabs Scribe v2 🗣",
       "patterns": [
         "agents",
         "ai/ml",
@@ -6916,7 +6732,7 @@
     {
       "id": "idea:378",
       "title": "DevOps: Docker (2025-12-19)",
-      "summary": "Exploring docker trends with 263 mentions. Apple satellite features \ud83d\udef0\ufe0f, inside Cursor \ud83d\udc68\u200d\ud83d\udcbb, becoming full stack \ud83d\udcbc\u00a0 Also: GitHub Discussion: Ability to import docker-compose defintion and convert them a",
+      "summary": "Exploring docker trends with 263 mentions. Apple satellite features 🛰️, inside Cursor 👨‍💻, becoming full stack 💼  Also: GitHub Discussion: Ability to import docker-compose defintion and convert them a",
       "patterns": [
         "devops",
         "docker",
@@ -6984,7 +6800,7 @@
     {
       "id": "idea:380",
       "title": "Apple Innovation (2025-12-19)",
-      "summary": "Exploring apple trends with 336 mentions. Apple Mini Apps \ud83d\udcf1, Blue Origin lands rocket \ud83d\ude80, GPT-5.1 for devs \ud83d\udc68\u200d\ud83d\udcbb\u00a0 Also: Apple satellite features \ud83d\udef0\ufe0f, inside Cursor \ud83d\udc68\u200d\ud83d\udcbb, becoming full stack \ud83d\udcbc\u00a0",
+      "summary": "Exploring apple trends with 336 mentions. Apple Mini Apps 📱, Blue Origin lands rocket 🚀, GPT-5.1 for devs 👨‍💻  Also: Apple satellite features 🛰️, inside Cursor 👨‍💻, becoming full stack 💼 ",
       "patterns": [
         "apple",
         "company_innovation",
@@ -7018,7 +6834,7 @@
     {
       "id": "idea:381",
       "title": "Nvidia Innovation (2025-12-19)",
-      "summary": "Exploring nvidia trends with 268 mentions. SoftBank dumps Nvidia \ud83d\udcb0, SpaceX GigaBay \ud83d\ude80, devtool integration \ud83d\udc68\u200d\ud83d\udcbb Also: DeepSeek uses banned Nvidia chips for AI model, report says",
+      "summary": "Exploring nvidia trends with 268 mentions. SoftBank dumps Nvidia 💰, SpaceX GigaBay 🚀, devtool integration 👨‍💻 Also: DeepSeek uses banned Nvidia chips for AI model, report says",
       "patterns": [
         "nvidia",
         "company_innovation",
@@ -7052,7 +6868,7 @@
     {
       "id": "idea:382",
       "title": "Google Innovation (2025-12-19)",
-      "summary": "Exploring google trends with 513 mentions. Cursor $29B valuation \ud83d\udcb0, Google Code Wiki \ud83d\udc68\u200d\ud83d\udcbb, advanced Nano Banana tips \ud83c\udf4c Also: A new Google model is nearly perfect on automated handwriting recognition",
+      "summary": "Exploring google trends with 513 mentions. Cursor $29B valuation 💰, Google Code Wiki 👨‍💻, advanced Nano Banana tips 🍌 Also: A new Google model is nearly perfect on automated handwriting recognition",
       "patterns": [
         "google",
         "company_innovation",
@@ -7576,7 +7392,7 @@
     {
       "id": "idea:396",
       "title": "AI/ML: Gpt (2025-12-20)",
-      "summary": "Exploring gpt trends with 848 mentions. GPT-5.1: A smarter, more conversational ChatGPT Also: Apple Mini Apps \ud83d\udcf1, Blue Origin lands rocket \ud83d\ude80, GPT-5.1 for devs \ud83d\udc68\u200d\ud83d\udcbb\u00a0",
+      "summary": "Exploring gpt trends with 848 mentions. GPT-5.1: A smarter, more conversational ChatGPT Also: Apple Mini Apps 📱, Blue Origin lands rocket 🚀, GPT-5.1 for devs 👨‍💻 ",
       "patterns": [
         "ai/ml",
         "gpt",
@@ -7610,7 +7426,7 @@
     {
       "id": "idea:397",
       "title": "AI/ML: Claude (2025-12-20)",
-      "summary": "Exploring claude trends with 381 mentions. GPT-5.1 \ud83e\udd16, Waymo hits highways \ud83d\ude97, Homebrew 5 \ud83d\udc68\u200d\ud83d\udcbb Also: Apple satellite features \ud83d\udef0\ufe0f, inside Cursor \ud83d\udc68\u200d\ud83d\udcbb, becoming full stack \ud83d\udcbc\u00a0",
+      "summary": "Exploring claude trends with 381 mentions. GPT-5.1 🤖, Waymo hits highways 🚗, Homebrew 5 👨‍💻 Also: Apple satellite features 🛰️, inside Cursor 👨‍💻, becoming full stack 💼 ",
       "patterns": [
         "ai/ml",
         "claude",
@@ -7644,7 +7460,7 @@
     {
       "id": "idea:398",
       "title": "Languages: Typescript (2025-12-20)",
-      "summary": "Exploring typescript trends with 169 mentions. GPT-5.1 \ud83e\udd16, Waymo hits highways \ud83d\ude97, Homebrew 5 \ud83d\udc68\u200d\ud83d\udcbb Also: Unofficial Microsoft Teams client for Linux",
+      "summary": "Exploring typescript trends with 169 mentions. GPT-5.1 🤖, Waymo hits highways 🚗, Homebrew 5 👨‍💻 Also: Unofficial Microsoft Teams client for Linux",
       "patterns": [
         "languages",
         "typescript",
@@ -7678,7 +7494,7 @@
     {
       "id": "idea:399",
       "title": "AI/ML: Ai (2025-12-20)",
-      "summary": "Exploring ai trends with 1931 mentions. iPhone Air flops \ud83d\udcf1, Anthropic OpenAI financials leak \ud83d\udcb0, becoming a compiler engineer \ud83d\udc68\u200d\ud83d\udcbb Also: Apple satellite features \ud83d\udef0\ufe0f, inside Cursor \ud83d\udc68\u200d\ud83d\udcbb, becoming full stack \ud83d\udcbc\u00a0",
+      "summary": "Exploring ai trends with 1931 mentions. iPhone Air flops 📱, Anthropic OpenAI financials leak 💰, becoming a compiler engineer 👨‍💻 Also: Apple satellite features 🛰️, inside Cursor 👨‍💻, becoming full stack 💼 ",
       "patterns": [
         "ai/ml",
         "ai",
@@ -7732,7 +7548,7 @@
     {
       "id": "idea:400",
       "title": "AI/ML: Agents (2025-12-20)",
-      "summary": "Exploring agents trends with 615 mentions. Apple satellite features \ud83d\udef0\ufe0f, inside Cursor \ud83d\udc68\u200d\ud83d\udcbb, becoming full stack \ud83d\udcbc\u00a0 Also: ChatGPT Group Chats \ud83d\udcac, growing an RL environment \ud83c\udf0d, ElevenLabs Scribe v2 \ud83d\udde3",
+      "summary": "Exploring agents trends with 615 mentions. Apple satellite features 🛰️, inside Cursor 👨‍💻, becoming full stack 💼  Also: ChatGPT Group Chats 💬, growing an RL environment 🌍, ElevenLabs Scribe v2 🗣",
       "patterns": [
         "ai/ml",
         "agents",
@@ -7779,7 +7595,7 @@
     {
       "id": "idea:401",
       "title": "DevOps: Docker (2025-12-20)",
-      "summary": "Exploring docker trends with 181 mentions. Apple satellite features \ud83d\udef0\ufe0f, inside Cursor \ud83d\udc68\u200d\ud83d\udcbb, becoming full stack \ud83d\udcbc\u00a0 Also: GitHub Discussion: Ability to import docker-compose defintion and convert them a",
+      "summary": "Exploring docker trends with 181 mentions. Apple satellite features 🛰️, inside Cursor 👨‍💻, becoming full stack 💼  Also: GitHub Discussion: Ability to import docker-compose defintion and convert them a",
       "patterns": [
         "docker",
         "devops",
@@ -7847,7 +7663,7 @@
     {
       "id": "idea:403",
       "title": "Apple Innovation (2025-12-20)",
-      "summary": "Exploring apple trends with 294 mentions. Apple Mini Apps \ud83d\udcf1, Blue Origin lands rocket \ud83d\ude80, GPT-5.1 for devs \ud83d\udc68\u200d\ud83d\udcbb\u00a0 Also: Apple satellite features \ud83d\udef0\ufe0f, inside Cursor \ud83d\udc68\u200d\ud83d\udcbb, becoming full stack \ud83d\udcbc\u00a0",
+      "summary": "Exploring apple trends with 294 mentions. Apple Mini Apps 📱, Blue Origin lands rocket 🚀, GPT-5.1 for devs 👨‍💻  Also: Apple satellite features 🛰️, inside Cursor 👨‍💻, becoming full stack 💼 ",
       "patterns": [
         "company_innovation",
         "apple",
@@ -7881,7 +7697,7 @@
     {
       "id": "idea:404",
       "title": "Google Innovation (2025-12-20)",
-      "summary": "Exploring google trends with 444 mentions. Cursor $29B valuation \ud83d\udcb0, Google Code Wiki \ud83d\udc68\u200d\ud83d\udcbb, advanced Nano Banana tips \ud83c\udf4c Also: A new Google model is nearly perfect on automated handwriting recognition",
+      "summary": "Exploring google trends with 444 mentions. Cursor $29B valuation 💰, Google Code Wiki 👨‍💻, advanced Nano Banana tips 🍌 Also: A new Google model is nearly perfect on automated handwriting recognition",
       "patterns": [
         "google",
         "company_innovation",
@@ -7915,7 +7731,7 @@
     {
       "id": "idea:405",
       "title": "Cloudflare Innovation (2025-12-20)",
-      "summary": "Exploring cloudflare trends with 157 mentions. serverless-dns/serverless-dns - The RethinkDNS resolver that deploys to Cloudflare Workers, Deno Dep Also: Cloudflare\u2019s BYOIP API \u2601\ufe0f, Self-Service LLM Deployment \u2728, State of Rust Dependen",
+      "summary": "Exploring cloudflare trends with 157 mentions. serverless-dns/serverless-dns - The RethinkDNS resolver that deploys to Cloudflare Workers, Deno Dep Also: Cloudflare’s BYOIP API ☁️, Self-Service LLM Deployment ✨, State of Rust Dependen",
       "patterns": [
         "company_innovation",
         "cloudflare",
@@ -7949,7 +7765,7 @@
     {
       "id": "idea:406",
       "title": "Nvidia Innovation (2025-12-20)",
-      "summary": "Exploring nvidia trends with 233 mentions. SoftBank dumps Nvidia \ud83d\udcb0, SpaceX GigaBay \ud83d\ude80, devtool integration \ud83d\udc68\u200d\ud83d\udcbb Also: Elon $1T comp approved \ud83d\udcb0, Google TPUs threaten Nvidia \u26a1, agents from scratch \ud83d\udc68\u200d\ud83d\udcbb",
+      "summary": "Exploring nvidia trends with 233 mentions. SoftBank dumps Nvidia 💰, SpaceX GigaBay 🚀, devtool integration 👨‍💻 Also: Elon $1T comp approved 💰, Google TPUs threaten Nvidia ⚡, agents from scratch 👨‍💻",
       "patterns": [
         "nvidia",
         "company_innovation",
@@ -8470,7 +8286,7 @@
     {
       "id": "idea:420",
       "title": "AI/ML: Gpt (2025-12-21)",
-      "summary": "Exploring gpt trends with 1022 mentions. GPT-5.1: A smarter, more conversational ChatGPT Also: Apple Mini Apps \ud83d\udcf1, Blue Origin lands rocket \ud83d\ude80, GPT-5.1 for devs \ud83d\udc68\u200d\ud83d\udcbb\u00a0",
+      "summary": "Exploring gpt trends with 1022 mentions. GPT-5.1: A smarter, more conversational ChatGPT Also: Apple Mini Apps 📱, Blue Origin lands rocket 🚀, GPT-5.1 for devs 👨‍💻 ",
       "patterns": [
         "ai/ml",
         "gpt",
@@ -8503,7 +8319,7 @@
     {
       "id": "idea:421",
       "title": "AI/ML: Claude (2025-12-21)",
-      "summary": "Exploring claude trends with 483 mentions. GPT-5.1 \ud83e\udd16, Waymo hits highways \ud83d\ude97, Homebrew 5 \ud83d\udc68\u200d\ud83d\udcbb Also: Apple satellite features \ud83d\udef0\ufe0f, inside Cursor \ud83d\udc68\u200d\ud83d\udcbb, becoming full stack \ud83d\udcbc\u00a0",
+      "summary": "Exploring claude trends with 483 mentions. GPT-5.1 🤖, Waymo hits highways 🚗, Homebrew 5 👨‍💻 Also: Apple satellite features 🛰️, inside Cursor 👨‍💻, becoming full stack 💼 ",
       "patterns": [
         "claude",
         "ai/ml",
@@ -8536,7 +8352,7 @@
     {
       "id": "idea:422",
       "title": "Languages: Typescript (2025-12-21)",
-      "summary": "Exploring typescript trends with 249 mentions. GPT-5.1 \ud83e\udd16, Waymo hits highways \ud83d\ude97, Homebrew 5 \ud83d\udc68\u200d\ud83d\udcbb Also: GitHub Copilot Docs: About customizing GitHub Copilot responses",
+      "summary": "Exploring typescript trends with 249 mentions. GPT-5.1 🤖, Waymo hits highways 🚗, Homebrew 5 👨‍💻 Also: GitHub Copilot Docs: About customizing GitHub Copilot responses",
       "patterns": [
         "typescript",
         "languages",
@@ -8569,7 +8385,7 @@
     {
       "id": "idea:423",
       "title": "AI/ML: Ai (2025-12-21)",
-      "summary": "Exploring ai trends with 2389 mentions. iPhone Air flops \ud83d\udcf1, Anthropic OpenAI financials leak \ud83d\udcb0, becoming a compiler engineer \ud83d\udc68\u200d\ud83d\udcbb Also: Apple satellite features \ud83d\udef0\ufe0f, inside Cursor \ud83d\udc68\u200d\ud83d\udcbb, becoming full stack \ud83d\udcbc\u00a0",
+      "summary": "Exploring ai trends with 2389 mentions. iPhone Air flops 📱, Anthropic OpenAI financials leak 💰, becoming a compiler engineer 👨‍💻 Also: Apple satellite features 🛰️, inside Cursor 👨‍💻, becoming full stack 💼 ",
       "patterns": [
         "ai",
         "ai/ml",
@@ -8622,7 +8438,7 @@
     {
       "id": "idea:424",
       "title": "AI/ML: Agents (2025-12-21)",
-      "summary": "Exploring agents trends with 711 mentions. Apple satellite features \ud83d\udef0\ufe0f, inside Cursor \ud83d\udc68\u200d\ud83d\udcbb, becoming full stack \ud83d\udcbc\u00a0 Also: ChatGPT Group Chats \ud83d\udcac, growing an RL environment \ud83c\udf0d, ElevenLabs Scribe v2 \ud83d\udde3",
+      "summary": "Exploring agents trends with 711 mentions. Apple satellite features 🛰️, inside Cursor 👨‍💻, becoming full stack 💼  Also: ChatGPT Group Chats 💬, growing an RL environment 🌍, ElevenLabs Scribe v2 🗣",
       "patterns": [
         "agents",
         "ai/ml",
@@ -8668,7 +8484,7 @@
     {
       "id": "idea:425",
       "title": "DevOps: Docker (2025-12-21)",
-      "summary": "Exploring docker trends with 263 mentions. Apple satellite features \ud83d\udef0\ufe0f, inside Cursor \ud83d\udc68\u200d\ud83d\udcbb, becoming full stack \ud83d\udcbc\u00a0 Also: GitHub Discussion: Ability to import docker-compose defintion and convert them a",
+      "summary": "Exploring docker trends with 263 mentions. Apple satellite features 🛰️, inside Cursor 👨‍💻, becoming full stack 💼  Also: GitHub Discussion: Ability to import docker-compose defintion and convert them a",
       "patterns": [
         "devops",
         "docker",
@@ -8734,7 +8550,7 @@
     {
       "id": "idea:427",
       "title": "Apple Innovation (2025-12-21)",
-      "summary": "Exploring apple trends with 336 mentions. Apple Mini Apps \ud83d\udcf1, Blue Origin lands rocket \ud83d\ude80, GPT-5.1 for devs \ud83d\udc68\u200d\ud83d\udcbb\u00a0 Also: Apple satellite features \ud83d\udef0\ufe0f, inside Cursor \ud83d\udc68\u200d\ud83d\udcbb, becoming full stack \ud83d\udcbc\u00a0",
+      "summary": "Exploring apple trends with 336 mentions. Apple Mini Apps 📱, Blue Origin lands rocket 🚀, GPT-5.1 for devs 👨‍💻  Also: Apple satellite features 🛰️, inside Cursor 👨‍💻, becoming full stack 💼 ",
       "patterns": [
         "company_innovation",
         "apple",
@@ -8767,7 +8583,7 @@
     {
       "id": "idea:428",
       "title": "Nvidia Innovation (2025-12-21)",
-      "summary": "Exploring nvidia trends with 268 mentions. SoftBank dumps Nvidia \ud83d\udcb0, SpaceX GigaBay \ud83d\ude80, devtool integration \ud83d\udc68\u200d\ud83d\udcbb Also: DeepSeek uses banned Nvidia chips for AI model, report says",
+      "summary": "Exploring nvidia trends with 268 mentions. SoftBank dumps Nvidia 💰, SpaceX GigaBay 🚀, devtool integration 👨‍💻 Also: DeepSeek uses banned Nvidia chips for AI model, report says",
       "patterns": [
         "company_innovation",
         "nvidia",
@@ -8800,7 +8616,7 @@
     {
       "id": "idea:429",
       "title": "Google Innovation (2025-12-21)",
-      "summary": "Exploring google trends with 513 mentions. Cursor $29B valuation \ud83d\udcb0, Google Code Wiki \ud83d\udc68\u200d\ud83d\udcbb, advanced Nano Banana tips \ud83c\udf4c Also: A new Google model is nearly perfect on automated handwriting recognition",
+      "summary": "Exploring google trends with 513 mentions. Cursor $29B valuation 💰, Google Code Wiki 👨‍💻, advanced Nano Banana tips 🍌 Also: A new Google model is nearly perfect on automated handwriting recognition",
       "patterns": [
         "company_innovation",
         "google",
@@ -9179,6 +8995,782 @@
       "category": "Integration",
       "analysis_date": "2025-12-21",
       "created_at": "2025-12-21T20:31:24Z"
+    },
+    {
+      "id": "idea:440",
+      "title": "Languages: Go (2025-12-22)",
+      "summary": "Exploring go trends with 430 mentions. Zed is our office Also: Reverse Engineering Yaesu FT-70D Firmware Encryption",
+      "patterns": [
+        "languages",
+        "go",
+        "topic:82bd93ca",
+        "date:2025-12-22"
+      ],
+      "companies": [
+        {
+          "name": "Tech Hub",
+          "city": "San Francisco",
+          "country": "US",
+          "lat": 37.7749,
+          "lng": -122.4194
+        }
+      ],
+      "inspiration_regions": [
+        {
+          "region_id": "US:San Francisco",
+          "lat": 37.7749,
+          "lng": -122.4194,
+          "weight": 1.0
+        }
+      ],
+      "source": "learning_analysis",
+      "mention_count": 430,
+      "category": "Languages",
+      "analysis_date": "2025-12-22",
+      "created_at": "2025-12-22T08:41:31Z"
+    },
+    {
+      "id": "idea:441",
+      "title": "DevOps: Cloud (2025-12-22)",
+      "summary": "Exploring cloud trends with 670 mentions. Checkout.com hacked, refuses ransom payment, donates to security labs Also: We cut our Mongo DB costs by 90% by moving to Hetzner",
+      "patterns": [
+        "devops",
+        "cloud",
+        "topic:3ea9011d",
+        "date:2025-12-22"
+      ],
+      "companies": [
+        {
+          "name": "AWS",
+          "city": "Seattle",
+          "country": "US",
+          "lat": 47.6062,
+          "lng": -122.3321
+        },
+        {
+          "name": "Microsoft Azure",
+          "city": "Redmond",
+          "country": "US",
+          "lat": 47.674,
+          "lng": -122.1215
+        },
+        {
+          "name": "Google Cloud",
+          "city": "San Francisco",
+          "country": "US",
+          "lat": 37.7749,
+          "lng": -122.4194
+        }
+      ],
+      "inspiration_regions": [
+        {
+          "region_id": "US:Seattle",
+          "lat": 47.6062,
+          "lng": -122.3321,
+          "weight": 0.33
+        },
+        {
+          "region_id": "US:Redmond",
+          "lat": 47.674,
+          "lng": -122.1215,
+          "weight": 0.33
+        },
+        {
+          "region_id": "US:San Francisco",
+          "lat": 37.7749,
+          "lng": -122.4194,
+          "weight": 0.33
+        }
+      ],
+      "source": "learning_analysis",
+      "mention_count": 670,
+      "category": "DevOps",
+      "analysis_date": "2025-12-22",
+      "created_at": "2025-12-22T08:41:31Z"
+    },
+    {
+      "id": "idea:442",
+      "title": "Security: Security (2025-12-22)",
+      "summary": "Exploring security trends with 777 mentions. Checkout.com hacked, refuses ransom payment, donates to security labs Also: Android developer verification: Early access starts",
+      "patterns": [
+        "security",
+        "topic:3ea9011d",
+        "date:2025-12-22"
+      ],
+      "companies": [
+        {
+          "name": "Cloudflare",
+          "city": "San Francisco",
+          "country": "US",
+          "lat": 37.7749,
+          "lng": -122.4194
+        },
+        {
+          "name": "CrowdStrike",
+          "city": "Austin",
+          "country": "US",
+          "lat": 30.2672,
+          "lng": -97.7431
+        }
+      ],
+      "inspiration_regions": [
+        {
+          "region_id": "US:San Francisco",
+          "lat": 37.7749,
+          "lng": -122.4194,
+          "weight": 0.5
+        },
+        {
+          "region_id": "US:Austin",
+          "lat": 30.2672,
+          "lng": -97.7431,
+          "weight": 0.5
+        }
+      ],
+      "source": "learning_analysis",
+      "mention_count": 777,
+      "category": "Security",
+      "analysis_date": "2025-12-22",
+      "created_at": "2025-12-22T08:41:31Z"
+    },
+    {
+      "id": "idea:443",
+      "title": "DevOps: Aws (2025-12-22)",
+      "summary": "Exploring aws trends with 341 mentions. We cut our Mongo DB costs by 90% by moving to Hetzner Also: Messing with scraper bots",
+      "patterns": [
+        "aws",
+        "devops",
+        "topic:5330b4fa",
+        "date:2025-12-22"
+      ],
+      "companies": [
+        {
+          "name": "Tech Hub",
+          "city": "San Francisco",
+          "country": "US",
+          "lat": 37.7749,
+          "lng": -122.4194
+        }
+      ],
+      "inspiration_regions": [
+        {
+          "region_id": "US:San Francisco",
+          "lat": 37.7749,
+          "lng": -122.4194,
+          "weight": 1.0
+        }
+      ],
+      "source": "learning_analysis",
+      "mention_count": 341,
+      "category": "DevOps",
+      "analysis_date": "2025-12-22",
+      "created_at": "2025-12-22T08:41:31Z"
+    },
+    {
+      "id": "idea:444",
+      "title": "AI/ML: Gpt (2025-12-22)",
+      "summary": "Exploring gpt trends with 848 mentions. GPT-5.1: A smarter, more conversational ChatGPT Also: Apple Mini Apps 📱, Blue Origin lands rocket 🚀, GPT-5.1 for devs 👨‍💻 ",
+      "patterns": [
+        "ai/ml",
+        "gpt",
+        "topic:7718b558",
+        "date:2025-12-22"
+      ],
+      "companies": [
+        {
+          "name": "Tech Hub",
+          "city": "San Francisco",
+          "country": "US",
+          "lat": 37.7749,
+          "lng": -122.4194
+        }
+      ],
+      "inspiration_regions": [
+        {
+          "region_id": "US:San Francisco",
+          "lat": 37.7749,
+          "lng": -122.4194,
+          "weight": 1.0
+        }
+      ],
+      "source": "learning_analysis",
+      "mention_count": 848,
+      "category": "AI/ML",
+      "analysis_date": "2025-12-22",
+      "created_at": "2025-12-22T08:41:31Z"
+    },
+    {
+      "id": "idea:445",
+      "title": "AI/ML: Claude (2025-12-22)",
+      "summary": "Exploring claude trends with 381 mentions. GPT-5.1 🤖, Waymo hits highways 🚗, Homebrew 5 👨‍💻 Also: Apple satellite features 🛰️, inside Cursor 👨‍💻, becoming full stack 💼 ",
+      "patterns": [
+        "ai/ml",
+        "claude",
+        "topic:efafaf81",
+        "date:2025-12-22"
+      ],
+      "companies": [
+        {
+          "name": "Tech Hub",
+          "city": "San Francisco",
+          "country": "US",
+          "lat": 37.7749,
+          "lng": -122.4194
+        }
+      ],
+      "inspiration_regions": [
+        {
+          "region_id": "US:San Francisco",
+          "lat": 37.7749,
+          "lng": -122.4194,
+          "weight": 1.0
+        }
+      ],
+      "source": "learning_analysis",
+      "mention_count": 381,
+      "category": "AI/ML",
+      "analysis_date": "2025-12-22",
+      "created_at": "2025-12-22T08:41:31Z"
+    },
+    {
+      "id": "idea:446",
+      "title": "Languages: Typescript (2025-12-22)",
+      "summary": "Exploring typescript trends with 169 mentions. GPT-5.1 🤖, Waymo hits highways 🚗, Homebrew 5 👨‍💻 Also: Unofficial Microsoft Teams client for Linux",
+      "patterns": [
+        "typescript",
+        "languages",
+        "topic:efafaf81",
+        "date:2025-12-22"
+      ],
+      "companies": [
+        {
+          "name": "Tech Hub",
+          "city": "San Francisco",
+          "country": "US",
+          "lat": 37.7749,
+          "lng": -122.4194
+        }
+      ],
+      "inspiration_regions": [
+        {
+          "region_id": "US:San Francisco",
+          "lat": 37.7749,
+          "lng": -122.4194,
+          "weight": 1.0
+        }
+      ],
+      "source": "learning_analysis",
+      "mention_count": 169,
+      "category": "Languages",
+      "analysis_date": "2025-12-22",
+      "created_at": "2025-12-22T08:41:31Z"
+    },
+    {
+      "id": "idea:447",
+      "title": "AI/ML: Ai (2025-12-22)",
+      "summary": "Exploring ai trends with 1931 mentions. iPhone Air flops 📱, Anthropic OpenAI financials leak 💰, becoming a compiler engineer 👨‍💻 Also: Apple satellite features 🛰️, inside Cursor 👨‍💻, becoming full stack 💼 ",
+      "patterns": [
+        "ai",
+        "ai/ml",
+        "topic:9b7b9c46",
+        "date:2025-12-22"
+      ],
+      "companies": [
+        {
+          "name": "OpenAI",
+          "city": "San Francisco",
+          "country": "US",
+          "lat": 37.7749,
+          "lng": -122.4194
+        },
+        {
+          "name": "DeepMind",
+          "city": "London",
+          "country": "GB",
+          "lat": 51.5074,
+          "lng": -0.1278
+        },
+        {
+          "name": "Anthropic",
+          "city": "San Francisco",
+          "country": "US",
+          "lat": 37.7749,
+          "lng": -122.4194
+        }
+      ],
+      "inspiration_regions": [
+        {
+          "region_id": "US:San Francisco",
+          "lat": 37.7749,
+          "lng": -122.4194,
+          "weight": 0.67
+        },
+        {
+          "region_id": "GB:London",
+          "lat": 51.5074,
+          "lng": -0.1278,
+          "weight": 0.33
+        }
+      ],
+      "source": "learning_analysis",
+      "mention_count": 1931,
+      "category": "AI/ML",
+      "analysis_date": "2025-12-22",
+      "created_at": "2025-12-22T08:41:31Z"
+    },
+    {
+      "id": "idea:448",
+      "title": "AI/ML: Agents (2025-12-22)",
+      "summary": "Exploring agents trends with 615 mentions. Apple satellite features 🛰️, inside Cursor 👨‍💻, becoming full stack 💼  Also: ChatGPT Group Chats 💬, growing an RL environment 🌍, ElevenLabs Scribe v2 🗣",
+      "patterns": [
+        "ai/ml",
+        "agents",
+        "topic:acd2dc29",
+        "date:2025-12-22"
+      ],
+      "companies": [
+        {
+          "name": "OpenAI",
+          "city": "San Francisco",
+          "country": "US",
+          "lat": 37.7749,
+          "lng": -122.4194
+        },
+        {
+          "name": "Microsoft",
+          "city": "Redmond",
+          "country": "US",
+          "lat": 47.674,
+          "lng": -122.1215
+        }
+      ],
+      "inspiration_regions": [
+        {
+          "region_id": "US:San Francisco",
+          "lat": 37.7749,
+          "lng": -122.4194,
+          "weight": 0.5
+        },
+        {
+          "region_id": "US:Redmond",
+          "lat": 47.674,
+          "lng": -122.1215,
+          "weight": 0.5
+        }
+      ],
+      "source": "learning_analysis",
+      "mention_count": 615,
+      "category": "AI/ML",
+      "analysis_date": "2025-12-22",
+      "created_at": "2025-12-22T08:41:31Z"
+    },
+    {
+      "id": "idea:449",
+      "title": "DevOps: Docker (2025-12-22)",
+      "summary": "Exploring docker trends with 181 mentions. Apple satellite features 🛰️, inside Cursor 👨‍💻, becoming full stack 💼  Also: GitHub Discussion: Ability to import docker-compose defintion and convert them a",
+      "patterns": [
+        "devops",
+        "docker",
+        "topic:acd2dc29",
+        "date:2025-12-22"
+      ],
+      "companies": [
+        {
+          "name": "Tech Hub",
+          "city": "San Francisco",
+          "country": "US",
+          "lat": 37.7749,
+          "lng": -122.4194
+        }
+      ],
+      "inspiration_regions": [
+        {
+          "region_id": "US:San Francisco",
+          "lat": 37.7749,
+          "lng": -122.4194,
+          "weight": 1.0
+        }
+      ],
+      "source": "learning_analysis",
+      "mention_count": 181,
+      "category": "DevOps",
+      "analysis_date": "2025-12-22",
+      "created_at": "2025-12-22T08:41:31Z"
+    },
+    {
+      "id": "idea:450",
+      "title": "Github Innovation (2025-12-22)",
+      "summary": "Exploring github trends with 990 mentions. GitHub Partial Outage Also: GitHub Copilot Docs: About billing for GitHub Copilot in organizations and enter",
+      "patterns": [
+        "company_innovation",
+        "github",
+        "topic:ab93d59d",
+        "date:2025-12-22"
+      ],
+      "companies": [
+        {
+          "name": "Tech Hub",
+          "city": "San Francisco",
+          "country": "US",
+          "lat": 37.7749,
+          "lng": -122.4194
+        }
+      ],
+      "inspiration_regions": [
+        {
+          "region_id": "US:San Francisco",
+          "lat": 37.7749,
+          "lng": -122.4194,
+          "weight": 1.0
+        }
+      ],
+      "source": "learning_analysis",
+      "mention_count": 990,
+      "category": "Company Innovation",
+      "analysis_date": "2025-12-22",
+      "created_at": "2025-12-22T08:41:31Z"
+    },
+    {
+      "id": "idea:451",
+      "title": "Apple Innovation (2025-12-22)",
+      "summary": "Exploring apple trends with 294 mentions. Apple Mini Apps 📱, Blue Origin lands rocket 🚀, GPT-5.1 for devs 👨‍💻  Also: Apple satellite features 🛰️, inside Cursor 👨‍💻, becoming full stack 💼 ",
+      "patterns": [
+        "company_innovation",
+        "apple",
+        "topic:0de24af9",
+        "date:2025-12-22"
+      ],
+      "companies": [
+        {
+          "name": "Tech Hub",
+          "city": "San Francisco",
+          "country": "US",
+          "lat": 37.7749,
+          "lng": -122.4194
+        }
+      ],
+      "inspiration_regions": [
+        {
+          "region_id": "US:San Francisco",
+          "lat": 37.7749,
+          "lng": -122.4194,
+          "weight": 1.0
+        }
+      ],
+      "source": "learning_analysis",
+      "mention_count": 294,
+      "category": "Company Innovation",
+      "analysis_date": "2025-12-22",
+      "created_at": "2025-12-22T08:41:31Z"
+    },
+    {
+      "id": "idea:452",
+      "title": "Google Innovation (2025-12-22)",
+      "summary": "Exploring google trends with 444 mentions. Cursor $29B valuation 💰, Google Code Wiki 👨‍💻, advanced Nano Banana tips 🍌 Also: A new Google model is nearly perfect on automated handwriting recognition",
+      "patterns": [
+        "company_innovation",
+        "google",
+        "topic:89086c33",
+        "date:2025-12-22"
+      ],
+      "companies": [
+        {
+          "name": "Tech Hub",
+          "city": "San Francisco",
+          "country": "US",
+          "lat": 37.7749,
+          "lng": -122.4194
+        }
+      ],
+      "inspiration_regions": [
+        {
+          "region_id": "US:San Francisco",
+          "lat": 37.7749,
+          "lng": -122.4194,
+          "weight": 1.0
+        }
+      ],
+      "source": "learning_analysis",
+      "mention_count": 444,
+      "category": "Company Innovation",
+      "analysis_date": "2025-12-22",
+      "created_at": "2025-12-22T08:41:31Z"
+    },
+    {
+      "id": "idea:453",
+      "title": "Cloudflare Innovation (2025-12-22)",
+      "summary": "Exploring cloudflare trends with 157 mentions. serverless-dns/serverless-dns - The RethinkDNS resolver that deploys to Cloudflare Workers, Deno Dep Also: Cloudflare’s BYOIP API ☁️, Self-Service LLM Deployment ✨, State of Rust Dependen",
+      "patterns": [
+        "cloudflare",
+        "company_innovation",
+        "topic:e17b59bb",
+        "date:2025-12-22"
+      ],
+      "companies": [
+        {
+          "name": "Tech Hub",
+          "city": "San Francisco",
+          "country": "US",
+          "lat": 37.7749,
+          "lng": -122.4194
+        }
+      ],
+      "inspiration_regions": [
+        {
+          "region_id": "US:San Francisco",
+          "lat": 37.7749,
+          "lng": -122.4194,
+          "weight": 1.0
+        }
+      ],
+      "source": "learning_analysis",
+      "mention_count": 157,
+      "category": "Company Innovation",
+      "analysis_date": "2025-12-22",
+      "created_at": "2025-12-22T08:41:31Z"
+    },
+    {
+      "id": "idea:454",
+      "title": "Nvidia Innovation (2025-12-22)",
+      "summary": "Exploring nvidia trends with 233 mentions. SoftBank dumps Nvidia 💰, SpaceX GigaBay 🚀, devtool integration 👨‍💻 Also: Elon $1T comp approved 💰, Google TPUs threaten Nvidia ⚡, agents from scratch 👨‍💻",
+      "patterns": [
+        "company_innovation",
+        "nvidia",
+        "topic:2fcf6690",
+        "date:2025-12-22"
+      ],
+      "companies": [
+        {
+          "name": "Tech Hub",
+          "city": "San Francisco",
+          "country": "US",
+          "lat": 37.7749,
+          "lng": -122.4194
+        }
+      ],
+      "inspiration_regions": [
+        {
+          "region_id": "US:San Francisco",
+          "lat": 37.7749,
+          "lng": -122.4194,
+          "weight": 1.0
+        }
+      ],
+      "source": "learning_analysis",
+      "mention_count": 233,
+      "category": "Company Innovation",
+      "analysis_date": "2025-12-22",
+      "created_at": "2025-12-22T08:41:31Z"
+    },
+    {
+      "id": "idea:455",
+      "title": "Emerging Theme: Ai Agents (2025-12-22)",
+      "summary": "Exploring ai-agents trends with 10 mentions. Explore Ai Agents innovations",
+      "patterns": [
+        "ai",
+        "agents",
+        "ai-agents",
+        "emerging_theme",
+        "topic:513e9258",
+        "date:2025-12-22"
+      ],
+      "companies": [
+        {
+          "name": "Tech Hub",
+          "city": "San Francisco",
+          "country": "US",
+          "lat": 37.7749,
+          "lng": -122.4194
+        }
+      ],
+      "inspiration_regions": [
+        {
+          "region_id": "US:San Francisco",
+          "lat": 37.7749,
+          "lng": -122.4194,
+          "weight": 1.0
+        }
+      ],
+      "source": "learning_analysis",
+      "mention_count": 10,
+      "category": "Emerging Theme",
+      "analysis_date": "2025-12-22",
+      "created_at": "2025-12-22T08:41:31Z"
+    },
+    {
+      "id": "idea:456",
+      "title": "Emerging Theme: Go Specialist (2025-12-22)",
+      "summary": "Exploring go-specialist trends with 10 mentions. Explore Go Specialist innovations",
+      "patterns": [
+        "specialist",
+        "go",
+        "emerging_theme",
+        "go-specialist",
+        "topic:19368490",
+        "date:2025-12-22"
+      ],
+      "companies": [
+        {
+          "name": "Tech Hub",
+          "city": "San Francisco",
+          "country": "US",
+          "lat": 37.7749,
+          "lng": -122.4194
+        }
+      ],
+      "inspiration_regions": [
+        {
+          "region_id": "US:San Francisco",
+          "lat": 37.7749,
+          "lng": -122.4194,
+          "weight": 1.0
+        }
+      ],
+      "source": "learning_analysis",
+      "mention_count": 10,
+      "category": "Emerging Theme",
+      "analysis_date": "2025-12-22",
+      "created_at": "2025-12-22T08:41:31Z"
+    },
+    {
+      "id": "idea:457",
+      "title": "Emerging Theme: Cloud Infrastructure (2025-12-22)",
+      "summary": "Exploring cloud-infrastructure trends with 10 mentions. Explore Cloud Infrastructure innovations",
+      "patterns": [
+        "infrastructure",
+        "emerging_theme",
+        "cloud-infrastructure",
+        "cloud",
+        "topic:e63a2b93",
+        "date:2025-12-22"
+      ],
+      "companies": [
+        {
+          "name": "Tech Hub",
+          "city": "San Francisco",
+          "country": "US",
+          "lat": 37.7749,
+          "lng": -122.4194
+        }
+      ],
+      "inspiration_regions": [
+        {
+          "region_id": "US:San Francisco",
+          "lat": 37.7749,
+          "lng": -122.4194,
+          "weight": 1.0
+        }
+      ],
+      "source": "learning_analysis",
+      "mention_count": 10,
+      "category": "Emerging Theme",
+      "analysis_date": "2025-12-22",
+      "created_at": "2025-12-22T08:41:31Z"
+    },
+    {
+      "id": "idea:458",
+      "title": "Integration: Ai-Docker (2025-12-22)",
+      "summary": "Exploring ai-docker trends with 1056 mentions. AI + Infrastructure: Integrate AI capabilities with cloud infrastructure Also: Combining Ai and Docker for better solutions",
+      "patterns": [
+        "ai-docker",
+        "ai",
+        "docker",
+        "integration",
+        "topic:f5a2956b",
+        "date:2025-12-22"
+      ],
+      "companies": [
+        {
+          "name": "Tech Hub",
+          "city": "San Francisco",
+          "country": "US",
+          "lat": 37.7749,
+          "lng": -122.4194
+        }
+      ],
+      "inspiration_regions": [
+        {
+          "region_id": "US:San Francisco",
+          "lat": 37.7749,
+          "lng": -122.4194,
+          "weight": 1.0
+        }
+      ],
+      "source": "learning_analysis",
+      "mention_count": 1056,
+      "category": "Integration",
+      "analysis_date": "2025-12-22",
+      "created_at": "2025-12-22T08:41:31Z"
+    },
+    {
+      "id": "idea:459",
+      "title": "Integration: Security-Ai (2025-12-22)",
+      "summary": "Exploring security-ai trends with 1354 mentions. Security + AI: Apply AI/ML to enhance security systems Also: Combining Security and Ai for better solutions",
+      "patterns": [
+        "ai",
+        "security-ai",
+        "security",
+        "integration",
+        "topic:e1d7cbc1",
+        "date:2025-12-22"
+      ],
+      "companies": [
+        {
+          "name": "Tech Hub",
+          "city": "San Francisco",
+          "country": "US",
+          "lat": 37.7749,
+          "lng": -122.4194
+        }
+      ],
+      "inspiration_regions": [
+        {
+          "region_id": "US:San Francisco",
+          "lat": 37.7749,
+          "lng": -122.4194,
+          "weight": 1.0
+        }
+      ],
+      "source": "learning_analysis",
+      "mention_count": 1354,
+      "category": "Integration",
+      "analysis_date": "2025-12-22",
+      "created_at": "2025-12-22T08:41:31Z"
+    },
+    {
+      "id": "idea:460",
+      "title": "Integration: Cloud-Security (2025-12-22)",
+      "summary": "Exploring cloud-security trends with 723 mentions. Cloud + Security: Secure cloud infrastructure and deployments Also: Combining Cloud and Security for better solutions",
+      "patterns": [
+        "integration",
+        "security",
+        "cloud-security",
+        "cloud",
+        "topic:fe4dbf24",
+        "date:2025-12-22"
+      ],
+      "companies": [
+        {
+          "name": "Tech Hub",
+          "city": "San Francisco",
+          "country": "US",
+          "lat": 37.7749,
+          "lng": -122.4194
+        }
+      ],
+      "inspiration_regions": [
+        {
+          "region_id": "US:San Francisco",
+          "lat": 37.7749,
+          "lng": -122.4194,
+          "weight": 1.0
+        }
+      ],
+      "source": "learning_analysis",
+      "mention_count": 723,
+      "category": "Integration",
+      "analysis_date": "2025-12-22",
+      "created_at": "2025-12-22T08:41:31Z"
     }
   ]
 }
