@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 # Workflow Consolidation Validation Script
 
 echo "================================================"

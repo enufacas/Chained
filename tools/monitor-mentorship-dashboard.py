@@ -155,7 +155,7 @@ class MentorshipDashboard:
                     start_dt = datetime.fromisoformat(start)
                     end_dt = datetime.fromisoformat(end)
                     durations.append((end_dt - start_dt).days)
-                except:
+                except Exception:
                     pass
 
         return {
@@ -326,7 +326,7 @@ class MentorshipDashboard:
                         try:
                             start_dt = datetime.fromisoformat(start_date)
                             days_active = (datetime.now() - start_dt).days
-                        except:
+                        except Exception:
                             pass
                     
                     print(f"  🎯 {mentee_id}")

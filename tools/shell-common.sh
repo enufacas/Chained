@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 # Chained Shell Script Common Library
 # Shared functions and variables for consistency across shell scripts

@@ -224,7 +224,7 @@ class AgentEvolutionSystem:
             spawn_date = datetime.fromisoformat(spawned_at.replace('Z', '+00:00'))
             age_days = (datetime.now() - spawn_date.replace(tzinfo=None)).days
             longevity_bonus = min(0.1, age_days * 0.01)  # Up to 10% bonus
-        except:
+        except Exception:
             longevity_bonus = 0.0
         
         # Final fitness with longevity bonus
