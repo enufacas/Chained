@@ -30,7 +30,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x4) [#5112](https://github.com/enufacas/Chained/pull/5112)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x5) [#5117](https://github.com/enufacas/Chained/pull/5117)
 
 ---
 
@@ -38,6 +38,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### ✨ Features
 
+- 👤 Add Spotify-style Year in Review page for Chained [#5114](https://github.com/enufacas/Chained/pull/5114)
 - 🤖 meta-coordination: 2025-12-22 03:25 - closed 4 stale PRs, 67% reduction [#5113](https://github.com/enufacas/Chained/pull/5113)
 - 🤖 meta-coordination: 2025-12-22 00:59 - monitor conflicting PRs, verify assignments [#5103](https://github.com/enufacas/Chained/pull/5103)
 - 🤖 meta-coordination: 2025-12-21 20:12 - merged 1 PR, tracked metrics [#5073](https://github.com/enufacas/Chained/pull/5073)
@@ -317,7 +318,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x37) [#4460](https://github.com/enufacas/Chained/pull/4460)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x36) [#4460](https://github.com/enufacas/Chained/pull/4460)
 - 🤖 **Documentation**: 📚 Sync World State to Docs - Pipeline (x2) [#4471](https://github.com/enufacas/Chained/pull/4471)
 - 👤 🧠 Learning **Documentation**: Verify Daily Learning Reflection 2025-12-15 completion (@create-botter) [#4429](https://github.com/enufacas/Chained/pull/4429)
 - 👤 **Chore**: Complete Go Specialist mission idea:150 - Research report and world model update [#4475](https://github.com/enufacas/Chained/pull/4475)
