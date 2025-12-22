@@ -51,9 +51,9 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x34) [#5196](https://github.com/enufacas/Chained/pull/5196)
+- 🤖 **Documentation**: 📚 Sync World State to Docs - Pipeline (x2) [#5204](https://github.com/enufacas/Chained/pull/5204)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x35) [#5203](https://github.com/enufacas/Chained/pull/5203)
 - 👤 🧠 Learning **Documentation**: Verify Daily Learning Reflection 2025-12-22 (@create-botter) [#5160](https://github.com/enufacas/Chained/pull/5160)
-- 🤖 **Documentation**: 📚 Sync World State to Docs - Pipeline [#5142](https://github.com/enufacas/Chained/pull/5142)
 - 🤖 **Chore**: 🌍 World Model Update - Pipeline (x2) [#5195](https://github.com/enufacas/Chained/pull/5195)
 - 🤖 **Chore**: 📊 Goal progress update: ✅ Completed [#5189](https://github.com/enufacas/Chained/pull/5189)
 - 🤖 **Chore**: meta-coordination: 08:19 run - proactive cleanup, 1 stale PR closed [#5129](https://github.com/enufacas/Chained/pull/5129)
@@ -333,6 +333,5 @@ This changelog excludes automated data syncs and routine maintenance commits.
 - 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x9) [#4460](https://github.com/enufacas/Chained/pull/4460)
 - 🤖 **Documentation**: 📚 Sync World State to Docs - Pipeline [#4471](https://github.com/enufacas/Chained/pull/4471)
 - 👤 **Chore**: Complete Go Specialist mission idea:150 - Research report and world model update [#4475](https://github.com/enufacas/Chained/pull/4475)
-- 🤖 **Chore**: 🌍 World Model Update - Pipeline [#4463](https://github.com/enufacas/Chained/pull/4463)
 
 ---
