@@ -8,7 +8,7 @@ inputs:
   package-manager:
     description: Package manager (npm, yarn, pnpm)
     required: false
-    default: npm
+    default: 'npm'
   run-build:
     description: Whether to run build
     required: false
@@ -26,14 +26,40 @@ runs:
       node-version: ${{ inputs.node-version }}
   - name: Install dependencies
     shell: bash
-    run: "\ncase \"${{ inputs.package-manager }}\" in\n  npm)\n    npm ci\n    ;;\n\
-      \  yarn)\n    yarn install --frozen-lockfile\n    ;;\n  pnpm)\n    pnpm install\
-      \ --frozen-lockfile\n    ;;\nesac\n"
+    run: |
+      case "${{ inputs.package-manager }}" in
+        npm)
+          npm ci
+          ;;
+        yarn)
+          yarn install --frozen-lockfile
+          ;;
+        pnpm)
+          pnpm install --frozen-lockfile
+          ;;
+        *)
+          echo "Error: Unknown package manager '${{ inputs.package-manager }}'"
+          exit 1
+          ;;
+      esac
   - name: Run build
     if: inputs.run-build == 'true'
     shell: bash
-    run: ${{ inputs.package-manager }} run build
+    run: |
+      case "${{ inputs.package-manager }}" in
+        npm|yarn|pnpm)
+          ${{ inputs.package-manager }} run build
+          ;;
+      esac
   - name: Run tests
     if: inputs.run-tests == 'true'
     shell: bash
-    run: ${{ inputs.package-manager }} test
+    run: |
+      case "${{ inputs.package-manager }}" in
+        npm|yarn)
+          ${{ inputs.package-manager }} test
+          ;;
+        pnpm)
+          pnpm run test
+          ;;
+      esac
