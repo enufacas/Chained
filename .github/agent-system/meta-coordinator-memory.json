@@ -1,10 +1,10 @@
 {
   "version": "1.1",
   "created_at": "2025-11-24T05:17:32.537364",
-  "last_updated": "2025-12-22T10:22:19.993439",
+  "last_updated": "2025-12-22T14:19:12.477672",
   "runs": {
-    "total_runs": 313,
-    "successful_runs": 313,
+    "total_runs": 314,
+    "successful_runs": 314,
     "failed_runs": 0,
     "last_run": {
       "timestamp": "2025-12-19T16:21:17.079557",
@@ -23,24 +23,18 @@
     "approval_times": []
   },
   "issue_patterns": {
-    "total_issues_processed": 12,
+    "total_issues_processed": 13,
     "agents_assigned": {
-      "edge-cases-pro": 2037035976334486086268445688409378161051468393665936250636140449354381299763336706183397376,
-      "coach-master": 2037035976334486086268445688409378161051468393665936250636140449354381299763336706183397376,
-      "construct-specialist": 2037035976334486086268445688409378161051468393665936250636140449354381299763336706183397376,
-      "create-botter": 6111107929003458258805337117884280317432998529967972966342902819081459458700890201336578048,
-      "investigate-champion": 2037035976334486086268445688409378161051468393665936250636140449354381299763336706183397376,
-      "troubleshoot-expert": 2037035976334486086268445688409378161051468393665936250636140449354381299763336706183397376,
-      "align-wizard": 3533694129556768659166595001485837031654967793751237916243212402585239552
+      "edge-cases-pro": 4074071952668972172536891376818756322102936787331872501272280898708762599526673412366794752,
+      "coach-master": 4074071952668972172536891376818756322102936787331872501272280898708762599526673412366794752,
+      "construct-specialist": 4074071952668972172536891376818756322102936787331872501272280898708762599526673412366794752,
+      "create-botter": 12222215858006916517610674235768560634865997059935945932685805638162918917401780402673156097,
+      "investigate-champion": 4074071952668972172536891376818756322102936787331872501272280898708762599526673412366794752,
+      "troubleshoot-expert": 4074071952668972172536891376818756322102936787331872501272280898708762599526673412366794752,
+      "align-wizard": 7067388259113537318333190002971674063309935587502475832486424805170479104
     },
     "agent_success_rates": {},
     "assignment_times": [
-      {
-        "issue": 2768,
-        "agent": "edge-cases-pro",
-        "timestamp": "2025-11-24T10:54:58.012983",
-        "score": 11
-      },
       {
         "issue": 2753,
         "agent": "coach-master",
@@ -634,6 +628,12 @@
         "agent": "create-botter",
         "timestamp": "2025-12-20T14:17:08.008049",
         "score": 12.0
+      },
+      {
+        "issue": 5178,
+        "agent": "create-botter",
+        "timestamp": "2025-12-22T14:19:10.954103",
+        "score": 12
       }
     ]
   },
@@ -650,17 +650,6 @@
   },
   "decisions": {
     "recent": [
-      {
-        "type": "issue_assignment",
-        "description": "Assigned issue #2689 to create-botter (score: 11.00)",
-        "context": {
-          "issue_number": 2689,
-          "agent": "create-botter",
-          "score": 11
-        },
-        "timestamp": "2025-11-24T10:54:58.013052",
-        "session_id": "a8f53e273f33a934"
-      },
       {
         "type": "phase1_skipped_trivial_prs",
         "description": "Skipped tech lead review assignment for 3 automated sync PRs (trivial changes)",
@@ -1727,6 +1716,17 @@
         },
         "timestamp": "2025-12-20T14:17:08.008060",
         "session_id": "42366c3afffe4095"
+      },
+      {
+        "type": "issue_assignment",
+        "description": "Assigned issue #5178 to create-botter (score: 12.00)",
+        "context": {
+          "issue_number": 5178,
+          "agent": "create-botter",
+          "score": 12
+        },
+        "timestamp": "2025-12-22T14:19:10.954117",
+        "session_id": "58899f9964e9ffd8"
       }
     ],
     "patterns": {}
