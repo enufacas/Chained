@@ -30,7 +30,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x5) [#5117](https://github.com/enufacas/Chained/pull/5117)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x6) [#5118](https://github.com/enufacas/Chained/pull/5118)
 
 ---
 
@@ -60,6 +60,10 @@ This changelog excludes automated data syncs and routine maintenance commits.
 - 🤖 ⚙️ Workflows meta-coordination: 06:17 run - workflow automation integration and system state verification [#5012](https://github.com/enufacas/Chained/pull/5012)
 - 🤖 🎯 Daily goal for 2025-12-21 [#5014](https://github.com/enufacas/Chained/pull/5014)
 - 🤖 meta-coordination: 2025-12-21 04:29 run - baseline metrics established [#5009](https://github.com/enufacas/Chained/pull/5009)
+
+### 🐛 Bug Fixes
+
+- 👤 📊 GitHub Pages remove broken symlink causing GitHub Pages build failure [#5119](https://github.com/enufacas/Chained/pull/5119)
 
 ### 🧹 Chores & Maintenance
 
