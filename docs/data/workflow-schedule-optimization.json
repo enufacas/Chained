@@ -1,0 +1,230 @@
+{
+  "timestamp": "2025-12-23T10:24:36.776239+00:00",
+  "summary": {
+    "total_workflows": 10,
+    "collisions_detected": 4,
+    "optimization_opportunities": 4
+  },
+  "workflows": [
+    {
+      "name": "discover-universal-truths",
+      "file_path": ".github/workflows/discover-universal-truths.yml",
+      "cron_expression": "0 6 * * *",
+      "parsed_schedule": {
+        "minute": "0",
+        "hour": "6",
+        "day_of_month": "*",
+        "month": "*",
+        "day_of_week": "*"
+      },
+      "estimated_duration": 300,
+      "priority": "normal"
+    },
+    {
+      "name": "autonomous-ab-testing",
+      "file_path": ".github/workflows/autonomous-ab-testing.yml",
+      "cron_expression": "0 2 * * *",
+      "parsed_schedule": {
+        "minute": "0",
+        "hour": "2",
+        "day_of_month": "*",
+        "month": "*",
+        "day_of_week": "*"
+      },
+      "estimated_duration": 300,
+      "priority": "normal"
+    },
+    {
+      "name": "workflow-schedule-optimization",
+      "file_path": ".github/workflows/workflow-schedule-optimization.yml",
+      "cron_expression": "0 3 * * *",
+      "parsed_schedule": {
+        "minute": "0",
+        "hour": "3",
+        "day_of_month": "*",
+        "month": "*",
+        "day_of_week": "*"
+      },
+      "estimated_duration": 300,
+      "priority": "normal"
+    },
+    {
+      "name": "update-context-summaries",
+      "file_path": ".github/workflows/update-context-summaries.yml",
+      "cron_expression": "0 2 * * *",
+      "parsed_schedule": {
+        "minute": "0",
+        "hour": "2",
+        "day_of_month": "*",
+        "month": "*",
+        "day_of_week": "*"
+      },
+      "estimated_duration": 300,
+      "priority": "normal"
+    },
+    {
+      "name": "pr-failure-intelligence",
+      "file_path": ".github/workflows/pr-failure-intelligence.yml",
+      "cron_expression": "30 0 * * 0",
+      "parsed_schedule": {
+        "minute": "30",
+        "hour": "0",
+        "day_of_month": "*",
+        "month": "*",
+        "day_of_week": "0"
+      },
+      "estimated_duration": 300,
+      "priority": "normal"
+    },
+    {
+      "name": "prompt-performance-tracker",
+      "file_path": ".github/workflows/prompt-performance-tracker.yml",
+      "cron_expression": "0 2 * * *",
+      "parsed_schedule": {
+        "minute": "0",
+        "hour": "2",
+        "day_of_month": "*",
+        "month": "*",
+        "day_of_week": "*"
+      },
+      "estimated_duration": 300,
+      "priority": "normal"
+    },
+    {
+      "name": "meta-learning-optimizer",
+      "file_path": ".github/workflows/meta-learning-optimizer.yml",
+      "cron_expression": "0 */6 * * *",
+      "parsed_schedule": {
+        "minute": "0",
+        "hour": "*/6",
+        "day_of_month": "*",
+        "month": "*",
+        "day_of_week": "*"
+      },
+      "estimated_duration": 300,
+      "priority": "normal"
+    },
+    {
+      "name": "pr-failure-learning",
+      "file_path": ".github/workflows/pr-failure-learning.yml",
+      "cron_expression": "0 0 * * 0",
+      "parsed_schedule": {
+        "minute": "0",
+        "hour": "0",
+        "day_of_month": "*",
+        "month": "*",
+        "day_of_week": "0"
+      },
+      "estimated_duration": 300,
+      "priority": "normal"
+    },
+    {
+      "name": "neural-architecture-evolution",
+      "file_path": ".github/workflows/neural-architecture-evolution.yml",
+      "cron_expression": "0 */6 * * *",
+      "parsed_schedule": {
+        "minute": "0",
+        "hour": "*/6",
+        "day_of_month": "*",
+        "month": "*",
+        "day_of_week": "*"
+      },
+      "estimated_duration": 300,
+      "priority": "normal"
+    },
+    {
+      "name": "generate-docs-from-discussions",
+      "file_path": ".github/workflows/generate-docs-from-discussions.yml",
+      "cron_expression": "0 12 * * *",
+      "parsed_schedule": {
+        "minute": "0",
+        "hour": "12",
+        "day_of_month": "*",
+        "month": "*",
+        "day_of_week": "*"
+      },
+      "estimated_duration": 300,
+      "priority": "normal"
+    }
+  ],
+  "collisions": [
+    {
+      "workflows": [
+        "autonomous-ab-testing",
+        "update-context-summaries"
+      ],
+      "time_pattern": "hour 2, minute 0",
+      "collision_probability": 1.0,
+      "severity": "critical",
+      "recommendation": "Stagger update-context-summaries by 10-15 minutes to prevent concurrent execution",
+      "estimated_impact": "High - Frequent concurrent runs, resource contention likely"
+    },
+    {
+      "workflows": [
+        "autonomous-ab-testing",
+        "prompt-performance-tracker"
+      ],
+      "time_pattern": "hour 2, minute 0",
+      "collision_probability": 1.0,
+      "severity": "critical",
+      "recommendation": "Stagger prompt-performance-tracker by 10-15 minutes to prevent concurrent execution",
+      "estimated_impact": "High - Frequent concurrent runs, resource contention likely"
+    },
+    {
+      "workflows": [
+        "update-context-summaries",
+        "prompt-performance-tracker"
+      ],
+      "time_pattern": "hour 2, minute 0",
+      "collision_probability": 1.0,
+      "severity": "critical",
+      "recommendation": "Stagger prompt-performance-tracker by 10-15 minutes to prevent concurrent execution",
+      "estimated_impact": "High - Frequent concurrent runs, resource contention likely"
+    },
+    {
+      "workflows": [
+        "meta-learning-optimizer",
+        "neural-architecture-evolution"
+      ],
+      "time_pattern": "hour */6, minute 0",
+      "collision_probability": 1.0,
+      "severity": "critical",
+      "recommendation": "Stagger neural-architecture-evolution by 10-15 minutes to prevent concurrent execution",
+      "estimated_impact": "High - Frequent concurrent runs, resource contention likely"
+    }
+  ],
+  "recommendations": [
+    {
+      "workflow": "pr-failure-intelligence",
+      "current_schedule": "30 0 * * 0",
+      "recommended_schedule": "31 1 * * 1",
+      "reason": "Reduce load during peak hour (current: 4 workflows)",
+      "expected_improvement": "20-30% faster execution due to reduced contention",
+      "confidence": 0.75
+    },
+    {
+      "workflow": "meta-learning-optimizer",
+      "current_schedule": "0 */6 * * *",
+      "recommended_schedule": "0 1 * * *",
+      "reason": "Reduce load during peak hour (current: 4 workflows)",
+      "expected_improvement": "20-30% faster execution due to reduced contention",
+      "confidence": 0.75
+    },
+    {
+      "workflow": "pr-failure-learning",
+      "current_schedule": "0 0 * * 0",
+      "recommended_schedule": "1 1 * * 1",
+      "reason": "Reduce load during peak hour (current: 4 workflows)",
+      "expected_improvement": "20-30% faster execution due to reduced contention",
+      "confidence": 0.75
+    },
+    {
+      "workflow": "neural-architecture-evolution",
+      "current_schedule": "0 */6 * * *",
+      "recommended_schedule": "0 1 * * *",
+      "reason": "Reduce load during peak hour (current: 4 workflows)",
+      "expected_improvement": "20-30% faster execution due to reduced contention",
+      "confidence": 0.75
+    }
+  ]
+}
