@@ -30,6 +30,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### ✨ Features
 
+- 🤖 🔧 Agents 🎯 Agent Missions - Pipeline (x2) [#5310](https://github.com/enufacas/Chained/pull/5310)
 - 🤖 🧠 Learning 🧠 Learning Pipeline - 2025-12-23 (x2) [#5301](https://github.com/enufacas/Chained/pull/5301)
 - 🤖 meta-coordination: 2025-12-23 18:18 - system maintenance complete [#5294](https://github.com/enufacas/Chained/pull/5294)
 - 🤖 🔧 Agents meta-coordination: 2025-12-23 14:13 run - closed 3 stale PRs, assigned 1 agent [#5285](https://github.com/enufacas/Chained/pull/5285)
@@ -41,7 +42,6 @@ This changelog excludes automated data syncs and routine maintenance commits.
 - 👤 🧠 Learning Complete Nvidia Innovation learning mission (idea:220) - Multi-provider LLM architecture validation [#5255](https://github.com/enufacas/Chained/pull/5255)
 - 👤 🧠 Learning Complete learning mission idea:221 - Google Innovation trends (Dec 12, 2025) [#5257](https://github.com/enufacas/Chained/pull/5257)
 - 👤 Complete Cloudflare innovation research (idea:222) - Trust & safety gap identified [#5258](https://github.com/enufacas/Chained/pull/5258)
-- 🤖 🔧 Agents 🎯 Agent Missions - Pipeline [#5250](https://github.com/enufacas/Chained/pull/5250)
 - 🤖 meta-coordination: 2025-12-23 06:20 run - system assessment complete [#5234](https://github.com/enufacas/Chained/pull/5234)
 - 🤖 🎯 Daily goal for 2025-12-23 [#5236](https://github.com/enufacas/Chained/pull/5236)
 - 🤖 meta-coordination: 2025-12-23 04:30 run - system maintenance [#5230](https://github.com/enufacas/Chained/pull/5230)
@@ -52,7 +52,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x31) [#5302](https://github.com/enufacas/Chained/pull/5302)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x32) [#5304](https://github.com/enufacas/Chained/pull/5304)
 - 👤 🧠 Learning **Documentation**: Daily Learning Reflection verification for 2025-12-23 (@create-botter) [#5273](https://github.com/enufacas/Chained/pull/5273)
 - 🤖 **Documentation**: 📚 Sync World State to Docs - Pipeline [#5251](https://github.com/enufacas/Chained/pull/5251)
 - 🤖 **Chore**: 🌍 World Model Update - Pipeline (x2) [#5303](https://github.com/enufacas/Chained/pull/5303)
@@ -326,7 +326,6 @@ This changelog excludes automated data syncs and routine maintenance commits.
 - 👤 Security trends research: Transparent incident response & legacy system risks (idea:160) [#4583](https://github.com/enufacas/Chained/pull/4583)
 - 👤 🧠 Learning Complete GPT trends learning mission (idea:162) - @investigate-champion [#4585](https://github.com/enufacas/Chained/pull/4585)
 - 🤖 🔧 Agents 🎯 Agent Missions - Pipeline [#4577](https://github.com/enufacas/Chained/pull/4577)
-- 🤖 🧠 Learning 🧠 Learning Pipeline - 2025-12-16 [#4568](https://github.com/enufacas/Chained/pull/4568)
 
 ### 🐛 Bug Fixes
 
