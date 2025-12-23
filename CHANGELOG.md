@@ -52,13 +52,13 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x30) [#5294](https://github.com/enufacas/Chained/pull/5294)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x31) [#5302](https://github.com/enufacas/Chained/pull/5302)
 - 👤 🧠 Learning **Documentation**: Daily Learning Reflection verification for 2025-12-23 (@create-botter) [#5273](https://github.com/enufacas/Chained/pull/5273)
 - 🤖 **Documentation**: 📚 Sync World State to Docs - Pipeline [#5251](https://github.com/enufacas/Chained/pull/5251)
+- 🤖 **Chore**: 🌍 World Model Update - Pipeline (x2) [#5303](https://github.com/enufacas/Chained/pull/5303)
 - 🤖 **Chore**: 📊 Goal progress update: ✅ Completed [#5296](https://github.com/enufacas/Chained/pull/5296)
 - 🤖 **Chore**: meta-coordination: 16:16 cycle - 80% PR reduction via conflict cleanup [#5291](https://github.com/enufacas/Chained/pull/5291)
 - 🤖 **Chore**: meta-coordination: 2025-12-23 12:24 - closed 1 stale PR, updated metrics [#5279](https://github.com/enufacas/Chained/pull/5279)
-- 🤖 **Chore**: 🌍 World Model Update - Pipeline [#5243](https://github.com/enufacas/Chained/pull/5243)
 
 ---
 
