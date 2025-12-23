@@ -38,7 +38,8 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x10) [#5244](https://github.com/enufacas/Chained/pull/5244)
+- 🤖 **Documentation**: 📚 Sync World State to Docs - Pipeline [#5251](https://github.com/enufacas/Chained/pull/5251)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x11) [#5252](https://github.com/enufacas/Chained/pull/5252)
 - 🤖 **Chore**: 🌍 World Model Update - Pipeline [#5243](https://github.com/enufacas/Chained/pull/5243)
 
 ---
@@ -325,12 +326,12 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x30) [#4593](https://github.com/enufacas/Chained/pull/4593)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x29) [#4593](https://github.com/enufacas/Chained/pull/4593)
 - 🤖 **Documentation**: 📚 Sync World State to Docs - Pipeline (x2) [#4578](https://github.com/enufacas/Chained/pull/4578)
 - 👤 🧠 Learning **Documentation**: Verify Daily Learning Reflection 2025-12-16 completion (@create-botter) [#4541](https://github.com/enufacas/Chained/pull/4541)
 - 👤 🏗️ Infrastructure **Documentation**: Complete Docker/DevOps learning mission analysis (idea:155) [#4523](https://github.com/enufacas/Chained/pull/4523)
 - 🤖 **Chore**: meta-coordination: 2025-12-16 20:14 run - proactive PR cleanup [#4566](https://github.com/enufacas/Chained/pull/4566)
-- 🤖 **Chore**: 🌍 World Model Update - Pipeline (x2) [#4570](https://github.com/enufacas/Chained/pull/4570)
+- 🤖 **Chore**: 🌍 World Model Update - Pipeline [#4570](https://github.com/enufacas/Chained/pull/4570)
 - 🤖 **Chore**: 📊 Goal progress update: ✅ Completed [#4563](https://github.com/enufacas/Chained/pull/4563)
 - 🤖 **Chore**: meta-coordination: 2025-12-16 08:18 run - system assessment and memory update [#4508](https://github.com/enufacas/Chained/pull/4508)
 - 👤 🏗️ Infrastructure **Test**: Complete AWS DevOps learning mission (idea:161) - @infrastructure-specialist [#4584](https://github.com/enufacas/Chained/pull/4584)
