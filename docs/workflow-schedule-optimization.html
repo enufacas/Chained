@@ -440,9 +440,12 @@
             document.getElementById('recommendationsSection').style.display = 'none';
             
             try {
-                // In production, this would fetch from an API
-                // For now, we'll use sample data or load from a JSON file
-                const response = await fetch('data/workflow-schedule-optimization.json');
+                // Fetch optimization data from GitHub Pages data directory
+                // Use relative path that works from GitHub Pages root
+                const dataPath = window.location.pathname.includes('/Chained/') 
+                    ? '/Chained/data/workflow-schedule-optimization.json'
+                    : 'data/workflow-schedule-optimization.json';
+                const response = await fetch(dataPath);
                 
                 if (!response.ok) {
                     throw new Error('Could not load optimization data');

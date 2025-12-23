@@ -103,10 +103,13 @@ jobs:
           if [ "$collisions" -gt "0" ]; then
             echo "⚠️  Creating issue for $collisions detected collision(s)..."
             
-            # Extract collision details from report
-            collision_summary=$(jq -r '.collisions[] | "- **\(.workflows | join(" ⚡ "))**: \(.severity | ascii_upcase) - \(.recommendation)"' /tmp/optimization_report.json)
+            # Extract collision details from report with clearer formatting
+            collision_summary=$(jq -r '
+              .collisions[] | 
+              "- **\(.workflows | join(" ⚡ "))**: \(.severity | ascii_upcase) - \(.recommendation)"
+            ' /tmp/optimization_report.json)
             
-            # Create issue body
+            # Create issue body in a file
             cat > /tmp/issue_body.md << 'EOF'
 ## ⚠️ Workflow Schedule Collisions Detected
 
@@ -138,16 +141,14 @@ EOF
             echo "---" >> /tmp/issue_body.md
             echo "*🤖 Created by workflow: [Workflow Schedule Optimization](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})*" >> /tmp/issue_body.md
             
-            # Create issue
+            # Try to create issue with labels, fall back without labels if it fails
             gh issue create \
               --title "⚠️ Workflow Schedule Collisions Detected - $(date +%Y-%m-%d)" \
               --body-file /tmp/issue_body.md \
-              --label "workflows,optimization,automated" || {
-                echo "⚠️ Issue creation with labels failed, retrying without labels..."
-                gh issue create \
-                  --title "⚠️ Workflow Schedule Collisions Detected - $(date +%Y-%m-%d)" \
-                  --body-file /tmp/issue_body.md
-              }
+              --label "workflows,optimization,automated" 2>/dev/null || \
+            gh issue create \
+              --title "⚠️ Workflow Schedule Collisions Detected - $(date +%Y-%m-%d)" \
+              --body-file /tmp/issue_body.md
             
             echo "✅ Optimization issue created"
           fi

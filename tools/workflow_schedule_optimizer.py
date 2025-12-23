@@ -24,8 +24,7 @@ from dataclasses import dataclass, asdict
 from collections import defaultdict
 import re
 
-# Add tools directory to path
-sys.path.insert(0, os.path.dirname(__file__))
+# Note: No additional modules imported from tools directory
 
 
 @dataclass
@@ -133,14 +132,13 @@ class WorkflowScheduleOptimizer:
     def extract_schedules_from_workflow(self, workflow_file: Path) -> List[Dict[str, Any]]:
         """Extract schedule triggers from a workflow file."""
         try:
-            # Try to extract schedule with regex first (more reliable)
+            # Read file once for both regex and YAML parsing
             with open(workflow_file, 'r') as f:
                 content_text = f.read()
             
             schedules = []
             
-            # Look for schedule blocks with regex
-            # Pattern: schedule: followed by cron expressions
+            # Try regex extraction first (more reliable for malformed YAML)
             schedule_pattern = r'schedule:\s*\n\s*-\s*cron:\s*[\'"]([^\'"]+)[\'"]'
             matches = re.finditer(schedule_pattern, content_text)
             
@@ -155,11 +153,9 @@ class WorkflowScheduleOptimizer:
             if schedules:
                 return schedules
             
-            # Fall back to YAML parsing
+            # Fall back to YAML parsing using already-read content
             try:
-                with open(workflow_file, 'r') as f:
-                    f.seek(0)
-                    content = yaml.safe_load(f)
+                content = yaml.safe_load(content_text)
                 
                 if not content or 'on' not in content:
                     return []
@@ -167,7 +163,6 @@ class WorkflowScheduleOptimizer:
                 # Handle both 'on' formats
                 triggers = content['on']
                 if isinstance(triggers, list):
-                    # on: [push, schedule]
                     return []
                 
                 if not isinstance(triggers, dict):
@@ -178,7 +173,6 @@ class WorkflowScheduleOptimizer:
                     return []
                 
                 # Extract cron expressions
-                schedules = []
                 for item in schedule:
                     if 'cron' in item:
                         schedules.append({
@@ -188,12 +182,16 @@ class WorkflowScheduleOptimizer:
                 
                 return schedules
             
-            except yaml.YAMLError:
-                # YAML parsing failed, but regex already tried
+            except yaml.YAMLError as e:
+                # YAML parsing failed - log if verbose mode enabled
+                if os.environ.get('DEBUG'):
+                    print(f"Debug: YAML parse error in {workflow_file.name}: {e}", file=sys.stderr)
                 return []
         
         except Exception as e:
-            # Silently skip problematic files
+            # Log unexpected errors if debug enabled
+            if os.environ.get('DEBUG'):
+                print(f"Debug: Error processing {workflow_file.name}: {e}", file=sys.stderr)
             return []
     
     def load_all_workflows(self) -> None:
