@@ -1,11 +1,11 @@
 {
-  "timestamp": "2025-12-23T02:08:53.627284",
-  "commit": "7bb3b511ea5947d3c395ad429a4082db968a6051",
+  "timestamp": "2025-12-23T12:57:47.954544",
+  "commit": "a15ad9e601d04e5aebed30bc92fc42702bfa8f82",
   "structure": {
     "directories": {
       "tools": {
-        "file_count": 440,
-        "line_count": 173941,
+        "file_count": 441,
+        "line_count": 174497,
         "files": [
           ".context.md",
           "AB_TESTING_README.md",
@@ -60,8 +60,8 @@
         ]
       },
       "docs": {
-        "file_count": 1067,
-        "line_count": 338665,
+        "file_count": 1071,
+        "line_count": 341266,
         "files": [
           ".nojekyll",
           "01_overview.md",
@@ -126,8 +126,8 @@
         "files": []
       },
       "analysis": {
-        "file_count": 30,
-        "line_count": 23239,
+        "file_count": 31,
+        "line_count": 23912,
         "files": [
           "actions-patterns.json",
           "architecture.mmd",
@@ -158,12 +158,13 @@
           "snapshot_2025-12-21T02-20-26.json",
           "snapshot_2025-12-21T12-52-16.json",
           "snapshot_2025-12-22T02-19-19.json",
-          "snapshot_2025-12-22T12-56-25.json"
+          "snapshot_2025-12-22T12-56-25.json",
+          "snapshot_2025-12-23T02-08-53.json"
         ]
       },
       "learnings": {
-        "file_count": 600,
-        "line_count": 456297,
+        "file_count": 603,
+        "line_count": 467730,
         "files": [
           "AI_ML.md",
           "CLAUDE_AI_INVESTIGATION.md",
@@ -219,8 +220,8 @@
       }
     },
     "files_by_type": {},
-    "total_files": 2137,
-    "total_lines": 992142
+    "total_files": 2146,
+    "total_lines": 1007405
   },
   "dependencies": {
     "internal_imports": {
@@ -290,6 +291,7 @@
       "build-learnings-book.py": [],
       "workflow_ab_testing_integration.py": [],
       "discussion-learning-query.py": [],
+      "workflow_schedule_optimizer.py": [],
       "fetch-web-content.py": [],
       "ab_testing_helper.py": [],
       "lazy_evaluation_system.py": [],
@@ -432,22 +434,22 @@
       "validation_utils.py": []
     },
     "external_imports": {
-      "os": 120,
-      "sys": 161,
-      "json": 178,
-      "re": 77,
+      "os": 121,
+      "sys": 162,
+      "json": 179,
+      "re": 78,
       "ast": 18,
-      "datetime": 142,
-      "pathlib": 168,
-      "typing": 155,
-      "collections": 80,
+      "datetime": 143,
+      "pathlib": 169,
+      "typing": 156,
+      "collections": 81,
       "functools": 9,
-      "argparse": 142,
+      "argparse": 143,
       "math": 13,
       "random": 29,
       "time": 31,
       "statistics": 18,
-      "dataclasses": 86,
+      "dataclasses": 87,
       "adaptive_workload_monitor": 2,
       "agent_coordinator": 1,
       "workload_subagent_spawner": 2,
@@ -455,7 +457,7 @@
       "github_integration": 4,
       "ab_testing_engine": 8,
       "ab_testing_advanced": 2,
-      "yaml": 20,
+      "yaml": 21,
       "subprocess": 29,
       "hashlib": 17,
       "traceback": 13,
@@ -540,17 +542,17 @@
   },
   "metrics": {
     "total_components": 6,
-    "total_files": 2137,
-    "total_lines": 992142,
+    "total_files": 2146,
+    "total_lines": 1007405,
     "total_dependencies": 2,
     "external_libraries": 92,
-    "coupling_score": 4.9258657209004484e-05,
+    "coupling_score": 4.8773350241428086e-05,
     "complexity_score": 1.0
   },
   "components": {
     "learning_system": {
       "file_count": 46,
-      "line_count": 456297,
+      "line_count": 467730,
       "files": [
         "AI_ML.md",
         "CLAUDE_AI_INVESTIGATION.md",
@@ -575,8 +577,8 @@
       ]
     },
     "analysis_tools": {
-      "file_count": 30,
-      "line_count": 23239,
+      "file_count": 31,
+      "line_count": 23912,
       "files": [
         "actions-patterns.json",
         "architecture.mmd",
@@ -602,7 +604,7 @@
     },
     "documentation": {
       "file_count": 50,
-      "line_count": 338665,
+      "line_count": 341266,
       "files": [
         ".nojekyll",
         "01_overview.md",
@@ -628,7 +630,7 @@
     },
     "tools": {
       "file_count": 50,
-      "line_count": 173941,
+      "line_count": 174497,
       "files": [
         ".context.md",
         "AB_TESTING_README.md",
