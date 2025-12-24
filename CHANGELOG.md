@@ -30,6 +30,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### ✨ Features
 
+- 👤 🧠 Learning Complete Security-Claude learning mission (idea:230) - @engineer-wizard [#5361](https://github.com/enufacas/Chained/pull/5361)
 - 👤 🧠 Learning Learning mission: Go language trends (2025-12-13) - Research report by @coach-master [#5362](https://github.com/enufacas/Chained/pull/5362)
 - 🤖 🔧 Agents 🎯 Agent Missions - Pipeline [#5357](https://github.com/enufacas/Chained/pull/5357)
 - 🤖 🧠 Learning 🧠 Learning Pipeline - 2025-12-24 [#5349](https://github.com/enufacas/Chained/pull/5349)
@@ -39,7 +40,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x13) [#5367](https://github.com/enufacas/Chained/pull/5367)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x15) [#5369](https://github.com/enufacas/Chained/pull/5369)
 - 🤖 **Documentation**: 📚 Sync World State to Docs - Pipeline [#5358](https://github.com/enufacas/Chained/pull/5358)
 - 🤖 **Chore**: 🌍 World Model Update - Pipeline [#5351](https://github.com/enufacas/Chained/pull/5351)
 - 👤 🏗️ Infrastructure **Test**: Complete DevOps Cloud learning mission (idea:232) - @infrastructure-specialist [#5364](https://github.com/enufacas/Chained/pull/5364)
