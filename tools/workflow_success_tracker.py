@@ -82,7 +82,8 @@ class WorkflowSuccessTracker:
         Returns:
             List of workflow run data
         """
-        since = (datetime.now(timezone.utc) - timedelta(days=days)).isoformat()
+        # GitHub API expects date in YYYY-MM-DD format for filters
+        since = (datetime.now(timezone.utc) - timedelta(days=days)).strftime('%Y-%m-%d')
         
         url = f"{self.api_base}/actions/runs"
         params = {
@@ -155,10 +156,14 @@ class WorkflowSuccessTracker:
             durations = []
             for run in runs:
                 if run.get('run_started_at') and run.get('updated_at'):
-                    start = datetime.fromisoformat(run['run_started_at'].replace('Z', '+00:00'))
-                    end = datetime.fromisoformat(run['updated_at'].replace('Z', '+00:00'))
-                    duration = (end - start).total_seconds()
-                    durations.append(duration)
+                    try:
+                        start = datetime.fromisoformat(run['run_started_at'].replace('Z', '+00:00'))
+                        end = datetime.fromisoformat(run['updated_at'].replace('Z', '+00:00'))
+                        duration = (end - start).total_seconds()
+                        durations.append(duration)
+                    except (ValueError, AttributeError) as e:
+                        # Skip runs with invalid timestamps
+                        continue
             
             avg_duration = sum(durations) / len(durations) if durations else 0
             
@@ -242,8 +247,14 @@ class WorkflowSuccessTracker:
                 # Get or create architecture
                 arch = self.architecture_manager.get_or_create(workflow_name)
                 
-                # Trigger evolution
-                if arch._should_evolve():
+                # Check if architecture should evolve (public method would be better)
+                should_evolve = (
+                    len(arch.success_history) >= arch.config.min_data_for_evolution and
+                    (arch.execution_count - arch.evolution_count * arch.config.evolution_interval) >= arch.config.evolution_interval and
+                    arch.get_success_rate() < arch.config.success_rate_threshold
+                )
+                
+                if should_evolve:
                     print(f"      🧬 Triggering evolution...")
                     arch.evolve()
                     evolved.append(workflow_name)

@@ -126,8 +126,13 @@ jobs:
         run: |
           cd tools
           echo "🧬 Checking for workflows needing evolution..."
-          python workflow_success_tracker.py --evolve --days 7 > /tmp/evolution_results.txt
-          cat /tmp/evolution_results.txt
+          if python workflow_success_tracker.py --evolve --days 7 > /tmp/evolution_results.txt 2>&1; then
+            cat /tmp/evolution_results.txt
+          else
+            echo "⚠️  Evolution check failed"
+            cat /tmp/evolution_results.txt
+            echo "empty_results" > /tmp/evolution_results.txt
+          fi
       
       - name: Run additional evolution cycle
         run: |
@@ -147,9 +152,16 @@ jobs:
         id: report
         run: |
           cd tools
-          python self_evolving_neural_architecture.py --report > /tmp/evolution_report.txt
-          echo "report<<EOF" >> $GITHUB_OUTPUT
-          cat /tmp/evolution_report.txt >> $GITHUB_OUTPUT
+          if python self_evolving_neural_architecture.py --report > /tmp/evolution_report.txt 2>&1; then
+            echo "Evolution report generated successfully"
+          else
+            echo "⚠️  Report generation failed, using empty report"
+            echo "No report available" > /tmp/evolution_report.txt
+          fi
+          
+          # Output for use in PR (properly escaped)
+          echo "report_preview<<EOF" >> $GITHUB_OUTPUT
+          head -20 /tmp/evolution_report.txt >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
       
       - name: Check for changes
@@ -177,12 +189,39 @@ jobs:
           
           git checkout -b "$BRANCH_NAME"
           git add .github/agent-system/evolving_architectures/
-          git commit -m "🧬 Neural architecture evolution - automated adaptation (@create-botter)" -m "Updated self-evolving neural architectures based on workflow success rates."
+          git commit -m "🧬 Neural architecture evolution - automated adaptation (@create-botter)" \
+                     -m "Updated self-evolving neural architectures based on workflow success rates."
           git push origin "$BRANCH_NAME"
+          
+          # Create PR body as a file for better handling
+          cat > /tmp/pr_body.md << 'PRBODY'
+## 🧬 Self-Evolving Neural Architecture Update
+
+**@create-botter** has evolved neural architectures based on workflow success rates.
+
+### 📊 Evolution Summary
+
+PRBODY
+          cat /tmp/evolution_results.txt >> /tmp/pr_body.md
+          
+          cat >> /tmp/pr_body.md << 'PRBODY'
+
+### 🧠 Architecture Report
+
+```
+PRBODY
+          head -30 /tmp/evolution_report.txt >> /tmp/pr_body.md
+          cat >> /tmp/pr_body.md << 'PRBODY'
+```
+
+---
+
+PRBODY
+          echo "*🤖 Created by workflow: [${{ github.workflow }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})*" >> /tmp/pr_body.md
           
           gh pr create \
             --title "🧬 Neural Architecture Evolution - $(date +%Y-%m-%d)" \
-            --body "## 🧬 Self-Evolving Neural Architecture Update"$'\n\n'"**@create-botter** has evolved neural architectures based on workflow success rates."$'\n\n'"### 📊 Evolution Summary"$'\n\n'"$(cat /tmp/evolution_results.txt)"$'\n\n'"### 🧠 Architecture Report"$'\n\n''```'$'\n'"$(cat /tmp/evolution_report.txt)"$'\n''```'$'\n\n'"---"$'\n\n'"*🤖 Created by workflow: [${{ github.workflow }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})*" \
+            --body-file /tmp/pr_body.md \
             --label "automated,neural-evolution" \
             --base main \
             --head "$BRANCH_NAME"
