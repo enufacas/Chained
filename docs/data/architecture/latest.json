@@ -1,6 +1,6 @@
 {
-  "timestamp": "2025-12-23T12:57:47.954544",
-  "commit": "a15ad9e601d04e5aebed30bc92fc42702bfa8f82",
+  "timestamp": "2025-12-24T02:06:41.405236",
+  "commit": "00f779af4646ea16f69ebe7d393219daebd0fe30",
   "structure": {
     "directories": {
       "tools": {
@@ -60,8 +60,8 @@
         ]
       },
       "docs": {
-        "file_count": 1071,
-        "line_count": 341266,
+        "file_count": 1072,
+        "line_count": 341787,
         "files": [
           ".nojekyll",
           "01_overview.md",
@@ -126,8 +126,8 @@
         "files": []
       },
       "analysis": {
-        "file_count": 31,
-        "line_count": 23912,
+        "file_count": 32,
+        "line_count": 24588,
         "files": [
           "actions-patterns.json",
           "architecture.mmd",
@@ -159,12 +159,13 @@
           "snapshot_2025-12-21T12-52-16.json",
           "snapshot_2025-12-22T02-19-19.json",
           "snapshot_2025-12-22T12-56-25.json",
-          "snapshot_2025-12-23T02-08-53.json"
+          "snapshot_2025-12-23T02-08-53.json",
+          "snapshot_2025-12-23T12-57-47.json"
         ]
       },
       "learnings": {
-        "file_count": 603,
-        "line_count": 467730,
+        "file_count": 609,
+        "line_count": 471154,
         "files": [
           "AI_ML.md",
           "CLAUDE_AI_INVESTIGATION.md",
@@ -205,6 +206,7 @@
           "ai_agents_ecosystem_integration_proposal_idea125_20251125.md",
           "ai_agents_ecosystem_integration_proposal_idea142_20251126.md",
           "ai_agents_ecosystem_integration_proposal_idea166_20251210.md",
+          "ai_agents_ecosystem_integration_proposal_idea223_20251212.md",
           "ai_agents_emerging_theme_research_report_20251124.md",
           "ai_agents_emerging_theme_research_report_20251211_idea104.md",
           "ai_agents_emerging_theme_research_report_idea125_20251125.md",
@@ -214,14 +216,13 @@
           "ai_ml_agents_investigation_20251116.md",
           "ai_ml_ecosystem_integration_proposal_idea141_20251126.md",
           "ai_ml_innovation_research_report_coach_master.md",
-          "ai_ml_innovation_summary.md",
-          "ai_ml_research_report_idea141_20251126.md"
+          "ai_ml_innovation_summary.md"
         ]
       }
     },
     "files_by_type": {},
-    "total_files": 2146,
-    "total_lines": 1007405
+    "total_files": 2154,
+    "total_lines": 1012026
   },
   "dependencies": {
     "internal_imports": {
@@ -542,8 +543,8 @@
   },
   "metrics": {
     "total_components": 6,
-    "total_files": 2146,
-    "total_lines": 1007405,
+    "total_files": 2154,
+    "total_lines": 1012026,
     "total_dependencies": 2,
     "external_libraries": 92,
     "coupling_score": 4.8773350241428086e-05,
@@ -552,7 +553,7 @@
   "components": {
     "learning_system": {
       "file_count": 46,
-      "line_count": 467730,
+      "line_count": 471154,
       "files": [
         "AI_ML.md",
         "CLAUDE_AI_INVESTIGATION.md",
@@ -577,8 +578,8 @@
       ]
     },
     "analysis_tools": {
-      "file_count": 31,
-      "line_count": 23912,
+      "file_count": 32,
+      "line_count": 24588,
       "files": [
         "actions-patterns.json",
         "architecture.mmd",
@@ -604,7 +605,7 @@
     },
     "documentation": {
       "file_count": 50,
-      "line_count": 341266,
+      "line_count": 341787,
       "files": [
         ".nojekyll",
         "01_overview.md",
