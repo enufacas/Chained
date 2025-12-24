@@ -82,6 +82,9 @@ jobs:
     name: Evolve Neural Architectures
     runs-on: ubuntu-latest
     if: github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.mode == 'evolve')
+    permissions:
+      contents: write
+      pull-requests: write
     
     steps:
       - name: Checkout repository
@@ -98,8 +101,35 @@ jobs:
       - name: Install dependencies
         run: |
           pip install -r requirements.txt
+          pip install requests  # For GitHub API calls
       
-      - name: Run evolution cycle
+      - name: Ensure storage directory exists
+        run: |
+          mkdir -p .github/agent-system/evolving_architectures
+          echo "✅ Storage directory verified"
+      
+      - name: Track workflow success rates
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cd tools
+          echo "📊 Fetching workflow execution history..."
+          python workflow_success_tracker.py --report --days 7
+          
+          echo ""
+          echo "📝 Recording executions in neural architectures..."
+          python workflow_success_tracker.py --record --days 7
+      
+      - name: Trigger evolution for poor performers
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cd tools
+          echo "🧬 Checking for workflows needing evolution..."
+          python workflow_success_tracker.py --evolve --days 7 > /tmp/evolution_results.txt
+          cat /tmp/evolution_results.txt
+      
+      - name: Run additional evolution cycle
         run: |
           cd tools
           
@@ -122,12 +152,40 @@ jobs:
           cat /tmp/evolution_report.txt >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
       
-      - name: Commit updated architectures
-        uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          commit_message: "🧬 Neural architecture evolution cycle"
-          file_pattern: ".github/agent-system/evolving_architectures/*.json"
-          commit_author: "create-botter[bot] <create-botter[bot]@users.noreply.github.com>"
+      - name: Check for changes
+        id: changes
+        run: |
+          git add .github/agent-system/evolving_architectures/
+          if git diff --staged --quiet; then
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+            echo "ℹ️  No architecture changes to commit"
+          else
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+            echo "✅ Architecture changes detected"
+          fi
+      
+      - name: Create PR with updated architectures
+        if: steps.changes.outputs.has_changes == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+          BRANCH_NAME="neural-evolution/${TIMESTAMP}-${{ github.run_id }}"
+          
+          git config user.name "create-botter[bot]"
+          git config user.email "create-botter[bot]@users.noreply.github.com"
+          
+          git checkout -b "$BRANCH_NAME"
+          git add .github/agent-system/evolving_architectures/
+          git commit -m "🧬 Neural architecture evolution - automated adaptation (@create-botter)" -m "Updated self-evolving neural architectures based on workflow success rates."
+          git push origin "$BRANCH_NAME"
+          
+          gh pr create \
+            --title "🧬 Neural Architecture Evolution - $(date +%Y-%m-%d)" \
+            --body "## 🧬 Self-Evolving Neural Architecture Update"$'\n\n'"**@create-botter** has evolved neural architectures based on workflow success rates."$'\n\n'"### 📊 Evolution Summary"$'\n\n'"$(cat /tmp/evolution_results.txt)"$'\n\n'"### 🧠 Architecture Report"$'\n\n''```'$'\n'"$(cat /tmp/evolution_report.txt)"$'\n''```'$'\n\n'"---"$'\n\n'"*🤖 Created by workflow: [${{ github.workflow }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})*" \
+            --label "automated,neural-evolution" \
+            --base main \
+            --head "$BRANCH_NAME"
       
       - name: Add summary
         run: |
@@ -136,6 +194,14 @@ jobs:
           echo '```' >> $GITHUB_STEP_SUMMARY
           cat /tmp/evolution_report.txt >> $GITHUB_STEP_SUMMARY
           echo '```' >> $GITHUB_STEP_SUMMARY
+          
+          if [ "${{ steps.changes.outputs.has_changes }}" == "true" ]; then
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "✅ PR created with architecture updates" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "ℹ️  No changes needed" >> $GITHUB_STEP_SUMMARY
+          fi
 
   generate-report:
     name: Generate Neural Architecture Report
