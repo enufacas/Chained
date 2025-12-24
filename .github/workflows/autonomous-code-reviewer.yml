@@ -88,9 +88,11 @@ jobs:
             # Extract key metrics
             overall_score=$(cat "${output_file}" | jq -r '.overall_score' 2>/dev/null || echo "0")
             passed=$(cat "${output_file}" | jq -r '.passed' 2>/dev/null || echo "false")
+            confidence=$(cat "${output_file}" | jq -r '.confidence' 2>/dev/null || echo "0.5")
             
             echo "overall_score=${overall_score}" >> $GITHUB_OUTPUT
             echo "passed=${passed}" >> $GITHUB_OUTPUT
+            echo "confidence=${confidence}" >> $GITHUB_OUTPUT
             echo "review_success=true" >> $GITHUB_OUTPUT
           else
             echo "⚠️ Review failed"
@@ -106,6 +108,7 @@ jobs:
           output_file="${{ steps.review.outputs.output_file }}"
           overall_score="${{ steps.review.outputs.overall_score }}"
           passed="${{ steps.review.outputs.passed }}"
+          confidence="${{ steps.review.outputs.confidence }}"
           
           # Load full review data
           issues_count=$(cat "${output_file}" | jq '.issues_found | length' 2>/dev/null || echo "0")
@@ -113,6 +116,7 @@ jobs:
           
           # Format score as percentage
           score_pct=$(python3 -c "print(f'{float(\"${overall_score}\") * 100:.1f}%')")
+          confidence_pct=$(python3 -c "print(f'{float(\"${confidence}\") * 100:.1f}%')")
           
           # Determine emoji and status
           if [ "${passed}" = "true" ]; then
@@ -123,8 +127,21 @@ jobs:
             status="**NEEDS IMPROVEMENT**"
           fi
           
+          # Determine confidence indicator
+          confidence_float=$(python3 -c "print(float('${confidence}'))")
+          if (( $(echo "$confidence_float > 0.7" | bc -l) )); then
+            confidence_emoji="🎯"
+            confidence_desc="High confidence"
+          elif (( $(echo "$confidence_float > 0.5" | bc -l) )); then
+            confidence_emoji="📊"
+            confidence_desc="Moderate confidence"
+          else
+            confidence_emoji="🔍"
+            confidence_desc="Low confidence (needs more data)"
+          fi
+          
           # Create review comment
-          comment="## ${emoji} Autonomous Code Review"$'\n\n'"**Status:** ${status}"$'\n'"**Overall Score:** ${score_pct}"$'\n\n'"### Review Summary"$'\n\n'"This PR has been automatically reviewed by the autonomous code reviewer system."$'\n\n'"**Issues Found:** ${issues_count}"$'\n\n'"### Suggestions for Improvement"$'\n\n'"${suggestions}"$'\n\n'"### About This Review"$'\n\n'"The autonomous code reviewer learns from PR outcomes to continuously improve its criteria. This review evaluates:"$'\n'"- Code complexity and maintainability"$'\n'"- Code style and formatting"$'\n'"- Documentation quality"$'\n'"- Test coverage"$'\n'"- Security considerations"$'\n\n'"**Note:** This is an automated assessment. Manual review by tech leads may still be required for protected paths."$'\n\n'"---"$'\n'"*🤖 Autonomous Code Reviewer v1.0 - @create-botter infrastructure*"$'\n'"*This system learns and improves with each review cycle*"
+          comment="## ${emoji} Autonomous Code Review"$'\n\n'"**Status:** ${status}"$'\n'"**Overall Score:** ${score_pct}"$'\n'"**Confidence:** ${confidence_emoji} ${confidence_pct} (${confidence_desc})"$'\n\n'"### Review Summary"$'\n\n'"This PR has been automatically reviewed by the autonomous code reviewer system."$'\n\n'"**Issues Found:** ${issues_count}"$'\n\n'"### Suggestions for Improvement"$'\n\n'"${suggestions}"$'\n\n'"### About This Review"$'\n\n'"The autonomous code reviewer learns from PR outcomes to continuously improve its criteria. This review evaluates:"$'\n'"- Code complexity and maintainability"$'\n'"- Code style and formatting"$'\n'"- Documentation quality"$'\n'"- Test coverage"$'\n'"- Security considerations"$'\n\n'"**Confidence Scoring:** The system tracks its prediction accuracy and adjusts confidence accordingly. Higher confidence means the system has more data and proven accuracy."$'\n\n'"**Note:** This is an automated assessment. Manual review by tech leads may still be required for protected paths."$'\n\n'"---"$'\n'"*🤖 Autonomous Code Reviewer v1.0 - Enhanced by **@construct-specialist***"$'\n'"*This system learns and improves with each review cycle*"
           
           # Post comment
           gh pr comment ${pr_num} --body "${comment}" --repo ${{ github.repository }}

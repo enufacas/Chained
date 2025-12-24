@@ -4,10 +4,11 @@ Tests for Autonomous Code Reviewer
 
 Tests the self-improving code review system including:
 - Criteria initialization and persistence
-- Review execution
-- Learning from outcomes
-- Criteria evolution
+- Review execution with GitHub API integration
+- Learning from outcomes with adaptive rates
+- Criteria evolution and confidence scoring
 - Performance metrics
+- Enhanced pattern matching and file-type analysis
 """
 
 import unittest
@@ -18,6 +19,7 @@ from pathlib import Path
 from datetime import datetime, timezone
 import sys
 import os
+from unittest.mock import patch, MagicMock
 
 # Add parent directory to path for imports
 sys.path.insert(0, str(Path(__file__).parent.parent / 'tools'))
@@ -430,6 +432,32 @@ class TestReviewResult(unittest.TestCase):
         self.assertIsInstance(d, dict)
         self.assertEqual(d['pr_number'], 123)
         self.assertTrue(d['passed'])
+    
+    def test_confidence_scoring(self):
+        """Test confidence scoring calculation"""
+        reviewer = AutonomousCodeReviewer(verbose=False)
+        
+        # With no history, confidence should be low
+        pr_data = {'number': 500, 'diff': 'def test(): pass'}
+        result1 = reviewer.review_pr(500, pr_data)
+        
+        # Confidence should be present and reasonable
+        self.assertIn('confidence', result1.to_dict())
+        self.assertGreaterEqual(result1.confidence, 0.0)
+        self.assertLessEqual(result1.confidence, 1.0)
+        
+        # With more history, confidence should increase
+        for i in range(10):
+            pr_num = 501 + i
+            pr_data = {'number': pr_num, 'diff': f'def test_{i}(): pass'}
+            result = reviewer.review_pr(pr_num, pr_data)
+            reviewer.learn_from_outcome(pr_num, 'merged')
+        
+        # Review again and check confidence
+        result2 = reviewer.review_pr(520, {'number': 520, 'diff': 'def test(): pass'})
+        
+        # Confidence should have increased with more data
+        self.assertGreater(result2.confidence, result1.confidence)
 
 
 if __name__ == '__main__':
