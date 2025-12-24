@@ -1,0 +1,273 @@
+name: Track Coordination Progress
+
+on:
+  issues:
+    types: [closed, labeled]
+  pull_request:
+    types: [closed]
+  workflow_dispatch:
+    inputs:
+      parent_issue:
+        description: 'Parent coordination issue number'
+        required: true
+        type: number
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: read
+
+jobs:
+  update_progress:
+    name: Update Coordination Progress
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      
+      - name: Identify parent issue
+        id: find_parent
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Determine current issue/PR
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            parent_issue="${{ inputs.parent_issue }}"
+            echo "parent_issue=$parent_issue" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          
+          # Get current issue/PR body
+          if [ "${{ github.event_name }}" == "issues" ]; then
+            current_num="${{ github.event.issue.number }}"
+            body=$(gh issue view "$current_num" --json body --jq '.body')
+          else
+            current_num="${{ github.event.pull_request.number }}"
+            body=$(gh pr view "$current_num" --json body --jq '.body')
+          fi
+          
+          # Extract parent issue from body
+          parent=$(echo "$body" | grep -oP 'Parent Issue.*#\K\d+' | head -1)
+          
+          if [ -z "$parent" ]; then
+            echo "No parent issue found, skipping"
+            exit 0
+          fi
+          
+          echo "parent_issue=$parent" >> $GITHUB_OUTPUT
+          echo "Found parent issue #$parent"
+      
+      - name: Check if coordination issue
+        id: check
+        if: steps.find_parent.outputs.parent_issue != ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          parent="${{ steps.find_parent.outputs.parent_issue }}"
+          
+          # Check if parent has coordination labels
+          labels=$(gh issue view "$parent" --json labels --jq '.labels[].name')
+          
+          if echo "$labels" | grep -q "coordination-active"; then
+            echo "is_coordination=true" >> $GITHUB_OUTPUT
+            echo "✅ Parent issue #$parent is an active coordination"
+          else
+            echo "is_coordination=false" >> $GITHUB_OUTPUT
+            echo "⏩ Parent issue #$parent is not a coordination issue"
+          fi
+      
+      - name: Get all coordination subtasks
+        id: subtasks
+        if: steps.check.outputs.is_coordination == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python3 << 'PYTHON_SCRIPT'
+          import json
+          import subprocess
+          import re
+          
+          parent = "${{ steps.find_parent.outputs.parent_issue }}"
+          
+          # Get parent issue body and comments
+          result = subprocess.run(
+              ['gh', 'issue', 'view', parent, '--json', 'body,comments'],
+              capture_output=True, text=True, check=True
+          )
+          data = json.loads(result.stdout)
+          
+          # Find coordination plan comment
+          coordination_comment = None
+          for comment in data.get('comments', []):
+              if 'Multi-Agent Coordination Plan Activated' in comment.get('body', ''):
+                  coordination_comment = comment['body']
+                  break
+          
+          if not coordination_comment:
+              print("No coordination plan found")
+              exit(0)
+          
+          # Extract subtask issue numbers
+          subtask_pattern = r'- \[[ x]\] .+\(#(\d+)\)'
+          subtasks = re.findall(subtask_pattern, coordination_comment)
+          
+          # Get status of each subtask
+          subtask_status = {}
+          for issue_num in subtasks:
+              result = subprocess.run(
+                  ['gh', 'issue', 'view', issue_num, '--json', 'state,title'],
+                  capture_output=True, text=True, check=True
+              )
+              issue_data = json.loads(result.stdout)
+              
+              subtask_status[issue_num] = {
+                  'state': issue_data['state'],
+                  'title': issue_data['title']
+              }
+          
+          # Calculate progress
+          total = len(subtasks)
+          completed = sum(1 for s in subtask_status.values() if s['state'] == 'CLOSED')
+          percentage = (completed / total * 100) if total > 0 else 0
+          
+          result = {
+              'total': total,
+              'completed': completed,
+              'percentage': round(percentage, 1),
+              'subtasks': subtask_status
+          }
+          
+          with open('/tmp/progress.json', 'w') as f:
+              json.dump(result, f, indent=2)
+          
+          print(f"Progress: {completed}/{total} ({percentage}%)")
+          
+          # Save for GitHub Actions
+          with open('$GITHUB_OUTPUT', 'a') as f:
+              f.write(f"total={total}\n")
+              f.write(f"completed={completed}\n")
+              f.write(f"percentage={percentage}\n")
+          PYTHON_SCRIPT
+      
+      - name: Update parent issue progress
+        if: steps.check.outputs.is_coordination == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python3 << 'PYTHON_SCRIPT'
+          import json
+          import subprocess
+          from datetime import datetime
+          
+          parent = "${{ steps.find_parent.outputs.parent_issue }}"
+          
+          # Load progress
+          with open('/tmp/progress.json', 'r') as f:
+              progress = json.load(f)
+          
+          # Build progress update comment
+          completed = progress['completed']
+          total = progress['total']
+          percentage = progress['percentage']
+          
+          # Create progress bar
+          bar_length = 20
+          filled = int(bar_length * percentage / 100)
+          bar = '█' * filled + '░' * (bar_length - filled)
+          
+          # List completed and pending tasks
+          completed_list = []
+          pending_list = []
+          
+          for issue_num, status in progress['subtasks'].items():
+              title = status['title'][:50]
+              if status['state'] == 'CLOSED':
+                  completed_list.append(f"- ✅ #{issue_num}: {title}")
+              else:
+                  pending_list.append(f"- 🔄 #{issue_num}: {title}")
+          
+          comment = f"""## 📊 Coordination Progress Update
+
+**Overall Progress:** {completed}/{total} sub-tasks complete ({percentage}%)
+
+`{bar}` {percentage}%
+
+### ✅ Completed Sub-Tasks
+{chr(10).join(completed_list) if completed_list else "- None yet"}
+
+### 🔄 Pending Sub-Tasks
+{chr(10).join(pending_list) if pending_list else "- All complete! 🎉"}
+
+---
+
+*Updated: {datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')} UTC*  
+*Automated progress tracking by @coordinate-wizard 🎹*
+"""
+          
+          # Post update
+          subprocess.run([
+              'gh', 'issue', 'comment', str(parent),
+              '--body', comment
+          ], check=True)
+          
+          print(f"✅ Updated progress for issue #{parent}")
+          PYTHON_SCRIPT
+      
+      - name: Check for completion
+        id: completion
+        if: steps.check.outputs.is_coordination == 'true'
+        run: |
+          completed="${{ steps.subtasks.outputs.completed }}"
+          total="${{ steps.subtasks.outputs.total }}"
+          
+          if [ "$completed" -eq "$total" ] && [ "$total" -gt "0" ]; then
+            echo "all_complete=true" >> $GITHUB_OUTPUT
+            echo "🎉 All sub-tasks complete!"
+          else
+            echo "all_complete=false" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Mark coordination complete
+        if: steps.completion.outputs.all_complete == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          parent="${{ steps.find_parent.outputs.parent_issue }}"
+          
+          # Post completion message
+          gh issue comment "$parent" --body "## 🎉 Coordination Complete!
+
+All sub-tasks have been successfully completed by the assigned agents!
+
+### 🎯 What Happened
+
+The multi-agent coordination workflow:
+1. ✅ Analyzed task complexity
+2. ✅ Created coordination plan
+3. ✅ Spawned sub-task issues
+4. ✅ Assigned specialized agents
+5. ✅ Tracked progress automatically
+6. ✅ All agents completed their work
+
+### 🏆 Outcome
+
+The coordinated effort is now complete. Review the linked PRs from each sub-task for the implemented solutions.
+
+**This coordination was orchestrated by @coordinate-wizard through automated workflows!** 🎹
+
+---
+
+*You can now close this issue or continue discussion about the coordinated work.*"
+          
+          # Remove active label, add complete label
+          gh issue edit "$parent" \
+            --remove-label "coordination-active" \
+            --add-label "coordination-complete"
+          
+          echo "✅ Marked coordination #$parent as complete"
