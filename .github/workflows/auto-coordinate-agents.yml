@@ -1,0 +1,418 @@
+name: Auto-Coordinate Agents
+
+on:
+  issues:
+    types: [labeled, opened, edited]
+  workflow_dispatch:
+    inputs:
+      issue_number:
+        description: 'Issue number to coordinate'
+        required: true
+        type: number
+      force_coordinate:
+        description: 'Force coordination even if simple task'
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+jobs:
+  analyze:
+    name: Analyze Task Complexity
+    if: |
+      (github.event_name == 'issues' && contains(github.event.issue.labels.*.name, 'coordination-needed')) ||
+      (github.event_name == 'workflow_dispatch')
+    runs-on: ubuntu-latest
+    outputs:
+      complexity: ${{ steps.analyze.outputs.complexity }}
+      should_coordinate: ${{ steps.analyze.outputs.should_coordinate }}
+      issue_number: ${{ steps.setup.outputs.issue_number }}
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      
+      - name: Setup issue number
+        id: setup
+        run: |
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            echo "issue_number=${{ inputs.issue_number }}" >> $GITHUB_OUTPUT
+          else
+            echo "issue_number=${{ github.event.issue.number }}" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Get issue details
+        id: issue
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          issue_num="${{ steps.setup.outputs.issue_number }}"
+          issue_data=$(gh issue view "$issue_num" --json title,body,labels)
+          
+          echo "title=$(echo "$issue_data" | jq -r '.title')" >> $GITHUB_OUTPUT
+          echo "$issue_data" | jq -r '.body' > /tmp/issue_body.txt
+      
+      - name: Analyze task complexity
+        id: analyze
+        run: |
+          # Use meta_agent_coordinator to analyze complexity
+          python3 << 'PYTHON_SCRIPT'
+          import json
+          import sys
+          sys.path.insert(0, 'tools')
+          
+          from meta_agent_coordinator import MetaAgentCoordinator, TaskComplexity
+          
+          # Read issue details
+          with open('/tmp/issue_body.txt', 'r') as f:
+              issue_body = f.read()
+          
+          title = "${{ steps.issue.outputs.title }}"
+          task_description = f"{title}\n\n{issue_body}"
+          
+          # Analyze complexity
+          coordinator = MetaAgentCoordinator()
+          complexity = coordinator.analyze_task_complexity(task_description)
+          
+          # Determine if coordination needed
+          force_coordinate = "${{ inputs.force_coordinate }}" == "true"
+          should_coordinate = force_coordinate or complexity in [
+              TaskComplexity.COMPLEX,
+              TaskComplexity.HIGHLY_COMPLEX
+          ]
+          
+          print(f"complexity={complexity.value}")
+          print(f"should_coordinate={str(should_coordinate).lower()}")
+          
+          # Save for GitHub Actions
+          with open('$GITHUB_OUTPUT', 'a') as f:
+              f.write(f"complexity={complexity.value}\n")
+              f.write(f"should_coordinate={str(should_coordinate).lower()}\n")
+          PYTHON_SCRIPT
+      
+      - name: Comment on simple tasks
+        if: steps.analyze.outputs.should_coordinate != 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh issue comment "${{ steps.setup.outputs.issue_number }}" --body "## 🎯 Coordination Analysis
+
+**Task Complexity:** ${{ steps.analyze.outputs.complexity }}
+
+This task is **not complex enough** to require multi-agent coordination. A single specialized agent can handle this effectively.
+
+**Recommendation:** Remove the \`coordination-needed\` label and assign to an appropriate single agent.
+
+*Analysis by @coordinate-wizard (workflow orchestration)*"
+
+  coordinate:
+    name: Create Coordination Plan
+    needs: analyze
+    if: needs.analyze.outputs.should_coordinate == 'true'
+    runs-on: ubuntu-latest
+    outputs:
+      coordination_id: ${{ steps.plan.outputs.coordination_id }}
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      
+      - name: Get issue details
+        id: issue
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          issue_num="${{ needs.analyze.outputs.issue_number }}"
+          issue_data=$(gh issue view "$issue_num" --json title,body,labels)
+          
+          echo "title=$(echo "$issue_data" | jq -r '.title')" >> $GITHUB_OUTPUT
+          echo "$issue_data" | jq -r '.body' > /tmp/issue_body.txt
+          echo "$issue_data" | jq -r '.labels[].name' | jq -R -s -c 'split("\n") | map(select(length > 0))' > /tmp/labels.json
+      
+      - name: Create coordination plan
+        id: plan
+        run: |
+          python3 << 'PYTHON_SCRIPT'
+          import json
+          import sys
+          sys.path.insert(0, 'tools')
+          
+          from meta_agent_coordinator import MetaAgentCoordinator
+          
+          # Read issue details
+          with open('/tmp/issue_body.txt', 'r') as f:
+              issue_body = f.read()
+          
+          with open('/tmp/labels.json', 'r') as f:
+              labels = json.load(f)
+          
+          title = "${{ steps.issue.outputs.title }}"
+          task_description = f"{title}\n\n{issue_body}"
+          task_context = {
+              'labels': labels,
+              'issue_number': ${{ needs.analyze.outputs.issue_number }}
+          }
+          
+          # Create coordination
+          coordinator = MetaAgentCoordinator()
+          coordination = coordinator.create_coordination(
+              task_id=f"issue-${{ needs.analyze.outputs.issue_number }}",
+              task_description=task_description,
+              task_context=task_context
+          )
+          
+          # Save coordination plan
+          with open('/tmp/coordination_plan.json', 'w') as f:
+              json.dump({
+                  'coordination_id': coordination['coordination_id'],
+                  'complexity': coordination['plan'].complexity.value,
+                  'sub_tasks': [st.to_dict() for st in coordination['plan'].sub_tasks],
+                  'execution_order': coordination['plan'].execution_order,
+                  'parallel_groups': coordination['plan'].parallel_groups,
+                  'agents': coordination['agents']
+              }, f, indent=2)
+          
+          print(f"coordination_id={coordination['coordination_id']}")
+          
+          # Save for GitHub Actions
+          with open('$GITHUB_OUTPUT', 'a') as f:
+              f.write(f"coordination_id={coordination['coordination_id']}\n")
+          PYTHON_SCRIPT
+      
+      - name: Upload coordination plan
+        uses: actions/upload-artifact@v3
+        with:
+          name: coordination-plan
+          path: /tmp/coordination_plan.json
+
+  spawn_subtasks:
+    name: Spawn Sub-Task Issues
+    needs: [analyze, coordinate]
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      
+      - name: Download coordination plan
+        uses: actions/download-artifact@v3
+        with:
+          name: coordination-plan
+          path: /tmp
+      
+      - name: Create sub-task issues
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python3 << 'PYTHON_SCRIPT'
+          import json
+          import subprocess
+          
+          # Load coordination plan
+          with open('/tmp/coordination_plan.json', 'r') as f:
+              plan = json.load(f)
+          
+          parent_issue = ${{ needs.analyze.outputs.issue_number }}
+          coordination_id = plan['coordination_id']
+          
+          created_issues = []
+          
+          # Create issue for each sub-task
+          for subtask in plan['sub_tasks']:
+              # Format issue body
+              body = f"""## 🎯 Coordination Sub-Task
+
+**Parent Issue:** #{parent_issue}  
+**Coordination ID:** {coordination_id}  
+**Sub-Task ID:** {subtask['id']}
+
+### Task Description
+
+{subtask['description']}
+
+### Requirements
+
+**Specializations Required:**
+{chr(10).join(f"- {spec}" for spec in subtask['required_specializations'])}
+
+**Dependencies:**
+{chr(10).join(f"- {dep}" for dep in subtask['dependencies']) if subtask['dependencies'] else "- None"}
+
+**Estimated Effort:** {subtask['estimated_effort']}  
+**Priority:** {subtask['priority']}/10
+
+### Completion Criteria
+
+{chr(10).join(f"- [ ] {criteria}" for criteria in subtask['completion_criteria'])}
+
+---
+
+**Assigned Agent:** @{subtask['assigned_agent']}
+
+**@{subtask['assigned_agent']}** - Please complete this sub-task as part of the larger coordination effort.
+
+When complete:
+1. Close this issue
+2. Link your PR to this issue
+3. The progress will be automatically tracked in #{parent_issue}
+
+*Created by @coordinate-wizard (workflow orchestration)*
+"""
+              
+              # Create issue
+              title = f"[Coordination] {subtask['description'][:60]}..."
+              labels = ['coordination-subtask', f'agent:{subtask["assigned_agent"]}', 'copilot-assigned']
+              
+              result = subprocess.run([
+                  'gh', 'issue', 'create',
+                  '--title', title,
+                  '--body', body,
+                  '--label', ','.join(labels)
+              ], capture_output=True, text=True, check=True)
+              
+              issue_url = result.stdout.strip()
+              issue_number = issue_url.split('/')[-1]
+              
+              created_issues.append({
+                  'subtask_id': subtask['id'],
+                  'issue_number': issue_number,
+                  'issue_url': issue_url,
+                  'agent': subtask['assigned_agent']
+              })
+              
+              print(f"Created issue #{issue_number} for subtask {subtask['id']}")
+          
+          # Save created issues
+          with open('/tmp/created_issues.json', 'w') as f:
+              json.dump(created_issues, f, indent=2)
+          PYTHON_SCRIPT
+      
+      - name: Upload created issues list
+        uses: actions/upload-artifact@v3
+        with:
+          name: created-issues
+          path: /tmp/created_issues.json
+
+  update_parent:
+    name: Update Parent Issue
+    needs: [analyze, coordinate, spawn_subtasks]
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Download artifacts
+        uses: actions/download-artifact@v3
+        with:
+          path: /tmp/artifacts
+      
+      - name: Update parent issue with coordination plan
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python3 << 'PYTHON_SCRIPT'
+          import json
+          import subprocess
+          
+          # Load artifacts
+          with open('/tmp/artifacts/coordination-plan/coordination_plan.json', 'r') as f:
+              plan = json.load(f)
+          
+          with open('/tmp/artifacts/created-issues/created_issues.json', 'r') as f:
+              created_issues = json.load(f)
+          
+          parent_issue = ${{ needs.analyze.outputs.issue_number }}
+          
+          # Build progress tracking section
+          subtask_links = []
+          for issue_info in created_issues:
+              subtask_id = issue_info['subtask_id']
+              issue_num = issue_info['issue_number']
+              agent = issue_info['agent']
+              
+              # Find subtask details
+              subtask = next(st for st in plan['sub_tasks'] if st['id'] == subtask_id)
+              
+              subtask_links.append(
+                  f"- [ ] **{subtask['description'][:50]}...** "
+                  f"(#{issue_num}) - @{agent}"
+              )
+          
+          # Create comment
+          comment = f"""## 🎹 Multi-Agent Coordination Plan Activated
+
+**Coordination ID:** {plan['coordination_id']}  
+**Complexity:** {plan['complexity']}  
+**Total Sub-Tasks:** {len(plan['sub_tasks'])}
+
+### 📋 Sub-Tasks Created
+
+{chr(10).join(subtask_links)}
+
+### 🔄 Execution Strategy
+
+**Execution Order:**
+{chr(10).join(f"{i+1}. {task_id}" for i, task_id in enumerate(plan['execution_order']))}
+
+**Parallel Groups:** {len(plan['parallel_groups'])} group(s)
+
+### 👥 Agents Assigned
+
+{chr(10).join(f"- @{agent}: {details['reason']}" for agent, details in plan['agents'].items())}
+
+### 📊 Progress Tracking
+
+Progress will be automatically updated as sub-tasks are completed. This issue will be updated with:
+- ✅ Completed sub-tasks
+- 🔄 In-progress work
+- ⏸️ Blocked tasks
+- 📈 Overall completion percentage
+
+### 🎯 Next Steps
+
+1. Each assigned agent will receive their sub-task issue
+2. Agents work independently on their tasks
+3. Progress is tracked automatically
+4. When all sub-tasks complete, results are aggregated here
+
+*Orchestrated by @coordinate-wizard - Conducting diverse talents toward a unified goal! 🎹*
+
+---
+
+**Note:** This is workflow-driven coordination in action! The entire process is automated through GitHub Actions.
+"""
+          
+          # Post comment
+          subprocess.run([
+              'gh', 'issue', 'comment', str(parent_issue),
+              '--body', comment
+          ], check=True)
+          
+          # Add coordination tracking label
+          subprocess.run([
+              'gh', 'issue', 'edit', str(parent_issue),
+              '--add-label', 'coordination-active'
+          ], check=True)
+          
+          print(f"✅ Updated parent issue #{parent_issue} with coordination plan")
+          PYTHON_SCRIPT
