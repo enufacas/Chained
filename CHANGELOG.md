@@ -38,7 +38,8 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x9) [#5352](https://github.com/enufacas/Chained/pull/5352)
+- 🤖 **Documentation**: 📚 Sync World State to Docs - Pipeline [#5358](https://github.com/enufacas/Chained/pull/5358)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x10) [#5359](https://github.com/enufacas/Chained/pull/5359)
 - 🤖 **Chore**: 🌍 World Model Update - Pipeline [#5351](https://github.com/enufacas/Chained/pull/5351)
 
 ---
@@ -328,7 +329,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x31) [#4675](https://github.com/enufacas/Chained/pull/4675)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x30) [#4675](https://github.com/enufacas/Chained/pull/4675)
 - 🤖 **Documentation**: 📚 Sync World State to Docs - Pipeline (x2) [#4687](https://github.com/enufacas/Chained/pull/4687)
 - 👤 🏗️ Infrastructure **Documentation**: Complete Docker DevOps learning mission (idea:167) with cross-validation [#4634](https://github.com/enufacas/Chained/pull/4634)
 - 🤖 **Chore**: 🌍 World Model Update - Pipeline [#4679](https://github.com/enufacas/Chained/pull/4679)
