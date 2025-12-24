@@ -1,0 +1,14 @@
+{
+  "pr_number": 503,
+  "review_score": 0.819,
+  "outcome": "merged",
+  "outcome_timestamp": "2025-12-24T20:25:47.065201+00:00",
+  "manual_feedback": null,
+  "criteria_accuracy": {
+    "code_complexity": true,
+    "code_style": true,
+    "documentation": true,
+    "test_coverage": true,
+    "security": true
+  }
+}
