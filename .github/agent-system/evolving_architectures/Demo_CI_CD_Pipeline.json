@@ -1,0 +1,173 @@
+{
+  "workflow_name": "Demo CI/CD Pipeline",
+  "version": "1.0.0",
+  "last_updated": "2025-12-24T10:23:28.855890+00:00",
+  "config": {
+    "base_learning_rate": 0.01,
+    "success_rate_threshold": 0.7,
+    "min_hidden_neurons": 2,
+    "max_hidden_neurons": 20
+  },
+  "layers": [
+    {
+      "layer_id": 0,
+      "layer_type": "input",
+      "neurons": [
+        {
+          "neuron_id": "input_hour_of_day",
+          "weights": {},
+          "bias": 0.0,
+          "contribution_score": 0.5,
+          "creation_time": "2025-12-24T10:23:28.855120+00:00"
+        },
+        {
+          "neuron_id": "input_day_of_week",
+          "weights": {},
+          "bias": 0.0,
+          "contribution_score": 0.5,
+          "creation_time": "2025-12-24T10:23:28.855132+00:00"
+        },
+        {
+          "neuron_id": "input_recent_success_rate",
+          "weights": {},
+          "bias": 0.0,
+          "contribution_score": 0.5,
+          "creation_time": "2025-12-24T10:23:28.855135+00:00"
+        },
+        {
+          "neuron_id": "input_execution_frequency",
+          "weights": {},
+          "bias": 0.0,
+          "contribution_score": 0.5,
+          "creation_time": "2025-12-24T10:23:28.855138+00:00"
+        },
+        {
+          "neuron_id": "input_avg_duration",
+          "weights": {},
+          "bias": 0.0,
+          "contribution_score": 0.5,
+          "creation_time": "2025-12-24T10:23:28.855141+00:00"
+        }
+      ]
+    },
+    {
+      "layer_id": 1,
+      "layer_type": "hidden",
+      "neurons": [
+        {
+          "neuron_id": "hidden1_0",
+          "weights": {
+            "input_hour_of_day": 0.2800347686522099,
+            "input_day_of_week": 0.3528565240904197,
+            "input_recent_success_rate": -0.15753887727590465,
+            "input_execution_frequency": 0.2343512310660847,
+            "input_avg_duration": 0.1430149843885733
+          },
+          "bias": -0.025171086706078146,
+          "contribution_score": 0.5,
+          "creation_time": "2025-12-24T10:23:28.855151+00:00"
+        },
+        {
+          "neuron_id": "hidden1_1",
+          "weights": {
+            "input_hour_of_day": 0.23189663189152887,
+            "input_day_of_week": 0.18942687297278316,
+            "input_recent_success_rate": -0.03625565228978422,
+            "input_execution_frequency": -0.20857082856583764,
+            "input_avg_duration": -0.2266655784612045
+          },
+          "bias": 0.01004854711063315,
+          "contribution_score": 0.5,
+          "creation_time": "2025-12-24T10:23:28.855158+00:00"
+        },
+        {
+          "neuron_id": "hidden1_2",
+          "weights": {
+            "input_hour_of_day": 0.049440274093089494,
+            "input_day_of_week": 0.3637592994243096,
+            "input_recent_success_rate": 0.21336771452689218,
+            "input_execution_frequency": 0.15179036230840015,
+            "input_avg_duration": -0.20862883556906997
+          },
+          "bias": 0.06324742229905003,
+          "contribution_score": 0.5,
+          "creation_time": "2025-12-24T10:23:28.855166+00:00"
+        }
+      ]
+    },
+    {
+      "layer_id": 2,
+      "layer_type": "output",
+      "neurons": [
+        {
+          "neuron_id": "output_timeout",
+          "weights": {
+            "hidden1_0": 0.25958247602817497,
+            "hidden1_1": 0.4623945444112265,
+            "hidden1_2": 0.4169066333910858
+          },
+          "bias": -0.07064532953995589,
+          "contribution_score": 0.5,
+          "creation_time": "2025-12-24T10:23:28.855175+00:00"
+        },
+        {
+          "neuron_id": "output_retries",
+          "weights": {
+            "hidden1_0": 0.178224167507528,
+            "hidden1_1": 0.2539012131485252,
+            "hidden1_2": 0.08411472696404376
+          },
+          "bias": 0.026980618315765984,
+          "contribution_score": 0.5,
+          "creation_time": "2025-12-24T10:23:28.855182+00:00"
+        },
+        {
+          "neuron_id": "output_concurrency",
+          "weights": {
+            "hidden1_0": 0.05946466399674744,
+            "hidden1_1": -0.05810095256753866,
+            "hidden1_2": -0.24572919514571168
+          },
+          "bias": -0.0638950745781172,
+          "contribution_score": 0.5,
+          "creation_time": "2025-12-24T10:23:28.855186+00:00"
+        },
+        {
+          "neuron_id": "output_priority",
+          "weights": {
+            "hidden1_0": -0.4717242993775188,
+            "hidden1_1": 0.07155621581033478,
+            "hidden1_2": 0.3927578507120978
+          },
+          "bias": -0.011594947284439768,
+          "contribution_score": 0.5,
+          "creation_time": "2025-12-24T10:23:28.855190+00:00"
+        }
+      ]
+    }
+  ],
+  "success_history": [
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "execution_count": 15,
+  "evolution_count": 1,
+  "last_evolution_time": "2025-12-24T10:23:28.855337+00:00",
+  "current_learning_rate": 0.0095,
+  "architecture_fitness": 0.5,
+  "neuron_counter": 0,
+  "patterns": []
+}
