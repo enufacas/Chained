@@ -37,7 +37,8 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x7) [#5342](https://github.com/enufacas/Chained/pull/5342)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x8) [#5350](https://github.com/enufacas/Chained/pull/5350)
+- 🤖 **Chore**: 🌍 World Model Update - Pipeline [#5351](https://github.com/enufacas/Chained/pull/5351)
 
 ---
 
@@ -307,7 +308,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 - 👤 Complete Mission idea:171: Cloudflare Innovation Research (Dec 2025) [#4692](https://github.com/enufacas/Chained/pull/4692)
 - 👤 Complete Nvidia Innovation Mission (idea:172) - Multi-vendor architecture patterns [#4694](https://github.com/enufacas/Chained/pull/4694)
 - 🤖 🔧 Agents 🎯 Agent Missions - Pipeline (x2) [#4686](https://github.com/enufacas/Chained/pull/4686)
-- 🤖 🧠 Learning 🧠 Learning Pipeline - 2025-12-17 (x2) [#4677](https://github.com/enufacas/Chained/pull/4677)
+- 🤖 🧠 Learning 🧠 Learning Pipeline - 2025-12-17 [#4677](https://github.com/enufacas/Chained/pull/4677)
 - 🤖 meta-coordination: 18:19 run - system oversight and monitoring [#4669](https://github.com/enufacas/Chained/pull/4669)
 - 🤖 meta-coordination: 2025-12-17 16:16 run - system assessment [#4666](https://github.com/enufacas/Chained/pull/4666)
 - 🤖 meta-coordination: Execute 14:13 orchestration cycle [#4660](https://github.com/enufacas/Chained/pull/4660)
