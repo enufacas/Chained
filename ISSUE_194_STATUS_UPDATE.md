@@ -227,7 +227,7 @@ As the pipeline runs automatically, you will see:
 
 ### 🚀 Next Pipeline Run
 
-The next automatic pipeline execution will occur at the next scheduled time:
+The pipeline will execute automatically according to the schedule (every 6 hours):
 - Check current runs: `gh run list --workflow=adk-a2a-blog-pipeline.yml --limit 5`
 - Trigger immediately: `./tools/adk-pipeline-status.sh trigger`
 
