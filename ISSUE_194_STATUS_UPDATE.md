@@ -115,23 +115,23 @@ The ADK A2A Blog Pipeline uses a three-agent architecture following the A2A prot
 
 **Complete guides available in repository:**
 
-- 📖 **[ADK Pipeline Tracking Guide](https://github.com/enufacas/Chained/blob/main/docs/ADK_PIPELINE_TRACKING_GUIDE.md)**
+- 📖 **ADK Pipeline Tracking Guide** (`docs/ADK_PIPELINE_TRACKING_GUIDE.md`)
   - How the tracking system works
   - Manual trigger commands
   - Troubleshooting guide
   - Best practices
 
-- ⚡ **[ADK Pipeline Quick Reference](https://github.com/enufacas/Chained/blob/main/docs/ADK_PIPELINE_QUICK_REF.md)**
+- ⚡ **ADK Pipeline Quick Reference** (`docs/ADK_PIPELINE_QUICK_REF.md`)
   - Essential commands
   - Quick troubleshooting
   - Common scenarios
 
-- 🔧 **[Implementation Details](https://github.com/enufacas/Chained/blob/main/docs/ADK_A2A_PIPELINE_IMPLEMENTATION.md)**
+- 🔧 **Implementation Details** (`docs/ADK_A2A_PIPELINE_IMPLEMENTATION.md`)
   - Technical architecture
   - A2A protocol implementation
   - Agent communication flow
 
-- 📊 **[Status Verification](https://github.com/enufacas/Chained/blob/main/docs/implementation-summaries/ADK_PIPELINE_STATUS_VERIFICATION.md)**
+- 📊 **Status Verification** (`docs/implementation-summaries/ADK_PIPELINE_STATUS_VERIFICATION.md`)
   - Infrastructure validation
   - Component verification
   - System health checks
@@ -204,13 +204,13 @@ As the pipeline runs automatically, you will see:
 - All agents have: `agent.py`, `Dockerfile`, `__init__.py`
 
 ✅ **Documentation**
-- Tracking guide: `docs/ADK_PIPELINE_TRACKING_GUIDE.md` (362 lines)
+- Tracking guide: `docs/ADK_PIPELINE_TRACKING_GUIDE.md`
 - Quick reference: `docs/ADK_PIPELINE_QUICK_REF.md`
 - Implementation docs: Multiple comprehensive guides
 - All links verified and current
 
 ✅ **Test Suite**
-- File exists: `tests/test_adk_blog_pipeline.py` (11,818 bytes)
+- File exists: `tests/test_adk_blog_pipeline.py`
 - Tests orchestrator module import
 - Tests A2A client functionality
 - Tests agent coordination
