@@ -30,6 +30,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### ✨ Features
 
+- 🤖 🔧 Agents 🎯 Agent Missions - Pipeline [#5475](https://github.com/enufacas/Chained/pull/5475)
 - 🤖 🧠 Learning 🧠 Learning Pipeline - 2025-12-25 [#5466](https://github.com/enufacas/Chained/pull/5466)
 - 🤖 meta-coordination: 2025-12-25 06:19 - system health monitoring [#5456](https://github.com/enufacas/Chained/pull/5456)
 - 🤖 🎯 Daily goal for 2025-12-25 [#5460](https://github.com/enufacas/Chained/pull/5460)
@@ -37,7 +38,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x10) [#5467](https://github.com/enufacas/Chained/pull/5467)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x11) [#5469](https://github.com/enufacas/Chained/pull/5469)
 - 👤 **Documentation**: Add Issue completion verification summary (@create-botter) [#194](https://github.com/enufacas/Chained/pull/194)
 - 🤖 **Chore**: 🌍 World Model Update - Pipeline [#5468](https://github.com/enufacas/Chained/pull/5468)
 
