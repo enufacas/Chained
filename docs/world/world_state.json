@@ -1,6 +1,6 @@
 {
-  "time": "2025-12-24T20:33:22Z",
-  "tick": 147,
+  "time": "2025-12-25T08:39:00Z",
+  "tick": 148,
   "agents": [
     {
       "id": "agent-1762910779",
@@ -11,7 +11,7 @@
       "path": [
         "US:San Francisco"
       ],
-      "current_idea_id": "idea:381",
+      "current_idea_id": "idea:411",
       "home_base": "US:Charlotte",
       "metrics": {
         "issues_resolved": 1,
@@ -31,11 +31,11 @@
       "label": "💭 Turing",
       "specialization": "coach-master",
       "location_region_id": "US:Charlotte",
-      "status": "working",
+      "status": "exploring",
       "path": [
         "US:San Francisco"
       ],
-      "current_idea_id": "idea:235",
+      "current_idea_id": "idea:385",
       "home_base": "US:Charlotte",
       "metrics": {
         "issues_resolved": 2,
@@ -48,12 +48,6 @@
         "creativity": 66,
         "caution": 81,
         "speed": 78
-      },
-      "current_mission": {
-        "mission_id": "idea:235",
-        "title": "AI/ML: Gpt (2025-12-13)",
-        "issue_number": null,
-        "assigned_at": "2025-12-24T20:33:22Z"
       }
     },
     {
@@ -61,11 +55,11 @@
       "label": "🎯 Liskov",
       "specialization": "investigate-champion",
       "location_region_id": "US:Charlotte",
-      "status": "working",
+      "status": "exploring",
       "path": [
         "US:San Francisco"
       ],
-      "current_idea_id": "idea:236",
+      "current_idea_id": "idea:528",
       "home_base": "US:Charlotte",
       "metrics": {
         "issues_resolved": 2,
@@ -78,12 +72,6 @@
         "creativity": 78,
         "caution": 75,
         "speed": 95
-      },
-      "current_mission": {
-        "mission_id": "idea:236",
-        "title": "AI/ML: Claude (2025-12-13)",
-        "issue_number": null,
-        "assigned_at": "2025-12-24T20:33:22Z"
       }
     },
     {
@@ -96,7 +84,7 @@
         "US:San Francisco",
         "US:Redmond"
       ],
-      "current_idea_id": "idea:356",
+      "current_idea_id": "idea:1",
       "home_base": "US:Charlotte",
       "metrics": {
         "issues_resolved": 1,
@@ -120,7 +108,7 @@
       "path": [
         "US:San Francisco"
       ],
-      "current_idea_id": "idea:407",
+      "current_idea_id": "idea:504",
       "home_base": "US:Charlotte",
       "metrics": {
         "issues_resolved": 2,
@@ -142,9 +130,10 @@
       "location_region_id": "US:Charlotte",
       "status": "exploring",
       "path": [
-        "US:San Francisco"
+        "US:San Francisco",
+        "US:Austin"
       ],
-      "current_idea_id": "idea:321",
+      "current_idea_id": "idea:394",
       "home_base": "US:Charlotte",
       "metrics": {
         "issues_resolved": 1,
@@ -168,7 +157,7 @@
       "path": [
         "US:San Francisco"
       ],
-      "current_idea_id": "idea:340",
+      "current_idea_id": "idea:451",
       "home_base": "US:Charlotte",
       "metrics": {
         "issues_resolved": 2,
@@ -192,7 +181,7 @@
       "path": [
         "US:San Francisco"
       ],
-      "current_idea_id": "idea:503",
+      "current_idea_id": "idea:412",
       "home_base": "US:Charlotte",
       "metrics": {
         "issues_resolved": 1,
@@ -216,7 +205,7 @@
       "path": [
         "US:San Francisco"
       ],
-      "current_idea_id": "idea:292",
+      "current_idea_id": "idea:269",
       "home_base": "US:Charlotte",
       "metrics": {
         "issues_resolved": 0,
@@ -240,7 +229,7 @@
       "path": [
         "US:San Francisco"
       ],
-      "current_idea_id": "idea:341",
+      "current_idea_id": "idea:295",
       "home_base": "US:Charlotte",
       "metrics": {
         "issues_resolved": 0,
@@ -262,9 +251,10 @@
       "location_region_id": "US:Charlotte",
       "status": "exploring",
       "path": [
-        "US:San Francisco"
+        "US:San Francisco",
+        "US:Redmond"
       ],
-      "current_idea_id": "idea:257",
+      "current_idea_id": "idea:356",
       "home_base": "US:Charlotte",
       "metrics": {
         "issues_resolved": 1,
@@ -288,7 +278,7 @@
       "path": [
         "US:San Francisco"
       ],
-      "current_idea_id": "idea:497",
+      "current_idea_id": "idea:384",
       "home_base": "US:Charlotte",
       "metrics": {
         "issues_resolved": 2,
@@ -312,7 +302,7 @@
       "path": [
         "US:San Francisco"
       ],
-      "current_idea_id": "idea:468",
+      "current_idea_id": "idea:438",
       "home_base": "US:Charlotte",
       "metrics": {
         "issues_resolved": 1,
@@ -334,9 +324,10 @@
       "location_region_id": "US:Charlotte",
       "status": "exploring",
       "path": [
-        "US:San Francisco"
+        "US:San Francisco",
+        "US:Austin"
       ],
-      "current_idea_id": "idea:286",
+      "current_idea_id": "idea:326",
       "home_base": "US:Charlotte",
       "metrics": {
         "issues_resolved": 1,
@@ -360,7 +351,7 @@
       "path": [
         "US:San Francisco"
       ],
-      "current_idea_id": "idea:351",
+      "current_idea_id": "idea:361",
       "home_base": "US:Charlotte",
       "metrics": {
         "issues_resolved": 0,
@@ -382,9 +373,10 @@
       "location_region_id": "US:Charlotte",
       "status": "exploring",
       "path": [
-        "US:San Francisco"
+        "US:San Francisco",
+        "GB:London"
       ],
-      "current_idea_id": "idea:458",
+      "current_idea_id": "idea:355",
       "home_base": "US:Charlotte",
       "metrics": {
         "issues_resolved": 0,
@@ -406,10 +398,9 @@
       "location_region_id": "US:Charlotte",
       "status": "exploring",
       "path": [
-        "US:San Francisco",
-        "GB:London"
+        "US:San Francisco"
       ],
-      "current_idea_id": "idea:399",
+      "current_idea_id": "idea:440",
       "home_base": "US:Charlotte",
       "metrics": {
         "issues_resolved": 0,
@@ -433,7 +424,7 @@
       "path": [
         "US:San Francisco"
       ],
-      "current_idea_id": "idea:324",
+      "current_idea_id": "idea:362",
       "home_base": "US:Charlotte",
       "metrics": {
         "issues_resolved": 0,
@@ -457,7 +448,7 @@
       "path": [
         "US:San Francisco"
       ],
-      "current_idea_id": "idea:252",
+      "current_idea_id": "idea:426",
       "home_base": "US:Charlotte",
       "metrics": {
         "issues_resolved": 0,
@@ -479,10 +470,9 @@
       "location_region_id": "US:Charlotte",
       "status": "exploring",
       "path": [
-        "US:San Francisco",
-        "US:Austin"
+        "US:San Francisco"
       ],
-      "current_idea_id": "idea:418",
+      "current_idea_id": "idea:395",
       "home_base": "US:Charlotte",
       "metrics": {
         "issues_resolved": 0,
@@ -504,10 +494,9 @@
       "location_region_id": "US:Charlotte",
       "status": "exploring",
       "path": [
-        "US:San Francisco",
-        "US:Austin"
+        "US:San Francisco"
       ],
-      "current_idea_id": "idea:394",
+      "current_idea_id": "idea:322",
       "home_base": "US:Charlotte",
       "metrics": {
         "issues_resolved": 0,
@@ -531,7 +520,7 @@
       "path": [
         "US:San Francisco"
       ],
-      "current_idea_id": "idea:446",
+      "current_idea_id": "idea:440",
       "home_base": "US:Charlotte",
       "metrics": {
         "issues_resolved": 0,
@@ -555,7 +544,7 @@
       "path": [
         "US:San Francisco"
       ],
-      "current_idea_id": "idea:323",
+      "current_idea_id": "idea:391",
       "home_base": "US:Charlotte",
       "metrics": {
         "issues_resolved": 0,
@@ -577,11 +566,9 @@
       "location_region_id": "US:Charlotte",
       "status": "exploring",
       "path": [
-        "US:Seattle",
-        "US:Redmond",
         "US:San Francisco"
       ],
-      "current_idea_id": "idea:487",
+      "current_idea_id": "idea:348",
       "home_base": "US:Charlotte",
       "metrics": {
         "issues_resolved": 0,
@@ -605,7 +592,7 @@
       "path": [
         "US:San Francisco"
       ],
-      "current_idea_id": "idea:446",
+      "current_idea_id": "idea:452",
       "home_base": "US:Charlotte",
       "metrics": {
         "issues_resolved": 1,
@@ -631,7 +618,7 @@
         "US:Redmond",
         "US:San Francisco"
       ],
-      "current_idea_id": "idea:325",
+      "current_idea_id": "idea:417",
       "home_base": "US:Charlotte",
       "metrics": {
         "issues_resolved": 2,
@@ -655,7 +642,7 @@
       "path": [
         "US:San Francisco"
       ],
-      "current_idea_id": "idea:298",
+      "current_idea_id": "idea:304",
       "home_base": "US:Charlotte",
       "metrics": {
         "issues_resolved": 2,
@@ -679,7 +666,7 @@
       "path": [
         "US:San Francisco"
       ],
-      "current_idea_id": "idea:470",
+      "current_idea_id": "idea:338",
       "home_base": "US:Charlotte",
       "metrics": {
         "issues_resolved": 2,
@@ -703,7 +690,7 @@
       "path": [
         "US:San Francisco"
       ],
-      "current_idea_id": "idea:307",
+      "current_idea_id": "idea:237",
       "home_base": "US:Charlotte",
       "metrics": {
         "issues_resolved": 1,
@@ -725,10 +712,9 @@
       "location_region_id": "US:Charlotte",
       "status": "exploring",
       "path": [
-        "US:San Francisco",
-        "US:Redmond"
+        "US:San Francisco"
       ],
-      "current_idea_id": "idea:332",
+      "current_idea_id": "idea:516",
       "home_base": "US:Charlotte",
       "metrics": {
         "issues_resolved": 2,
@@ -750,9 +736,10 @@
       "location_region_id": "US:Charlotte",
       "status": "exploring",
       "path": [
-        "US:San Francisco"
+        "US:San Francisco",
+        "US:Austin"
       ],
-      "current_idea_id": "idea:307",
+      "current_idea_id": "idea:279",
       "home_base": "US:Charlotte",
       "metrics": {
         "issues_resolved": 1,
@@ -774,9 +761,10 @@
       "location_region_id": "US:Charlotte",
       "status": "exploring",
       "path": [
-        "US:San Francisco"
+        "US:San Francisco",
+        "GB:London"
       ],
-      "current_idea_id": "idea:277",
+      "current_idea_id": "idea:308",
       "home_base": "US:Charlotte",
       "metrics": {
         "issues_resolved": 1,
@@ -800,7 +788,7 @@
       "path": [
         "US:San Francisco"
       ],
-      "current_idea_id": "idea:486",
+      "current_idea_id": "idea:375",
       "home_base": "US:Charlotte",
       "metrics": {
         "issues_resolved": 1,
@@ -824,7 +812,7 @@
       "path": [
         "US:San Francisco"
       ],
-      "current_idea_id": "idea:416",
+      "current_idea_id": "idea:341",
       "home_base": "US:Charlotte",
       "metrics": {
         "issues_resolved": 2,
@@ -848,7 +836,7 @@
       "path": [
         "US:San Francisco"
       ],
-      "current_idea_id": "idea:436",
+      "current_idea_id": "idea:258",
       "home_base": "US:Charlotte",
       "metrics": {
         "issues_resolved": 1,
@@ -870,11 +858,10 @@
       "location_region_id": "US:Charlotte",
       "status": "exploring",
       "path": [
-        "US:Seattle",
-        "US:Redmond",
-        "US:San Francisco"
+        "US:San Francisco",
+        "GB:London"
       ],
-      "current_idea_id": "idea:465",
+      "current_idea_id": "idea:284",
       "home_base": "US:Charlotte",
       "metrics": {
         "issues_resolved": 1,
@@ -919,7 +906,7 @@
       "label": "San Francisco",
       "lat": 37.7749,
       "lng": -122.4194,
-      "idea_count": 284,
+      "idea_count": 300,
       "timezone": "America/Los_Angeles",
       "utc_offset": -8,
       "region_type": "innovation_hub",
@@ -999,7 +986,7 @@
       "label": "Redmond",
       "lat": 47.674,
       "lng": -122.1215,
-      "idea_count": 25,
+      "idea_count": 26,
       "timezone": "America/Los_Angeles",
       "utc_offset": -8,
       "region_type": "corporate_hub",
@@ -1154,7 +1141,7 @@
       "label": "London",
       "lat": 51.5074,
       "lng": -0.1278,
-      "idea_count": 13,
+      "idea_count": 14,
       "timezone": "UTC",
       "utc_offset": 0,
       "region_type": "general",
@@ -1166,7 +1153,7 @@
       "label": "Austin",
       "lat": 30.2672,
       "lng": -97.7431,
-      "idea_count": 12,
+      "idea_count": 13,
       "timezone": "UTC",
       "utc_offset": 0,
       "region_type": "general",
@@ -1294,9 +1281,9 @@
     }
   ],
   "metrics": {
-    "total_ideas": 287,
+    "total_ideas": 303,
     "total_regions": 10,
-    "ticks_completed": 146,
+    "ticks_completed": 148,
     "active_agents": 12,
     "total_agent_count": 36,
     "elimination_threshold": 0.3,
