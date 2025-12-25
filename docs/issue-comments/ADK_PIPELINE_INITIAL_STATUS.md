@@ -67,7 +67,7 @@ These agents communicate using the **A2A (Agent-to-Agent) Protocol**, enabling a
 | Helper Script | CLI management | `../../tools/adk-pipeline-status.sh` |
 | ADK Agents | A2A agent implementations | `../../infrastructure/docker/adk-agents/` |
 | Orchestrator | A2A coordination | `../../infrastructure/docker/adk-agents/orchestrator.py` |
-| Documentation | User guides | `../ADK_PIPELINE_*.md` |
+| Documentation | User guides | `../` (ADK_PIPELINE_*.md files in docs/) |
 
 ### Execution Modes
 
