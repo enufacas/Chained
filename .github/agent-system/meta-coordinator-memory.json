@@ -1,10 +1,10 @@
 {
   "version": "1.1",
   "created_at": "2025-11-24T05:17:32.537364",
-  "last_updated": "2025-12-25T12:28:27.222486",
+  "last_updated": "2025-12-25T14:17:37.958243",
   "runs": {
-    "total_runs": 382,
-    "successful_runs": 382,
+    "total_runs": 385,
+    "successful_runs": 385,
     "failed_runs": 0,
     "last_run": {
       "timestamp": "2025-12-23T18:23:40.027531",
@@ -23,30 +23,18 @@
     "approval_times": []
   },
   "issue_patterns": {
-    "total_issues_processed": 14,
+    "total_issues_processed": 16,
     "agents_assigned": {
-      "edge-cases-pro": 1202453802380202612679414065556140558016349465041059773802132977424491020858679523053413887173001575952350707712,
-      "coach-master": 1202453802380202612679414065556140558016349465041059773802132977424491020858679523053413887173001575952350707712,
-      "construct-specialist": 1202453802380202612679414065556140558016349465041059773802132977424491020858679523053413887173001575952350707712,
-      "create-botter": 3607361407140607838038242227751123949660713529841151848811986262720602364140500473468447990312518907351149838336,
-      "investigate-champion": 1202453802380202612679414065556140558016349465041059773802132977424491020858679523053413887173001575952350707712,
-      "troubleshoot-expert": 1202453802380202612679414065556140558016349465041059773802132977424491020858679523053413887173001575952350707712,
-      "align-wizard": 2085924839766513752338888384931203236916703635113918720651407820138886450957656787131798913024
+      "edge-cases-pro": 9619630419041620901435312524449124464130795720328478190417063819395928166869436184427311097384012607618805661696,
+      "coach-master": 9619630419041620901435312524449124464130795720328478190417063819395928166869436184427311097384012607618805661696,
+      "construct-specialist": 9619630419041620901435312524449124464130795720328478190417063819395928166869436184427311097384012607618805661696,
+      "create-botter": 28858891257124862704305937822008991597285708238729214790495890101764818913124003787747583922500151258809198706691,
+      "investigate-champion": 9619630419041620901435312524449124464130795720328478190417063819395928166869436184427311097384012607618805661696,
+      "troubleshoot-expert": 9619630419041620901435312524449124464130795720328478190417063819395928166869436184427311097384012607618805661696,
+      "align-wizard": 16687398718132110018711107079449625895333629080911349765211262561111091607661254297054391304192
     },
     "agent_success_rates": {},
     "assignment_times": [
-      {
-        "issue": 2751,
-        "agent": "construct-specialist",
-        "timestamp": "2025-11-24T10:54:58.013006",
-        "score": 9
-      },
-      {
-        "issue": 2743,
-        "agent": "create-botter",
-        "timestamp": "2025-11-24T10:54:58.013016",
-        "score": 14
-      },
       {
         "issue": 2733,
         "agent": "create-botter",
@@ -634,6 +622,18 @@
         "agent": "create-botter",
         "timestamp": "2025-12-24T14:18:15.772898",
         "score": 12
+      },
+      {
+        "issue": 5513,
+        "agent": "create-botter",
+        "timestamp": "2025-12-25T14:17:16.866061",
+        "score": 12
+      },
+      {
+        "issue": 5513,
+        "agent": "create-botter",
+        "timestamp": "2025-12-25T14:17:37.957636",
+        "score": 12
       }
     ]
   },
@@ -650,29 +650,6 @@
   },
   "decisions": {
     "recent": [
-      {
-        "type": "phase5_auto_merged",
-        "description": "Auto-merged PR #2769 (automated sync from trusted source, no CI checks required)",
-        "context": {
-          "pr_number": 2769,
-          "reason": "trusted_source_no_wip"
-        },
-        "timestamp": "2025-11-24T10:54:58.013060",
-        "session_id": "a8f53e273f33a934"
-      },
-      {
-        "type": "phase7_closed_conflicting",
-        "description": "Closed PRs #2760 and #2725 (merge conflicts, superseded by merged PR #2769)",
-        "context": {
-          "pr_numbers": [
-            2760,
-            2725
-          ],
-          "reason": "conflicts_superseded"
-        },
-        "timestamp": "2025-11-24T10:54:58.013062",
-        "session_id": "a8f53e273f33a934"
-      },
       {
         "type": "phase0_previous_cycle_pr_merged",
         "description": "Merged PR #2766 from previous cycle (10:16) - memory persistence completed",
@@ -1729,6 +1706,28 @@
         },
         "timestamp": "2025-12-24T14:18:15.772912",
         "session_id": "4438881cddbfa24c"
+      },
+      {
+        "type": "issue_assignment",
+        "description": "Assigned issue #5513 to create-botter (score: 12.00)",
+        "context": {
+          "issue_number": 5513,
+          "agent": "create-botter",
+          "score": 12
+        },
+        "timestamp": "2025-12-25T14:17:16.866083",
+        "session_id": "9baccefada781fb0"
+      },
+      {
+        "type": "issue_assignment",
+        "description": "Assigned issue #5513 to create-botter (score: 12.00)",
+        "context": {
+          "issue_number": 5513,
+          "agent": "create-botter",
+          "score": 12
+        },
+        "timestamp": "2025-12-25T14:17:37.957646",
+        "session_id": "98cd0f47793130cc"
       }
     ],
     "patterns": {}
