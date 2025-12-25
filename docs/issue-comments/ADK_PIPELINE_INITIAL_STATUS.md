@@ -63,11 +63,11 @@ These agents communicate using the **A2A (Agent-to-Agent) Protocol**, enabling a
 
 | Component | Purpose | Location |
 |-----------|---------|----------|
-| Workflow | Scheduled execution | `.github/workflows/adk-a2a-blog-pipeline.yml` |
-| Helper Script | CLI management | `tools/adk-pipeline-status.sh` |
-| ADK Agents | A2A agent implementations | `infrastructure/docker/adk-agents/` |
-| Orchestrator | A2A coordination | `infrastructure/docker/adk-agents/orchestrator.py` |
-| Documentation | User guides | `docs/ADK_PIPELINE_*.md` |
+| Workflow | Scheduled execution | `../../.github/workflows/adk-a2a-blog-pipeline.yml` |
+| Helper Script | CLI management | `../../tools/adk-pipeline-status.sh` |
+| ADK Agents | A2A agent implementations | `../../infrastructure/docker/adk-agents/` |
+| Orchestrator | A2A coordination | `../../infrastructure/docker/adk-agents/orchestrator.py` |
+| Documentation | User guides | `../ADK_PIPELINE_*.md` |
 
 ### Execution Modes
 
@@ -186,9 +186,9 @@ Pipeline executed successfully in cloud_run mode.
 - [Complete Summary](../ADK_PIPELINE_STATUS_COMPLETE_SUMMARY.md)
 
 **Technical Reference:**
-- [Workflow File](../.github/workflows/adk-a2a-blog-pipeline.yml)
-- [Helper Script](../tools/adk-pipeline-status.sh)
-- [ADK Agents](../infrastructure/docker/adk-agents/)
+- [Workflow File](../../.github/workflows/adk-a2a-blog-pipeline.yml)
+- [Helper Script](../../tools/adk-pipeline-status.sh)
+- [ADK Agents](../../infrastructure/docker/adk-agents/)
 
 ### Design Philosophy
 
@@ -206,7 +206,7 @@ This tracking system embodies **@create-botter**'s Tesla-inspired infrastructure
 **Questions about:**
 - Pipeline execution → Check [Status Guide](../ADK_PIPELINE_STATUS_GUIDE.md)
 - Helper scripts → Run `./tools/adk-pipeline-status.sh help`
-- ADK agents → See [ADK Agents README](../infrastructure/docker/adk-agents/README.md)
+- ADK agents → See [ADK Agents README](../../infrastructure/docker/adk-agents/README.md)
 - Workflow failures → Check `gh run list --status failure`
 
 **Report issues:**
