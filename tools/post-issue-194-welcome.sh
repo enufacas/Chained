@@ -1,11 +1,14 @@
 #!/usr/bin/env bash
 #
-# Post welcome comment to Issue #194 (ADK A2A Blog Pipeline Status)
+# Post welcome comment to ADK A2A Blog Pipeline tracking issue
 # ==================================================================
 #
 # This script posts the welcome/onboarding comment to the tracking issue.
 # It's designed to be run once to initialize the tracking issue with
 # comprehensive information about the pipeline.
+#
+# The tracking issue is discovered dynamically by label "adk-pipeline"
+# (no hardcoded issue numbers).
 #
 # Usage:
 #   GH_TOKEN=<token> ./tools/post-issue-194-welcome.sh
@@ -13,7 +16,7 @@
 # Requirements:
 #   - GitHub CLI (gh) installed and authenticated
 #   - GH_TOKEN environment variable set
-#   - Issue #194 must exist with label "adk-pipeline"
+#   - Tracking issue must exist with label "adk-pipeline"
 #
 
 set -euo pipefail
