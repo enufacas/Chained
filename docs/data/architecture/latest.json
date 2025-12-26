@@ -1,11 +1,11 @@
 {
-  "timestamp": "2025-12-26T02:07:51.893827",
-  "commit": "13d6dc5fd93fe82644a83617008864144a22edd3",
+  "timestamp": "2025-12-26T12:55:40.357876",
+  "commit": "4c1f0e474fdc15b9307badd010dca24517e70d8f",
   "structure": {
     "directories": {
       "tools": {
-        "file_count": 443,
-        "line_count": 175475,
+        "file_count": 447,
+        "line_count": 176861,
         "files": [
           ".context.md",
           "AB_TESTING_README.md",
@@ -60,8 +60,8 @@
         ]
       },
       "docs": {
-        "file_count": 1099,
-        "line_count": 353010,
+        "file_count": 1106,
+        "line_count": 356383,
         "files": [
           ".nojekyll",
           "01_overview.md",
@@ -126,8 +126,8 @@
         "files": []
       },
       "analysis": {
-        "file_count": 36,
-        "line_count": 27309,
+        "file_count": 37,
+        "line_count": 27992,
         "files": [
           "actions-patterns.json",
           "architecture.mmd",
@@ -164,12 +164,13 @@
           "snapshot_2025-12-24T02-06-41.json",
           "snapshot_2025-12-24T12-56-10.json",
           "snapshot_2025-12-25T02-08-53.json",
-          "snapshot_2025-12-25T12-55-33.json"
+          "snapshot_2025-12-25T12-55-33.json",
+          "snapshot_2025-12-26T02-07-51.json"
         ]
       },
       "learnings": {
-        "file_count": 630,
-        "line_count": 498770,
+        "file_count": 637,
+        "line_count": 511953,
         "files": [
           "AI_ML.md",
           "CLAUDE_AI_INVESTIGATION.md",
@@ -185,6 +186,7 @@
           "MISSION_COMPLETE_idea124_nvidia_innovation.md",
           "MISSION_COMPLETE_idea148_nvidia_innovation.md",
           "MISSION_COMPLETE_idea196_nvidia_innovation.md",
+          "MISSION_COMPLETE_idea250_security_ai_agents.md",
           "OpenSource.md",
           "Other.md",
           "Performance.md",
@@ -219,14 +221,13 @@
           "ai_agents_research_report_idea166_20251210.md",
           "ai_ml_agents_investigation_20251116.md",
           "ai_ml_ecosystem_integration_proposal_idea141_20251126.md",
-          "ai_ml_innovation_research_report_coach_master.md",
-          "ai_ml_innovation_summary.md"
+          "ai_ml_innovation_research_report_coach_master.md"
         ]
       }
     },
     "files_by_type": {},
-    "total_files": 2208,
-    "total_lines": 1054564
+    "total_files": 2227,
+    "total_lines": 1073189
   },
   "dependencies": {
     "internal_imports": {
@@ -246,6 +247,7 @@
       "sync_mission_flags.py": [],
       "enhanced-discussion-learner.py": [],
       "verify-registry-concurrency.py": [],
+      "rl_recommendation_engine.py": [],
       "ab_testing_engine.py": [],
       "example_truth_discovery.py": [
         "tools"
@@ -397,6 +399,7 @@
       "analyze_workflows.py": [],
       "evaluate-mentorship.py": [],
       "hierarchical_agent_system.py": [],
+      "rl_performance_monitor.py": [],
       "auto-doc-from-discussions.py": [],
       "cross-repo-analyzer.py": [],
       "hn-code-generator.py": [],
@@ -441,22 +444,22 @@
       "validation_utils.py": []
     },
     "external_imports": {
-      "os": 122,
-      "sys": 164,
-      "json": 181,
+      "os": 124,
+      "sys": 166,
+      "json": 183,
       "re": 78,
       "ast": 18,
-      "datetime": 145,
-      "pathlib": 171,
-      "typing": 158,
-      "collections": 82,
+      "datetime": 147,
+      "pathlib": 173,
+      "typing": 160,
+      "collections": 84,
       "functools": 9,
-      "argparse": 145,
+      "argparse": 147,
       "math": 13,
       "random": 29,
       "time": 31,
-      "statistics": 18,
-      "dataclasses": 87,
+      "statistics": 19,
+      "dataclasses": 89,
       "adaptive_workload_monitor": 2,
       "agent_coordinator": 1,
       "workload_subagent_spawner": 2,
@@ -466,9 +469,12 @@
       "ab_testing_advanced": 2,
       "yaml": 21,
       "subprocess": 30,
-      "hashlib": 17,
+      "hashlib": 18,
       "traceback": 13,
       "importlib": 25,
+      "rl_resource_optimizer": 3,
+      "rl_optimizer_enhanced": 1,
+      "rl_performance_monitor": 1,
       "csv": 1,
       "google": 1,
       "vertexai": 2,
@@ -477,7 +483,6 @@
       "tempfile": 7,
       "shutil": 8,
       "heapq": 1,
-      "rl_resource_optimizer": 2,
       "workflow_execution_tracker": 2,
       "registry_manager": 15,
       "fcntl": 2,
@@ -550,17 +555,17 @@
   },
   "metrics": {
     "total_components": 6,
-    "total_files": 2208,
-    "total_lines": 1054564,
+    "total_files": 2227,
+    "total_lines": 1073189,
     "total_dependencies": 2,
-    "external_libraries": 93,
-    "coupling_score": 4.7824007651841225e-05,
+    "external_libraries": 95,
+    "coupling_score": 4.690211528539937e-05,
     "complexity_score": 1.0
   },
   "components": {
     "learning_system": {
       "file_count": 46,
-      "line_count": 498770,
+      "line_count": 511953,
       "files": [
         "AI_ML.md",
         "CLAUDE_AI_INVESTIGATION.md",
@@ -576,17 +581,17 @@
         "MISSION_COMPLETE_idea124_nvidia_innovation.md",
         "MISSION_COMPLETE_idea148_nvidia_innovation.md",
         "MISSION_COMPLETE_idea196_nvidia_innovation.md",
+        "MISSION_COMPLETE_idea250_security_ai_agents.md",
         "OpenSource.md",
         "Other.md",
         "Performance.md",
         "Programming.md",
-        "QUICK_REFERENCE.md",
-        "README.md"
+        "QUICK_REFERENCE.md"
       ]
     },
     "analysis_tools": {
-      "file_count": 36,
-      "line_count": 27309,
+      "file_count": 37,
+      "line_count": 27992,
       "files": [
         "actions-patterns.json",
         "architecture.mmd",
@@ -612,7 +617,7 @@
     },
     "documentation": {
       "file_count": 50,
-      "line_count": 353010,
+      "line_count": 356383,
       "files": [
         ".nojekyll",
         "01_overview.md",
@@ -638,7 +643,7 @@
     },
     "tools": {
       "file_count": 50,
-      "line_count": 175475,
+      "line_count": 176861,
       "files": [
         ".context.md",
         "AB_TESTING_README.md",
