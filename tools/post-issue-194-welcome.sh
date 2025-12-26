@@ -80,9 +80,8 @@ fi
 
 # Post the comment
 print_info "Posting welcome comment to issue #$ISSUE_NUMBER..."
-gh issue comment "$ISSUE_NUMBER" --body-file "$WELCOME_COMMENT_FILE"
 
-if [[ $? -eq 0 ]]; then
+if gh issue comment "$ISSUE_NUMBER" --body-file "$WELCOME_COMMENT_FILE"; then
     print_success "Welcome comment posted successfully!"
     echo ""
     print_info "View the issue: gh issue view $ISSUE_NUMBER --web"

@@ -71,9 +71,9 @@ Or use the GitHub UI:
 
 ## 📚 Documentation
 
-- **[ADK Pipeline Status Guide](../../ADK_PIPELINE_STATUS_GUIDE.md)** - Complete guide with examples
-- **[ADK Pipeline Quick Reference](../../ADK_PIPELINE_QUICK_REF.md)** - TL;DR version
-- **[ADK A2A Pipeline Implementation](../../ADK_A2A_PIPELINE_IMPLEMENTATION.md)** - Technical details
+- **[ADK Pipeline Tracking Guide](../../docs/ADK_PIPELINE_TRACKING_GUIDE.md)** - Complete tracking guide
+- **[ADK Pipeline Status Guide](../../docs/ADK_PIPELINE_STATUS_GUIDE.md)** - User-friendly cosmos guide
+- **[ADK Pipeline Quick Reference](../../docs/ADK_PIPELINE_QUICK_REF.md)** - TL;DR version
 
 ## 🔍 Finding This Issue
 
