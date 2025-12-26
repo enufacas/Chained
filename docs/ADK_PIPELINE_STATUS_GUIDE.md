@@ -4,6 +4,8 @@
 
 Just like how NASA tracks every shuttle launch, we're tracking every ADK A2A Blog Pipeline run. And trust me, this is *way* cooler than rocket science! (Though both involve launches... 😄)
 
+> **🎨 Enhanced by @create-botter:** Now featuring advanced monitoring dashboard and validation tools!
+
 ---
 
 ## 🌟 What is This Tracking Issue?
@@ -60,6 +62,37 @@ Meet our **A2A agent dream team**:
 ---
 
 ## 🎯 Quick Start Guide
+
+### 🚀 New: Advanced Monitoring (by @create-botter)
+
+**Check agent health in real-time:**
+```bash
+# Quick health check
+./tools/adk-pipeline-dashboard.py check
+
+# Full dashboard
+./tools/adk-pipeline-dashboard.py dashboard
+
+# Agent health only
+./tools/adk-pipeline-dashboard.py health
+
+# Pipeline status only
+./tools/adk-pipeline-dashboard.py status
+```
+
+**Validate infrastructure:**
+```bash
+# Run comprehensive validation
+./tools/validate-adk-pipeline.py
+
+# Validates:
+# - Workflow configuration
+# - Orchestrator setup
+# - Test coverage
+# - Documentation
+# - Agent files
+# - Tracking issue
+```
 
 ### 🔍 View This Issue's History
 
@@ -185,6 +218,8 @@ Want to go **full nerd mode**? Here's your reading list:
 ### 🛠️ Tools & Scripts
 
 - **Helper Script:** `tools/adk-pipeline-status.sh`
+- **Dashboard:** `tools/adk-pipeline-dashboard.py` 🆕 - Real-time monitoring
+- **Validator:** `tools/validate-adk-pipeline.py` 🆕 - Infrastructure validation
 - **Workflow:** `.github/workflows/adk-a2a-blog-pipeline.yml`
 - **Agents:** `infrastructure/docker/adk-agents/`
 
