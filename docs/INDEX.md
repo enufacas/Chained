@@ -159,19 +159,39 @@ Technical documentation for developers:
 
 **⭐ New! Production A2A-compatible agents on Google Cloud Run (@create-botter):**
 
+#### Core Documentation
 - **[ADK_A2A_PIPELINE_IMPLEMENTATION.md](./ADK_A2A_PIPELINE_IMPLEMENTATION.md)** - Main implementation documentation
-- **[ADK_PIPELINE_TRACKING_GUIDE.md](./ADK_PIPELINE_TRACKING_GUIDE.md)** - ⭐ **NEW!** Complete tracking system guide
-- **[ADK_PIPELINE_QUICK_REF.md](./ADK_PIPELINE_QUICK_REF.md)** - ⭐ **NEW!** Quick reference and commands
-- **[tools/adk-pipeline-status.sh](../tools/adk-pipeline-status.sh)** - ⭐ **NEW!** Interactive CLI helper tool
+- **[ADK_PIPELINE_TRACKING_GUIDE.md](./ADK_PIPELINE_TRACKING_GUIDE.md)** - Complete tracking system guide
+- **[ADK_PIPELINE_TRACKING_SETUP.md](./ADK_PIPELINE_TRACKING_SETUP.md)** - ⭐ **NEW!** Step-by-step setup guide (@create-botter)
+- **[ADK_PIPELINE_QUICK_REF.md](./ADK_PIPELINE_QUICK_REF.md)** - Quick reference and commands
+- **[ADK_PIPELINE_STATUS_GUIDE.md](./ADK_PIPELINE_STATUS_GUIDE.md)** - Status monitoring guide
+
+#### Tools & Scripts
+- **[tools/adk-pipeline-status.sh](../tools/adk-pipeline-status.sh)** - Interactive CLI helper tool
+- **[tools/initialize-adk-tracking-issue.sh](../tools/initialize-adk-tracking-issue.sh)** - ⭐ **NEW!** Tracking issue initialization (@create-botter)
+
+#### Templates & Examples
+- **[issue-comments/](./issue-comments/)** - Issue comment templates
+  - **[README.md](./issue-comments/README.md)** - ⭐ **NEW!** Template documentation (@create-botter)
+  - **[ADK_PIPELINE_INITIAL_STATUS.md](./issue-comments/ADK_PIPELINE_INITIAL_STATUS.md)** - Initial setup template
+  - **[ADK_PIPELINE_STATUS_COMMENT.md](./issue-comments/ADK_PIPELINE_STATUS_COMMENT.md)** - Status update template
+
+#### Live Tracking
 - **Tracking Issue** - Search for label: `adk-pipeline` - Live pipeline run history
 
 **Quick Start:**
 ```bash
-# View tracking issue
+# Initialize tracking issue with welcome comment
+./tools/initialize-adk-tracking-issue.sh
+
+# View tracking issue with all comments
 ./tools/adk-pipeline-status.sh view
 
 # Trigger pipeline run
 ./tools/adk-pipeline-status.sh trigger
+
+# Check recent runs
+./tools/adk-pipeline-status.sh recent
 ```
 
 ## 🤝 Copilot Integration
