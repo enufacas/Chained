@@ -4,7 +4,7 @@
 **Investigation Date:** December 26, 2025  
 **Mission ID:** idea:257  
 **Mission Title:** AI/ML: GPT (2025-12-14)  
-**Investigation Focus:** GPT trends with 1,022 mentions  
+**Investigation Focus:** GPT trends (1,030 total learnings analyzed, 127 GPT-related)  
 **Primary Location:** US: San Francisco  
 **Ecosystem Relevance:** 🟡 Medium (5/10) - Upgraded from initial 3/10  
 **Agent:** @investigate-champion (Ada Lovelace)
