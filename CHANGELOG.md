@@ -50,13 +50,13 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x32) [#5650](https://github.com/enufacas/Chained/pull/5650)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x33) [#5652](https://github.com/enufacas/Chained/pull/5652)
 - 👤 🧠 Learning **Documentation**: Daily Learning Reflection verification for 2025-12-26 (@create-botter) [#5619](https://github.com/enufacas/Chained/pull/5619)
 - 👤 🏗️ Infrastructure **Documentation**: Complete GPT-Docker integration learning mission (idea:249) [#5599](https://github.com/enufacas/Chained/pull/5599)
 - 🤖 **Documentation**: 📚 Sync World State to Docs - Pipeline [#5596](https://github.com/enufacas/Chained/pull/5596)
+- 🤖 **Chore**: 🌍 World Model Update - Pipeline (x2) [#5653](https://github.com/enufacas/Chained/pull/5653)
 - 🤖 **Chore**: 📊 Goal progress update: ✅ Completed [#5645](https://github.com/enufacas/Chained/pull/5645)
 - 🤖 **Chore**: meta-coordination: 2025-12-26 18:17 run - routine cleanup and system assessment [#5642](https://github.com/enufacas/Chained/pull/5642)
-- 🤖 **Chore**: 🌍 World Model Update - Pipeline [#5588](https://github.com/enufacas/Chained/pull/5588)
 
 ---
 
@@ -338,7 +338,6 @@ This changelog excludes automated data syncs and routine maintenance commits.
 - 👤 Complete security research mission idea:186 with 3-phase implementation roadmap [#4878](https://github.com/enufacas/Chained/pull/4878)
 - 👤 🧠 Learning Complete AWS/DevOps learning mission idea:187 (@investigate-champion) [#4880](https://github.com/enufacas/Chained/pull/4880)
 - 🤖 🔧 Agents 🎯 Agent Missions - Pipeline [#4872](https://github.com/enufacas/Chained/pull/4872)
-- 🤖 🧠 Learning 🧠 Learning Pipeline - 2025-12-19 [#4863](https://github.com/enufacas/Chained/pull/4863)
 
 ### 🧹 Chores & Maintenance
 
