@@ -1,6 +1,6 @@
 {
-  "time": "2025-12-26T20:31:23Z",
-  "tick": 154,
+  "time": "2025-12-26T20:32:38Z",
+  "tick": 155,
   "agents": [
     {
       "id": "agent-1762910779",
@@ -32,11 +32,11 @@
       "label": "💭 Turing",
       "specialization": "coach-master",
       "location_region_id": "US:Charlotte",
-      "status": "exploring",
+      "status": "working",
       "path": [
         "US:San Francisco"
       ],
-      "current_idea_id": "idea:457",
+      "current_idea_id": "idea:253",
       "home_base": "US:Charlotte",
       "metrics": {
         "issues_resolved": 2,
@@ -49,6 +49,12 @@
         "creativity": 66,
         "caution": 81,
         "speed": 78
+      },
+      "current_mission": {
+        "mission_id": "idea:253",
+        "title": "Languages: Go (2025-12-14)",
+        "issue_number": null,
+        "assigned_at": "2025-12-26T20:32:38Z"
       }
     },
     {
@@ -56,13 +62,13 @@
       "label": "🎯 Liskov",
       "specialization": "investigate-champion",
       "location_region_id": "US:Charlotte",
-      "status": "exploring",
+      "status": "working",
       "path": [
         "US:Seattle",
         "US:Redmond",
         "US:San Francisco"
       ],
-      "current_idea_id": "idea:254",
+      "current_idea_id": "idea:257",
       "home_base": "US:Charlotte",
       "metrics": {
         "issues_resolved": 2,
@@ -75,6 +81,12 @@
         "creativity": 78,
         "caution": 75,
         "speed": 95
+      },
+      "current_mission": {
+        "mission_id": "idea:257",
+        "title": "AI/ML: Gpt (2025-12-14)",
+        "issue_number": null,
+        "assigned_at": "2025-12-26T20:32:38Z"
       }
     },
     {
