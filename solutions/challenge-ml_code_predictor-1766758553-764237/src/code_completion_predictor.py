@@ -21,6 +21,7 @@ Test Cases:
 import re
 import json
 import hashlib
+import ast
 from collections import Counter, defaultdict
 from typing import List, Tuple, Dict, Optional
 
@@ -216,12 +217,18 @@ class SequencePredictor:
             List of (token, confidence) tuples, sorted by confidence
         """
         if not context:
-            # No context - return most common tokens from unigrams
-            if 1 in self.ngrams and () in self.ngrams[1]:
-                total = sum(self.ngrams[1][()].values())
+            # No context - return most common unigrams (order 1)
+            # Collect all tokens that appear as next tokens from any context
+            all_next_tokens = Counter()
+            if 1 in self.ngrams:
+                for ctx_counts in self.ngrams[1].values():
+                    all_next_tokens.update(ctx_counts)
+            
+            if all_next_tokens:
+                total = sum(all_next_tokens.values())
                 predictions = [
                     (token, count / total)
-                    for token, count in self.ngrams[1][()].most_common(top_k)
+                    for token, count in all_next_tokens.most_common(top_k)
                 ]
                 return predictions
             return []
@@ -469,7 +476,7 @@ class CodeCompletionPredictor:
         for order_str, contexts in model_data['ngrams'].items():
             order = int(order_str)
             for ctx_str, counts in contexts.items():
-                ctx = eval(ctx_str)  # Convert string back to tuple
+                ctx = ast.literal_eval(ctx_str)  # Safely convert string back to tuple
                 self.predictor.ngrams[order][ctx] = Counter(counts)
         
         # Clear caches
