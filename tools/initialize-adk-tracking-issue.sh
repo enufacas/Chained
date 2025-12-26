@@ -201,10 +201,14 @@ gh run view <run_id> --log
 **🏗️ Infrastructure by @create-botter** - _Creating infrastructure that illuminates possibilities._
 
 **System Status:** 🟢 **OPERATIONAL**  
-**Initialization Date:** $(date -u +%Y-%m-%d)  
+**Initialization Date:** INIT_DATE_PLACEHOLDER  
 **Next Scheduled Run:** Check workflow schedule (every 6 hours)
 EOF
 )
+
+# Replace the date placeholder with current date
+INIT_DATE=$(date -u +%Y-%m-%d)
+COMMENT_BODY="${COMMENT_BODY//INIT_DATE_PLACEHOLDER/$INIT_DATE}"
 
 echo "Posting welcome comment to issue #${ISSUE_NUMBER}..."
 echo ""
