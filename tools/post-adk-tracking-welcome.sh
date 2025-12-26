@@ -18,6 +18,7 @@ set -euo pipefail
 # Configuration
 TRACKING_LABEL="adk-pipeline"
 WELCOME_COMMENT_FILE="docs/issue-comments/ADK_PIPELINE_TRACKING_WELCOME.md"
+DEFAULT_REPO="enufacas/Chained"
 
 # Colors for output
 RED='\033[0;31m'
@@ -43,6 +44,13 @@ check_github_access() {
     if command -v gh &> /dev/null; then
         return 0
     elif [[ -n "${GITHUB_TOKEN:-}" || -n "${GH_TOKEN:-}" ]]; then
+        # Verify required environment variable for API mode
+        if [[ -z "${GITHUB_REPOSITORY:-}" ]]; then
+            print_error "GITHUB_REPOSITORY environment variable not set"
+            print_info "Set GITHUB_REPOSITORY=owner/repo when using API mode"
+            print_info "Example: export GITHUB_REPOSITORY=enufacas/Chained"
+            return 1
+        fi
         return 0
     else
         print_error "Neither gh CLI nor GITHUB_TOKEN/GH_TOKEN is available"
@@ -74,7 +82,7 @@ get_issue_number() {
     else
         # Use GitHub API directly
         local token="${GITHUB_TOKEN:-${GH_TOKEN:-}}"
-        local repo="${GITHUB_REPOSITORY:-enufacas/Chained}"
+        local repo="${GITHUB_REPOSITORY:-$DEFAULT_REPO}"
         
         local issue_num=$(curl -s \
             -H "Authorization: token $token" \
@@ -113,7 +121,7 @@ post_welcome_comment() {
     else
         # Use GitHub API directly
         local token="${GITHUB_TOKEN:-${GH_TOKEN:-}}"
-        local repo="${GITHUB_REPOSITORY:-enufacas/Chained}"
+        local repo="${GITHUB_REPOSITORY:-$DEFAULT_REPO}"
         
         # Create JSON payload (properly escaping the markdown)
         local json_payload=$(jq -n --arg body "$comment_body" '{body: $body}')
@@ -128,7 +136,8 @@ post_welcome_comment() {
         
         local http_code=$(echo "$response" | tail -n1)
         
-        if [[ "$http_code" =~ ^20 ]]; then
+        # Check for GitHub API success codes (200, 201, 204)
+        if [[ "$http_code" =~ ^(200|201|204)$ ]]; then
             print_success "Comment posted successfully (HTTP $http_code)"
         else
             print_error "Failed to post comment (HTTP $http_code)"
