@@ -37,6 +37,19 @@ gh workflow run adk-a2a-blog-pipeline.yml
 ./tools/adk-pipeline-status.sh health
 ```
 
+### Initialize Tracking Issue
+
+```bash
+# Post welcome comment (recommended)
+./tools/post-adk-tracking-welcome.sh
+
+# Or specify issue number
+./tools/post-adk-tracking-welcome.sh 4069
+
+# Legacy initialization
+./tools/initialize-adk-tracking-issue.sh
+```
+
 ## 📊 Tracking Issue
 
 **Title:** 🤖 ADK A2A Blog Pipeline Status
@@ -57,6 +70,7 @@ gh issue list --label "adk-pipeline" --state open
 | **Tracking Issue** | Search for label: `adk-pipeline` |
 | **Workflow** | `.github/workflows/adk-a2a-blog-pipeline.yml` |
 | **Documentation** | `docs/ADK_PIPELINE_TRACKING_GUIDE.md` |
+| **Welcome Script** ✨ | `tools/post-adk-tracking-welcome.sh` |
 | **Helper Script** | `tools/adk-pipeline-status.sh` |
 | **Agents** | `infrastructure/docker/adk-agents/` |
 
