@@ -228,12 +228,20 @@ class RLPerformanceMonitor:
         recent_rewards = [lp.avg_reward for lp in self.learning_history[-10:]]
         recent_rewards.append(current_avg_reward)
         
+        # Need at least 2 values for stdev
+        if len(recent_rewards) < 2:
+            return 0.0
+        
         # Calculate coefficient of variation (lower is better)
         mean_reward = statistics.mean(recent_rewards)
         if mean_reward == 0:
             return 0.0
         
-        std_reward = statistics.stdev(recent_rewards)
+        try:
+            std_reward = statistics.stdev(recent_rewards)
+        except statistics.StatisticsError:
+            return 0.0
+        
         cv = std_reward / abs(mean_reward)
         
         # Convert to 0-1 score (lower CV = higher score)
@@ -247,7 +255,11 @@ class RLPerformanceMonitor:
                                      after_duration: float, before_success_rate: float,
                                      after_success_rate: float) -> None:
         """Record outcome of applying a recommendation."""
-        improvement = ((before_duration - after_duration) / before_duration * 100) if before_duration > 0 else 0.0
+        # Calculate improvement (positive = improvement, negative = regression)
+        if before_duration > 0:
+            improvement = ((before_duration - after_duration) / before_duration * 100)
+        else:
+            improvement = 0.0
         
         outcome = RecommendationOutcome(
             workflow_name=workflow_name,

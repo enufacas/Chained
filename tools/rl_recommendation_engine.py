@@ -96,6 +96,10 @@ class RLRecommendationEngine:
     PRIORITY_HIGH_THRESHOLD = 0.5      # >50% improvement potential
     PRIORITY_MEDIUM_THRESHOLD = 0.2    # >20% improvement potential
     
+    # Duration thresholds (seconds)
+    LONG_DURATION_THRESHOLD_SECONDS = 600  # 10 minutes
+    PARALLELIZATION_THRESHOLD_SECONDS = 300  # 5 minutes
+    
     def __init__(self, repo_root: str = None, use_enhanced: bool = True):
         """Initialize the recommendation engine."""
         if repo_root:
@@ -173,21 +177,29 @@ class RLRecommendationEngine:
             try:
                 with open(self.coordination_plans_file, 'r') as f:
                     data = json.load(f)
-                    return [
-                        CoordinationPlan(
+                    plans = []
+                    for item in data:
+                        # Reconstruct recommendations with proper datetime handling
+                        recs = []
+                        for rec_data in item['recommendations']:
+                            if isinstance(rec_data, dict):
+                                # Convert ISO datetime string back to datetime object
+                                if 'created_at' in rec_data and isinstance(rec_data['created_at'], str):
+                                    rec_data['created_at'] = datetime.fromisoformat(rec_data['created_at'])
+                                recs.append(ActionableRecommendation(**rec_data))
+                            else:
+                                recs.append(rec_data)
+                        
+                        plans.append(CoordinationPlan(
                             plan_id=item['plan_id'],
                             workflows_affected=item['workflows_affected'],
-                            recommendations=[
-                                ActionableRecommendation(**rec) if isinstance(rec, dict) else rec
-                                for rec in item['recommendations']
-                            ],
+                            recommendations=recs,
                             execution_order=item['execution_order'],
                             total_expected_improvement=item['total_expected_improvement'],
                             coordination_strategy=item['coordination_strategy'],
                             created_at=datetime.fromisoformat(item['created_at'])
-                        )
-                        for item in data
-                    ]
+                        ))
+                    return plans
             except Exception as e:
                 print(f"Warning: Could not load coordination plans: {e}", file=sys.stderr)
         return []
@@ -228,7 +240,7 @@ class RLRecommendationEngine:
             bottlenecks.append(f"Low success rate ({current_state.success_rate*100:.1f}%)")
             optimization_potential += 0.3
         
-        if current_state.avg_duration_seconds > 600:  # > 10 minutes
+        if current_state.avg_duration_seconds > self.LONG_DURATION_THRESHOLD_SECONDS:
             bottlenecks.append(f"Long duration ({current_state.avg_duration_seconds/60:.1f} min)")
             optimization_potential += 0.3
         
@@ -240,7 +252,7 @@ class RLRecommendationEngine:
             bottlenecks.append("Caching disabled")
             optimization_potential += 0.15
         
-        if current_state.parallel_jobs == 1 and current_state.avg_duration_seconds > 300:
+        if current_state.parallel_jobs == 1 and current_state.avg_duration_seconds > self.PARALLELIZATION_THRESHOLD_SECONDS:
             bottlenecks.append("Sequential execution (could parallelize)")
             optimization_potential += 0.25
         
@@ -293,7 +305,7 @@ class RLRecommendationEngine:
         validation_criteria = {}
         
         # Determine best action based on bottlenecks
-        if "Low success rate" in analysis.bottlenecks:
+        if any("Low success rate" in b for b in analysis.bottlenecks):
             action = ResourceAction.EXTEND_TIMEOUT.value
             description = "Extend timeout to reduce failure rate"
             implementation_steps = [
@@ -308,7 +320,7 @@ class RLRecommendationEngine:
                 'revert_if': 'no improvement after 2 weeks'
             }
         
-        elif "Long duration" in analysis.bottlenecks:
+        elif any("Long duration" in b for b in analysis.bottlenecks):
             if not analysis.current_metrics.get('caching'):
                 action = ResourceAction.ENABLE_CACHING.value
                 description = "Enable dependency caching to reduce build time"
@@ -338,7 +350,7 @@ class RLRecommendationEngine:
                     'monitoring_period_days': 5
                 }
         
-        elif "Low resource utilization" in analysis.bottlenecks:
+        elif any("Low resource utilization" in b for b in analysis.bottlenecks):
             action = ResourceAction.REDUCE_TIMEOUT.value
             description = "Reduce timeout to free resources faster"
             implementation_steps = [
