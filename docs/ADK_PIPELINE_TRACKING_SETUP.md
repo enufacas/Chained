@@ -38,25 +38,37 @@ gh issue create \
   --body "Tracking issue for ADK A2A blog pipeline runs. See comments for run history."
 ```
 
-### Step 2: Initialize with Welcome Comment
+### Step 2: Initialize with Welcome Comment (Recommended ✨)
 
-Run the initialization script to add a comprehensive welcome comment:
+Run the new welcome posting script to add a comprehensive welcome comment:
 
 ```bash
-# Auto-detect tracking issue
-./tools/initialize-adk-tracking-issue.sh
+# Auto-detect tracking issue (RECOMMENDED)
+./tools/post-adk-tracking-welcome.sh
 
 # Or specify issue number explicitly
+./tools/post-adk-tracking-welcome.sh 4069
+```
+
+**Alternative (Legacy):**
+```bash
+# Legacy initialization script
+./tools/initialize-adk-tracking-issue.sh
+
+# Or specify issue number
 ./tools/initialize-adk-tracking-issue.sh 194
 ```
 
-This script will post a detailed welcome comment that includes:
-- System status overview
-- Quick command references
-- Pipeline architecture diagram
-- Documentation links
-- Schedule information
-- Expected comment format
+The welcome script posts a detailed comment that includes:
+- Complete system status with component verification
+- Quick command references for all operations
+- A2A pipeline architecture visual diagram
+- Comprehensive documentation links
+- Monitoring & diagnostics commands
+- Pipeline schedule information
+- Expected comment format examples
+- Infrastructure design principles
+- Full @create-botter attribution
 
 ### Step 3: Verify Setup
 
@@ -227,11 +239,49 @@ Checks the health status of deployed Cloud Run agents (requires `gcloud` CLI).
 
 Shows usage information and available commands.
 
-## Initialization Script Details
+## Initialization Scripts
 
-### What It Does
+### Welcome Posting Script (✨ Recommended)
 
-The `tools/initialize-adk-tracking-issue.sh` script:
+**Script:** `tools/post-adk-tracking-welcome.sh`
+
+**What It Does:**
+
+1. **Finds tracking issue** by label (or uses provided issue number)
+2. **Posts comprehensive welcome comment** from `docs/issue-comments/ADK_PIPELINE_TRACKING_WELCOME.md` with:
+   - Complete system status with component verification
+   - Quick command references for all operations
+   - A2A pipeline architecture visual diagram
+   - Comprehensive documentation links
+   - Monitoring & diagnostics commands
+   - Pipeline schedule information
+   - Expected comment format examples
+   - Infrastructure design principles
+   - Full @create-botter attribution
+
+**Usage:**
+
+**Auto-detect tracking issue:**
+```bash
+./tools/post-adk-tracking-welcome.sh
+```
+
+**Specify issue number:**
+```bash
+./tools/post-adk-tracking-welcome.sh 4069
+```
+
+**When to Use:**
+- **First-time setup** - Initialize new tracking issue (primary use case)
+- **After recreation** - Re-initialize if issue was deleted/recreated
+- **Documentation update** - Refresh welcome comment with latest info
+- **Onboarding** - Help new team members understand the system
+
+### Legacy Initialization Script
+
+**Script:** `tools/initialize-adk-tracking-issue.sh`
+
+**What It Does:**
 
 1. **Finds tracking issue** by label (or uses provided issue number)
 2. **Posts welcome comment** with:
@@ -242,7 +292,7 @@ The `tools/initialize-adk-tracking-issue.sh` script:
    - Schedule information
    - Monitoring commands
 
-### Usage
+**Usage:**
 
 **Auto-detect tracking issue:**
 ```bash
@@ -254,12 +304,7 @@ The `tools/initialize-adk-tracking-issue.sh` script:
 ./tools/initialize-adk-tracking-issue.sh 194
 ```
 
-### When to Use
-
-- **First-time setup** - Initialize new tracking issue
-- **After recreation** - Re-initialize if issue was deleted/recreated
-- **Documentation update** - Refresh welcome comment with latest info
-- **Onboarding** - Help new team members understand the system
+**Note:** Consider using `post-adk-tracking-welcome.sh` instead for more comprehensive initialization.
 
 ## Expected Comment Format
 
@@ -446,7 +491,9 @@ gh auth login
 ### Technical Documentation
 - [Workflow File](../../.github/workflows/adk-a2a-blog-pipeline.yml)
 - [Helper Script](../../tools/adk-pipeline-status.sh)
-- [Initialization Script](../../tools/initialize-adk-tracking-issue.sh)
+- [Welcome Posting Script (Recommended)](../../tools/post-adk-tracking-welcome.sh) ✨
+- [Initialization Script (Legacy)](../../tools/initialize-adk-tracking-issue.sh)
+- [Welcome Comment Template](../issue-comments/ADK_PIPELINE_TRACKING_WELCOME.md)
 - [ADK Agents Directory](../../infrastructure/docker/adk-agents/)
 - [Orchestrator](../../infrastructure/docker/adk-agents/orchestrator.py)
 
