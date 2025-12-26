@@ -38,7 +38,8 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x11) [#5589](https://github.com/enufacas/Chained/pull/5589)
+- 🤖 **Documentation**: 📚 Sync World State to Docs - Pipeline [#5596](https://github.com/enufacas/Chained/pull/5596)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x12) [#5597](https://github.com/enufacas/Chained/pull/5597)
 - 🤖 **Chore**: 🌍 World Model Update - Pipeline [#5588](https://github.com/enufacas/Chained/pull/5588)
 
 ---
@@ -343,7 +344,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 - 👤 🧠 Learning **Documentation**: Verify daily learning reflection 2025-12-19 (@create-botter) [#4834](https://github.com/enufacas/Chained/pull/4834)
 - 👤 🏗️ Infrastructure **Documentation**: Complete GPT-Docker integration research (idea:179) - @connector-ninja [#4816](https://github.com/enufacas/Chained/pull/4816)
 - 👤 🏗️ Infrastructure **Documentation**: Complete Claude-Docker integration learning mission (idea:182) [#4820](https://github.com/enufacas/Chained/pull/4820)
-- 🤖 **Chore**: 🌍 World Model Update - Pipeline (x2) [#4865](https://github.com/enufacas/Chained/pull/4865)
+- 🤖 **Chore**: 🌍 World Model Update - Pipeline [#4865](https://github.com/enufacas/Chained/pull/4865)
 - 🤖 **Chore**: 📊 Goal progress update: ✅ Completed [#4858](https://github.com/enufacas/Chained/pull/4858)
 - 🤖 **Chore**: meta-coordination: 2025-12-19 08:18 - proactive cleanup, system assessment [#4802](https://github.com/enufacas/Chained/pull/4802)
 
