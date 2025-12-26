@@ -90,6 +90,13 @@ jobs:
               else
                 python3 tools/rl_resource_optimizer.py --simulate "$EPISODES" --report
               fi
+              
+              # Generate performance report
+              echo ""
+              echo "📊 Generating performance metrics..."
+              if [ -f "tools/rl_performance_monitor.py" ]; then
+                python3 tools/rl_performance_monitor.py --report
+              fi
               ;;
             "recommend")
               if [ -n "$WORKFLOW" ]; then
@@ -98,11 +105,33 @@ jobs:
               else
                 echo "💡 Generating recommendations for all workflows..."
                 python3 tools/rl_resource_optimizer.py --report
+                
+                # Generate automated recommendations
+                echo ""
+                echo "🎯 Automated Recommendation Engine..."
+                if [ -f "tools/rl_recommendation_engine.py" ]; then
+                  python3 tools/rl_recommendation_engine.py --report
+                fi
               fi
               ;;
             "report")
               echo "📊 Generating comprehensive report..."
               python3 tools/rl_resource_optimizer.py --report
+              
+              # Add performance monitoring report
+              echo ""
+              echo "📈 Performance Monitoring Report..."
+              if [ -f "tools/rl_performance_monitor.py" ]; then
+                python3 tools/rl_performance_monitor.py --report
+                python3 tools/rl_performance_monitor.py --dashboard --export .github/rl-optimizer/dashboard.json
+              fi
+              
+              # Add recommendation engine report
+              echo ""
+              echo "💡 Recommendation Engine Report..."
+              if [ -f "tools/rl_recommendation_engine.py" ]; then
+                python3 tools/rl_recommendation_engine.py --report
+              fi
               ;;
             *)
               echo "Unknown mode: $MODE"
@@ -206,6 +235,49 @@ jobs:
             echo "- Job parallelization for reduced total time" >> "$GITHUB_STEP_SUMMARY"
           else
             echo "ℹ️ No RL model found yet. Run with mode: train to start training." >> "$GITHUB_STEP_SUMMARY"
+          fi
+          
+          # Add performance monitoring summary
+          if [ -f ".github/rl-optimizer/metrics/learning_history.json" ]; then
+            echo "" >> "$GITHUB_STEP_SUMMARY"
+            echo "### 📈 Performance Monitoring" >> "$GITHUB_STEP_SUMMARY"
+            echo "" >> "$GITHUB_STEP_SUMMARY"
+            
+            python3 -c "
+          import json
+          import sys
+          sys.path.insert(0, 'tools')
+          from rl_performance_monitor import RLPerformanceMonitor
+          monitor = RLPerformanceMonitor()
+          convergence = monitor.get_convergence_status()
+          effectiveness = monitor.get_recommendation_effectiveness()
+          print(f\"- **Convergence Status**: {convergence['status'].upper()}\")
+          print(f\"- **Convergence Score**: {convergence['convergence_score']:.2f}\")
+          print(f\"- **Total Recommendations**: {effectiveness['total_recommendations']}\")
+          print(f\"- **Success Rate**: {effectiveness['success_rate']*100:.1f}%\")
+          print(f\"- **Avg Improvement**: {effectiveness['avg_improvement']:.1f}%\")
+          " >> "$GITHUB_STEP_SUMMARY" 2>&1 || echo "⚠️ Performance data not available yet" >> "$GITHUB_STEP_SUMMARY"
+          fi
+          
+          # Add recommendation summary
+          if [ -f ".github/rl-optimizer/recommendations/active_recommendations.json" ]; then
+            echo "" >> "$GITHUB_STEP_SUMMARY"
+            echo "### 💡 Active Recommendations" >> "$GITHUB_STEP_SUMMARY"
+            echo "" >> "$GITHUB_STEP_SUMMARY"
+            
+            python3 -c "
+          import json
+          with open('.github/rl-optimizer/recommendations/active_recommendations.json', 'r') as f:
+              recs = json.load(f)
+          if recs:
+              print(f\"📋 **{len(recs)} recommendations** ready for implementation\")
+              print(\"\")
+              for rec in recs[:5]:
+                  print(f\"- **{rec['workflow_name']}**: {rec['description']}\")
+                  print(f\"  Expected: {rec['expected_improvement']:.1f}% improvement\")
+          else:
+              print(\"No active recommendations at this time.\")
+          " >> "$GITHUB_STEP_SUMMARY" 2>&1 || echo "No recommendations data" >> "$GITHUB_STEP_SUMMARY"
           fi
           
           echo "" >> "$GITHUB_STEP_SUMMARY"

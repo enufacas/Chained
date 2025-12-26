@@ -108,7 +108,7 @@ class RLRecommendationEngine:
                     break
                 current = current.parent
             else:
-                self.repo_root = Path.cwd())
+                self.repo_root = Path.cwd()
         
         # Initialize RL optimizer
         if use_enhanced and EnhancedRLOptimizer:
