@@ -8,9 +8,34 @@ These templates provide standardized, comprehensive comments that can be posted 
 
 ## Available Templates
 
+### ADK_PIPELINE_TRACKING_WELCOME.md (✨ NEW - Recommended)
+
+**Use Case:** Complete initialization of new tracking issues
+
+**Contents:**
+- System status with all component verification
+- Comprehensive "How it works" explanation
+- Quick commands for all common operations
+- A2A pipeline architecture diagram
+- Documentation links (quick start, guides, technical details)
+- Pipeline schedule
+- Expected comment format examples
+- Monitoring & diagnostics commands
+- Infrastructure design principles
+- About @create-botter section
+- Full operational status footer
+
+**When to Use:**
+- When initializing any new tracking issue (primary use case)
+- After major infrastructure updates
+- For onboarding new team members
+- To provide complete system overview
+
+**Script:** `tools/post-adk-tracking-welcome.sh` - Automated posting script
+
 ### ADK_PIPELINE_INITIAL_STATUS.md
 
-**Use Case:** First-time setup of a tracking issue
+**Use Case:** First-time setup of a tracking issue (Legacy - use TRACKING_WELCOME instead)
 
 **Contents:**
 - Purpose and overview of tracking system
@@ -30,6 +55,7 @@ These templates provide standardized, comprehensive comments that can be posted 
 - Success metrics
 
 **When to Use:**
+- Legacy template - consider using ADK_PIPELINE_TRACKING_WELCOME.md instead
 - When creating a new tracking issue
 - After significant system updates
 - For onboarding new team members
@@ -72,12 +98,22 @@ gh issue comment "$ISSUE_NUMBER" --body-file docs/issue-comments/ADK_PIPELINE_IN
 gh issue comment "$ISSUE_NUMBER" --body-file docs/issue-comments/ADK_PIPELINE_STATUS_COMMENT.md
 ```
 
-### Via Script
+### Via Script (Recommended)
 
-The `tools/initialize-adk-tracking-issue.sh` script automatically generates and posts a welcome comment similar to these templates:
+**Preferred method** - Use the dedicated welcome posting script:
 
 ```bash
-# Auto-detect tracking issue and initialize
+# Auto-detect tracking issue and post welcome comment
+./tools/post-adk-tracking-welcome.sh
+
+# Or specify issue number
+./tools/post-adk-tracking-welcome.sh 4069
+```
+
+**Legacy method** - The `tools/initialize-adk-tracking-issue.sh` script automatically generates and posts a welcome comment:
+
+```bash
+# Auto-detect tracking issue and initialize (legacy)
 ./tools/initialize-adk-tracking-issue.sh
 
 # Or specify issue number
@@ -169,7 +205,8 @@ Templates are version controlled in git:
 ## Related Files
 
 **Scripts:**
-- `../../tools/initialize-adk-tracking-issue.sh` - Uses template structure
+- `../../tools/post-adk-tracking-welcome.sh` - Posts ADK_PIPELINE_TRACKING_WELCOME.md (recommended)
+- `../../tools/initialize-adk-tracking-issue.sh` - Legacy initialization script
 - `../../tools/adk-pipeline-status.sh` - Helper commands referenced in templates
 
 **Documentation:**
@@ -286,6 +323,7 @@ echo "✅ Status update posted"
 
 **📝 Templates by @create-botter** - _Creating documentation that illuminates understanding._
 
-**Directory Version:** 1.0  
+**Directory Version:** 1.1  
 **Last Updated:** 2025-12-26  
-**Template Count:** 2 active templates
+**Template Count:** 3 active templates (1 new, 2 legacy)  
+**Recommended:** Use `ADK_PIPELINE_TRACKING_WELCOME.md` + `post-adk-tracking-welcome.sh`
