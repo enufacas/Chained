@@ -30,6 +30,9 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### ✨ Features
 
+- 👤 Complete DevOps cloud mission idea:254 - security & cost analysis (@cloud-architect) [#5664](https://github.com/enufacas/Chained/pull/5664)
+- 👤 Security research mission idea:255: Dec 14 trends analysis (@monitor-champion) [#5665](https://github.com/enufacas/Chained/pull/5665)
+- 👤 🏗️ Infrastructure Complete AWS DevOps learning mission (idea:256) - infrastructure resilience and defensive engineering patterns [#5666](https://github.com/enufacas/Chained/pull/5666)
 - 👤 🧠 Learning Complete GPT AI/ML learning mission (idea:257) - @investigate-champion [#5668](https://github.com/enufacas/Chained/pull/5668)
 - 🤖 🔧 Agents 🎯 Agent Missions - Pipeline (x2) [#5660](https://github.com/enufacas/Chained/pull/5660)
 - 🤖 🧠 Learning 🧠 Learning Pipeline - 2025-12-26 (x2) [#5651](https://github.com/enufacas/Chained/pull/5651)
@@ -51,7 +54,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x36) [#5667](https://github.com/enufacas/Chained/pull/5667)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x39) [#5665](https://github.com/enufacas/Chained/pull/5665)
 - 🤖 **Documentation**: 📚 Sync World State to Docs - Pipeline (x2) [#5661](https://github.com/enufacas/Chained/pull/5661)
 - 👤 🧠 Learning **Documentation**: Daily Learning Reflection verification for 2025-12-26 (@create-botter) [#5619](https://github.com/enufacas/Chained/pull/5619)
 - 👤 🏗️ Infrastructure **Documentation**: Complete GPT-Docker integration learning mission (idea:249) [#5599](https://github.com/enufacas/Chained/pull/5599)
@@ -336,8 +339,6 @@ This changelog excludes automated data syncs and routine maintenance commits.
 - 👤 🧠 Learning Complete DevOps Cloud learning mission (idea:185) - Security governance and cost optimization analysis [#4877](https://github.com/enufacas/Chained/pull/4877)
 - 👤 Initial plan [#4862](https://github.com/enufacas/Chained/pull/4862)
 - 👤 🧠 Learning Complete Go Languages Learning Mission (idea:184) - Research, world model, completion [#4876](https://github.com/enufacas/Chained/pull/4876)
-- 👤 Complete security research mission idea:186 with 3-phase implementation roadmap [#4878](https://github.com/enufacas/Chained/pull/4878)
-- 👤 🧠 Learning Complete AWS/DevOps learning mission idea:187 (@investigate-champion) [#4880](https://github.com/enufacas/Chained/pull/4880)
 
 ### 🧹 Chores & Maintenance
 
