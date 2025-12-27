@@ -1,0 +1,91 @@
+# =============================================================================
+# Initialize ADK A2A Blog Pipeline Tracking Issue - One-Time Workflow
+# =============================================================================
+# This workflow initializes an existing ADK A2A Blog Pipeline tracking issue
+# with the comprehensive welcome comment.
+#
+# **@create-botter** created this workflow to properly initialize tracking issues
+# that were created before the automatic initialization feature was added.
+#
+# Usage:
+#   - Run manually via workflow_dispatch when a tracking issue needs initialization
+#   - Can be run multiple times safely (checks if welcome already exists)
+#
+# Note: This is typically needed only once per tracking issue. Future tracking
+#       issues will be automatically initialized by the main pipeline workflow.
+# =============================================================================
+
+name: "Initialize ADK Pipeline Tracking Issue"
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  initialize:
+    name: "Initialize Tracking Issue"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Initialize tracking issue
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "🎉 Initializing ADK A2A Blog Pipeline Tracking Issue"
+          echo "===================================================="
+          echo ""
+
+          # Make initialize script executable (ensure it has correct permissions)
+          if [[ ! -x ./initialize_tracking_issue.sh ]]; then
+            echo "📝 Making script executable..."
+            chmod +x ./initialize_tracking_issue.sh
+          fi
+
+          # Run the initialization script with error handling and output capture
+          if ! init_output=$(./initialize_tracking_issue.sh 2>&1); then
+            echo ""
+            echo "❌ Initialization failed with error:"
+            echo "$init_output"
+            exit 1
+          fi
+
+          echo ""
+          echo "✅ Initialization complete!"
+          echo ""
+          echo "The tracking issue now has the comprehensive welcome comment"
+          echo "explaining the ADK A2A Blog Pipeline tracking system."
+
+      - name: Generate summary
+        if: always()
+        run: |
+          echo "## 🎉 ADK Pipeline Tracking Issue Initialized" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**@create-botter** has successfully initialized the ADK A2A Blog Pipeline tracking issue." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### ✅ What Was Done" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "1. Found the tracking issue with label \`adk-pipeline\`" >> $GITHUB_STEP_SUMMARY
+          echo "2. Posted the comprehensive welcome comment" >> $GITHUB_STEP_SUMMARY
+          echo "3. Verified the tracking infrastructure is operational" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 🔍 View Tracking Issue" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Use the helper script to view the tracking issue:" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`bash" >> $GITHUB_STEP_SUMMARY
+          echo "./tools/adk-pipeline-status.sh view" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 📚 Documentation" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- [Quick Reference](https://github.com/enufacas/Chained/blob/main/docs/ADK_PIPELINE_QUICK_REF.md)" >> $GITHUB_STEP_SUMMARY
+          echo "- [Complete Guide](https://github.com/enufacas/Chained/blob/main/docs/ADK_PIPELINE_TRACKING_GUIDE.md)" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "---" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**🏗️ Infrastructure by @create-botter** - _Creating infrastructure that illuminates possibilities._" >> $GITHUB_STEP_SUMMARY
