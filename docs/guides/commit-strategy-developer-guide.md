@@ -404,9 +404,15 @@ ls -la analysis/commit_patterns.json
 ### Dashboard Won't Start
 
 ```bash
-# Export to HTML instead
-python tools/commit-strategy-dashboard.py --export-html /tmp/dashboard.html
-open /tmp/dashboard.html  # or your browser
+# Export to HTML instead (cross-platform)
+python tools/commit-strategy-dashboard.py --export-html ~/dashboard.html
+# Or specify your preferred location
+python tools/commit-strategy-dashboard.py --export-html dashboard.html
+
+# Then open in your browser
+open ~/dashboard.html  # macOS
+xdg-open ~/dashboard.html  # Linux
+start dashboard.html  # Windows
 ```
 
 ## 🎨 Customization
