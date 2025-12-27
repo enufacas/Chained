@@ -43,15 +43,17 @@ fi
 if [[ "$NEW_ISSUE" == "true" ]]; then
     echo "🎉 Initializing tracking issue with welcome comment..."
     
-    # Check if welcome comment exists
-    WELCOME_MARKER="ADK A2A Blog Pipeline Tracking System"
+    # Check if welcome comment exists (match the exact marker from welcome template)
+    WELCOME_MARKER="ADK A2A Blog Pipeline Tracking System - Initialized"
     HAS_WELCOME=$(gh issue view "$ISSUE_NUMBER" --json comments --jq '.comments[].body' | grep -c "$WELCOME_MARKER" || echo "0")
     
     if [[ "$HAS_WELCOME" -eq 0 ]]; then
         # Post welcome comment using the initialize script
         echo "📝 Posting welcome comment..."
         export GITHUB_TOKEN="${GH_TOKEN}"
-        ./initialize_tracking_issue.sh || echo "⚠️  Welcome comment posting failed, but continuing..."
+        if ! ./initialize_tracking_issue.sh 2>&1; then
+            echo "⚠️  Welcome comment posting failed, but continuing with run summary..."
+        fi
     else
         echo "✅ Welcome comment already exists"
     fi

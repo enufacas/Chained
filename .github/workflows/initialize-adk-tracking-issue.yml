@@ -50,8 +50,13 @@ jobs:
           # Make initialize script executable
           chmod +x ./initialize_tracking_issue.sh
 
-          # Run the initialization script
-          ./initialize_tracking_issue.sh
+          # Run the initialization script with error handling
+          if ! ./initialize_tracking_issue.sh 2>&1; then
+            echo ""
+            echo "⚠️  Warning: Initialization script encountered an error"
+            echo "Check the logs above for details"
+            exit 1
+          fi
 
           echo ""
           echo "✅ Initialization complete!"
