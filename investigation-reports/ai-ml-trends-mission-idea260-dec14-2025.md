@@ -660,7 +660,7 @@ Write syntactically-guaranteed code
 **Implication for Chained**:
 - AST-aware agents could generate higher-quality code
 - Compiler expertise distinguishes AI coding tools
-- Understanding code structure &gt; generating text that looks like code
+- Understanding code structure > generating text that looks like code
 
 **Actionability**: 8/10 - Clear path to integrate tree-sitter and AST analysis
 
@@ -678,7 +678,7 @@ Write syntactically-guaranteed code
 **Implication for Chained**:
 - Tool choice matters for agent development workflow
 - Real-time collaboration (Zed's strength) could enable multi-agent coding
-- AI-native tools &gt; AI-bolted-on tools
+- AI-native tools > AI-bolted-on tools
 
 **Actionability**: 7/10 - Can evaluate Zed, but not critical path
 
@@ -691,12 +691,12 @@ Write syntactically-guaranteed code
 **Cross-Domain Connection**:
 - **Renaissance Person**: Historical ideal of broad knowledge (Leonardo da Vinci)
 - **Modern Full-Stack**: Expectation of broad technical knowledge
-- **Chained's Model**: Specialized agents collaborating &gt; generalist agents working alone
+- **Chained's Model**: Specialized agents collaborating > generalist agents working alone
 
 **Implication for Chained**:
 - Don't try to build "one agent that does everything"
-- Specialized agents with collaboration &gt; generalist agents
-- Like full-stack teams &gt; full-stack individuals
+- Specialized agents with collaboration > generalist agents
+- Like full-stack teams > full-stack individuals
 
 **Actionability**: 6/10 - Strategic validation, not tactical change
 
