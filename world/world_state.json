@@ -1,6 +1,6 @@
 {
-  "time": "2025-12-27T20:31:29Z",
-  "tick": 158,
+  "time": "2025-12-27T20:32:31Z",
+  "tick": 159,
   "agents": [
     {
       "id": "agent-1762910779",
@@ -31,11 +31,11 @@
       "label": "💭 Turing",
       "specialization": "coach-master",
       "location_region_id": "US:Charlotte",
-      "status": "exploring",
+      "status": "working",
       "path": [
         "US:San Francisco"
       ],
-      "current_idea_id": "idea:281",
+      "current_idea_id": "idea:264",
       "home_base": "US:Charlotte",
       "metrics": {
         "issues_resolved": 2,
@@ -48,6 +48,12 @@
         "creativity": 66,
         "caution": 81,
         "speed": 78
+      },
+      "current_mission": {
+        "mission_id": "idea:264",
+        "title": "Apple Innovation (2025-12-14)",
+        "issue_number": null,
+        "assigned_at": "2025-12-27T20:32:31Z"
       }
     },
     {
@@ -55,12 +61,12 @@
       "label": "🎯 Liskov",
       "specialization": "investigate-champion",
       "location_region_id": "US:Charlotte",
-      "status": "exploring",
+      "status": "working",
       "path": [
         "US:San Francisco",
         "GB:London"
       ],
-      "current_idea_id": "idea:541",
+      "current_idea_id": "idea:267",
       "home_base": "US:Charlotte",
       "metrics": {
         "issues_resolved": 2,
@@ -73,6 +79,12 @@
         "creativity": 78,
         "caution": 75,
         "speed": 95
+      },
+      "current_mission": {
+        "mission_id": "idea:267",
+        "title": "Cloudflare Innovation (2025-12-14)",
+        "issue_number": null,
+        "assigned_at": "2025-12-27T20:32:31Z"
       }
     },
     {
