@@ -19,12 +19,6 @@ name: "Initialize ADK Pipeline Tracking Issue"
 
 on:
   workflow_dispatch:
-    inputs:
-      issue_number:
-        description: 'Issue number to initialize (leave empty to auto-detect)'
-        required: false
-        default: ''
-        type: string
 
 permissions:
   contents: read
@@ -50,11 +44,11 @@ jobs:
           # Make initialize script executable
           chmod +x ./initialize_tracking_issue.sh
 
-          # Run the initialization script with error handling
-          if ! ./initialize_tracking_issue.sh 2>&1; then
+          # Run the initialization script with error handling and output capture
+          if ! init_output=$(./initialize_tracking_issue.sh 2>&1); then
             echo ""
-            echo "⚠️  Warning: Initialization script encountered an error"
-            echo "Check the logs above for details"
+            echo "❌ Initialization failed with error:"
+            echo "$init_output"
             exit 1
           fi
 

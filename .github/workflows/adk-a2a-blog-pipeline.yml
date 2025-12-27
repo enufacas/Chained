@@ -385,8 +385,12 @@ jobs:
               # Post welcome comment using the initialize script
               echo "📝 Posting welcome comment..."
               export GITHUB_TOKEN="${GH_TOKEN}"
-              if ! ./initialize_tracking_issue.sh 2>&1; then
-                echo "⚠️  Welcome comment posting failed, but continuing with run summary..."
+              if ! init_output=$(./initialize_tracking_issue.sh 2>&1); then
+                echo "⚠️  Welcome comment posting failed:"
+                echo "$init_output"
+                echo "Continuing with run summary..."
+              else
+                echo "✅ Welcome comment posted successfully"
               fi
             else
               echo "✅ Welcome comment already exists"
