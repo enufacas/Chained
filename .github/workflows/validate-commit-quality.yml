@@ -1,0 +1,294 @@
+name: "Quality: Validate Commit Strategies"
+
+# Validate commits in PRs against learned optimal strategies
+# Created by @create-botter - Autonomous commit quality enforcement
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches:
+      - main
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+jobs:
+  validate-commits:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full history for analysis
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Analyze PR commits
+        id: analyze
+        run: |
+          python3 << 'PYTHON_SCRIPT'
+          import json
+          import os
+          import sys
+          import subprocess
+          
+          print("🔍 Analyzing PR commits against learned strategies...")
+          
+          # Get PR base and head
+          base_ref = os.environ.get('GITHUB_BASE_REF', 'main')
+          head_ref = os.environ.get('GITHUB_HEAD_REF', '')
+          
+          print(f"Comparing {base_ref}...{head_ref}")
+          
+          # Get commits in PR
+          result = subprocess.run(
+              ['git', 'log', f'origin/{base_ref}..HEAD', '--format=%H'],
+              capture_output=True,
+              text=True,
+              check=True
+          )
+          
+          commit_hashes = [h.strip() for h in result.stdout.strip().split('\n') if h.strip()]
+          
+          print(f"Found {len(commit_hashes)} commits in PR")
+          
+          # Import learner
+          sys.path.insert(0, 'tools')
+          import importlib.util
+          spec = importlib.util.spec_from_file_location('learner', 'tools/commit-strategy-learner.py')
+          learner_module = importlib.util.module_from_spec(spec)
+          spec.loader.exec_module(learner_module)
+          
+          CommitStrategyLearner = learner_module.CommitStrategyLearner
+          learner = CommitStrategyLearner(repo_path='.', verbose=False)
+          
+          # Validate each commit
+          all_results = []
+          total_score = 0
+          issues_found = 0
+          
+          for commit_hash in commit_hashes:
+              # Get commit info
+              msg_result = subprocess.run(
+                  ['git', 'log', '-1', '--format=%s%n%b', commit_hash],
+                  capture_output=True,
+                  text=True,
+                  check=True
+              )
+              commit_msg = msg_result.stdout.strip()
+              
+              # Get file changes
+              stat_result = subprocess.run(
+                  ['git', 'diff', '--stat', f'{commit_hash}^..{commit_hash}'],
+                  capture_output=True,
+                  text=True
+              )
+              
+              # Count files and lines
+              files_changed = 0
+              lines_changed = 0
+              for line in stat_result.stdout.split('\n'):
+                  if '|' in line:
+                      files_changed += 1
+                  if 'changed' in line:
+                      import re
+                      match = re.search(r'(\d+) insertion', line)
+                      if match:
+                          lines_changed += int(match.group(1))
+                      match = re.search(r'(\d+) deletion', line)
+                      if match:
+                          lines_changed += int(match.group(1))
+              
+              # Validate
+              validation = learner.validate_commit(
+                  message=commit_msg,
+                  files_changed=files_changed,
+                  lines_changed=lines_changed
+              )
+              
+              all_results.append({
+                  'commit_hash': commit_hash[:8],
+                  'message': commit_msg.split('\n')[0][:60],
+                  'score': validation['score'],
+                  'status': validation['status'],
+                  'issues': validation['issues'],
+                  'suggestions': validation['suggestions']
+              })
+              
+              total_score += validation['score']
+              issues_found += len(validation['issues'])
+          
+          average_score = total_score / len(commit_hashes) if commit_hashes else 0
+          
+          # Save results
+          with open('/tmp/validation_results.json', 'w') as f:
+              json.dump({
+                  'commits_analyzed': len(commit_hashes),
+                  'average_score': average_score,
+                  'issues_found': issues_found,
+                  'results': all_results
+              }, f, indent=2)
+          
+          # Output for GitHub Actions
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+              f.write(f"commits_count={len(commit_hashes)}\n")
+              f.write(f"average_score={average_score:.1f}\n")
+              f.write(f"issues_count={issues_found}\n")
+              f.write(f"status={'pass' if average_score >= 70 else 'warning' if average_score >= 50 else 'fail'}\n")
+          
+          # Print summary
+          print("\n=== Validation Summary ===")
+          print(f"Commits analyzed: {len(commit_hashes)}")
+          print(f"Average score: {average_score:.1f}/100")
+          print(f"Total issues: {issues_found}")
+          
+          for result in all_results:
+              emoji = "✅" if result['score'] >= 90 else "👍" if result['score'] >= 70 else "⚠️" if result['score'] >= 50 else "❌"
+              print(f"\n{emoji} {result['commit_hash']}: {result['message']}")
+              print(f"   Score: {result['score']}/100 ({result['status']})")
+              if result['issues']:
+                  print(f"   Issues: {len(result['issues'])}")
+          
+          PYTHON_SCRIPT
+        env:
+          GITHUB_BASE_REF: ${{ github.base_ref }}
+          GITHUB_HEAD_REF: ${{ github.head_ref }}
+
+      - name: Create PR comment
+        if: always()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          COMMITS_COUNT: ${{ steps.analyze.outputs.commits_count }}
+          AVERAGE_SCORE: ${{ steps.analyze.outputs.average_score }}
+          ISSUES_COUNT: ${{ steps.analyze.outputs.issues_count }}
+          STATUS: ${{ steps.analyze.outputs.status }}
+        run: |
+          # Load detailed results
+          RESULTS_JSON=$(cat /tmp/validation_results.json)
+          
+          # Determine status emoji
+          if [ "${STATUS}" = "pass" ]; then
+            STATUS_EMOJI="✅"
+            STATUS_TEXT="Excellent"
+          elif [ "${STATUS}" = "warning" ]; then
+            STATUS_EMOJI="⚠️"
+            STATUS_TEXT="Needs Improvement"
+          else
+            STATUS_EMOJI="❌"
+            STATUS_TEXT="Poor Quality"
+          fi
+          
+          # Create comment
+          cat > /tmp/comment.md << 'EOF_MARKER'
+## ${STATUS_EMOJI} Commit Quality Report
+
+**@create-botter** has analyzed the commits in this PR against learned optimal strategies.
+
+### 📊 Summary
+
+- **Commits Analyzed:** ${COMMITS_COUNT}
+- **Average Quality Score:** ${AVERAGE_SCORE}/100
+- **Issues Found:** ${ISSUES_COUNT}
+- **Status:** ${STATUS_TEXT}
+
+### 📋 Commit Details
+
+EOF_MARKER
+          
+          # Add commit-specific details
+          python3 << 'PYTHON_SCRIPT'
+          import json
+          
+          with open('/tmp/validation_results.json', 'r') as f:
+              data = json.load(f)
+          
+          with open('/tmp/comment.md', 'a') as f:
+              for result in data['results']:
+                  emoji = "✅" if result['score'] >= 90 else "👍" if result['score'] >= 70 else "⚠️" if result['score'] >= 50 else "❌"
+                  
+                  f.write(f"\n#### {emoji} `{result['commit_hash']}` - Score: {result['score']}/100\n\n")
+                  f.write(f"**Message:** {result['message']}\n\n")
+                  
+                  if result['issues']:
+                      f.write("**Issues:**\n")
+                      for issue in result['issues'][:3]:  # Top 3 issues
+                          severity_emoji = "⚠️" if issue['severity'] == 'warning' else "ℹ️"
+                          f.write(f"- {severity_emoji} {issue['message']}\n")
+                          f.write(f"  > {issue['suggestion']}\n")
+                      f.write("\n")
+          
+          PYTHON_SCRIPT
+          
+          # Add footer
+          cat >> /tmp/comment.md << 'EOF_MARKER'
+
+### 💡 Recommendations
+
+Based on learned patterns from this repository:
+
+- Follow conventional commit format: `type(scope): description`
+- Keep commits focused (5-7 files per commit)
+- Write descriptive commit messages (at least 10 characters)
+- Add commit body for complex changes
+
+### 🔧 How to Improve
+
+Run this command to validate before committing:
+
+```bash
+python tools/commit-strategy-learner.py --validate "your commit message"
+```
+
+Install pre-commit hooks for automatic validation:
+
+```bash
+bash tools/install-commit-hooks.sh
+```
+
+---
+
+*✨ Powered by autonomous learning infrastructure (@create-botter)*
+*📊 Dashboard: [View Commit Insights](https://github.com/${{ github.repository }}/actions)*
+EOF_MARKER
+          
+          # Substitute variables
+          sed -e "s|\${STATUS_EMOJI}|${STATUS_EMOJI}|g" \
+              -e "s|\${STATUS_TEXT}|${STATUS_TEXT}|g" \
+              -e "s|\${COMMITS_COUNT}|${COMMITS_COUNT}|g" \
+              -e "s|\${AVERAGE_SCORE}|${AVERAGE_SCORE}|g" \
+              -e "s|\${ISSUES_COUNT}|${ISSUES_COUNT}|g" \
+              /tmp/comment.md > /tmp/comment_final.md
+          
+          # Post comment
+          gh pr comment ${{ github.event.pull_request.number }} \
+            --body-file /tmp/comment_final.md || echo "Failed to create comment"
+
+      - name: Set status
+        if: always()
+        run: |
+          STATUS="${{ steps.analyze.outputs.status }}"
+          
+          if [ "${STATUS}" = "fail" ]; then
+            echo "❌ Commit quality is below threshold"
+            echo "Consider improving commit messages before merging"
+            # Don't fail the workflow, just warn
+          else
+            echo "✅ Commit quality check passed"
+          fi
+
+      - name: Log activity
+        if: always()
+        run: |
+          echo "===================="
+          echo "Commit Quality Validation Complete"
+          echo "===================="
+          echo "PR: #${{ github.event.pull_request.number }}"
+          echo "Commits: ${{ steps.analyze.outputs.commits_count }}"
+          echo "Score: ${{ steps.analyze.outputs.average_score }}/100"
+          echo "Status: ${{ steps.analyze.outputs.status }}"
+          echo "Infrastructure by: @create-botter"
+          echo "===================="
