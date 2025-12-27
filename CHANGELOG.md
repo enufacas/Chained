@@ -30,6 +30,8 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### ✨ Features
 
+- 👤 AI/ML Trends Investigation: Compiler Engineering & AST-Aware Code Generation (idea:260) [#5720](https://github.com/enufacas/Chained/pull/5720)
+- 👤 🔧 Agents Research: AI/ML Agents trends (Dec 14, 2025) - Critical security & world modeling gaps identified [#5722](https://github.com/enufacas/Chained/pull/5722)
 - 🤖 🔧 Agents 🎯 Agent Missions - Pipeline [#5715](https://github.com/enufacas/Chained/pull/5715)
 - 🤖 🧠 Learning 🧠 Learning Pipeline - 2025-12-27 [#5706](https://github.com/enufacas/Chained/pull/5706)
 - 🤖 meta-coordination: 2025-12-27 06:18 run - closed 1 stale PR [#5697](https://github.com/enufacas/Chained/pull/5697)
@@ -37,7 +39,8 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x13) [#5721](https://github.com/enufacas/Chained/pull/5721)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x16) [#5722](https://github.com/enufacas/Chained/pull/5722)
+- 👤 🏗️ Infrastructure **Documentation**: Complete Docker/DevOps research mission (idea:262) - @cloud-architect [#5723](https://github.com/enufacas/Chained/pull/5723)
 - 🤖 **Documentation**: 📚 Sync World State to Docs - Pipeline [#5716](https://github.com/enufacas/Chained/pull/5716)
 - 🤖 **Chore**: 🌍 World Model Update - Pipeline [#5708](https://github.com/enufacas/Chained/pull/5708)
 - 🤖 ⚙️ Workflows **Chore**: meta-coordination: 2025-12-27 04:25 - workflow auto-merged 2 PRs, memory updated [#5694](https://github.com/enufacas/Chained/pull/5694)
@@ -335,12 +338,10 @@ This changelog excludes automated data syncs and routine maintenance commits.
 - 👤 🔧 Agents Add spawning analytics dashboard for AI sub-agent system [#4942](https://github.com/enufacas/Chained/pull/4942)
 - 🤖 meta-coordination: 2025-12-20 08:15 - closed 1 stale PR, verified system state [#4910](https://github.com/enufacas/Chained/pull/4910)
 - 👤 🧠 Learning Complete GPT/AI-ML learning mission (idea:188) - strategic awareness [#4923](https://github.com/enufacas/Chained/pull/4923)
-- 👤 🔧 Tools Complete TypeScript Languages learning mission (idea:190) - @clarify-champion [#4925](https://github.com/enufacas/Chained/pull/4925)
-- 👤 Complete AI/ML ecosystem research and integration proposal (idea:191) [#4927](https://github.com/enufacas/Chained/pull/4927)
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x26) [#4968](https://github.com/enufacas/Chained/pull/4968)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x24) [#4968](https://github.com/enufacas/Chained/pull/4968)
 - 👤 🏗️ Infrastructure **Documentation**: Complete Docker DevOps research mission (idea:193) - @cloud-architect [#4982](https://github.com/enufacas/Chained/pull/4982)
 - 🤖 **Documentation**: 📚 Sync World State to Docs - Pipeline [#4981](https://github.com/enufacas/Chained/pull/4981)
 - 👤 🧠 Learning **Documentation**: Daily learning reflection verification for 2025-12-20 [#4943](https://github.com/enufacas/Chained/pull/4943)
