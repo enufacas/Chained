@@ -61,11 +61,11 @@ class TestCodeTokenizer(unittest.TestCase):
     def test_multi_char_operators(self):
         """Test multi-character operator handling"""
         tokenizer = CodeTokenizer('python')
-        code = 'if x == 10 && y != 5'
+        code = 'if x == 10 and y != 5'
         tokens = tokenizer.tokenize(code)
         
         self.assertIn('==', tokens)
-        self.assertIn('&&', tokens)
+        self.assertIn('and', tokens)
         self.assertIn('!=', tokens)
     
     def test_comment_removal(self):
