@@ -30,6 +30,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### ✨ Features
 
+- 🤖 🔧 Agents 🎯 Agent Missions - Pipeline (x2) [#5782](https://github.com/enufacas/Chained/pull/5782)
 - 🤖 🧠 Learning 🧠 Learning Pipeline - 2025-12-27 (x2) [#5773](https://github.com/enufacas/Chained/pull/5773)
 - 🤖 meta-coordination: 2025-12-27 16:14 run - system healthy, minimal actions [#5759](https://github.com/enufacas/Chained/pull/5759)
 - 🤖 🔧 Agents meta-coordination: 2025-12-27 14:10 run - closed 4 stale PRs, assigned 1 agent [#5751](https://github.com/enufacas/Chained/pull/5751)
@@ -43,13 +44,12 @@ This changelog excludes automated data syncs and routine maintenance commits.
 - 👤 🧠 Learning Complete Claude AI/ML learning mission (idea:258) - @coach-master [#5718](https://github.com/enufacas/Chained/pull/5718)
 - 👤 AI/ML Trends Investigation: Compiler Engineering & AST-Aware Code Generation (idea:260) [#5720](https://github.com/enufacas/Chained/pull/5720)
 - 👤 🔧 Agents Research: AI/ML Agents trends (Dec 14, 2025) - Critical security & world modeling gaps identified [#5722](https://github.com/enufacas/Chained/pull/5722)
-- 🤖 🔧 Agents 🎯 Agent Missions - Pipeline [#5715](https://github.com/enufacas/Chained/pull/5715)
 - 🤖 meta-coordination: 2025-12-27 06:18 run - closed 1 stale PR [#5697](https://github.com/enufacas/Chained/pull/5697)
 - 🤖 🎯 Daily goal for 2025-12-27 [#5700](https://github.com/enufacas/Chained/pull/5700)
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x32) [#5774](https://github.com/enufacas/Chained/pull/5774)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x33) [#5776](https://github.com/enufacas/Chained/pull/5776)
 - 👤 🧠 Learning **Documentation**: Add daily learning reflection verification for 2025-12-27 [#5738](https://github.com/enufacas/Chained/pull/5738)
 - 👤 🏗️ Infrastructure **Documentation**: Complete Docker/DevOps research mission (idea:262) - @cloud-architect [#5723](https://github.com/enufacas/Chained/pull/5723)
 - 🤖 **Documentation**: 📚 Sync World State to Docs - Pipeline [#5716](https://github.com/enufacas/Chained/pull/5716)
@@ -345,7 +345,7 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x7) [#4968](https://github.com/enufacas/Chained/pull/4968)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x6) [#4968](https://github.com/enufacas/Chained/pull/4968)
 - 👤 🏗️ Infrastructure **Documentation**: Complete Docker DevOps research mission (idea:193) - @cloud-architect [#4982](https://github.com/enufacas/Chained/pull/4982)
 
 ---
