@@ -22,7 +22,7 @@ import re
 import json
 import hashlib
 from collections import Counter, defaultdict
-from typing import List, Tuple, Dict, Optional
+from typing import List, Tuple, Dict, Optional, Any
 
 
 class CodeTokenizer:
@@ -259,7 +259,7 @@ class SequencePredictor:
         
         return []
     
-    def get_stats(self) -> Dict[str, any]:
+    def get_stats(self) -> Dict[str, Any]:
         """Get predictor statistics"""
         return {
             'vocabulary_size': len(self.vocabulary),
@@ -476,7 +476,7 @@ class CodeCompletionPredictor:
         self.language = model_data['language']
         self.n = model_data['n']
     
-    def get_stats(self) -> Dict[str, any]:
+    def get_stats(self) -> Dict[str, Any]:
         """
         Get model statistics
         
