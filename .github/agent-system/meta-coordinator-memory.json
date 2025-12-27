@@ -1,10 +1,10 @@
 {
   "version": "1.1",
   "created_at": "2025-11-24T05:17:32.537364",
-  "last_updated": "2025-12-27T10:17:46.640406",
+  "last_updated": "2025-12-27T14:16:22.691203",
   "runs": {
-    "total_runs": 424,
-    "successful_runs": 424,
+    "total_runs": 426,
+    "successful_runs": 426,
     "failed_runs": 0,
     "last_run": {
       "timestamp": "2025-12-27T04:28:32.993095",
@@ -25,13 +25,13 @@
   "issue_patterns": {
     "total_issues_processed": 17,
     "agents_assigned": {
-      "edge-cases-pro": 5288447750321988791615322464262168318627237463714249754277190362195246329890490766601513683517722278780729696200186866434048,
-      "coach-master": 5288447750321988791615322464262168318627237463714249754277190362195246329890490766601513683517722278780729696200186866434048,
-      "construct-specialist": 5288447750321988791615322464262168318627237463714249754277190362195246329890490766601513683517722278780729696200186866434048,
-      "create-botter": 15865343250965966374845967529489675254819957664453086479992235470014721166749422267002367801619654171089758764698027696848896,
-      "investigate-champion": 5288447750321988791615322464262168318627237463714249754277190362195246329890490766601513683517722278780729696200186866434048,
-      "troubleshoot-expert": 5288447750321988791615322464262168318627237463714249754277190362195246329890490766601513683517722278780729696200186866434048,
-      "align-wizard": 9173994463960286046443283581208347763186259956673124494950355357547691504353939232280074212440502746218496
+      "edge-cases-pro": 21153791001287955166461289857048673274508949854856999017108761448780985319561963066406054734070889115122918784800747465736192,
+      "coach-master": 21153791001287955166461289857048673274508949854856999017108761448780985319561963066406054734070889115122918784800747465736192,
+      "construct-specialist": 21153791001287955166461289857048673274508949854856999017108761448780985319561963066406054734070889115122918784800747465736192,
+      "create-botter": 63461373003863865499383870117958701019279830657812345919968941880058884666997689068009471206478616684359035058792110787395584,
+      "investigate-champion": 21153791001287955166461289857048673274508949854856999017108761448780985319561963066406054734070889115122918784800747465736192,
+      "troubleshoot-expert": 21153791001287955166461289857048673274508949854856999017108761448780985319561963066406054734070889115122918784800747465736192,
+      "align-wizard": 36695977855841144185773134324833391052745039826692497979801421430190766017415756929120296849762010984873984
     },
     "agent_success_rates": {},
     "assignment_times": [
@@ -644,11 +644,83 @@
     "duplicate_prevented": 0
   },
   "exceptions": {
-    "total_handled": 2,
+    "total_handled": 8,
     "by_type": {
-      "merge_conflict_closure": 2
+      "merge_conflict_closure": 8
     },
     "recent": [
+      {
+        "type": "merge_conflict_closure",
+        "description": "Recommended closing PR #5703 due to merge conflict",
+        "context": {
+          "pr_number": 5703,
+          "reason": "Merge conflict in changelog update",
+          "age_hours": 0.05,
+          "policy": "3-hour conflict window",
+          "action": "closure_recommended"
+        },
+        "timestamp": "2025-12-27T08:19:56.163771"
+      },
+      {
+        "type": "merge_conflict_closure",
+        "description": "Recommended closing PR #5703 due to merge conflict",
+        "context": {
+          "pr_number": 5703,
+          "reason": "Merge conflict in changelog update",
+          "age_hours": 0.05,
+          "policy": "3-hour conflict window",
+          "action": "closure_recommended"
+        },
+        "timestamp": "2025-12-27T08:19:56.163771"
+      },
+      {
+        "type": "merge_conflict_closure",
+        "description": "Recommended closing PR #5703 due to merge conflict",
+        "context": {
+          "pr_number": 5703,
+          "reason": "Merge conflict in changelog update",
+          "age_hours": 0.05,
+          "policy": "3-hour conflict window",
+          "action": "closure_recommended"
+        },
+        "timestamp": "2025-12-27T08:19:56.163771"
+      },
+      {
+        "type": "merge_conflict_closure",
+        "description": "Recommended closing PR #5703 due to merge conflict",
+        "context": {
+          "pr_number": 5703,
+          "reason": "Merge conflict in changelog update",
+          "age_hours": 0.05,
+          "policy": "3-hour conflict window",
+          "action": "closure_recommended"
+        },
+        "timestamp": "2025-12-27T08:19:56.163771"
+      },
+      {
+        "type": "merge_conflict_closure",
+        "description": "Recommended closing PR #5703 due to merge conflict",
+        "context": {
+          "pr_number": 5703,
+          "reason": "Merge conflict in changelog update",
+          "age_hours": 0.05,
+          "policy": "3-hour conflict window",
+          "action": "closure_recommended"
+        },
+        "timestamp": "2025-12-27T08:19:56.163771"
+      },
+      {
+        "type": "merge_conflict_closure",
+        "description": "Recommended closing PR #5703 due to merge conflict",
+        "context": {
+          "pr_number": 5703,
+          "reason": "Merge conflict in changelog update",
+          "age_hours": 0.05,
+          "policy": "3-hour conflict window",
+          "action": "closure_recommended"
+        },
+        "timestamp": "2025-12-27T08:19:56.163771"
+      },
       {
         "type": "merge_conflict_closure",
         "description": "Recommended closing PR #5703 due to merge conflict",
