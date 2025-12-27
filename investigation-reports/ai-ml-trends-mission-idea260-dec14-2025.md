@@ -572,7 +572,7 @@ Write syntactically-guaranteed code
 
 **Success Criteria:**
 - [ ] tree-sitter successfully parses Chained codebase
-- [ ] Parsing overhead acceptable (&lt;1 second per file)
+- [ ] Parsing overhead acceptable (<1 second per file)
 - [ ] AST summary fits in LLM context window
 - [ ] Prototype shows potential quality improvement
 
