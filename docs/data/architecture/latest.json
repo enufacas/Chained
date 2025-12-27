@@ -1,11 +1,11 @@
 {
-  "timestamp": "2025-12-27T02:05:36.655816",
-  "commit": "5559d6e382ccdc5aca17de8de0670a176ef0a76a",
+  "timestamp": "2025-12-27T12:53:08.360913",
+  "commit": "64d6f40389d8375617b1caaba685e3683533694d",
   "structure": {
     "directories": {
       "tools": {
-        "file_count": 451,
-        "line_count": 178148,
+        "file_count": 453,
+        "line_count": 178811,
         "files": [
           ".context.md",
           "AB_TESTING_README.md",
@@ -60,8 +60,8 @@
         ]
       },
       "docs": {
-        "file_count": 1109,
-        "line_count": 357846,
+        "file_count": 1111,
+        "line_count": 359612,
         "files": [
           ".nojekyll",
           "01_overview.md",
@@ -126,12 +126,13 @@
         "files": []
       },
       "analysis": {
-        "file_count": 38,
-        "line_count": 28684,
+        "file_count": 40,
+        "line_count": 29392,
         "files": [
           "actions-patterns.json",
           "architecture.mmd",
           "clustering_results.json",
+          "commit_patterns.json",
           "evolution.json",
           "latest.json",
           "snapshot_2025-12-10T12-58-44.json",
@@ -166,12 +167,13 @@
           "snapshot_2025-12-25T02-08-53.json",
           "snapshot_2025-12-25T12-55-33.json",
           "snapshot_2025-12-26T02-07-51.json",
-          "snapshot_2025-12-26T12-55-40.json"
+          "snapshot_2025-12-26T12-55-40.json",
+          "snapshot_2025-12-27T02-05-36.json"
         ]
       },
       "learnings": {
-        "file_count": 643,
-        "line_count": 513769,
+        "file_count": 654,
+        "line_count": 528161,
         "files": [
           "AI_ML.md",
           "CLAUDE_AI_INVESTIGATION.md",
@@ -189,6 +191,7 @@
           "MISSION_COMPLETE_idea196_nvidia_innovation.md",
           "MISSION_COMPLETE_idea250_security_ai_agents.md",
           "MISSION_COMPLETE_idea253_go_languages.md",
+          "MISSION_COMPLETE_idea258_claude_ai_ml.md",
           "OpenSource.md",
           "Other.md",
           "Performance.md",
@@ -221,14 +224,13 @@
           "ai_agents_innovation_deep_dive_nov16_2025.md",
           "ai_agents_research_report_idea142_20251126.md",
           "ai_agents_research_report_idea166_20251210.md",
-          "ai_ml_agents_investigation_20251116.md",
-          "ai_ml_ecosystem_integration_proposal_idea141_20251126.md"
+          "ai_ml_agents_investigation_20251116.md"
         ]
       }
     },
     "files_by_type": {},
-    "total_files": 2241,
-    "total_lines": 1078447
+    "total_files": 2258,
+    "total_lines": 1095976
   },
   "dependencies": {
     "internal_imports": {
@@ -263,6 +265,7 @@
       "demo_meta_coordination.py": [],
       "workflow_execution_tracker.py": [],
       "dependency-flow-analyzer.py": [],
+      "commit-strategy-dashboard.py": [],
       "debug_custom_agent_actors.py": [],
       "demo-agent-evolution.py": [],
       "thematic-analyzer.py": [],
@@ -447,17 +450,17 @@
       "validation_utils.py": []
     },
     "external_imports": {
-      "os": 126,
-      "sys": 168,
-      "json": 185,
+      "os": 127,
+      "sys": 169,
+      "json": 186,
       "re": 79,
       "ast": 18,
-      "datetime": 148,
-      "pathlib": 175,
-      "typing": 162,
+      "datetime": 149,
+      "pathlib": 176,
+      "typing": 163,
       "collections": 84,
       "functools": 9,
-      "argparse": 149,
+      "argparse": 150,
       "math": 13,
       "random": 29,
       "time": 31,
@@ -483,7 +486,11 @@
       "vertexai": 2,
       "meta_agent_coordinator": 3,
       "ai_workflow_predictor": 6,
-      "tempfile": 7,
+      "http": 4,
+      "socketserver": 1,
+      "webbrowser": 1,
+      "tempfile": 8,
+      "threading": 6,
       "shutil": 8,
       "heapq": 1,
       "workflow_execution_tracker": 2,
@@ -513,7 +520,6 @@
       "workflow_dependency_graph": 1,
       "lazy_workflow_loader": 1,
       "pickle": 1,
-      "threading": 5,
       "semantic_similarity_engine": 2,
       "workflow_ab_testing_integration": 2,
       "autonomous_experiment_creator": 3,
@@ -522,7 +528,6 @@
       "api_monitoring_bridge": 2,
       "aiohttp": 2,
       "fnmatch": 1,
-      "http": 3,
       "ab_testing_api": 1,
       "openai": 1,
       "anthropic": 1,
@@ -559,17 +564,17 @@
   },
   "metrics": {
     "total_components": 6,
-    "total_files": 2241,
-    "total_lines": 1078447,
+    "total_files": 2258,
+    "total_lines": 1095976,
     "total_dependencies": 2,
-    "external_libraries": 96,
-    "coupling_score": 4.6006624953993374e-05,
+    "external_libraries": 98,
+    "coupling_score": 4.55684666210982e-05,
     "complexity_score": 1.0
   },
   "components": {
     "learning_system": {
       "file_count": 46,
-      "line_count": 513769,
+      "line_count": 528161,
       "files": [
         "AI_ML.md",
         "CLAUDE_AI_INVESTIGATION.md",
@@ -587,19 +592,20 @@
         "MISSION_COMPLETE_idea196_nvidia_innovation.md",
         "MISSION_COMPLETE_idea250_security_ai_agents.md",
         "MISSION_COMPLETE_idea253_go_languages.md",
+        "MISSION_COMPLETE_idea258_claude_ai_ml.md",
         "OpenSource.md",
         "Other.md",
-        "Performance.md",
-        "Programming.md"
+        "Performance.md"
       ]
     },
     "analysis_tools": {
-      "file_count": 38,
-      "line_count": 28684,
+      "file_count": 40,
+      "line_count": 29392,
       "files": [
         "actions-patterns.json",
         "architecture.mmd",
         "clustering_results.json",
+        "commit_patterns.json",
         "evolution.json",
         "latest.json",
         "snapshot_2025-12-10T12-58-44.json",
@@ -615,13 +621,12 @@
         "snapshot_2025-12-15T13-00-32.json",
         "snapshot_2025-12-16T02-08-45.json",
         "snapshot_2025-12-16T12-58-48.json",
-        "snapshot_2025-12-17T02-03-41.json",
-        "snapshot_2025-12-17T12-58-59.json"
+        "snapshot_2025-12-17T02-03-41.json"
       ]
     },
     "documentation": {
       "file_count": 50,
-      "line_count": 357846,
+      "line_count": 359612,
       "files": [
         ".nojekyll",
         "01_overview.md",
@@ -647,7 +652,7 @@
     },
     "tools": {
       "file_count": 50,
-      "line_count": 178148,
+      "line_count": 178811,
       "files": [
         ".context.md",
         "AB_TESTING_README.md",
