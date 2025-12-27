@@ -49,10 +49,10 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ### 🧹 Chores & Maintenance
 
-- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x33) [#5776](https://github.com/enufacas/Chained/pull/5776)
+- 🤖 **Documentation**: 📚 Sync World State to Docs - Pipeline (x2) [#5784](https://github.com/enufacas/Chained/pull/5784)
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge (x34) [#5783](https://github.com/enufacas/Chained/pull/5783)
 - 👤 🧠 Learning **Documentation**: Add daily learning reflection verification for 2025-12-27 [#5738](https://github.com/enufacas/Chained/pull/5738)
 - 👤 🏗️ Infrastructure **Documentation**: Complete Docker/DevOps research mission (idea:262) - @cloud-architect [#5723](https://github.com/enufacas/Chained/pull/5723)
-- 🤖 **Documentation**: 📚 Sync World State to Docs - Pipeline [#5716](https://github.com/enufacas/Chained/pull/5716)
 - 🤖 **Chore**: 🌍 World Model Update - Pipeline (x2) [#5775](https://github.com/enufacas/Chained/pull/5775)
 - 🤖 **Chore**: meta-coordination: 2025-12-27 18:16 - system assessment and memory update [#5762](https://github.com/enufacas/Chained/pull/5762)
 - 🤖 **Chore**: 📊 Goal progress update: ✅ Completed [#5766](https://github.com/enufacas/Chained/pull/5766)
