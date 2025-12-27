@@ -495,10 +495,12 @@ def main():
     import http.server
     import socketserver
     import webbrowser
+    import tempfile
     from threading import Thread
     
-    # Write temporary HTML
-    temp_file = Path("/tmp/commit-dashboard.html")
+    # Write temporary HTML (cross-platform compatible)
+    temp_dir = Path(tempfile.gettempdir())
+    temp_file = temp_dir / "commit-dashboard.html"
     temp_file.write_text(html)
     
     class Handler(http.server.SimpleHTTPRequestHandler):
