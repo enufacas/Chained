@@ -1,15 +1,16 @@
 {
-  "timestamp": "2025-12-26T12:55:40.357876",
-  "commit": "4c1f0e474fdc15b9307badd010dca24517e70d8f",
+  "timestamp": "2025-12-27T02:05:36.655816",
+  "commit": "5559d6e382ccdc5aca17de8de0670a176ef0a76a",
   "structure": {
     "directories": {
       "tools": {
-        "file_count": 447,
-        "line_count": 176861,
+        "file_count": 451,
+        "line_count": 178148,
         "files": [
           ".context.md",
           "AB_TESTING_README.md",
           "ACTIONS_GENERATOR_README.md",
+          "ADK_MONITORING_QUICKSTART.md",
           "AGENT_EVOLUTION_SYSTEM_README.md",
           "AGENT_LEARNING_API_README.md",
           "AI_CODE_GOLF_OPTIMIZER_README.md",
@@ -55,13 +56,12 @@
           "INTELLIGENT_LEARNING_QUICKREF.md",
           "INTELLIGENT_LEARNING_SYSTEM.md",
           "ISSUE_CLUSTERING_SYSTEM_README.md",
-          "LAZY_EVALUATION_SYSTEM_README.md",
-          "LAZY_WORKFLOW_EVALUATOR_README.md"
+          "LAZY_EVALUATION_SYSTEM_README.md"
         ]
       },
       "docs": {
-        "file_count": 1106,
-        "line_count": 356383,
+        "file_count": 1109,
+        "line_count": 357846,
         "files": [
           ".nojekyll",
           "01_overview.md",
@@ -110,9 +110,9 @@
           "ADK_A2A_PIPELINE_IMPLEMENTATION.md",
           "ADK_DEV_UI_GUIDE.md",
           "ADK_PIPELINE_COMPLETE_SESSION_SUMMARY.md",
+          "ADK_PIPELINE_DASHBOARD.md",
           "ADK_PIPELINE_INITIAL_STATUS.md",
-          "ADK_PIPELINE_ISSUE_AGNOSTIC_FIX.md",
-          "ADK_PIPELINE_QUICK_REF.md"
+          "ADK_PIPELINE_ISSUE_AGNOSTIC_FIX.md"
         ]
       },
       ".github/workflows": {
@@ -126,8 +126,8 @@
         "files": []
       },
       "analysis": {
-        "file_count": 37,
-        "line_count": 27992,
+        "file_count": 38,
+        "line_count": 28684,
         "files": [
           "actions-patterns.json",
           "architecture.mmd",
@@ -165,12 +165,13 @@
           "snapshot_2025-12-24T12-56-10.json",
           "snapshot_2025-12-25T02-08-53.json",
           "snapshot_2025-12-25T12-55-33.json",
-          "snapshot_2025-12-26T02-07-51.json"
+          "snapshot_2025-12-26T02-07-51.json",
+          "snapshot_2025-12-26T12-55-40.json"
         ]
       },
       "learnings": {
-        "file_count": 637,
-        "line_count": 511953,
+        "file_count": 643,
+        "line_count": 513769,
         "files": [
           "AI_ML.md",
           "CLAUDE_AI_INVESTIGATION.md",
@@ -187,6 +188,7 @@
           "MISSION_COMPLETE_idea148_nvidia_innovation.md",
           "MISSION_COMPLETE_idea196_nvidia_innovation.md",
           "MISSION_COMPLETE_idea250_security_ai_agents.md",
+          "MISSION_COMPLETE_idea253_go_languages.md",
           "OpenSource.md",
           "Other.md",
           "Performance.md",
@@ -220,14 +222,13 @@
           "ai_agents_research_report_idea142_20251126.md",
           "ai_agents_research_report_idea166_20251210.md",
           "ai_ml_agents_investigation_20251116.md",
-          "ai_ml_ecosystem_integration_proposal_idea141_20251126.md",
-          "ai_ml_innovation_research_report_coach_master.md"
+          "ai_ml_ecosystem_integration_proposal_idea141_20251126.md"
         ]
       }
     },
     "files_by_type": {},
-    "total_files": 2227,
-    "total_lines": 1073189
+    "total_files": 2241,
+    "total_lines": 1078447
   },
   "dependencies": {
     "internal_imports": {
@@ -242,6 +243,7 @@
       "parse_agent_config.py": [],
       "validate-commit-quality.py": [],
       "design-decision-documenter.py": [],
+      "validate-adk-pipeline.py": [],
       "extract-agent-knowledge.py": [],
       "example_cross_repo_pattern_matcher.py": [],
       "sync_mission_flags.py": [],
@@ -288,6 +290,7 @@
       "get-available-human-names.py": [],
       "benchmark_code_analyzer.py": [],
       "meta-coordinator-memory.py": [],
+      "adk-pipeline-dashboard.py": [],
       "example_autonomous_issue_prioritizer.py": [],
       "workflow_config_generator.py": [],
       "demo_hn_code_generator.py": [],
@@ -444,17 +447,17 @@
       "validation_utils.py": []
     },
     "external_imports": {
-      "os": 124,
-      "sys": 166,
-      "json": 183,
-      "re": 78,
+      "os": 126,
+      "sys": 168,
+      "json": 185,
+      "re": 79,
       "ast": 18,
-      "datetime": 147,
-      "pathlib": 173,
-      "typing": 160,
+      "datetime": 148,
+      "pathlib": 175,
+      "typing": 162,
       "collections": 84,
       "functools": 9,
-      "argparse": 147,
+      "argparse": 149,
       "math": 13,
       "random": 29,
       "time": 31,
@@ -468,9 +471,9 @@
       "ab_testing_engine": 8,
       "ab_testing_advanced": 2,
       "yaml": 21,
-      "subprocess": 30,
+      "subprocess": 33,
       "hashlib": 18,
-      "traceback": 13,
+      "traceback": 14,
       "importlib": 25,
       "rl_resource_optimizer": 3,
       "rl_optimizer_enhanced": 1,
@@ -493,6 +496,8 @@
       "workload_monitor": 8,
       "intelligent_parent_selector": 3,
       "subagent_performance_learner": 3,
+      "asyncio": 4,
+      "httpx": 1,
       "autonomous_issue_prioritizer": 1,
       "hn_code_generator": 1,
       "unsupervised_pattern_learner": 5,
@@ -515,7 +520,6 @@
       "copy": 2,
       "api_coordination_hub": 2,
       "api_monitoring_bridge": 2,
-      "asyncio": 3,
       "aiohttp": 2,
       "fnmatch": 1,
       "http": 3,
@@ -555,17 +559,17 @@
   },
   "metrics": {
     "total_components": 6,
-    "total_files": 2227,
-    "total_lines": 1073189,
+    "total_files": 2241,
+    "total_lines": 1078447,
     "total_dependencies": 2,
-    "external_libraries": 95,
-    "coupling_score": 4.690211528539937e-05,
+    "external_libraries": 96,
+    "coupling_score": 4.6006624953993374e-05,
     "complexity_score": 1.0
   },
   "components": {
     "learning_system": {
       "file_count": 46,
-      "line_count": 511953,
+      "line_count": 513769,
       "files": [
         "AI_ML.md",
         "CLAUDE_AI_INVESTIGATION.md",
@@ -582,16 +586,16 @@
         "MISSION_COMPLETE_idea148_nvidia_innovation.md",
         "MISSION_COMPLETE_idea196_nvidia_innovation.md",
         "MISSION_COMPLETE_idea250_security_ai_agents.md",
+        "MISSION_COMPLETE_idea253_go_languages.md",
         "OpenSource.md",
         "Other.md",
         "Performance.md",
-        "Programming.md",
-        "QUICK_REFERENCE.md"
+        "Programming.md"
       ]
     },
     "analysis_tools": {
-      "file_count": 37,
-      "line_count": 27992,
+      "file_count": 38,
+      "line_count": 28684,
       "files": [
         "actions-patterns.json",
         "architecture.mmd",
@@ -617,7 +621,7 @@
     },
     "documentation": {
       "file_count": 50,
-      "line_count": 356383,
+      "line_count": 357846,
       "files": [
         ".nojekyll",
         "01_overview.md",
@@ -643,11 +647,12 @@
     },
     "tools": {
       "file_count": 50,
-      "line_count": 176861,
+      "line_count": 178148,
       "files": [
         ".context.md",
         "AB_TESTING_README.md",
         "ACTIONS_GENERATOR_README.md",
+        "ADK_MONITORING_QUICKSTART.md",
         "AGENT_EVOLUTION_SYSTEM_README.md",
         "AGENT_LEARNING_API_README.md",
         "AI_CODE_GOLF_OPTIMIZER_README.md",
@@ -663,8 +668,7 @@
         "API_COORDINATION_HUB_README.md",
         "API_TOOLS_INTEGRATION_GUIDE.md",
         "API_TOOLS_README.md",
-        "ARCHAEOLOGY_ENHANCED_README.md",
-        "AUTONOMOUS_ISSUE_PRIORITIZER_QUICKREF.md"
+        "ARCHAEOLOGY_ENHANCED_README.md"
       ]
     }
   }
