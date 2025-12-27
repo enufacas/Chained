@@ -41,8 +41,11 @@ jobs:
           echo "===================================================="
           echo ""
 
-          # Make initialize script executable
-          chmod +x ./initialize_tracking_issue.sh
+          # Make initialize script executable (ensure it has correct permissions)
+          if [[ ! -x ./initialize_tracking_issue.sh ]]; then
+            echo "📝 Making script executable..."
+            chmod +x ./initialize_tracking_issue.sh
+          fi
 
           # Run the initialization script with error handling and output capture
           if ! init_output=$(./initialize_tracking_issue.sh 2>&1); then

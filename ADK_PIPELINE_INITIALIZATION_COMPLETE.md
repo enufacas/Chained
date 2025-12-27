@@ -77,13 +77,7 @@ fi
 name: "Initialize ADK Pipeline Tracking Issue"
 
 on:
-  workflow_dispatch:
-    inputs:
-      issue_number:
-        description: 'Issue number to initialize (leave empty to auto-detect)'
-        required: false
-        default: ''
-        type: string
+  workflow_dispatch:  # No inputs - auto-detects tracking issue by label
 
 jobs:
   initialize:
@@ -92,7 +86,18 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          chmod +x ./initialize_tracking_issue.sh
+          # Make script executable if needed
+          if [[ ! -x ./initialize_tracking_issue.sh ]]; then
+            chmod +x ./initialize_tracking_issue.sh
+          fi
+          
+          # Run initialization - auto-detects issue by label
+          if ! init_output=$(./initialize_tracking_issue.sh 2>&1); then
+            echo "❌ Initialization failed with error:"
+            echo "$init_output"
+            exit 1
+          fi
+```
           ./initialize_tracking_issue.sh
 ```
 

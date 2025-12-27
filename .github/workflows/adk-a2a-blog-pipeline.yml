@@ -384,6 +384,12 @@ jobs:
             if [[ "$HAS_WELCOME" -eq 0 ]]; then
               # Post welcome comment using the initialize script
               echo "📝 Posting welcome comment..."
+              
+              # Ensure script is executable
+              if [[ ! -x ./initialize_tracking_issue.sh ]]; then
+                chmod +x ./initialize_tracking_issue.sh
+              fi
+              
               export GITHUB_TOKEN="${GH_TOKEN}"
               if ! init_output=$(./initialize_tracking_issue.sh 2>&1); then
                 echo "⚠️  Welcome comment posting failed:"
