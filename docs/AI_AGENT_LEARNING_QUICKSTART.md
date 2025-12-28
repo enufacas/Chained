@@ -106,7 +106,7 @@ Based on historical PR failures, **@create-botter** should be aware of:
 
 PRs that follow these patterns have high success rates:
 
-- Small PRs (≤10 files) have 100% success rate (e.g., ##1, ##3)
+- Small PRs (≤10 files) have 100% success rate (e.g., #1, #3)
 - PRs including test files have 100% success rate
 - PRs with conventional commit format have 100% success rate
 ```

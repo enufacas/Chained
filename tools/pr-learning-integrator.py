@@ -27,14 +27,12 @@ Usage:
 """
 
 import json
-import os
 import sys
-import re
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Dict, List, Optional, Any, Tuple
-from dataclasses import dataclass, asdict, field
-from collections import defaultdict, Counter
+from typing import Dict, List, Optional, Any
+from dataclasses import dataclass, field
+from collections import Counter
 import argparse
 
 
@@ -413,8 +411,6 @@ def main():
                        help='Agent ID to generate guidance for')
     parser.add_argument('--issue-title', type=str,
                        help='Issue title for context')
-    parser.add_argument('--issue', type=int,
-                       help='Issue number for context')
     parser.add_argument('--format', choices=['json', 'issue-body', 'markdown'],
                        default='issue-body',
                        help='Output format')
