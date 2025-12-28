@@ -1,11 +1,11 @@
 {
-  "timestamp": "2025-12-28T02:26:20.790527",
-  "commit": "7d3ffe158ae83e6d5e88a40183246bbe4a3b118d",
+  "timestamp": "2025-12-28T12:53:59.740830",
+  "commit": "f1cc523997db024514ab5f88d2e323f792cf701c",
   "structure": {
     "directories": {
       "tools": {
-        "file_count": 453,
-        "line_count": 178811,
+        "file_count": 454,
+        "line_count": 179264,
         "files": [
           ".context.md",
           "AB_TESTING_README.md",
@@ -60,8 +60,8 @@
         ]
       },
       "docs": {
-        "file_count": 1112,
-        "line_count": 360183,
+        "file_count": 1117,
+        "line_count": 362630,
         "files": [
           ".nojekyll",
           "01_overview.md",
@@ -126,8 +126,8 @@
         "files": []
       },
       "analysis": {
-        "file_count": 41,
-        "line_count": 30093,
+        "file_count": 42,
+        "line_count": 30791,
         "files": [
           "actions-patterns.json",
           "architecture.mmd",
@@ -169,12 +169,13 @@
           "snapshot_2025-12-26T02-07-51.json",
           "snapshot_2025-12-26T12-55-40.json",
           "snapshot_2025-12-27T02-05-36.json",
-          "snapshot_2025-12-27T12-53-08.json"
+          "snapshot_2025-12-27T12-53-08.json",
+          "snapshot_2025-12-28T02-26-20.json"
         ]
       },
       "learnings": {
-        "file_count": 659,
-        "line_count": 529988,
+        "file_count": 665,
+        "line_count": 543277,
         "files": [
           "AI_ML.md",
           "CLAUDE_AI_INVESTIGATION.md",
@@ -219,19 +220,19 @@
           "ai_agents_ecosystem_integration_proposal_idea142_20251126.md",
           "ai_agents_ecosystem_integration_proposal_idea166_20251210.md",
           "ai_agents_ecosystem_integration_proposal_idea223_20251212.md",
+          "ai_agents_ecosystem_integration_proposal_idea268_20251214.md",
           "ai_agents_emerging_theme_research_report_20251124.md",
           "ai_agents_emerging_theme_research_report_20251211_idea104.md",
           "ai_agents_emerging_theme_research_report_idea125_20251125.md",
           "ai_agents_innovation_deep_dive_nov16_2025.md",
           "ai_agents_research_report_idea142_20251126.md",
-          "ai_agents_research_report_idea166_20251210.md",
-          "ai_ml_agents_investigation_20251116.md"
+          "ai_agents_research_report_idea166_20251210.md"
         ]
       }
     },
     "files_by_type": {},
-    "total_files": 2265,
-    "total_lines": 1099075
+    "total_files": 2278,
+    "total_lines": 1115962
   },
   "dependencies": {
     "internal_imports": {
@@ -405,6 +406,7 @@
       "assign-mentor.py": [],
       "analyze_workflows.py": [],
       "evaluate-mentorship.py": [],
+      "pr-learning-integrator.py": [],
       "hierarchical_agent_system.py": [],
       "rl_performance_monitor.py": [],
       "auto-doc-from-discussions.py": [],
@@ -452,21 +454,21 @@
     },
     "external_imports": {
       "os": 127,
-      "sys": 169,
-      "json": 186,
+      "sys": 170,
+      "json": 187,
       "re": 79,
       "ast": 18,
-      "datetime": 149,
-      "pathlib": 176,
-      "typing": 163,
-      "collections": 84,
+      "datetime": 150,
+      "pathlib": 177,
+      "typing": 164,
+      "collections": 85,
       "functools": 9,
-      "argparse": 150,
+      "argparse": 151,
       "math": 13,
       "random": 29,
       "time": 31,
       "statistics": 19,
-      "dataclasses": 89,
+      "dataclasses": 90,
       "adaptive_workload_monitor": 2,
       "agent_coordinator": 1,
       "workload_subagent_spawner": 2,
@@ -565,17 +567,17 @@
   },
   "metrics": {
     "total_components": 6,
-    "total_files": 2265,
-    "total_lines": 1099075,
+    "total_files": 2278,
+    "total_lines": 1115962,
     "total_dependencies": 2,
     "external_libraries": 98,
-    "coupling_score": 4.55684666210982e-05,
+    "coupling_score": 4.513653802753329e-05,
     "complexity_score": 1.0
   },
   "components": {
     "learning_system": {
       "file_count": 46,
-      "line_count": 529988,
+      "line_count": 543277,
       "files": [
         "AI_ML.md",
         "CLAUDE_AI_INVESTIGATION.md",
@@ -600,8 +602,8 @@
       ]
     },
     "analysis_tools": {
-      "file_count": 41,
-      "line_count": 30093,
+      "file_count": 42,
+      "line_count": 30791,
       "files": [
         "actions-patterns.json",
         "architecture.mmd",
@@ -627,7 +629,7 @@
     },
     "documentation": {
       "file_count": 50,
-      "line_count": 360183,
+      "line_count": 362630,
       "files": [
         ".nojekyll",
         "01_overview.md",
@@ -653,7 +655,7 @@
     },
     "tools": {
       "file_count": 50,
-      "line_count": 178811,
+      "line_count": 179264,
       "files": [
         ".context.md",
         "AB_TESTING_README.md",
