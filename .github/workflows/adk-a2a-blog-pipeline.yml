@@ -382,22 +382,22 @@ jobs:
             HAS_WELCOME=$(gh issue view "$ISSUE_NUMBER" --json comments --jq "[.comments[].body | select(contains(\"$WELCOME_MARKER\"))] | length")
             
             if [[ "$HAS_WELCOME" -eq 0 ]]; then
-              # Post welcome comment using the initialize script
+              # Post welcome comment directly (don't call initialize script which creates its own issue)
               echo "📝 Posting welcome comment..."
               
-              # Ensure script is executable
-              if [[ ! -x ./initialize_tracking_issue.sh ]]; then
-                chmod +x ./initialize_tracking_issue.sh
-              fi
-              
-              # Script expects GITHUB_TOKEN (we have GH_TOKEN in env)
-              export GITHUB_TOKEN="${GH_TOKEN}"
-              if ! init_output=$(./initialize_tracking_issue.sh 2>&1); then
-                echo "⚠️  Welcome comment posting failed:"
-                echo "$init_output"
-                echo "Continuing with run summary..."
+              WELCOME_FILE="docs/issue-comments/ADK_PIPELINE_TRACKING_WELCOME.md"
+              if [[ -f "$WELCOME_FILE" ]]; then
+                INIT_DATE=$(date -u +%Y-%m-%d)
+                WELCOME_CONTENT=$(cat "$WELCOME_FILE")
+                WELCOME_CONTENT="${WELCOME_CONTENT//2025-12-26/$INIT_DATE}"
+                
+                if gh issue comment "$ISSUE_NUMBER" --body "$WELCOME_CONTENT"; then
+                  echo "✅ Welcome comment posted successfully"
+                else
+                  echo "⚠️ Welcome comment posting failed, continuing..."
+                fi
               else
-                echo "✅ Welcome comment posted successfully"
+                echo "⚠️ Welcome template not found: $WELCOME_FILE"
               fi
             else
               echo "✅ Welcome comment already exists"
