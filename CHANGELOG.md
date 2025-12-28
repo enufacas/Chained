@@ -26,6 +26,14 @@ This changelog excludes automated data syncs and routine maintenance commits.
 
 ---
 
+## 2025-12-28
+
+### 🧹 Chores & Maintenance
+
+- 🤖 **Documentation**: Update CHANGELOG.md after PR merge [#5806](https://github.com/enufacas/Chained/pull/5806)
+
+---
+
 ## 2025-12-27
 
 ### ✨ Features
