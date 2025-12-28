@@ -1,6 +1,6 @@
 {
-  "time": "2025-12-28T08:37:09Z",
-  "tick": 160,
+  "time": "2025-12-28T08:38:09Z",
+  "tick": 161,
   "agents": [
     {
       "id": "agent-1762910779",
@@ -31,11 +31,11 @@
       "label": "💭 Turing",
       "specialization": "coach-master",
       "location_region_id": "US:Charlotte",
-      "status": "exploring",
+      "status": "working",
       "path": [
         "US:San Francisco"
       ],
-      "current_idea_id": "idea:544",
+      "current_idea_id": "idea:269",
       "home_base": "US:Charlotte",
       "metrics": {
         "issues_resolved": 2,
@@ -48,6 +48,12 @@
         "creativity": 66,
         "caution": 81,
         "speed": 78
+      },
+      "current_mission": {
+        "mission_id": "idea:269",
+        "title": "Emerging Theme: Go Specialist (2025-12-14)",
+        "issue_number": null,
+        "assigned_at": "2025-12-28T08:38:09Z"
       }
     },
     {
@@ -55,12 +61,12 @@
       "label": "🎯 Liskov",
       "specialization": "investigate-champion",
       "location_region_id": "US:Charlotte",
-      "status": "exploring",
+      "status": "working",
       "path": [
         "US:San Francisco",
         "US:Austin"
       ],
-      "current_idea_id": "idea:466",
+      "current_idea_id": "idea:268",
       "home_base": "US:Charlotte",
       "metrics": {
         "issues_resolved": 2,
@@ -73,6 +79,12 @@
         "creativity": 78,
         "caution": 75,
         "speed": 95
+      },
+      "current_mission": {
+        "mission_id": "idea:268",
+        "title": "Emerging Theme: Ai Agents (2025-12-14)",
+        "issue_number": null,
+        "assigned_at": "2025-12-28T08:38:09Z"
       }
     },
     {
