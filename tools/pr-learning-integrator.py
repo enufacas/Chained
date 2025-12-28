@@ -166,7 +166,7 @@ class PRLearningIntegrator:
                 data = json.load(f)
                 self.pr_failures = data.get('failures', [])
                 self.log(f"Loaded {len(self.pr_failures)} PR failures")
-        except Exception as e:
+        except (FileNotFoundError, json.JSONDecodeError, IOError) as e:
             self.log(f"Error loading PR failures: {e}")
     
     def _load_code_patterns(self):
@@ -180,7 +180,7 @@ class PRLearningIntegrator:
                 data = json.load(f)
                 self.code_patterns = data.get('patterns', [])
                 self.log(f"Loaded {len(self.code_patterns)} code patterns")
-        except Exception as e:
+        except (FileNotFoundError, json.JSONDecodeError, IOError) as e:
             self.log(f"Error loading code patterns: {e}")
     
     def _load_agent_profiles(self):
@@ -196,7 +196,7 @@ class PRLearningIntegrator:
                     agent_id = profile.get('agent_id')
                     if agent_id:
                         self.agent_profiles[agent_id] = profile
-            except Exception as e:
+            except (FileNotFoundError, json.JSONDecodeError, IOError) as e:
                 self.log(f"Error loading profile {profile_file}: {e}")
         
         self.log(f"Loaded {len(self.agent_profiles)} agent profiles")
@@ -338,6 +338,10 @@ class PRLearningIntegrator:
     
     def get_agent_stats(self, agent_id: str) -> Dict[str, Any]:
         """Get statistical data for an agent"""
+        # Constants for readability
+        DAYS_FOR_RECENT = 30
+        SECONDS_PER_DAY = 86400
+        
         stats = {}
         
         # Count agent PRs
@@ -351,11 +355,12 @@ class PRLearningIntegrator:
         # Recent failures (last 30 days)
         recent_failures = []
         if agent_failures:
-            cutoff = (datetime.now(timezone.utc).timestamp() - 30 * 86400) * 1000
+            # Calculate cutoff timestamp (in seconds)
+            cutoff = datetime.now(timezone.utc).timestamp() - (DAYS_FOR_RECENT * SECONDS_PER_DAY)
             recent_failures = [
                 f for f in agent_failures 
                 if f.get('closed_at') and 
-                datetime.fromisoformat(f['closed_at'].replace('Z', '+00:00')).timestamp() * 1000 > cutoff
+                datetime.fromisoformat(f['closed_at'].replace('Z', '+00:00')).timestamp() > cutoff
             ]
         stats['recent_failures'] = len(recent_failures)
         
