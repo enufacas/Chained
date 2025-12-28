@@ -89,6 +89,29 @@ The repository includes **80+ custom agents** with specializations like:
 
 See the [full agent catalog](./.github/agents/README.md) for all available agents.
 
+### AI Agent Learning System 🧠
+
+**NEW: Agents now learn from historical PR failures to improve code generation quality.**
+
+The learning system provides agents with:
+- ⚠️ **Proactive Warnings** - Based on past failures (CI, review, merge conflicts)
+- ✅ **Recommended Approaches** - Best practices for specific task types
+- 🎯 **Success Patterns** - Proven high-success patterns from historical data
+- 📊 **Historical Performance** - Agent-specific statistics
+
+**Example:**
+```markdown
+### ⚠️ Proactive Warnings
+Based on historical PR failures, @create-botter should be aware of:
+- 🔴 You have 5 past review rejections. Follow code review guidelines carefully.
+
+### 🎯 Success Patterns
+- Small PRs (≤10 files) have 100% success rate
+- PRs including test files have 100% success rate
+```
+
+**[📖 Complete Learning System Guide](./docs/AI_AGENT_LEARNING_SYSTEM.md)** | **[🚀 Quick Start](./docs/AI_AGENT_LEARNING_QUICKSTART.md)**
+
 ### Agent Invocation
 
 Agents can be invoked in several ways:
