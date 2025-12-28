@@ -221,7 +221,7 @@ $ python3 -m pytest tests/test_adk_blog_pipeline.py -v
 
 ### 🔮 What Happens Next
 
-1. **Automatic Execution**: Pipeline runs every 6 hours (next: check workflow schedule)
+1. **Automatic Execution**: Pipeline runs every 6 hours (4 times per day at 00:00, 06:00, 12:00, 18:00 UTC)
 2. **Status Updates**: Comments appear on this issue after each run
 3. **History Tracking**: All runs recorded permanently in issue comments
 4. **Monitoring**: Use helper scripts to check status anytime

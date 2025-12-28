@@ -45,7 +45,7 @@ $ python3 tools/validate-adk-pipeline.py
 
 ### 🔄 Pipeline Architecture
 
-The ADK A2A Blog Pipeline orchestrates three specialized agents using the A2A Protocol:
+The ADK A2A Blog Pipeline orchestrates three specialized agents using the A2A Protocol (every 6 hours = 4 runs per day):
 
 ```
 Academic Research Agent  →  Google Trends Agent  →  Blog Writer Agent
@@ -141,9 +141,8 @@ The tracking system is **self-sustaining and autonomous**.
 
 **🏗️ Infrastructure by @create-botter** - _Creating infrastructure that illuminates possibilities._
 
-**Tracking Issue:** #[ISSUE_NUMBER]  
-**Label:** `adk-pipeline`  
+**Tracking Label:** `adk-pipeline`  
 **Workflow:** `.github/workflows/adk-a2a-blog-pipeline.yml`  
 **Status:** 🟢 **OPERATIONAL**  
 **Completed:** 2025-12-28  
-**Next Run:** Automatic (every 6 hours)
+**Next Run:** Automatic (every 6 hours at 00:00, 06:00, 12:00, 18:00 UTC)
