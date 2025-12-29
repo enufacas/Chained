@@ -1,0 +1,982 @@
+name: "Agent System: Evaluator"
+
+on:
+  schedule:
+    # Run daily at midnight UTC
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+    inputs:
+      force_evaluation:
+        description: 'Force evaluation even if already run today'
+        required: false
+        type: boolean
+        default: false
+
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+  actions: write
+
+jobs:
+  evaluate-agents:
+    runs-on: ubuntu-latest
+    outputs:
+      has_results: ${{ steps.check_results.outputs.has_results }}
+      pr_number: ${{ steps.create_pr.outputs.pr_number }}
+      pr_created: ${{ steps.create_pr.outputs.pr_created }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Ensure agent system labels exist
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "🏷️ Checking agent system labels..."
+          
+          # Function to create label if it doesn't exist
+          create_label_if_missing() {
+            local name="$1"
+            local color="$2"
+            local description="$3"
+            
+            if gh label list --repo ${{ github.repository }} | grep -q "^${name}"; then
+              echo "✓ Label '$name' already exists"
+            else
+              gh label create "$name" --color "$color" --description "$description" --repo ${{ github.repository }} 2>/dev/null || echo "⚠️ Could not create label '$name'"
+            fi
+          }
+          
+          # Create evaluation-specific labels
+          create_label_if_missing "agent-system" "7057ff" "Agent ecosystem activity"
+          create_label_if_missing "evaluation" "e4e669" "Agent evaluations"
+          create_label_if_missing "automated" "ededed" "Auto-generated content"
+          create_label_if_missing "copilot" "8b5cf6" "Copilot-related tasks"
+
+      - name: Evaluate all agents
+        id: evaluate
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          FORCE_EVALUATION: ${{ github.event.inputs.force_evaluation || 'false' }}
+        run: |
+          python3 << 'PYTHON_SCRIPT'
+          import json
+          import subprocess
+          import sys
+          import os
+          from datetime import datetime, timedelta, timezone
+          
+          # Use registry manager
+          sys.path.insert(0, 'tools')
+          from registry_manager import RegistryManager
+          
+          registry = RegistryManager()
+          
+          # Check if force_evaluation was requested
+          force_evaluation = os.environ.get('FORCE_EVALUATION', 'false').lower() == 'true'
+          if force_evaluation:
+              print("🔄 FORCE EVALUATION MODE: Will refresh all metrics from GitHub API")
+          
+          # Check last evaluation time (unless force mode)
+          metadata = registry.get_metadata()
+          last_eval = metadata.get('last_evaluation')
+          if last_eval and not force_evaluation:
+              try:
+                  last_time = datetime.fromisoformat(last_eval.replace('Z', '+00:00'))
+                  hours_since_eval = (datetime.now(timezone.utc) - last_time).total_seconds() / 3600
+                  print(f"⏱️  Last evaluation: {hours_since_eval:.1f}h ago ({last_eval})")
+                  
+                  if hours_since_eval < 20:
+                      print(f"✅ Recent evaluation found (<20h ago). Skipping to avoid redundant API calls.")
+                      print(f"   Use 'force_evaluation: true' to override this check.")
+                      sys.exit(0)
+              except Exception as e:
+                  print(f"⚠️  Could not parse last evaluation time: {e}")
+          
+          # Get active agents
+          active_agents = registry.list_agents(status='active')
+          
+          if not active_agents:
+              print("No active agents to evaluate")
+              sys.exit(0)
+          
+          total_agents = len(active_agents)
+          print(f"📊 Evaluating {total_agents} active agents...")
+          
+          promoted = []
+          eliminated = []
+          maintained = []
+          
+          # Import the real metrics collector
+          import importlib.util
+          try:
+              spec = importlib.util.spec_from_file_location(
+                  "agent_metrics_collector",
+                  "tools/agent-metrics-collector.py"
+              )
+              metrics_module = importlib.util.module_from_spec(spec)
+              spec.loader.exec_module(metrics_module)
+              MetricsCollector = metrics_module.MetricsCollector
+              collector = MetricsCollector()
+              use_real_metrics = True
+              print("✅ Using real GitHub metrics collector")
+          except Exception as e:
+              print(f"⚠️  Warning: Could not load metrics collector, using fallback: {e}")
+              use_real_metrics = False
+          
+          # Get config
+          config = registry.get_config()
+          protected_specializations = config.get('protected_specializations', [])
+          elimination_threshold = config['elimination_threshold']
+          promotion_threshold = config['promotion_threshold']
+          grace_period_hours = config.get('new_agent_grace_period_hours', 48)
+          minimum_score = config.get('new_agent_minimum_score', 0.40)
+          
+          # OPTIMIZATION: Use evaluate_all_agents() which prefers stored metrics
+          # This significantly reduces GitHub API calls by using stored data when fresh
+          # FIX: Now respects force_evaluation input parameter
+          metrics_results = {}
+          if use_real_metrics:
+              try:
+                  if force_evaluation:
+                      print("🔄 Force mode: Refreshing ALL metrics from GitHub API...")
+                  else:
+                      print("🚀 Starting optimized evaluation (storage-first approach)...")
+                      print("   Checking stored metrics (freshness threshold: 24 hours)")
+                      print("   Lookback window: 3 days (recent activity focus)")
+                  
+                  # Use the new evaluate_all_agents() method that prefers stored metrics
+                  # FIX: Now uses force_evaluation from workflow input
+                  # OPTIMIZATION: Reduced API calls by:
+                  # - Increasing cache window to 24h (aligns with daily schedule)
+                  # - Reducing lookback window to 3 days (more recent activity)
+                  metrics_results = collector.evaluate_all_agents(
+                      since_days=3,  # Focus on recent activity (was 7)
+                      max_age_hours=24.0,  # Align with daily schedule (was 12)
+                      force_refresh=force_evaluation  # Now respects workflow input!
+                  )
+                  print(f"✅ Evaluation complete! Collected/loaded metrics for {len(metrics_results)} agents")
+                  
+                  # Log cache effectiveness (only if collector is available)
+                  if not force_evaluation and 'collector' in locals():
+                      try:
+                          api_stats = collector.get_api_stats()
+                          print(f"📊 API Usage Stats:")
+                          print(f"   API calls made: {api_stats.get('api_calls', 0)}")
+                          print(f"   Cached issues: {api_stats.get('cached_issues', 0)}")
+                          print(f"   Cached PRs: {api_stats.get('cached_prs', 0)}")
+                      except Exception as e:
+                          print(f"⚠️  Could not retrieve API stats: {e}")
+                      
+              except Exception as e:
+                  print(f"⚠️  Batch evaluation failed: {e}")
+                  use_real_metrics = False
+          
+          for idx, agent in enumerate(active_agents, 1):
+              # Progress logging
+              print(f"\n{'='*60}")
+              print(f"📊 Processing agent {idx}/{total_agents}")
+              print(f"{'='*60}")
+              agent_id = agent['id']
+              agent_name = agent['name']
+              specialization = agent.get('specialization', '')
+              
+              print(f"Agent: {agent_name} ({agent_id})")
+              print(f"Specialization: {specialization}")
+              
+              # Check if this agent is protected
+              is_protected = specialization in protected_specializations
+              
+              if is_protected:
+                  print(f"\n{agent_name}: 🛡️ PROTECTED (cannot be eliminated)")
+                  maintained.append(agent)
+                  continue
+              
+              # Check if agent is in grace period (new agent protection)
+              spawned = datetime.fromisoformat(agent['spawned_at'].replace('Z', '+00:00'))
+              age_hours = (datetime.utcnow().replace(tzinfo=spawned.tzinfo) - spawned).total_seconds() / 3600
+              in_grace_period = age_hours < grace_period_hours
+              
+              if in_grace_period:
+                  print(f"\n{agent_name}: 🆕 IN GRACE PERIOD ({age_hours:.1f}h / {grace_period_hours}h)")
+              
+              if use_real_metrics and agent_id in metrics_results:
+                  # Use metrics from storage-first evaluation
+                  try:
+                      metrics = metrics_results[agent_id]
+                      overall_score = metrics.scores.overall
+                      
+                      # Update all metrics from real data
+                      agent['metrics']['issues_resolved'] = metrics.activity.issues_resolved
+                      agent['metrics']['prs_merged'] = metrics.activity.prs_merged
+                      agent['metrics']['reviews_given'] = metrics.activity.reviews_given
+                      agent['metrics']['code_quality_score'] = metrics.scores.code_quality
+                      agent['metrics']['creativity_score'] = metrics.scores.creativity
+                      agent['metrics']['overall_score'] = overall_score
+                      
+                      # Show source of metrics
+                      source = "stored" if hasattr(metrics, '_from_storage') else "fresh"
+                      print(f"\n{agent_name}: {overall_score:.2%} ({source} metrics)")
+                      print(f"  🎨 Creativity: {metrics.scores.creativity:.2%}")
+                  except Exception as e:
+                      print(f"⚠️  Error processing metrics for {agent_id}, using fallback: {e}")
+                      # Fallback to time-based scoring if metrics processing fails
+                      spawned = datetime.fromisoformat(agent['spawned_at'].replace('Z', '+00:00'))
+                      age_hours = (datetime.utcnow().replace(tzinfo=spawned.tzinfo) - spawned).total_seconds() / 3600
+                      overall_score = min(0.5, age_hours / 48.0)  # Conservative scoring for new agents
+                      agent['metrics']['overall_score'] = overall_score
+                      print(f"\n{agent_name}: {overall_score:.2%} (fallback)")
+              else:
+                  # Fallback: Use time-based scoring for new agents
+                  spawned = datetime.fromisoformat(agent['spawned_at'].replace('Z', '+00:00'))
+                  age_hours = (datetime.utcnow().replace(tzinfo=spawned.tzinfo) - spawned).total_seconds() / 3600
+                  overall_score = min(0.5, age_hours / 48.0)  # Conservative scoring
+                  agent['metrics']['overall_score'] = overall_score
+                  print(f"\n{agent_name}: {overall_score:.2%} (fallback)")
+              
+              # Apply grace period protection: ensure minimum score
+              if in_grace_period and overall_score < minimum_score:
+                  print(f"   🆕 Grace period: Boosting from {overall_score:.2%} to {minimum_score:.2%}")
+                  overall_score = minimum_score
+                  agent['metrics']['overall_score'] = overall_score
+              
+              print(f"\n{agent_name}: {overall_score:.2%}")
+              
+              # Determine fate
+              if overall_score >= promotion_threshold:
+                  agent['status'] = 'hall_of_fame'
+                  agent['promoted_at'] = datetime.utcnow().isoformat() + 'Z'
+                  # Add to hall of fame
+                  hall_of_fame = registry.get_hall_of_fame()
+                  hall_of_fame.append(agent)
+                  registry.update_hall_of_fame(hall_of_fame)
+                  promoted.append(agent)
+                  print(f"  🏆 PROMOTED to Hall of Fame!")
+              elif overall_score < elimination_threshold:
+                  agent['status'] = 'eliminated'
+                  agent['eliminated_at'] = datetime.utcnow().isoformat() + 'Z'
+                  agent['elimination_reason'] = f"Score {overall_score:.2%} below threshold {elimination_threshold:.2%}"
+                  eliminated.append(agent)
+                  print(f"  ❌ ELIMINATED (score too low)")
+              else:
+                  maintained.append(agent)
+                  print(f"  ✅ Maintained (active)")
+              
+              # Update agent in registry
+              registry.update_agent(agent)
+          
+          # Delete eliminated agents
+          for agent in eliminated:
+              registry.delete_agent(agent['id'])
+          
+          # Update metadata
+          metadata = registry.get_metadata()
+          metadata['last_evaluation'] = datetime.utcnow().isoformat() + 'Z'
+          
+          # Update system lead (highest scoring Hall of Fame member)
+          hall_of_fame = registry.get_hall_of_fame()
+          if hall_of_fame:
+              top_agent = max(hall_of_fame, key=lambda a: a.get('metrics', {}).get('overall_score', 0))
+              metadata['system_lead'] = top_agent['id']
+              print(f"\n👑 System Lead: {top_agent['name']}")
+          
+          registry.update_metadata(metadata)
+          
+          # Output results
+          print(f"\n📊 Evaluation Summary:")
+          print(f"  🏆 Promoted: {len(promoted)}")
+          print(f"  ❌ Eliminated: {len(eliminated)}")
+          print(f"  ✅ Maintained: {len(maintained)}")
+          
+          # Save results for next steps (include specialization for archiving)
+          with open('/tmp/evaluation_results.json', 'w') as f:
+              json.dump({
+                  'promoted': [{'id': a['id'], 'name': a['name'], 'score': a['metrics']['overall_score'], 'specialization': a.get('specialization', 'unknown')} for a in promoted],
+                  'eliminated': [{'id': a['id'], 'name': a['name'], 'score': a['metrics']['overall_score'], 'specialization': a.get('specialization', 'unknown')} for a in eliminated],
+                  'maintained': [{'id': a['id'], 'name': a['name'], 'score': a['metrics']['overall_score'], 'specialization': a.get('specialization', 'unknown')} for a in maintained]
+              }, f, indent=2)
+          
+          PYTHON_SCRIPT
+
+      - name: Sync agent registry to GitHub Pages
+        run: |
+          # Create docs/data/agents directory if it doesn't exist
+          mkdir -p docs/data/agents
+          
+          # Copy registry to GitHub Pages
+          cp .github/agent-system/registry.json docs/data/agents/agent-registry.json
+          
+          echo "✅ Agent registry synced to GitHub Pages (docs/data/agents/agent-registry.json)"
+          
+          # Check if there are results to process
+          if [ -f "/tmp/evaluation_results.json" ]; then
+            echo "has_results=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_results=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Check for evaluation results
+        id: check_results
+        run: |
+          if [ -f "/tmp/evaluation_results.json" ]; then
+            echo "has_results=true" >> $GITHUB_OUTPUT
+            echo "✅ Evaluation results available"
+          else
+            echo "has_results=false" >> $GITHUB_OUTPUT
+            echo "ℹ️ No evaluation results"
+          fi
+
+      - name: Update agent profiles
+        if: steps.check_results.outputs.has_results == 'true'
+        run: |
+          python3 << 'PYTHON_SCRIPT'
+          import json
+          import os
+          
+          with open('/tmp/evaluation_results.json', 'r') as f:
+              results = json.load(f)
+          
+          # Update profiles for eliminated agents
+          for agent in results.get('eliminated', []):
+              profile_path = f".github/agent-system/profiles/{agent['id']}.md"
+              if os.path.exists(profile_path):
+                  with open(profile_path, 'r') as f:
+                      content = f.read()
+                  
+                  # Update status
+                  content = content.replace('**Status**: 🟢 Active', f"**Status**: ❌ Eliminated (Score: {agent['score']:.2%})")
+                  
+                  with open(profile_path, 'w') as f:
+                      f.write(content)
+          
+          # Update profiles for promoted agents
+          for agent in results.get('promoted', []):
+              profile_path = f".github/agent-system/profiles/{agent['id']}.md"
+              if os.path.exists(profile_path):
+                  with open(profile_path, 'r') as f:
+                      content = f.read()
+                  
+                  # Update status
+                  content = content.replace('**Status**: 🟢 Active', f"**Status**: 🏆 Hall of Fame (Score: {agent['score']:.2%})")
+                  
+                  with open(profile_path, 'w') as f:
+                      f.write(content)
+          
+          print("✅ Agent profiles updated")
+          PYTHON_SCRIPT
+
+      - name: Archive eliminated agents
+        if: steps.check_results.outputs.has_results == 'true'
+        run: |
+          mkdir -p .github/agent-system/archive
+          mkdir -p .github/agent-system/archive/definitions
+          
+          python3 << 'PYTHON_SCRIPT'
+          import json
+          import shutil
+          import os
+          import sys
+          from pathlib import Path
+          
+          # Use registry manager
+          sys.path.insert(0, 'tools')
+          from registry_manager import RegistryManager
+          
+          with open('/tmp/evaluation_results.json', 'r') as f:
+              results = json.load(f)
+          
+          registry = RegistryManager()
+          
+          for agent in results.get('eliminated', []):
+              agent_id = agent['id']
+              agent_name = agent['name']
+              
+              # Archive profile
+              profile_path = f".github/agent-system/profiles/{agent_id}.md"
+              archive_path = f".github/agent-system/archive/{agent_id}.md"
+              
+              if os.path.exists(profile_path):
+                  shutil.move(profile_path, archive_path)
+                  print(f"📦 Archived profile for {agent_name}")
+              
+              # Find and note the agent definition (but don't remove it - keep for future spawns)
+              # Get specialization from evaluation results (already includes it)
+              specialization = agent.get('specialization', 'unknown')
+              agent_def_path = Path(f".github/agents/{specialization}.md")
+              
+              if agent_def_path.exists():
+                  print(f"  ℹ️  Agent definition {specialization}.md remains for future spawns")
+              else:
+                  print(f"  ⚠️  Agent definition {specialization}.md not found")
+          
+          PYTHON_SCRIPT
+
+      - name: Create evaluation PR
+        id: create_pr
+        if: steps.check_results.outputs.has_results == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          BRANCH_NAME="agent-evaluation/$(date +%Y%m%d-%H%M%S)"
+          git checkout -b "$BRANCH_NAME"
+          
+          git add .github/agent-system/
+          git add docs/data/agents/agent-registry.json
+          git commit -m "🔄 Daily agent evaluation and governance"
+          git push origin "$BRANCH_NAME"
+          
+          # Read results
+          PROMOTED_COUNT=$(python3 -c "
+          import json
+          with open('/tmp/evaluation_results.json', 'r') as f:
+              results = json.load(f)
+          print(len(results.get('promoted', [])))
+          ")
+          
+          ELIMINATED_COUNT=$(python3 -c "
+          import json
+          with open('/tmp/evaluation_results.json', 'r') as f:
+              results = json.load(f)
+          print(len(results.get('eliminated', [])))
+          ")
+          
+          MAINTAINED_COUNT=$(python3 -c "
+          import json
+          with open('/tmp/evaluation_results.json', 'r') as f:
+              results = json.load(f)
+          print(len(results.get('maintained', [])))
+          ")
+          
+          # Build PR body
+          PR_BODY="## 🏛️ Daily Agent Evaluation Results
+
+          The agent ecosystem has been evaluated based on performance metrics.
+
+          ### Summary
+
+          - 🏆 **Promoted to Hall of Fame**: $PROMOTED_COUNT agents
+          - ❌ **Eliminated**: $ELIMINATED_COUNT agents  
+          - ✅ **Maintained Active Status**: $MAINTAINED_COUNT agents
+
+          ### Details
+          "
+          
+          # Add promoted agents
+          if [ "$PROMOTED_COUNT" -gt 0 ]; then
+            PR_BODY="$PR_BODY
+
+          #### 🏆 Promoted to Hall of Fame
+          "
+            python3 << 'PYTHON_SCRIPT'
+          import json
+          with open('/tmp/evaluation_results.json', 'r') as f:
+              results = json.load(f)
+          for agent in results.get('promoted', []):
+              print(f"- **{agent['name']}** - Score: {agent['score']:.2%}")
+          PYTHON_SCRIPT
+          fi
+          
+          # Add eliminated agents
+          if [ "$ELIMINATED_COUNT" -gt 0 ]; then
+            PR_BODY="$PR_BODY
+
+          #### ❌ Eliminated
+          "
+            python3 << 'PYTHON_SCRIPT'
+          import json
+          with open('/tmp/evaluation_results.json', 'r') as f:
+              results = json.load(f)
+          for agent in results.get('eliminated', []):
+              print(f"- **{agent['name']}** - Score: {agent['score']:.2%} (below threshold)")
+          PYTHON_SCRIPT
+          fi
+          
+          PR_BODY="$PR_BODY
+
+          ### Changes
+
+          - Updated agent registry
+          - Modified agent profiles  
+          - Archived eliminated agents
+          - Updated system lead if applicable
+
+          ---
+          *🤖 Automated agent evaluation system - Survival of the fittest in action!*"
+          
+          PR_URL=$(gh pr create \
+            --title "🏛️ Daily Agent Evaluation - $(date +%Y-%m-%d)" \
+            --body "$PR_BODY" \
+            --label "agent-system,evaluation,automated,copilot,auto-merge" \
+            --base main \
+            --head "$BRANCH_NAME")
+          
+          # Extract PR number
+          PR_NUMBER=$(echo "$PR_URL" | grep -oE '[0-9]+$')
+          echo "Created PR #${PR_NUMBER}: ${PR_URL}"
+          echo "pr_number=${PR_NUMBER}" >> $GITHUB_OUTPUT
+          echo "pr_created=true" >> $GITHUB_OUTPUT
+          echo "✅ Evaluation PR created: #${PR_NUMBER}"
+
+      - name: Create evaluation report issue
+        if: steps.check_results.outputs.has_results == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python3 << 'PYTHON_SCRIPT'
+          import json
+          import subprocess
+          import sys
+          from datetime import datetime
+          
+          # Use registry manager
+          sys.path.insert(0, 'tools')
+          from registry_manager import RegistryManager
+          
+          with open('/tmp/evaluation_results.json', 'r') as f:
+              results = json.load(f)
+          
+          registry = RegistryManager()
+          
+          title = f"🏛️ Agent Evaluation Report - {datetime.utcnow().strftime('%Y-%m-%d')}"
+          
+          # Get data using proper RegistryManager methods
+          active_agents = registry.list_agents(status='active')
+          hall_of_fame = registry.get_hall_of_fame()
+          metadata = registry.get_metadata()
+          system_lead_id = metadata.get('system_lead')
+          
+          body = f"""## 📊 Daily Agent Evaluation Report
+
+          **Date**: {datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')} UTC
+
+          ### Results Summary
+
+          - 🏆 **Promoted**: {len(results.get('promoted', []))} agents
+          - ❌ **Eliminated**: {len(results.get('eliminated', []))} agents
+          - ✅ **Maintained**: {len(results.get('maintained', []))} agents
+          - 📊 **Total Active**: {len(active_agents)} agents
+
+          ### Hall of Fame
+
+          """
+          
+          if hall_of_fame:
+              body += f"{len(hall_of_fame)} agents have earned their place:\n\n"
+              for hof_agent in sorted(hall_of_fame, key=lambda a: a['metrics']['overall_score'], reverse=True):
+                  score = hof_agent['metrics']['overall_score']
+                  is_lead = hof_agent['id'] == system_lead_id
+                  crown = "👑 " if is_lead else ""
+                  body += f"- {crown}**{hof_agent['name']}** - {score:.2%}\n"
+          else:
+              body += "*No agents in Hall of Fame yet*\n"
+          
+          body += "\n### System Lead\n\n"
+          
+          if system_lead_id:
+              lead = next((a for a in hall_of_fame if a['id'] == system_lead_id), None)
+              if lead:
+                  body += f"👑 **{lead['name']}** is currently governing the agent ecosystem.\n"
+          else:
+              body += "*No system lead elected yet*\n"
+          
+          body += """
+          ### Performance Metrics
+
+          Agents are evaluated on:
+          - **Code Quality** (30%): Linting, best practices, maintainability
+          - **Issue Resolution** (20%): Issues completed, time to resolution
+          - **PR Success** (20%): PRs merged, review feedback
+          - **Peer Review** (15%): Reviews provided, quality of feedback
+          - **🎨 Creativity** (15%): Novel solutions, diverse approaches, impactful changes
+
+          ### Next Steps
+
+          - New agents will continue spawning every 3 hours
+          - Next evaluation in 24 hours
+          - Community feedback influences agent scores
+
+          ---
+          *🤖 Automated evaluation - May the best agents thrive!*
+          """
+          
+          # Create issue using gh CLI
+          result = subprocess.run(
+              ['gh', 'issue', 'create', '--title', title, '--body', body, '--label', 'agent-system,evaluation'],
+              capture_output=True,
+              text=True
+          )
+          
+          if result.returncode == 0:
+              print("✅ Evaluation report issue created")
+          else:
+              print(f"⚠️ Failed to create issue: {result.stderr}")
+          
+          PYTHON_SCRIPT
+
+  # ============================================================================
+  # STAGE 2: MERGE EVALUATION PR (Parallelized with Stage 3)
+  # ============================================================================
+  
+  merge-evaluation-pr:
+    name: "Stage 2: Merge Evaluation PR"
+    runs-on: ubuntu-latest
+    needs: evaluate-agents
+    if: always() && !cancelled() && needs.evaluate-agents.outputs.pr_created == 'true'
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Trigger Auto Review and Merge
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PR_NUMBER="${{ needs.evaluate-agents.outputs.pr_number }}"
+          echo "🔄 Triggering Auto Review & Merge workflow for PR #$PR_NUMBER..."
+          
+          # Trigger the auto-review-merge workflow with the specific PR number
+          gh workflow run auto-review-merge.yml \
+            --repo ${{ github.repository }} \
+            -f pr_number="$PR_NUMBER"
+          
+          echo "✅ Auto-review workflow triggered for PR #$PR_NUMBER"
+
+      - name: Wait for PR to be merged
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PR_NUMBER="${{ needs.evaluate-agents.outputs.pr_number }}"
+          echo "⏳ Waiting for PR #$PR_NUMBER to be merged by auto-review workflow..."
+          
+          # Give auto-review-merge workflow time to start processing
+          echo "   Giving auto-review workflow 8 seconds to start..."
+          sleep 8
+          
+          # Wait up to 2 minutes with optimized exponential backoff
+          MAX_WAIT=120  # 2 minutes (reduced from 3)
+          ELAPSED=8  # Already waited 8 seconds
+          WAIT_INTERVAL=2  # Start with 2 seconds (reduced from 3)
+          CHECK_COUNT=0
+          
+          while [ $ELAPSED -lt $MAX_WAIT ]; do
+            CHECK_COUNT=$((CHECK_COUNT + 1))
+            
+            # Check PR state - use --json to get full state including merged status
+            PR_DATA=$(gh pr view "$PR_NUMBER" --repo ${{ github.repository }} --json state,mergedAt,closed)
+            PR_STATE=$(echo "$PR_DATA" | jq -r '.state')
+            MERGED_AT=$(echo "$PR_DATA" | jq -r '.mergedAt')
+            IS_CLOSED=$(echo "$PR_DATA" | jq -r '.closed')
+            
+            # Check if merged (mergedAt will be non-null if merged)
+            if [ "$MERGED_AT" != "null" ] && [ "$MERGED_AT" != "" ]; then
+              echo "✅ PR #$PR_NUMBER was merged successfully! (verified in ${ELAPSED}s after $CHECK_COUNT checks)"
+              echo "🎉 Evaluation PR merged - continuing to world model update"
+              exit 0
+            elif [ "$PR_STATE" = "MERGED" ]; then
+              echo "✅ PR #$PR_NUMBER has been merged successfully! (detected in ${ELAPSED}s after $CHECK_COUNT checks)"
+              echo "🎉 Evaluation PR merged - continuing to world model update"
+              exit 0
+            elif [ "$IS_CLOSED" = "true" ] && [ "$MERGED_AT" = "null" ]; then
+              echo "⚠️ PR #$PR_NUMBER was closed without merging"
+              echo "This may indicate an issue with the auto-review process"
+              exit 1
+            elif [ "$PR_STATE" = "CLOSED" ]; then
+              # Double-check if it was actually merged
+              MERGED_CHECK=$(gh pr view "$PR_NUMBER" --repo ${{ github.repository }} --json mergedAt --jq '.mergedAt')
+              if [ "$MERGED_CHECK" != "null" ] && [ "$MERGED_CHECK" != "" ]; then
+                echo "✅ PR #$PR_NUMBER was merged successfully! (verified in ${ELAPSED}s)"
+                echo "🎉 Evaluation PR merged - continuing to world model update"
+                exit 0
+              else
+                echo "⚠️ PR #$PR_NUMBER was closed without merging"
+                exit 1
+              fi
+            fi
+            
+            # Still waiting - sleep and then update elapsed time
+            echo "   Check $CHECK_COUNT: PR #$PR_NUMBER is $PR_STATE, waiting ${WAIT_INTERVAL}s... (${ELAPSED}s elapsed)"
+            sleep $WAIT_INTERVAL
+            ELAPSED=$((ELAPSED + WAIT_INTERVAL))
+            
+            # Exponential backoff: double wait time, max 20 seconds (optimized)
+            if [ $WAIT_INTERVAL -lt 20 ]; then
+              WAIT_INTERVAL=$((WAIT_INTERVAL * 2))
+            fi
+          done
+          
+          # Timeout reached - do final check
+          echo "⏰ Timeout reached after ${ELAPSED}s"
+          FINAL_CHECK=$(gh pr view "$PR_NUMBER" --repo ${{ github.repository }} --json state,mergedAt --jq '{state: .state, mergedAt: .mergedAt}')
+          echo "Final PR state: $FINAL_CHECK"
+          
+          FINAL_MERGED=$(echo "$FINAL_CHECK" | jq -r '.mergedAt')
+          if [ "$FINAL_MERGED" != "null" ] && [ "$FINAL_MERGED" != "" ]; then
+            echo "✅ PR #$PR_NUMBER was actually merged! (confirmed on final check)"
+            exit 0
+          fi
+          
+          echo "❌ PR #$PR_NUMBER was not merged within ${MAX_WAIT} seconds"
+          echo "Check PR status at: https://github.com/${{ github.repository }}/pull/$PR_NUMBER"
+          exit 1
+
+  # ============================================================================
+  # STAGE 3: SYNC TO WORLD MODEL (Runs in parallel with Stage 2)
+  # ============================================================================
+  
+  sync-to-world:
+    name: "Stage 3: Sync Agents to World Model"
+    runs-on: ubuntu-latest
+    needs: evaluate-agents  # Removed merge-evaluation-pr dependency for parallelization
+    if: always() && !cancelled() && needs.evaluate-agents.outputs.has_results == 'true'
+    outputs:
+      has_changes: ${{ steps.world_sync.outputs.has_changes }}
+      pr_number: ${{ steps.world_pr.outputs.pr_number }}
+      pr_created: ${{ steps.world_pr.outputs.pr_created }}
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: main  # Checkout main after evaluation PR is merged
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt || echo "⚠️ No requirements.txt, continuing..."
+
+      - name: Sync agents to world model
+        id: world_sync
+        run: |
+          echo "🌍 Syncing agent evaluation results to world model..."
+          
+          # Sync agents from registry to world
+          if [ -f "world/sync_agents_to_world.py" ]; then
+            python3 world/sync_agents_to_world.py 2>&1 || echo "⚠️ Agent sync warning (continuing)"
+          else
+            echo "⚠️ world/sync_agents_to_world.py not found, skipping agent sync"
+          fi
+          
+          # Update agent state
+          if [ -f "scripts/update_agent.py" ]; then
+            python3 scripts/update_agent.py 2>&1 || echo "⚠️ Agent state update warning (continuing)"
+          else
+            echo "⚠️ scripts/update_agent.py not found, skipping state update"
+          fi
+          
+          # Sync to docs for GitHub Pages
+          mkdir -p docs/world
+          if [ -f "world/world_state.json" ]; then
+            cp world/world_state.json docs/world/
+            echo "✅ Synced world_state.json to docs/world/"
+          fi
+          if [ -f "world/knowledge.json" ]; then
+            cp world/knowledge.json docs/world/
+            echo "✅ Synced knowledge.json to docs/world/"
+          fi
+          
+          # Check for changes
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          git add world/ docs/world/ 2>/dev/null || true
+          if git diff --staged --quiet; then
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+            echo "ℹ️ No world model changes needed"
+          else
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+            echo "✅ World model updated with agent evaluation data"
+          fi
+
+      - name: Create PR with world updates
+        id: world_pr
+        if: steps.world_sync.outputs.has_changes == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+          BRANCH_NAME="agent-eval-world-sync/${TIMESTAMP}-${{ github.run_id }}"
+          
+          git checkout -b "$BRANCH_NAME"
+          git commit -m "🌍 World Model: Agent Evaluation Sync"
+          git push origin "$BRANCH_NAME"
+          
+          # Create PR
+          PR_URL=$(gh pr create \
+            --title "🌍 World Model: Agent Evaluation Sync - $(date +%Y-%m-%d)" \
+            --body "## 🌍 World Model Sync: Agent Evaluation
+          
+          **Pipeline Run:** [View Details](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+          
+          Updates:
+          - ✅ Agent positions synchronized from evaluation
+          - ✅ Agent registry data reflected in world state
+          - ✅ World model updated for agent environment
+          
+          **Note:** This PR will be auto-merged by the next pipeline stage.
+          
+          This sync ensures agents have access to updated evaluation data in their world model environment.
+          " \
+            --label "automated,world-model,agent-system,auto-merge,copilot" \
+            --base main \
+            --head "$BRANCH_NAME")
+          
+          # Extract PR number
+          PR_NUMBER=$(echo "$PR_URL" | grep -oE '[0-9]+$')
+          echo "Created PR #${PR_NUMBER}: ${PR_URL}"
+          echo "pr_number=${PR_NUMBER}" >> $GITHUB_OUTPUT
+          echo "pr_created=true" >> $GITHUB_OUTPUT
+
+  # ============================================================================
+  # STAGE 4: MERGE WORLD MODEL PR
+  # ============================================================================
+  
+  merge-world-pr:
+    name: "Stage 4: Merge World Model PR"
+    runs-on: ubuntu-latest
+    needs: [sync-to-world, merge-evaluation-pr]  # Wait for both stage 2 and 3
+    if: always() && !cancelled() && needs.sync-to-world.outputs.pr_created == 'true'
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Trigger Auto Review and Merge
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PR_NUMBER="${{ needs.sync-to-world.outputs.pr_number }}"
+          echo "🔄 Triggering Auto Review & Merge workflow for PR #$PR_NUMBER..."
+          
+          # Trigger the auto-review-merge workflow with the specific PR number
+          gh workflow run auto-review-merge.yml \
+            --repo ${{ github.repository }} \
+            -f pr_number="$PR_NUMBER"
+          
+          echo "✅ Auto-review workflow triggered for PR #$PR_NUMBER"
+
+      - name: Wait for PR to be merged
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PR_NUMBER="${{ needs.sync-to-world.outputs.pr_number }}"
+          echo "⏳ Waiting for PR #$PR_NUMBER to be merged by auto-review workflow..."
+          
+          # Give auto-review-merge workflow time to start processing
+          echo "   Giving auto-review workflow 8 seconds to start..."
+          sleep 8
+          
+          # Wait up to 2 minutes with optimized exponential backoff
+          MAX_WAIT=120  # 2 minutes (reduced from 3)
+          ELAPSED=8  # Already waited 8 seconds
+          WAIT_INTERVAL=2  # Start with 2 seconds (optimized)
+          CHECK_COUNT=0
+          
+          while [ $ELAPSED -lt $MAX_WAIT ]; do
+            CHECK_COUNT=$((CHECK_COUNT + 1))
+            
+            # Check PR state - use --json to get full state including merged status
+            PR_DATA=$(gh pr view "$PR_NUMBER" --repo ${{ github.repository }} --json state,mergedAt,closed)
+            PR_STATE=$(echo "$PR_DATA" | jq -r '.state')
+            MERGED_AT=$(echo "$PR_DATA" | jq -r '.mergedAt')
+            IS_CLOSED=$(echo "$PR_DATA" | jq -r '.closed')
+            
+            # Check if merged (mergedAt will be non-null if merged)
+            if [ "$MERGED_AT" != "null" ] && [ "$MERGED_AT" != "" ]; then
+              echo "✅ PR #$PR_NUMBER was merged successfully! (verified in ${ELAPSED}s after $CHECK_COUNT checks)"
+              echo "🎉 World model PR merged - agent evaluation pipeline complete!"
+              exit 0
+            elif [ "$PR_STATE" = "MERGED" ]; then
+              echo "✅ PR #$PR_NUMBER has been merged successfully! (detected in ${ELAPSED}s after $CHECK_COUNT checks)"
+              echo "🎉 World model PR merged - agent evaluation pipeline complete!"
+              exit 0
+            elif [ "$IS_CLOSED" = "true" ] && [ "$MERGED_AT" = "null" ]; then
+              echo "⚠️ PR #$PR_NUMBER was closed without merging"
+              echo "This may indicate an issue with the auto-review process"
+              exit 1
+            elif [ "$PR_STATE" = "CLOSED" ]; then
+              # Double-check if it was actually merged
+              MERGED_CHECK=$(gh pr view "$PR_NUMBER" --repo ${{ github.repository }} --json mergedAt --jq '.mergedAt')
+              if [ "$MERGED_CHECK" != "null" ] && [ "$MERGED_CHECK" != "" ]; then
+                echo "✅ PR #$PR_NUMBER was merged successfully! (verified in ${ELAPSED}s)"
+                echo "🎉 World model PR merged - agent evaluation pipeline complete!"
+                exit 0
+              else
+                echo "⚠️ PR #$PR_NUMBER was closed without merging"
+                exit 1
+              fi
+            fi
+            
+            # Still waiting - sleep and then update elapsed time
+            echo "   Check $CHECK_COUNT: PR #$PR_NUMBER is $PR_STATE, waiting ${WAIT_INTERVAL}s... (${ELAPSED}s elapsed)"
+            sleep $WAIT_INTERVAL
+            ELAPSED=$((ELAPSED + WAIT_INTERVAL))
+            
+            # Exponential backoff: double wait time, max 20 seconds (optimized)
+            if [ $WAIT_INTERVAL -lt 20 ]; then
+              WAIT_INTERVAL=$((WAIT_INTERVAL * 2))
+            fi
+          done
+          
+          # Timeout reached - do final check
+          echo "⏰ Timeout reached after ${ELAPSED}s"
+          FINAL_CHECK=$(gh pr view "$PR_NUMBER" --repo ${{ github.repository }} --json state,mergedAt --jq '{state: .state, mergedAt: .mergedAt}')
+          echo "Final PR state: $FINAL_CHECK"
+          
+          FINAL_MERGED=$(echo "$FINAL_CHECK" | jq -r '.mergedAt')
+          if [ "$FINAL_MERGED" != "null" ] && [ "$FINAL_MERGED" != "" ]; then
+            echo "✅ PR #$PR_NUMBER was actually merged! (confirmed on final check)"
+            exit 0
+          fi
+          
+          echo "❌ PR #$PR_NUMBER was not merged within ${MAX_WAIT} seconds"
+          echo "Check PR status at: https://github.com/${{ github.repository }}/pull/$PR_NUMBER"
+          exit 1
+
+  # ============================================================================
+  # STAGE 5: SUMMARY
+  # ============================================================================
+
+  pipeline-summary:
+    name: "Stage 5: Pipeline Summary"
+    runs-on: ubuntu-latest
+    needs: [evaluate-agents, merge-evaluation-pr, sync-to-world, merge-world-pr]
+    if: always() && !cancelled()
+    
+    steps:
+      - name: Summary
+        run: |
+          echo "🏛️ Agent Evaluation Pipeline Complete!"
+          echo ""
+          echo "Pipeline Stages:"
+          echo "  Stage 1: Agent Evaluation - ${{ needs.evaluate-agents.result }}"
+          echo "  Stage 2: Merge Evaluation PR - ${{ needs.merge-evaluation-pr.result }}"
+          echo "  Stage 3: Sync to World Model - ${{ needs.sync-to-world.result }}"
+          echo "  Stage 4: Merge World Model PR - ${{ needs.merge-world-pr.result }}"
+          echo ""
+          if [ "${{ needs.evaluate-agents.outputs.has_results }}" = "true" ]; then
+            echo "✅ Agent evaluation completed with results"
+            echo "   Evaluation PR: #${{ needs.evaluate-agents.outputs.pr_number }}"
+            if [ "${{ needs.sync-to-world.outputs.pr_created }}" = "true" ]; then
+              echo "   World Model PR: #${{ needs.sync-to-world.outputs.pr_number }}"
+            fi
+          else
+            echo "ℹ️ No agents to evaluate"
+          fi
+          echo ""
+          echo "🎉 Multi-stage agent evaluation pipeline completed!"

@@ -1,0 +1,76 @@
+name: "Cleanup: Close Stale Issues and Conflicted PRs"
+
+on:
+  schedule:
+    # Run every hour to check for stale issues and PRs with conflicts
+    - cron: '0 * * * *'
+  workflow_dispatch:
+    inputs:
+      issue_hours:
+        description: 'Close issues older than this many hours'
+        required: false
+        default: '2'
+        type: string
+      close_issues:
+        description: 'Enable closing stale issues'
+        required: false
+        default: 'true'
+        type: boolean
+      close_prs:
+        description: 'Enable closing PRs with conflicts'
+        required: false
+        default: 'true'
+        type: boolean
+      dry_run:
+        description: 'Dry run mode (no actual closures)'
+        required: false
+        default: 'false'
+        type: boolean
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Run cleanup script
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Build arguments for the script
+          args=""
+          
+          if [ "${{ inputs.close_issues || 'true' }}" = "true" ]; then
+            args="${args} --close-issues"
+          fi
+          
+          if [ "${{ inputs.close_prs || 'true' }}" = "true" ]; then
+            args="${args} --close-prs"
+          fi
+          
+          if [ "${{ inputs.dry_run || 'false' }}" = "true" ]; then
+            args="${args} --dry-run"
+          fi
+          
+          if [ -n "${{ inputs.issue_hours }}" ]; then
+            args="${args} --issue-hours ${{ inputs.issue_hours }}"
+          fi
+          
+          # Run the cleanup script
+          ./tools/close-stale-issues-and-prs.sh ${args}
+
+      - name: Log activity
+        run: |
+          echo "Cleanup completed"
+          echo "Timestamp: $(date -u +'%Y-%m-%d %H:%M:%S UTC')"

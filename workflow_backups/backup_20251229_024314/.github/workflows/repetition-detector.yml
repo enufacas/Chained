@@ -1,0 +1,551 @@
+name: "AI: Pattern Repetition Detector"
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+    # Note: No 'paths' filters - we want to analyze ALL PRs for repetition patterns.
+    # The tools used (diversity-dashboard.py, repetition-detector.py, etc.) are
+    # dependencies, not trigger conditions. We need to run on every PR to detect
+    # repetitive patterns across all code changes.
+  schedule:
+    # Run every 6 hours
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+    inputs:
+      days:
+        description: 'Days to analyze (default: 30)'
+        required: false
+        default: '30'
+      threshold:
+        description: 'Uniqueness threshold (default: 30)'
+        required: false
+        default: '30'
+
+permissions:
+  contents: write  # Need write permission to push analysis results
+  issues: write
+  pull-requests: write
+
+concurrency:
+  group: analysis-repetition-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  detect-repetition:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Get full history for comprehensive analysis
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Configure Git
+        run: |
+          git config --global --add safe.directory $GITHUB_WORKSPACE
+
+      - name: Run Repetition Detector
+        id: detect
+        run: |
+          days="${{ inputs.days }}"
+          if [ -z "${days}" ]; then
+            days="30"
+          fi
+          
+          echo "Analyzing contributions from the last ${days} days..."
+          
+          # Create history directory if it doesn't exist
+          mkdir -p analysis/repetition-history
+          
+          # Generate timestamp for historical snapshot
+          TIMESTAMP=$(date -u +%Y-%m-%d-%H-%M-%S)
+          
+          # Run detector and save to both current and historical locations
+          # Capture exit code immediately
+          python3 tools/repetition-detector.py \
+            -d . \
+            --since-days ${days} \
+            -o analysis/repetition-report.json
+          
+          DETECTOR_EXIT_CODE=$?
+          
+          # Save timestamped snapshot for trend analysis
+          if [ -f analysis/repetition-report.json ]; then
+            cp analysis/repetition-report.json "analysis/repetition-history/${TIMESTAMP}.json"
+            
+            # Update latest symlink
+            cd analysis/repetition-history
+            ln -sf "${TIMESTAMP}.json" latest.json
+            cd ../..
+          fi
+          
+          # Check if the script failed to run
+          if [ $DETECTOR_EXIT_CODE -ne 0 ]; then
+            echo "⚠️  Repetition detector failed to run"
+            echo "repetition_detected=false" >> $GITHUB_OUTPUT
+          else
+            # Script ran successfully - check if repetition flags exist in output
+            if [ -f analysis/repetition-report.json ]; then
+              FLAGS_COUNT=$(python3 -c "import json; print(len(json.load(open('analysis/repetition-report.json')).get('repetition_flags', [])))" 2>/dev/null || echo "0")
+              if [ "$FLAGS_COUNT" -gt 0 ]; then
+                echo "repetition_detected=true" >> $GITHUB_OUTPUT
+                echo "✅ Detected ${FLAGS_COUNT} repetition flags"
+              else
+                echo "repetition_detected=false" >> $GITHUB_OUTPUT
+                echo "✅ No repetition detected"
+              fi
+            else
+              echo "repetition_detected=false" >> $GITHUB_OUTPUT
+              echo "⚠️  Report file not found"
+            fi
+          fi
+          
+          echo "days=${days}" >> $GITHUB_OUTPUT
+          echo "timestamp=${TIMESTAMP}" >> $GITHUB_OUTPUT
+
+      - name: Run Uniqueness Scorer
+        id: score
+        continue-on-error: true
+        run: |
+          threshold="${{ inputs.threshold }}"
+          if [ -z "${threshold}" ]; then
+            threshold="30"
+          fi
+          
+          # Minimum contributions required for meaningful diversity analysis
+          min_contributions="3"
+          
+          echo "Calculating uniqueness scores (threshold: ${threshold}, min contributions: ${min_contributions})..."
+          
+          # Run scorer and capture exit code
+          python3 tools/uniqueness-scorer.py \
+            -d . \
+            --threshold ${threshold} \
+            --days 90 \
+            --min-contributions ${min_contributions} \
+            -o analysis/uniqueness-scores.json
+          
+          EXIT_CODE=$?
+          
+          # Exit code 1 means agents are below threshold (expected behavior)
+          # This is informational, not a failure
+          if [ $EXIT_CODE -ne 0 ]; then
+            echo "below_threshold=true" >> $GITHUB_OUTPUT
+            echo "⚠️  Some agents are below uniqueness threshold (this is informational)"
+          else
+            echo "below_threshold=false" >> $GITHUB_OUTPUT
+            echo "✅ All agents meet uniqueness threshold or have insufficient data"
+          fi
+          
+          echo "threshold=${threshold}" >> $GITHUB_OUTPUT
+          
+          # Always succeed - the exit code is informational only
+          exit 0
+
+      - name: Generate Diversity Suggestions
+        id: suggest
+        if: steps.detect.outputs.repetition_detected == 'true' || steps.score.outputs.below_threshold == 'true'
+        run: |
+          echo "Generating diversity suggestions..."
+          
+          python3 tools/diversity-suggester.py \
+            --repetition-report analysis/repetition-report.json \
+            -d . \
+            -o analysis/diversity-suggestions.md
+          
+          echo "suggestions_generated=true" >> $GITHUB_OUTPUT
+
+      - name: Analyze Diversity Trends
+        id: trends
+        run: |
+          echo "Analyzing diversity trends from historical data..."
+          
+          python3 tools/trend-analyzer.py \
+            -d . \
+            --days 90 \
+            -o analysis/diversity-trends.json
+          
+          echo "trends_analyzed=true" >> $GITHUB_OUTPUT
+
+      - name: Generate Diversity Dashboard
+        id: dashboard
+        run: |
+          echo "Generating diversity dashboard..."
+          
+          python3 tools/diversity-dashboard.py \
+            -d . \
+            -o docs/diversity-dashboard.md
+          
+          echo "dashboard_generated=true" >> $GITHUB_OUTPUT
+
+      - name: Extract Summary Statistics
+        id: stats
+        run: |
+          # Extract key metrics from both reports
+          # Note: total_flags = repetition patterns in commits/code structure
+          #       flagged_count = agents below uniqueness threshold (diversity scores)
+          # These are different metrics measuring different aspects
+          
+          if [ -f analysis/repetition-report.json ]; then
+            total_agents=$(python3 -c "import json; d=json.load(open('analysis/repetition-report.json')); print(d['summary']['total_agents'])" 2>/dev/null || echo "0")
+            total_flags=$(python3 -c "import json; d=json.load(open('analysis/repetition-report.json')); print(len(d.get('repetition_flags', [])))" 2>/dev/null || echo "0")
+            echo "total_agents=${total_agents}" >> $GITHUB_OUTPUT
+            echo "total_flags=${total_flags}" >> $GITHUB_OUTPUT
+          else
+            echo "total_agents=0" >> $GITHUB_OUTPUT
+            echo "total_flags=0" >> $GITHUB_OUTPUT
+          fi
+          
+          if [ -f analysis/uniqueness-scores.json ]; then
+            avg_score=$(python3 -c "import json; d=json.load(open('analysis/uniqueness-scores.json')); print(d.get('summary', {}).get('average_score', 0))" 2>/dev/null || echo "0")
+            flagged_count=$(python3 -c "import json; d=json.load(open('analysis/uniqueness-scores.json')); print(len(d.get('flagged_agents', [])))" 2>/dev/null || echo "0")
+            echo "avg_score=${avg_score}" >> $GITHUB_OUTPUT
+            echo "flagged_count=${flagged_count}" >> $GITHUB_OUTPUT
+          else
+            echo "avg_score=0" >> $GITHUB_OUTPUT
+            echo "flagged_count=0" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Post PR Comment
+        if: github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          pr_number="${{ github.event.pull_request.number }}"
+          
+          # Create comment file
+          cat > /tmp/pr_comment.md << 'COMMENT_EOF'
+          ## 🎨 AI Pattern Repetition Analysis
+          
+          **Analysis Period:** Last ${{ steps.detect.outputs.days }} days
+          **Uniqueness Threshold:** ${{ steps.score.outputs.threshold }}
+          
+          ### Results:
+          - **Total Agents Analyzed:** ${{ steps.stats.outputs.total_agents }}
+          - **Average Uniqueness Score:** ${{ steps.stats.outputs.avg_score }}
+          - **Repetition Flags:** ${{ steps.stats.outputs.total_flags }}
+          - **Agents Below Threshold:** ${{ steps.stats.outputs.flagged_count }}
+          COMMENT_EOF
+          
+          if [ "${{ steps.suggest.outputs.suggestions_generated }}" = "true" ]; then
+            cat >> /tmp/pr_comment.md << 'COMMENT_EOF'
+          
+          ### ⚠️ Action Required
+          
+          Repetition patterns detected! Check the diversity suggestions for concrete recommendations.
+          
+          📄 See `analysis/diversity-suggestions.md` for detailed suggestions.
+          COMMENT_EOF
+          else
+            cat >> /tmp/pr_comment.md << 'COMMENT_EOF'
+          
+          ### ✅ All Clear
+          
+          No significant repetition detected. All agents show healthy diversity!
+          COMMENT_EOF
+          fi
+          
+          cat >> /tmp/pr_comment.md << 'COMMENT_EOF'
+          
+          ---
+          *Analysis reports available in `analysis/` directory*
+          COMMENT_EOF
+          
+          # Post comment
+          gh pr comment ${pr_number} --body-file /tmp/pr_comment.md || true
+
+      - name: Create Issue for Significant Repetition
+        if: steps.stats.outputs.flagged_count != '0' && steps.stats.outputs.flagged_count != ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          total_flags="${{ steps.stats.outputs.total_flags }}"
+          flagged_count="${{ steps.stats.outputs.flagged_count }}"
+          
+          # Only create issue if there are agents flagged below threshold
+          # flagged_count is from uniqueness scorer (agents needing diversity improvement)
+          if [ "${flagged_count}" -gt 0 ]; then
+            # Extract flagged agent details for better reporting
+            # Validate file exists first to provide better error messages
+            if [ ! -f "analysis/uniqueness-scores.json" ]; then
+              echo "⚠️  uniqueness-scores.json not found, skipping issue creation"
+              exit 0
+            fi
+            
+            # VALIDATION LAYER 1: Data Freshness Check
+            # Verify analysis data was generated recently to prevent stale data issues
+            # This prevents false positives from cached or outdated analysis files
+            echo "🔍 Validating data freshness..."
+            python3 << 'FRESHNESS_CHECK'
+          import json
+          from datetime import datetime, timezone, timedelta
+          
+          try:
+              with open("analysis/uniqueness-scores.json") as f:
+                  data = json.load(f)
+                  generated_at_str = data.get("metadata", {}).get("generated_at", "")
+                  
+                  if not generated_at_str:
+                      print("⚠️  No generation timestamp found in analysis data")
+                      exit(1)
+                  
+                  # Parse ISO format timestamp
+                  generated_at = datetime.fromisoformat(generated_at_str.replace('Z', '+00:00'))
+                  current_time = datetime.now(timezone.utc)
+                  age = current_time - generated_at
+                  
+                  # Warn if data is more than 1 hour old (indicates stale data)
+                  if age > timedelta(hours=1):
+                      print(f"⚠️  Analysis data is {age.total_seconds()/3600:.1f} hours old")
+                      print(f"   Generated: {generated_at_str}")
+                      print(f"   This may indicate stale cached data")
+                      # Don't fail, just warn - data might legitimately be from earlier run
+                  else:
+                      print(f"✅ Data is fresh ({age.total_seconds():.0f} seconds old)")
+          except Exception as e:
+              print(f"⚠️  Data freshness check failed: {e}")
+              # Don't fail workflow, but log warning
+          FRESHNESS_CHECK
+            
+            # VALIDATION LAYER 2: Insufficient Data Filtering
+            # Extract flagged agents and validate they have sufficient data for diversity analysis
+            # Agents with insufficient data (< 3 contributions) should NOT trigger diversity alerts
+            # This prevents false positives for new agents or agents with limited activity
+            echo "🔍 Validating flagged agents have sufficient data..."
+            flagged_agents=$(python3 -c '
+          import json
+          import sys
+          try:
+              with open("analysis/uniqueness-scores.json") as f:
+                  data = json.load(f)
+                  flagged = data.get("flagged_agents", [])
+                  scores = data.get("scores", {})
+                  
+                  # Validate that flagged agents actually have sufficient data
+                  # Filter out agents with "Insufficient data" notes
+                  real_flagged = []
+                  for agent in flagged:
+                      agent_id = agent.get("agent_id", "unknown")
+                      # Check if this agent has the "Insufficient data" note
+                      agent_score = scores.get(agent_id, {})
+                      if "note" in agent_score and "Insufficient data" in agent_score["note"]:
+                          # Skip agents with insufficient data - they should not trigger alerts
+                          continue
+                      real_flagged.append(agent)
+                  
+                  if real_flagged:
+                      for agent in real_flagged:
+                          agent_id = agent.get("agent_id", "unknown")
+                          score = agent.get("score", 0)
+                          reason = agent.get("reason", "no reason")
+                          print(f"- **{agent_id}**: Score {score:.2f} - {reason}")
+                      # Exit with 0 to indicate real flagged agents found
+                      sys.exit(0)
+                  else:
+                      # No real flagged agents (all have insufficient data)
+                      # Exit with 1 to signal no issue should be created
+                      sys.exit(1)
+          except Exception as e:
+              print(f"- Error: {type(e).__name__}: {str(e)}", file=sys.stderr)
+              sys.exit(1)
+          ' 2>&1)
+            
+            # VALIDATION LAYER 3: Exit Code Validation
+            # Check if we got real flagged agents (exit code 0) or not (exit code 1)
+            # Exit code 0 = real flagged agents with sufficient data
+            # Exit code 1 = no valid flagged agents (all have insufficient data or errors)
+            if [ $? -ne 0 ]; then
+              echo "✅ No agents with sufficient data are flagged - skipping issue creation"
+              echo "   All flagged agents have insufficient contributions (< 3) for diversity analysis"
+              echo "   This prevents false positive alerts for new or low-activity agents"
+              exit 0
+            fi
+            
+            cat > /tmp/issue_body.md << 'ISSUE_EOF'
+          ## AI Agent Diversity Alert
+          
+          The uniqueness scoring system has identified AI agents with diversity scores below the threshold.
+          
+          ### Summary:
+          - **Agents Below Threshold:** FLAGGED_COUNT_PLACEHOLDER
+          - **Average Uniqueness Score:** AVG_SCORE_PLACEHOLDER
+          - **Threshold:** 30.0
+          - **Analysis Period:** Last DAYS_PLACEHOLDER days
+          
+          ### Agents Needing Improvement:
+          FLAGGED_AGENTS_LIST
+          
+          ### What This Means:
+          Low diversity scores may indicate:
+          - Agents falling into habitual approaches
+          - Limited variety in problem-solving strategies
+          - Opportunities for broader skill application
+          - Potential for more innovative solutions
+          
+          ### Action Items:
+          1. **Review Diversity Suggestions**: Check `analysis/diversity-suggestions.md` for specific recommendations
+          2. **Examine Recent Work**: Look at flagged agents' recent contributions to identify patterns
+          3. **Encourage Exploration**: Consider assigning diverse types of issues to these agents
+          4. **Learn from High Performers**: Share successful diverse patterns from agents above threshold
+          
+          ### Analysis Reports:
+          - 📊 **Repetition Patterns**: `analysis/repetition-report.json` - Code structure and commit patterns
+          - 🎯 **Uniqueness Scores**: `analysis/uniqueness-scores.json` - Agent diversity metrics
+          - 💡 **Improvement Suggestions**: `analysis/diversity-suggestions.md` - Actionable recommendations
+          
+          ### Note:
+          This alert focuses on **AI agent diversity**, not code quality. All agents can improve by:
+          - Working on varied issue types
+          - Using different solution approaches
+          - Exploring diverse technologies and domains
+          
+          ---
+          
+          ### 🔍 Validation Metadata
+          *Use this metadata to verify data freshness and trace back to source:*
+          - **Workflow Run:** [${{ github.run_id }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+          - **Analysis Generated:** GENERATED_AT_PLACEHOLDER
+          - **Repository:** ${{ github.repository }}
+          - **Branch:** ${{ github.ref }}
+          - **Commit:** [${{ github.sha }}](${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }})
+          
+          <details>
+          <summary>Validation Checklist</summary>
+          
+          Before acting on this alert, verify:
+          - [ ] Analysis data is recent (< 1 hour old)
+          - [ ] Flagged agents exist in git history
+          - [ ] Contribution counts are accurate
+          - [ ] All flagged agents have ≥ 3 contributions
+          - [ ] Cross-reference with `analysis/uniqueness-scores.json`
+          
+          </details>
+          
+          ---
+          *Automatically generated by the AI Pattern Repetition Detector*
+          *Issue created by workflow: repetition-detector.yml*
+          ISSUE_EOF
+            
+            # Replace placeholders
+            # Extract generated_at timestamp from analysis data for validation metadata
+            generated_at=$(python3 -c "import json; print(json.load(open('analysis/uniqueness-scores.json'))['metadata']['generated_at'])")
+            
+            sed -i "s/FLAGGED_COUNT_PLACEHOLDER/${{ steps.stats.outputs.flagged_count }}/g" /tmp/issue_body.md
+            sed -i "s/AVG_SCORE_PLACEHOLDER/${{ steps.stats.outputs.avg_score }}/g" /tmp/issue_body.md
+            sed -i "s/DAYS_PLACEHOLDER/${{ steps.detect.outputs.days }}/g" /tmp/issue_body.md
+            sed -i "s|GENERATED_AT_PLACEHOLDER|${generated_at}|g" /tmp/issue_body.md
+            
+            # Insert flagged agents list (properly escaped for sed)
+            echo "${flagged_agents}" > /tmp/flagged_agents.txt
+            sed -i "/FLAGGED_AGENTS_LIST/r /tmp/flagged_agents.txt" /tmp/issue_body.md
+            sed -i "/FLAGGED_AGENTS_LIST/d" /tmp/issue_body.md
+            
+            # Create issue with fallback if labels don't exist
+            gh issue create \
+              --title "⚠️ AI Agent Diversity Alert: ${flagged_count} agents below threshold" \
+              --body-file /tmp/issue_body.md \
+              --label "automated" || {
+                echo "⚠️ Issue creation with labels failed, retrying without labels..."
+                gh issue create \
+                  --title "⚠️ AI Agent Diversity Alert: ${flagged_count} agents below threshold" \
+                  --body-file /tmp/issue_body.md
+              }
+          fi
+
+      - name: Commit Analysis Results
+        if: github.event_name != 'pull_request'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # Add analysis files (including historical snapshots)
+          git add analysis/repetition-report.json analysis/uniqueness-scores.json analysis/pattern-diversity.json || true
+          git add analysis/repetition-history/ || true
+          git add analysis/diversity-trends.json || true
+          
+          if [ -f analysis/diversity-suggestions.md ]; then
+            git add analysis/diversity-suggestions.md
+          fi
+          
+          # Add dashboard to docs
+          if [ -f docs/diversity-dashboard.md ]; then
+            git add docs/diversity-dashboard.md
+          fi
+          
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            # Create a new branch for the PR with unique name using run ID
+            TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+            BRANCH_NAME="repetition-analysis/${TIMESTAMP}-${{ github.run_id }}"
+            git checkout -b "$BRANCH_NAME"
+            
+            # Pull latest main to avoid conflicts
+            git fetch origin main
+            git merge origin/main --no-edit || {
+              # If merge conflicts, keep our changes
+              git checkout --ours analysis/
+              git add analysis/
+              git commit --no-edit
+            }
+            
+            git commit -m "🤖 Update pattern repetition analysis" \
+                       -m "Analyzed: ${{ steps.stats.outputs.total_agents }} agents" \
+                       -m "Flags: ${{ steps.stats.outputs.total_flags }}" \
+                       -m "Average score: ${{ steps.stats.outputs.avg_score }}" \
+                       -m "Timestamp: ${{ steps.detect.outputs.timestamp }}" \
+                       -m "Dashboard updated: ${{ steps.dashboard.outputs.dashboard_generated }}"
+            
+            # Push branch
+            git push origin "$BRANCH_NAME"
+            
+            # Create PR (with fallback if labels don't exist)
+            PR_DATE=$(date +%Y-%m-%d)
+            gh pr create \
+              --title "🤖 Update pattern repetition analysis - ${PR_DATE}" \
+              --body "## Pattern Repetition Analysis Update"$'\n\n'"This PR updates the pattern repetition analysis results."$'\n\n'"### Analysis Results"$'\n'"- **Agents analyzed**: ${{ steps.stats.outputs.total_agents }}"$'\n'"- **Flags**: ${{ steps.stats.outputs.total_flags }}"$'\n'"- **Average score**: ${{ steps.stats.outputs.avg_score }}"$'\n\n'"---"$'\n'"*🤖 Automated pattern analysis workflow*" \
+              --label "automated,copilot" \
+              --base main \
+              --head "$BRANCH_NAME" || {
+                echo "⚠️ PR creation with labels failed, retrying without labels..."
+                gh pr create \
+                  --title "🤖 Update pattern repetition analysis - ${PR_DATE}" \
+                  --body "## Pattern Repetition Analysis Update"$'\n\n'"This PR updates the pattern repetition analysis results."$'\n\n'"### Analysis Results"$'\n'"- **Agents analyzed**: ${{ steps.stats.outputs.total_agents }}"$'\n'"- **Flags**: ${{ steps.stats.outputs.total_flags }}"$'\n'"- **Average score**: ${{ steps.stats.outputs.avg_score }}"$'\n\n'"---"$'\n'"*🤖 Automated pattern analysis workflow (labels unavailable)*" \
+                  --base main \
+                  --head "$BRANCH_NAME"
+              }
+            
+            echo "✅ PR created for analysis update"
+          fi
+
+      - name: Upload Analysis Reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: repetition-analysis-reports
+          path: |
+            analysis/repetition-report.json
+            analysis/uniqueness-scores.json
+            analysis/diversity-suggestions.md
+            analysis/diversity-trends.json
+            analysis/repetition-history/*.json
+            docs/diversity-dashboard.md
+          retention-days: 30
+
+      - name: Log Activity
+        run: |
+          echo "=========================================="
+          echo "Pattern Repetition Analysis Complete"
+          echo "=========================================="
+          echo "Timestamp: $(date -u +'%Y-%m-%d %H:%M:%S UTC')"
+          echo "Agents analyzed: ${{ steps.stats.outputs.total_agents }}"
+          echo "Repetition flags: ${{ steps.stats.outputs.total_flags }}"
+          echo "Average uniqueness score: ${{ steps.stats.outputs.avg_score }}"
+          echo "Agents below threshold: ${{ steps.stats.outputs.flagged_count }}"
+          echo "=========================================="

@@ -1,25 +1,17 @@
+# ============================================================================
+# WORKFLOW DISABLED
+# Disabled on: 2025-12-29T02:43:14.994388
+# Original workflow name: AI: Pattern Repetition Detector
+# Original triggers: pull_request, schedule, workflow_dispatch
+# 
+# To re-enable: Use the tools/enable_workflows.py script with the
+# workflow_disable_metadata.json file to restore original triggers.
+# ============================================================================
+
 name: "AI: Pattern Repetition Detector"
 
 on:
-  pull_request:
-    types: [opened, synchronize]
-    # Note: No 'paths' filters - we want to analyze ALL PRs for repetition patterns.
-    # The tools used (diversity-dashboard.py, repetition-detector.py, etc.) are
-    # dependencies, not trigger conditions. We need to run on every PR to detect
-    # repetitive patterns across all code changes.
-  schedule:
-    # Run every 6 hours
-    - cron: '0 */6 * * *'
   workflow_dispatch:
-    inputs:
-      days:
-        description: 'Days to analyze (default: 30)'
-        required: false
-        default: '30'
-      threshold:
-        description: 'Uniqueness threshold (default: 30)'
-        required: false
-        default: '30'
 
 permissions:
   contents: write  # Need write permission to push analysis results

@@ -1,20 +1,18 @@
+# ============================================================================
+# WORKFLOW DISABLED
+# Disabled on: 2025-12-29T02:43:14.994388
+# Original workflow name: Cleanup: Sub-Agent
+# Original triggers: schedule, workflow_dispatch
+# 
+# To re-enable: Use the tools/enable_workflows.py script with the
+# workflow_disable_metadata.json file to restore original triggers.
+# ============================================================================
+
 name: "Cleanup: Sub-Agent"
 
 on:
-  schedule:
-    # Run every 6 hours to check if sub-agents can be deactivated
-    - cron: '0 */6 * * *'
   
   workflow_dispatch:
-    inputs:
-      min_idle_hours:
-        description: 'Minimum idle hours before deactivation'
-        required: false
-        default: '12'
-      dry_run:
-        description: 'Dry run (no actual deactivation)'
-        required: false
-        default: 'false'
 
 jobs:
   cleanup:

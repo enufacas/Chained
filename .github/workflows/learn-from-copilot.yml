@@ -1,3 +1,13 @@
+# ============================================================================
+# WORKFLOW DISABLED
+# Disabled on: 2025-12-29T02:43:14.994388
+# Original workflow name: Learning: GitHub Copilot
+# Original triggers: schedule, workflow_dispatch
+# 
+# To re-enable: Use the tools/enable_workflows.py script with the
+# workflow_disable_metadata.json file to restore original triggers.
+# ============================================================================
+
 name: "Learning: GitHub Copilot"
 
 # This workflow fetches learning content about GitHub Copilot from multiple sources:
@@ -5,26 +15,7 @@ name: "Learning: GitHub Copilot"
 # 2. Reddit r/GithubCopilot (community discussions) - may be blocked by network
 # 3. GitHub Discussions (community forum) - requires API token
 on:
-  schedule:
-    # Run once daily - morning UTC
-    - cron: '0 9 * * *'
   workflow_dispatch:
-    inputs:
-      docs_count:
-        description: 'Number of documentation topics to fetch'
-        required: false
-        default: '5'
-        type: string
-      reddit_count:
-        description: 'Number of Reddit posts to fetch'
-        required: false
-        default: '5'
-        type: string
-      discussions_count:
-        description: 'Number of GitHub discussions to fetch'
-        required: false
-        default: '5'
-        type: string
 
 permissions:
   contents: write  # Required: Create branches and push commits for PR creation

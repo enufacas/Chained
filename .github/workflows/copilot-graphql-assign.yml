@@ -1,3 +1,13 @@
+# ============================================================================
+# WORKFLOW DISABLED
+# Disabled on: 2025-12-29T02:43:14.994388
+# Original workflow name: Automation: Copilot Assignment
+# Original triggers: issues, schedule, workflow_dispatch, workflow_run
+# 
+# To re-enable: Use the tools/enable_workflows.py script with the
+# workflow_disable_metadata.json file to restore original triggers.
+# ============================================================================
+
 name: "Automation: Copilot Assignment"
 
 # ⚠️ DEPRECATED - REPLACED BY META-COORDINATOR
@@ -7,28 +17,8 @@ name: "Automation: Copilot Assignment"
 # See: .github/workflows/META_COORDINATOR_IMPLEMENTATION.md
 
 on:
-  issues:
-    types: [opened]
-  schedule:
-    # Run every 15 minutes to check for unassigned issues
-    - cron: '*/15 * * * *'
   workflow_dispatch:
-    inputs:
-      issue_number:
-        description: 'Issue number to assign to Copilot (leave empty to process all open issues)'
-        required: false
-        type: string
-  workflow_run:
-    # Trigger after workflows that may create issues
-    workflows:
-      - "Idea Generation: Progress Checker"
-      - "World Model Update"
-    types:
-      - completed
 
-# Prevent multiple concurrent runs of this workflow
-# This prevents race conditions where multiple workflow instances
-# try to assign Copilot to the same issue simultaneously
 concurrency:
   group: copilot-assignment-${{ github.event.issue.number || github.event.workflow_run.id || 'scheduled' }}
   cancel-in-progress: false

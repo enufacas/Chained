@@ -1,0 +1,481 @@
+name: "Learning: GitHub Copilot"
+
+# This workflow fetches learning content about GitHub Copilot from multiple sources:
+# 1. GitHub Docs (official documentation)
+# 2. Reddit r/GithubCopilot (community discussions) - may be blocked by network
+# 3. GitHub Discussions (community forum) - requires API token
+on:
+  schedule:
+    # Run once daily - morning UTC
+    - cron: '0 9 * * *'
+  workflow_dispatch:
+    inputs:
+      docs_count:
+        description: 'Number of documentation topics to fetch'
+        required: false
+        default: '5'
+        type: string
+      reddit_count:
+        description: 'Number of Reddit posts to fetch'
+        required: false
+        default: '5'
+        type: string
+      discussions_count:
+        description: 'Number of GitHub discussions to fetch'
+        required: false
+        default: '5'
+        type: string
+
+permissions:
+  contents: write  # Required: Create branches and push commits for PR creation
+  issues: write    # Required: Create learning documentation issues
+  pull-requests: write  # Required: Create PRs for learnings
+
+jobs:
+  learn-from-copilot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30  # Prevent infinite runs if external APIs hang
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+          cache: 'pip'  # Cache pip dependencies for faster runs
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Fetch GitHub Copilot content
+        id: fetch
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DOCS_COUNT: ${{ inputs.docs_count || '5' }}
+          REDDIT_COUNT: ${{ inputs.reddit_count || '5' }}
+          DISCUSSIONS_COUNT: ${{ inputs.discussions_count || '5' }}
+        run: |
+          # Validate inputs are numeric and within reasonable range
+          for var in DOCS_COUNT REDDIT_COUNT DISCUSSIONS_COUNT; do
+            val=$(eval echo \$$var)
+            if ! [[ "$val" =~ ^[0-9]+$ ]] || [ "$val" -lt 1 ] || [ "$val" -gt 50 ]; then
+              echo "Error: $var must be a number between 1 and 50, got: $val"
+              exit 1
+            fi
+          done
+          
+          python3 tools/fetch-github-copilot.py \
+            --docs ${DOCS_COUNT} \
+            --reddit ${REDDIT_COUNT} \
+            --discussions ${DISCUSSIONS_COUNT} \
+            --output /tmp/copilot_raw.json
+          
+          # Extract metadata for GitHub Actions outputs
+          python3 << 'PYTHON_SCRIPT'
+          import json
+          import os
+          
+          with open('/tmp/copilot_raw.json', 'r') as f:
+              data = json.load(f)
+          
+          learnings = data.get('learnings', [])
+          source_counts = data.get('source_counts', {})
+          
+          print(f"Fetched {len(learnings)} learnings")
+          print(f"Source breakdown: {source_counts}")
+          
+          # Move to learnings directory
+          from datetime import datetime
+          timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+          learning_file = f'learnings/copilot_{timestamp}.json'
+          
+          os.makedirs('learnings', exist_ok=True)
+          with open(learning_file, 'w') as f:
+              json.dump(data, f, indent=2)
+          
+          print(f"Saved to: {learning_file}")
+          
+          # Output for GitHub Actions
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+              f.write(f"has_learnings={'true' if learnings else 'false'}\n")
+              f.write(f"learning_count={len(learnings)}\n")
+              f.write(f"learning_file={learning_file}\n")
+              f.write(f"docs_count={source_counts.get('GitHub Copilot Docs', 0)}\n")
+              f.write(f"reddit_count={source_counts.get('Reddit r/GithubCopilot', 0)}\n")
+              f.write(f"discussions_count={source_counts.get('GitHub Community Discussions', 0)}\n")
+              if learnings:
+                  # Get first learning as sample
+                  sample = learnings[0].get('title', 'No title')
+                  f.write(f"sample_learning={sample}\n")
+          
+          PYTHON_SCRIPT
+
+      - name: Parse and clean learnings
+        if: steps.fetch.outputs.has_learnings == 'true'
+        id: parse
+        run: |
+          python3 << 'PYTHON_SCRIPT'
+          import json
+          import os
+          import sys
+          sys.path.insert(0, 'tools')
+          
+          # Import the intelligent parser
+          import importlib.util
+          spec = importlib.util.spec_from_file_location('parser', 'tools/intelligent-content-parser.py')
+          parser_module = importlib.util.module_from_spec(spec)
+          spec.loader.exec_module(parser_module)
+          
+          parser = parser_module.IntelligentContentParser()
+          
+          # Load the learning file
+          learning_file = os.environ.get('LEARNING_FILE', '')
+          if not learning_file or not os.path.exists(learning_file):
+              print("No learning file found")
+              sys.exit(0)
+          
+          print(f"Parsing: {learning_file}")
+          
+          # Load and parse
+          with open(learning_file, 'r') as f:
+              data = json.load(f)
+          
+          learnings = data.get('learnings', [])
+          print(f"Input learnings: {len(learnings)}")
+          
+          # Parse and clean
+          cleaned, stats = parser.parse_learnings(learnings)
+          
+          print(f"Cleaned learnings: {len(cleaned)}")
+          print(f"Acceptance rate: {stats['acceptance_rate']:.1%}")
+          
+          # Update data
+          data['learnings'] = cleaned
+          data['parsing_stats'] = stats
+          data['parsed_version'] = '1.0'
+          
+          # Save cleaned version
+          with open(learning_file, 'w') as f:
+              json.dump(data, f, indent=2)
+          
+          print(f"✓ Saved cleaned learnings to {learning_file}")
+          
+          # Output stats
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+              f.write(f"cleaned_count={len(cleaned)}\n")
+              f.write(f"rejected_count={stats['rejected']}\n")
+              f.write(f"acceptance_rate={stats['acceptance_rate']:.1%}\n")
+          
+          PYTHON_SCRIPT
+        env:
+          LEARNING_FILE: ${{ steps.fetch.outputs.learning_file }}
+
+      - name: Analyze trends
+        if: steps.fetch.outputs.has_learnings == 'true'
+        id: analyze
+        run: |
+          python3 << 'PYTHON_SCRIPT'
+          import json
+          import os
+          import sys
+          sys.path.insert(0, 'tools')
+          
+          # Import the thematic analyzer
+          import importlib.util
+          spec = importlib.util.spec_from_file_location('analyzer', 'tools/thematic-analyzer.py')
+          analyzer_module = importlib.util.module_from_spec(spec)
+          spec.loader.exec_module(analyzer_module)
+          
+          analyzer = analyzer_module.ThematicAnalyzer(lookback_days=7)
+          
+          # Load learnings from directory
+          learnings = analyzer.load_learnings_from_files('learnings')
+          
+          print(f"Analyzing {len(learnings)} learnings from last 7 days")
+          
+          # Perform analysis
+          analysis = analyzer.analyze_learnings(learnings)
+          
+          # Save analysis
+          os.makedirs('learnings', exist_ok=True)
+          from datetime import datetime
+          timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+          analysis_file = f'learnings/analysis_{timestamp}.json'
+          
+          # Convert to dict
+          from dataclasses import asdict
+          analysis_data = asdict(analysis)
+          
+          with open(analysis_file, 'w') as f:
+              json.dump(analysis_data, f, indent=2)
+          
+          print(f"✓ Saved analysis to {analysis_file}")
+          
+          # Output summary
+          print(f"\nTop technologies:")
+          for tech in analysis.top_technologies[:5]:
+              print(f"  - {tech.name} (score: {tech.score:.1f}, mentions: {tech.mention_count})")
+          
+          print(f"\nHot themes for agent spawning:")
+          for theme in analysis.hot_themes:
+              print(f"  - {theme}")
+          
+          # Output for GitHub Actions
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+              f.write(f"analysis_file={analysis_file}\n")
+              f.write(f"hot_themes={','.join(analysis.hot_themes)}\n")
+              f.write(f"theme_count={len(analysis.hot_themes)}\n")
+          
+          PYTHON_SCRIPT
+
+      - name: Create learning issue
+        if: steps.fetch.outputs.has_learnings == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Create an issue documenting the learnings
+          gh issue create \
+            --title "🧠 Learn from GitHub Copilot Sources - $(date +%Y-%m-%d)" \
+            --body "## New Insights About GitHub Copilot
+
+          **Date:** $(date -u +'%Y-%m-%d %H:%M:%S UTC')
+          **Total Learnings:** ${{ steps.fetch.outputs.learning_count }}
+          **After Filtering:** ${{ steps.parse.outputs.cleaned_count }}
+          **Acceptance Rate:** ${{ steps.parse.outputs.acceptance_rate }}
+          **Hot Themes:** ${{ steps.analyze.outputs.theme_count }}
+
+          ### 📊 Source Breakdown
+          
+          - **GitHub Copilot Docs:** ${{ steps.fetch.outputs.docs_count }} topics
+          - **Reddit r/GithubCopilot:** ${{ steps.fetch.outputs.reddit_count }} posts
+          - **GitHub Discussions:** ${{ steps.fetch.outputs.discussions_count }} threads
+
+          ### 📚 What Was Learned
+
+          **Sample Learning:**
+          ${{ steps.fetch.outputs.sample_learning }}
+
+          This learning session collected insights from multiple GitHub Copilot sources:
+          - 📖 Official GitHub Copilot documentation
+          - 💬 Community discussions from Reddit
+          - 🗣️ GitHub Community forum posts
+          - 🎯 Best practices and use cases
+          - ⚡ Feature updates and announcements
+
+          ### 🎯 Hot Themes Identified
+
+          ${{ steps.analyze.outputs.hot_themes }}
+
+          These themes are being monitored for potential new agent creation and mission assignment.
+
+          ### 🔗 Learning Resources
+
+          - **Learning File:** [\`${{ steps.fetch.outputs.learning_file }}\`](https://github.com/enufacas/Chained/blob/main/${{ steps.fetch.outputs.learning_file }})
+          - **Analysis File:** [\`${{ steps.analyze.outputs.analysis_file }}\`](https://github.com/enufacas/Chained/blob/main/${{ steps.analyze.outputs.analysis_file }})
+          - **Learnings Directory:** [Browse all learnings](https://github.com/enufacas/Chained/tree/main/learnings)
+
+          ### 📊 Key Insights
+
+          The collected learnings include:
+          - GitHub Copilot features and capabilities
+          - Best practices for AI-assisted coding
+          - Integration patterns and workflows
+          - Community feedback and experiences
+          - Tips and tricks from power users
+          - Security and privacy considerations
+
+          ### ✨ Quality Improvements
+
+          - ✅ Fetched from multiple authoritative sources
+          - ✅ Intelligently parsed and cleaned content
+          - ✅ Validated content quality with ${{ steps.parse.outputs.acceptance_rate }} acceptance
+          - ✅ Analyzed thematic trends across all sources
+
+          ### 🎯 Actions Taken
+          - ✅ Fetched GitHub Copilot documentation
+          - ✅ Collected Reddit community discussions
+          - ✅ Gathered GitHub Discussions threads
+          - ✅ Intelligently parsed and filtered content
+          - ✅ Performed thematic analysis
+          - ✅ Saved to learnings database
+          - ⏳ Will generate missions for agents
+
+          ### 🔄 Next Steps
+          These learnings will influence:
+          - Agent mission creation focused on GitHub Copilot
+          - Implementation of Copilot best practices
+          - Exploration of advanced Copilot features
+          - Integration patterns in the autonomous system
+          - Documentation improvements
+
+          ---
+
+          *This learning was automatically collected by **@coordinate-wizard** from multiple GitHub Copilot sources. The AI continuously learns to improve its understanding of GitHub Copilot capabilities.*" \
+            --label "learning,automated,copilot,github-copilot" || echo "Issue creation skipped or failed"
+
+      - name: Create PR for learnings
+        if: steps.fetch.outputs.has_learnings == 'true'
+        id: create_pr
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # Rebuild learnings book
+          echo "Rebuilding learnings book..."
+          python3 tools/build-learnings-book.py || echo "Learnings book rebuild skipped"
+          
+          git add learnings/
+          
+          if git diff --staged --quiet; then
+            echo "No new learnings to commit"
+          else
+            # Create a branch for this learning update
+            TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+            BRANCH_NAME="learning/copilot-${TIMESTAMP}-${{ github.run_id }}"
+            git checkout -b "${BRANCH_NAME}"
+            
+            git commit -m "🧠 Learn from GitHub Copilot sources - $(date -u +%Y-%m-%d)
+
+            Collected learnings from:
+            - GitHub Copilot Docs: ${{ steps.fetch.outputs.docs_count }}
+            - Reddit: ${{ steps.fetch.outputs.reddit_count }}
+            - GitHub Discussions: ${{ steps.fetch.outputs.discussions_count }}
+
+            Total: ${{ steps.fetch.outputs.learning_count }} learnings
+            After filtering: ${{ steps.parse.outputs.cleaned_count }}
+
+            Automated by @coordinate-wizard"
+            
+            git push origin "${BRANCH_NAME}"
+            
+            # Create PR
+            PR_URL=$(gh pr create \
+              --title "🧠 Learning Update: GitHub Copilot - $(date -u +%Y-%m-%d)" \
+              --body "## Automated Learning Update from GitHub Copilot Sources (@coordinate-wizard)
+            
+            **Date:** $(date -u +'%Y-%m-%d %H:%M:%S UTC')
+            **Total Learnings:** ${{ steps.fetch.outputs.learning_count }}
+            **After Filtering:** ${{ steps.parse.outputs.cleaned_count }}
+            **Acceptance Rate:** ${{ steps.parse.outputs.acceptance_rate }}
+            
+            ### 📊 Source Breakdown
+            
+            - **GitHub Copilot Docs:** ${{ steps.fetch.outputs.docs_count }} topics
+            - **Reddit r/GithubCopilot:** ${{ steps.fetch.outputs.reddit_count }} posts  
+            - **GitHub Discussions:** ${{ steps.fetch.outputs.discussions_count }} threads
+            
+            ### Summary
+            
+            **@coordinate-wizard** has orchestrated the collection of new learnings about GitHub Copilot from multiple authoritative sources including official documentation, community discussions, and user experiences.
+            
+            **Sample Learning:**
+            ${{ steps.fetch.outputs.sample_learning }}
+            
+            ### Changes
+            - ✅ Fetched latest GitHub Copilot documentation topics
+            - ✅ Collected community discussions from Reddit
+            - ✅ Gathered GitHub Discussions threads
+            - ✅ Intelligently parsed and cleaned content
+            - ✅ Performed thematic analysis
+            - ✅ Updated learnings database
+            - ✅ Rebuilt learnings book
+            
+            ### 🎯 Mission Generation
+            
+            These learnings will automatically spawn agent missions through the autonomous pipeline, ensuring at least one mission related to GitHub Copilot best practices, features, or integration patterns.
+            
+            ---
+            *This PR was automatically created by **@coordinate-wizard** via the GitHub Copilot Learning workflow.*" \
+              --label "automated,learning,copilot,github-copilot,auto-merge" \
+              --base main \
+              --head "${BRANCH_NAME}")
+            
+            # Extract PR number from URL
+            PR_NUMBER=$(echo "$PR_URL" | grep -oE '[0-9]+$')
+            echo "pr_number=$PR_NUMBER" >> $GITHUB_OUTPUT
+            echo "pr_created=true" >> $GITHUB_OUTPUT
+            echo "✅ PR created successfully for GitHub Copilot learnings - PR #$PR_NUMBER"
+          fi
+
+      # Auto-merge the PR if it was successfully created
+      # This follows the same pattern as agentops-data-sync.yml for consistency
+      - name: Auto-merge PR
+        if: steps.create_pr.outputs.pr_created == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PR_NUMBER="${{ steps.create_pr.outputs.pr_number }}"
+          echo "🔄 Auto-merging GitHub Copilot Learning PR #$PR_NUMBER..."
+          
+          # Wait a few seconds for PR to be ready
+          echo "⏳ Waiting 5 seconds for PR to be ready..."
+          sleep 5
+          
+          # Check PR mergeable state
+          PR_DATA=$(gh pr view "$PR_NUMBER" --json mergeable,mergeStateStatus,state)
+          MERGEABLE=$(echo "$PR_DATA" | jq -r '.mergeable')
+          MERGE_STATE=$(echo "$PR_DATA" | jq -r '.mergeStateStatus')
+          PR_STATE=$(echo "$PR_DATA" | jq -r '.state')
+          
+          echo "📊 PR Status:"
+          echo "   State: $PR_STATE"
+          echo "   Mergeable: $MERGEABLE"
+          echo "   Merge State: $MERGE_STATE"
+          
+          # Check if already merged
+          if [ "$PR_STATE" = "MERGED" ]; then
+            echo "✅ PR #$PR_NUMBER is already merged!"
+            exit 0
+          fi
+          
+          # Attempt merge with auto strategy (squash for cleaner history)
+          echo "🚀 Attempting to merge PR #$PR_NUMBER..."
+          if gh pr merge "$PR_NUMBER" --repo ${{ github.repository }} --auto --squash --delete-branch; then
+            echo "✅ PR #$PR_NUMBER merge initiated successfully!"
+            echo "🎉 GitHub Copilot learning PR merged"
+            
+            # Brief wait to confirm merge completed
+            sleep 2
+            FINAL_STATE=$(gh pr view "$PR_NUMBER" --json state --jq '.state')
+            if [ "$FINAL_STATE" = "MERGED" ]; then
+              echo "✅ Merge confirmed!"
+            else
+              echo "ℹ️  Merge is processing (state: $FINAL_STATE)"
+            fi
+          else
+            echo "⚠️  Merge command failed, checking if PR can be force merged..."
+            
+            # Try regular merge without auto flag
+            if gh pr merge "$PR_NUMBER" --repo ${{ github.repository }} --squash --delete-branch; then
+              echo "✅ PR #$PR_NUMBER merged successfully (direct merge)!"
+              echo "🎉 GitHub Copilot learning PR merged"
+            else
+              echo "❌ Failed to merge PR #$PR_NUMBER"
+              echo "This may indicate:"
+              echo "  - Merge conflicts"
+              echo "  - Required checks not passing"
+              echo "  - Branch protection rules blocking"
+              echo ""
+              echo "Check PR status at: https://github.com/${{ github.repository }}/pull/$PR_NUMBER"
+              exit 1
+            fi
+          fi
+
+      - name: Log learning activity
+        if: always()
+        run: |
+          echo "=========================================="
+          echo "GitHub Copilot Learning Complete"
+          echo "=========================================="
+          echo "Learnings collected: ${{ steps.fetch.outputs.learning_count || '0' }}"
+          echo "Docs: ${{ steps.fetch.outputs.docs_count || '0' }}"
+          echo "Reddit: ${{ steps.fetch.outputs.reddit_count || '0' }}"
+          echo "Discussions: ${{ steps.fetch.outputs.discussions_count || '0' }}"
+          echo "After filtering: ${{ steps.parse.outputs.cleaned_count || 'N/A' }}"
+          echo "Hot themes: ${{ steps.analyze.outputs.theme_count || 'N/A' }}"
+          echo "Timestamp: $(date -u +'%Y-%m-%d %H:%M:%S UTC')"
+          echo "=========================================="

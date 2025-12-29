@@ -1,19 +1,17 @@
+# ============================================================================
+# WORKFLOW DISABLED
+# Disabled on: 2025-12-29T02:43:14.994388
+# Original workflow name: Automation: Issue Prioritizer
+# Original triggers: schedule, workflow_dispatch
+# 
+# To re-enable: Use the tools/enable_workflows.py script with the
+# workflow_disable_metadata.json file to restore original triggers.
+# ============================================================================
+
 name: "Automation: Issue Prioritizer"
 
 on:
-  schedule:
-    # Run every 6 hours
-    - cron: '0 */6 * * *'
   workflow_dispatch:
-    inputs:
-      record_outcomes:
-        description: 'Record outcomes for closed issues'
-        required: false
-        default: 'true'
-      show_stats:
-        description: 'Display statistics'
-        required: false
-        default: 'true'
 
 permissions:
   contents: write

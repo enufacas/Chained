@@ -1,0 +1,286 @@
+name: "Evolution: RL Resource Optimization"
+# Created by @create-botter
+# Reinforcement learning-based resource optimization for GitHub Actions
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'Operation mode'
+        required: true
+        default: 'recommend'
+        type: choice
+        options:
+          - recommend
+          - train
+          - report
+      workflow:
+        description: 'Specific workflow to analyze (optional)'
+        required: false
+        type: string
+      episodes:
+        description: 'Training episodes (for train mode)'
+        required: false
+        default: '100'
+        type: string
+      data_limit:
+        description: 'Number of workflow runs to collect for data'
+        required: false
+        default: '100'
+        type: string
+  schedule:
+    # Run weekly on Sunday at 3 AM UTC to train and generate recommendations
+    - cron: '0 3 * * 0'
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  rl-optimization:
+    runs-on: ubuntu-latest
+    concurrency:
+      group: rl-resource-optimization
+      cancel-in-progress: false
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Collect workflow data first
+        run: |
+          echo "📥 Collecting latest workflow execution data..."
+          DATA_LIMIT="${{ github.event.inputs.data_limit || '100' }}"
+          python3 tools/github_actions_data_collector.py --collect --limit "$DATA_LIMIT" || {
+            echo "⚠️ Data collection failed, continuing with existing data"
+          }
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Run RL optimization
+        id: optimize
+        run: |
+          echo "🤖 @create-botter - RL Resource Optimizer"
+          echo "========================================"
+          echo ""
+          
+          MODE="${{ github.event.inputs.mode || 'train' }}"
+          WORKFLOW="${{ github.event.inputs.workflow }}"
+          EPISODES="${{ github.event.inputs.episodes || '100' }}"
+          
+          echo "Mode: $MODE"
+          echo "Episodes: $EPISODES"
+          if [ -n "$WORKFLOW" ]; then
+            echo "Workflow: $WORKFLOW"
+          fi
+          echo ""
+          
+          case "$MODE" in
+            "train")
+              echo "🎮 Training RL model with enhanced optimizer..."
+              # Use enhanced optimizer if available, fallback to base
+              if [ -f "tools/rl_optimizer_enhanced.py" ]; then
+                echo "Using enhanced optimizer with Double Q-Learning + PER"
+                python3 tools/rl_optimizer_enhanced.py --simulate "$EPISODES"
+              else
+                python3 tools/rl_resource_optimizer.py --simulate "$EPISODES" --report
+              fi
+              
+              # Generate performance report
+              echo ""
+              echo "📊 Generating performance metrics..."
+              if [ -f "tools/rl_performance_monitor.py" ]; then
+                python3 tools/rl_performance_monitor.py --report
+              fi
+              ;;
+            "recommend")
+              if [ -n "$WORKFLOW" ]; then
+                echo "💡 Getting recommendation for: $WORKFLOW"
+                python3 tools/rl_resource_optimizer.py --workflow "$WORKFLOW"
+              else
+                echo "💡 Generating recommendations for all workflows..."
+                python3 tools/rl_resource_optimizer.py --report
+                
+                # Generate automated recommendations
+                echo ""
+                echo "🎯 Automated Recommendation Engine..."
+                if [ -f "tools/rl_recommendation_engine.py" ]; then
+                  python3 tools/rl_recommendation_engine.py --report
+                fi
+              fi
+              ;;
+            "report")
+              echo "📊 Generating comprehensive report..."
+              python3 tools/rl_resource_optimizer.py --report
+              
+              # Add performance monitoring report
+              echo ""
+              echo "📈 Performance Monitoring Report..."
+              if [ -f "tools/rl_performance_monitor.py" ]; then
+                python3 tools/rl_performance_monitor.py --report
+                python3 tools/rl_performance_monitor.py --dashboard --export .github/rl-optimizer/dashboard.json
+              fi
+              
+              # Add recommendation engine report
+              echo ""
+              echo "💡 Recommendation Engine Report..."
+              if [ -f "tools/rl_recommendation_engine.py" ]; then
+                python3 tools/rl_recommendation_engine.py --report
+              fi
+              ;;
+            *)
+              echo "Unknown mode: $MODE"
+              exit 1
+              ;;
+          esac
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Check for changes
+        id: check_changes
+        run: |
+          git add -A
+          if git diff --staged --quiet; then
+            echo "has_changes=false" >> "$GITHUB_OUTPUT"
+            echo "ℹ️ No changes to commit"
+          else
+            echo "has_changes=true" >> "$GITHUB_OUTPUT"
+            echo "✓ RL model updated"
+          fi
+
+      - name: Commit RL model updates
+        if: steps.check_changes.outputs.has_changes == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+          BRANCH_NAME="rl-optimization/${TIMESTAMP}-${{ github.run_id }}"
+          
+          git checkout -b "$BRANCH_NAME"
+          git add .github/rl-optimizer/
+          git commit -m "chore: Update RL model for resource optimization by @create-botter"
+          git push origin "$BRANCH_NAME"
+          
+          PR_BODY="## 🧠 Reinforcement Learning Model Update
+
+          **@create-botter** has trained and updated the RL resource optimization model.
+
+          ### What's Included
+          - Updated Q-table with learned optimal actions
+          - New experiences from workflow execution data
+          - Performance metrics and insights
+
+          ### Benefits
+          - Better workflow scheduling recommendations
+          - Optimized concurrency and timeout settings
+          - Improved caching strategy suggestions
+          - Reduced resource waste
+
+          ---
+
+          *Created by **@create-botter** - RL Resource Optimizer 🏭*"
+          
+          gh pr create \
+            --title "🤖 RL Resource Optimization Model Update" \
+            --body "$PR_BODY" \
+            --label "automated,workflow-optimization" \
+            --base main \
+            --head "$BRANCH_NAME" || {
+              echo "⚠️ PR creation with labels failed, retrying without labels..."
+              gh pr create \
+                --title "🤖 RL Resource Optimization Model Update" \
+                --body "$PR_BODY" \
+                --base main \
+                --head "$BRANCH_NAME"
+            }
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create summary
+        run: |
+          echo "## 🤖 RL Resource Optimization Summary" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "**@create-botter** has processed resource optimization using reinforcement learning." >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          
+          if [ -f ".github/rl-optimizer/q_table.json" ]; then
+            echo "### 📊 Model Statistics" >> "$GITHUB_STEP_SUMMARY"
+            echo "" >> "$GITHUB_STEP_SUMMARY"
+            
+            python3 -c "
+          import json
+          with open('.github/rl-optimizer/q_table.json', 'r') as f:
+              data = json.load(f)
+          stats = data.get('stats', {})
+          print(f\"- **States Learned**: {stats.get('num_states', 0)}\")
+          print(f\"- **Q-Table Entries**: {stats.get('total_q_entries', 0)}\")
+          print(f\"- **Epsilon**: {data.get('epsilon', 1.0):.3f}\")
+          print(f\"- **Total Episodes**: {data.get('total_episodes', 0)}\")
+          print(f\"- **Last Updated**: {data.get('last_updated', 'N/A')}\")
+          " >> "$GITHUB_STEP_SUMMARY" || echo "⚠️ Could not read model stats" >> "$GITHUB_STEP_SUMMARY"
+            
+            echo "" >> "$GITHUB_STEP_SUMMARY"
+            echo "### 🎯 Key Insights" >> "$GITHUB_STEP_SUMMARY"
+            echo "" >> "$GITHUB_STEP_SUMMARY"
+            echo "The RL model has learned to optimize:" >> "$GITHUB_STEP_SUMMARY"
+            echo "- Concurrency settings for workflow parallelization" >> "$GITHUB_STEP_SUMMARY"
+            echo "- Timeout configurations to prevent failures" >> "$GITHUB_STEP_SUMMARY"
+            echo "- Caching strategies for faster builds" >> "$GITHUB_STEP_SUMMARY"
+            echo "- Job parallelization for reduced total time" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "ℹ️ No RL model found yet. Run with mode: train to start training." >> "$GITHUB_STEP_SUMMARY"
+          fi
+          
+          # Add performance monitoring summary
+          if [ -f ".github/rl-optimizer/metrics/learning_history.json" ]; then
+            echo "" >> "$GITHUB_STEP_SUMMARY"
+            echo "### 📈 Performance Monitoring" >> "$GITHUB_STEP_SUMMARY"
+            echo "" >> "$GITHUB_STEP_SUMMARY"
+            
+            python3 -c "
+          import json
+          import sys
+          sys.path.insert(0, 'tools')
+          from rl_performance_monitor import RLPerformanceMonitor
+          monitor = RLPerformanceMonitor()
+          convergence = monitor.get_convergence_status()
+          effectiveness = monitor.get_recommendation_effectiveness()
+          print(f\"- **Convergence Status**: {convergence['status'].upper()}\")
+          print(f\"- **Convergence Score**: {convergence['convergence_score']:.2f}\")
+          print(f\"- **Total Recommendations**: {effectiveness['total_recommendations']}\")
+          print(f\"- **Success Rate**: {effectiveness['success_rate']*100:.1f}%\")
+          print(f\"- **Avg Improvement**: {effectiveness['avg_improvement']:.1f}%\")
+          " >> "$GITHUB_STEP_SUMMARY" 2>&1 || echo "⚠️ Performance data not available yet" >> "$GITHUB_STEP_SUMMARY"
+          fi
+          
+          # Add recommendation summary
+          if [ -f ".github/rl-optimizer/recommendations/active_recommendations.json" ]; then
+            echo "" >> "$GITHUB_STEP_SUMMARY"
+            echo "### 💡 Active Recommendations" >> "$GITHUB_STEP_SUMMARY"
+            echo "" >> "$GITHUB_STEP_SUMMARY"
+            
+            python3 -c "
+          import json
+          with open('.github/rl-optimizer/recommendations/active_recommendations.json', 'r') as f:
+              recs = json.load(f)
+          if recs:
+              print(f\"📋 **{len(recs)} recommendations** ready for implementation\")
+              print(\"\")
+              for rec in recs[:5]:
+                  print(f\"- **{rec['workflow_name']}**: {rec['description']}\")
+                  print(f\"  Expected: {rec['expected_improvement']:.1f}% improvement\")
+          else:
+              print(\"No active recommendations at this time.\")
+          " >> "$GITHUB_STEP_SUMMARY" 2>&1 || echo "No recommendations data" >> "$GITHUB_STEP_SUMMARY"
+          fi
+          
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "---" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "*🤖 Created by workflow: [${{ github.workflow }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})*" >> "$GITHUB_STEP_SUMMARY"

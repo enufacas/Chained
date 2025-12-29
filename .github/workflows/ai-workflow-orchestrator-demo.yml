@@ -1,23 +1,19 @@
+# ============================================================================
+# WORKFLOW DISABLED
+# Disabled on: 2025-12-29T02:43:14.994388
+# Original workflow name: Demo: AI Workflow Orchestrator
+# Original triggers: workflow_dispatch, schedule
+# 
+# To re-enable: Use the tools/enable_workflows.py script with the
+# workflow_disable_metadata.json file to restore original triggers.
+# ============================================================================
+
 name: "Demo: AI Workflow Orchestrator"
 # Created by @coordinate-wizard
 
 on:
+
   workflow_dispatch:
-    inputs:
-      mode:
-        description: 'Orchestrator mode'
-        required: true
-        default: 'report'
-        type: choice
-        options:
-          - report
-          - simulate
-          - export
-          - accuracy
-          - track-demo
-  schedule:
-    # Run weekly on Monday at 9:00 AM UTC
-    - cron: '0 9 * * 1'
 
 permissions:
   contents: write

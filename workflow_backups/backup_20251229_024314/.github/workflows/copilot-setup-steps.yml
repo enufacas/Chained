@@ -1,0 +1,418 @@
+name: "System: Copilot Setup Steps"
+
+# This workflow is automatically executed by GitHub Copilot before the agent starts working.
+# It runs in the copilot execution environment and can:
+# - Install dependencies
+# - Set up toolchains
+# - Configure environment variables
+# - Access secrets from the 'copilot' environment
+#
+# Documentation: https://docs.github.com/en/copilot/how-tos/use-copilot-agents/coding-agent/customize-the-agent-environment
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - .github/workflows/copilot-setup-steps.yml
+  pull_request:
+    paths:
+      - .github/workflows/copilot-setup-steps.yml
+
+jobs:
+  # The job MUST be named 'copilot-setup-steps' for Copilot to recognize it
+  copilot-setup-steps:
+    name: Copilot setup steps
+    runs-on: ubuntu-latest
+    
+    # Use the 'copilot' environment to access secrets needed by Copilot agents
+    # Secrets like COPILOT_PAT should be configured in: Settings → Environments → copilot
+    environment: copilot
+    
+    # Permissions for the setup steps only
+    # Copilot will receive its own separate token with permissions for its operations
+    permissions:
+      contents: read  # Needed to checkout code
+    
+    steps:
+      - name: Checkout repository (full refs for diffs)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Fetch all refs (ensure diffs find base)
+        run: |
+          git remote set-url origin https://github.com/${{ github.repository }}
+          git fetch --no-tags --prune origin '+refs/heads/*:refs/remotes/origin/*' || true
+
+      - name: Prune large directories to keep workspace small
+        run: |
+          rm -rf node_modules dist build out .cache .parcel-cache .next || true
+          find . -maxdepth 2 \( -name '*.tar.gz' -o -name '*.zip' -o -name '*.tgz' \) -exec rm -f {} \; || true
+
+      - name: Setup minimal toolchain
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'  # Node.js 20+ required for @google-cloud/gcloud-mcp
+      
+      - name: Setup Python for tools
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then
+            pip install -q -r requirements.txt
+          fi
+
+      - name: Install only developer tooling (no large installs)
+        run: |
+          if [ -f package-lock.json ]; then
+            npm ci --ignore-scripts --no-progress || true
+          fi
+
+      - name: Configure environment for Copilot agents
+        run: |
+          # These environment variables will be available to Copilot after setup
+          echo "COPILOT_LIMIT_CONTEXT=true" >> $GITHUB_ENV
+          echo "COPILOT_IGNORE_FILE=.copilotignore" >> $GITHUB_ENV
+      
+      - name: Configure secrets access for wide-access agents
+        env:
+          # Access COPILOT_PAT from the copilot environment
+          # This secret must be configured in: Settings → Environments → copilot → Secrets
+          COPILOT_PAT: ${{ secrets.COPILOT_PAT }}
+        run: |
+          # Make COPILOT_PAT available to Copilot if it exists
+          if [ -n "$COPILOT_PAT" ]; then
+            echo "✅ COPILOT_PAT secret is available from copilot environment"
+            # Export it for Copilot to use
+            echo "COPILOT_PAT_AVAILABLE=true" >> $GITHUB_ENV
+          else
+            echo "⚠️  COPILOT_PAT not configured in copilot environment"
+            echo "⚠️  Copilot will use standard GITHUB_TOKEN with limited permissions"
+            echo "COPILOT_PAT_AVAILABLE=false" >> $GITHUB_ENV
+          fi
+          
+          # Note: The actual COPILOT_PAT value is not exported here for security
+          # Copilot will access it directly from the environment when needed
+      
+      # =========================================================================
+      # GCP / gcloud-mcp Setup
+      # =========================================================================
+      # This enables Copilot to use the gcloud-mcp server for GCP operations
+      # Required secrets in 'copilot' environment:
+      #   - GCP_PROJECT_ID: Your GCP project ID
+      #   - GCP_SA_KEY: Service account key JSON
+      # Optional:
+      #   - GCP_REGION: Deployment region (default: us-central1)
+      # =========================================================================
+      
+      - name: Check GCP secrets availability
+        id: check-gcp
+        env:
+          GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
+          GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+        run: |
+          if [ -n "$GCP_SA_KEY" ] && [ -n "$GCP_PROJECT_ID" ]; then
+            echo "gcp_configured=true" >> $GITHUB_OUTPUT
+            echo "✅ GCP secrets are configured"
+          else
+            echo "gcp_configured=false" >> $GITHUB_OUTPUT
+            echo "⚠️ GCP secrets not configured - gcloud-mcp will not be available"
+          fi
+      
+      - name: Clean and prepare GCP service account key
+        id: clean-gcp-key
+        if: steps.check-gcp.outputs.gcp_configured == 'true'
+        env:
+          GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
+        run: |
+          # Clean the JSON by removing trailing whitespace and control characters
+          # This handles cases where the secret was pasted with extra formatting
+          # The key often has trailing spaces or carriage returns from copy/paste
+          
+          # Remove trailing whitespace from each line, then remove all newlines, then compact with jq
+          echo "$GCP_SA_KEY" | sed 's/[[:space:]]*$//' | tr -d '\r\n' | jq -c '.' > /tmp/gcp-sa-key-cleaned.json 2>/dev/null
+          
+          if [ -s /tmp/gcp-sa-key-cleaned.json ] && jq -e '.' /tmp/gcp-sa-key-cleaned.json > /dev/null 2>&1; then
+            echo "key_valid=true" >> $GITHUB_OUTPUT
+            # Set env var for gcloud auth and SDKs
+            echo "GOOGLE_APPLICATION_CREDENTIALS=/tmp/gcp-sa-key-cleaned.json" >> $GITHUB_ENV
+            echo "✅ GCP service account key validated and saved"
+          else
+            echo "key_valid=false" >> $GITHUB_OUTPUT
+            echo "❌ Failed to parse GCP service account key JSON"
+            echo "❌ Please ensure the GCP_SA_KEY secret contains valid JSON"
+            echo "❌ Tip: Copy the entire contents of your service account key file without modification"
+          fi
+      
+      - name: Authenticate to Google Cloud
+        id: gcp-auth
+        if: steps.clean-gcp-key.outputs.key_valid == 'true'
+        run: |
+          # Use gcloud auth with the cleaned credentials file
+          gcloud auth activate-service-account --key-file=/tmp/gcp-sa-key-cleaned.json
+          if [ $? -eq 0 ]; then
+            echo "✅ GCP authentication successful"
+            echo "auth_success=true" >> $GITHUB_OUTPUT
+          else
+            echo "❌ GCP authentication failed"
+            echo "auth_success=false" >> $GITHUB_OUTPUT
+          fi
+        continue-on-error: true
+      
+      - name: Configure gcloud CLI project
+        if: steps.gcp-auth.outputs.auth_success == 'true'
+        env:
+          GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+        run: |
+          gcloud config set project "$GCP_PROJECT_ID"
+          echo "✅ gcloud CLI configured for project: $GCP_PROJECT_ID"
+      
+      - name: Configure GCP environment for Copilot
+        env:
+          GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+          GCP_REGION: ${{ secrets.GCP_REGION }}
+        run: |
+          # Check if GCP is configured
+          if [ -n "$GCP_PROJECT_ID" ]; then
+            echo "✅ GCP_PROJECT_ID is configured"
+            echo "GCP_PROJECT_ID=$GCP_PROJECT_ID" >> $GITHUB_ENV
+            echo "CLOUDSDK_CORE_PROJECT=$GCP_PROJECT_ID" >> $GITHUB_ENV
+            
+            # Set region (default to us-central1)
+            REGION="${GCP_REGION:-us-central1}"
+            echo "GCP_REGION=$REGION" >> $GITHUB_ENV
+            echo "CLOUDSDK_COMPUTE_REGION=$REGION" >> $GITHUB_ENV
+            
+            # Verify gcloud is working
+            if command -v gcloud &> /dev/null; then
+              echo "✅ gcloud CLI is available"
+              gcloud config list --format="value(core.project)" 2>/dev/null && echo "✅ GCP authentication successful"
+              echo "GCP_AVAILABLE=true" >> $GITHUB_ENV
+            else
+              echo "⚠️  gcloud CLI not available"
+              echo "GCP_AVAILABLE=false" >> $GITHUB_ENV
+            fi
+          else
+            echo "⚠️  GCP_PROJECT_ID not configured in copilot environment"
+            echo "⚠️  gcloud-mcp will not be available"
+            echo "GCP_AVAILABLE=false" >> $GITHUB_ENV
+          fi
+      
+      # =========================================================================
+      # Gemini API Setup (for ask_gemini tool)
+      # =========================================================================
+      # This enables Copilot to use the ask_gemini tool for consulting Gemini
+      # Required secrets (choose one):
+      #   Option A: GEMINI_API_KEY (Google AI Studio)
+      #   Option B: GOOGLE_API_KEY + USE_VERTEX_AI=true (Vertex AI)
+      # =========================================================================
+      
+      - name: Check Gemini API configuration
+        id: check-gemini
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+          USE_VERTEX_AI: ${{ vars.USE_VERTEX_AI }}
+        run: |
+          GEMINI_MODE="none"
+          
+          # Check for Vertex AI mode
+          if [ "${USE_VERTEX_AI,,}" = "true" ] && [ -n "$GOOGLE_API_KEY" ]; then
+            GEMINI_MODE="vertex"
+            echo "gemini_mode=vertex" >> $GITHUB_OUTPUT
+            echo "✅ Gemini API configured: Vertex AI mode"
+            echo "   Using GOOGLE_API_KEY with Vertex AI"
+          # Check for Google AI Studio mode
+          elif [ -n "$GEMINI_API_KEY" ]; then
+            GEMINI_MODE="genai"
+            echo "gemini_mode=genai" >> $GITHUB_OUTPUT
+            echo "✅ Gemini API configured: Google AI Studio mode"
+            echo "   Using GEMINI_API_KEY"
+          # Check if GOOGLE_API_KEY available but Vertex AI not enabled
+          elif [ -n "$GOOGLE_API_KEY" ] && [ "${USE_VERTEX_AI,,}" != "true" ]; then
+            GEMINI_MODE="genai-fallback"
+            echo "gemini_mode=genai-fallback" >> $GITHUB_OUTPUT
+            echo "⚠️  GOOGLE_API_KEY found but USE_VERTEX_AI not set"
+            echo "   Will attempt to use as Google AI Studio key"
+          else
+            echo "gemini_mode=none" >> $GITHUB_OUTPUT
+            echo "⚠️  Gemini API not configured"
+            echo "   ask_gemini tool will not be available"
+            echo ""
+            echo "To enable, configure one of:"
+            echo "  Option A: Set GEMINI_API_KEY secret (Google AI Studio)"
+            echo "  Option B: Set GOOGLE_API_KEY secret + USE_VERTEX_AI=true variable (Vertex AI)"
+          fi
+          
+          echo "gemini_configured=$([[ $GEMINI_MODE != 'none' ]] && echo 'true' || echo 'false')" >> $GITHUB_OUTPUT
+      
+      - name: Configure Gemini environment for Copilot
+        if: steps.check-gemini.outputs.gemini_configured == 'true'
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+          USE_VERTEX_AI: ${{ vars.USE_VERTEX_AI }}
+          GEMINI_MODE: ${{ steps.check-gemini.outputs.gemini_mode }}
+          GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+        run: |
+          echo "🤖 Configuring Gemini API for ask_gemini tool..."
+          
+          if [ "$GEMINI_MODE" = "vertex" ]; then
+            # Vertex AI mode
+            echo "USE_VERTEX_AI=true" >> $GITHUB_ENV
+            echo "GOOGLE_API_KEY=$GOOGLE_API_KEY" >> $GITHUB_ENV
+            echo "GOOGLE_CLOUD_PROJECT=$GCP_PROJECT_ID" >> $GITHUB_ENV
+            echo "✅ Vertex AI mode enabled"
+            echo "   Model: gemini-3-pro-preview (or gemini-2.0-flash on Vertex AI)"
+            
+          elif [ "$GEMINI_MODE" = "genai" ] || [ "$GEMINI_MODE" = "genai-fallback" ]; then
+            # Google AI Studio mode
+            if [ -n "$GEMINI_API_KEY" ]; then
+              echo "GEMINI_API_KEY=$GEMINI_API_KEY" >> $GITHUB_ENV
+            elif [ -n "$GOOGLE_API_KEY" ]; then
+              echo "GEMINI_API_KEY=$GOOGLE_API_KEY" >> $GITHUB_ENV
+            fi
+            echo "✅ Google AI Studio mode enabled"
+            echo "   Model: gemini-3-pro-preview"
+          fi
+          
+          # Set as available for Copilot
+          echo "GEMINI_AVAILABLE=true" >> $GITHUB_ENV
+          echo "GEMINI_MODE=$GEMINI_MODE" >> $GITHUB_ENV
+      
+      - name: Verify ask_gemini tool
+        if: steps.check-gemini.outputs.gemini_configured == 'true'
+        run: |
+          echo "🧪 Testing ask_gemini tool..."
+          
+          # Test authentication mode detection
+          python3 -c "
+          import sys
+          sys.path.insert(0, 'tools')
+          from ask_gemini import get_auth_mode
+          mode, error = get_auth_mode()
+          if mode:
+              print(f'✅ Authentication mode: {mode}')
+              sys.exit(0)
+          else:
+              print(f'❌ Authentication failed: {error}')
+              sys.exit(1)
+          "
+          
+          if [ $? -eq 0 ]; then
+            echo "✅ ask_gemini tool is ready"
+            echo "ASK_GEMINI_READY=true" >> $GITHUB_ENV
+          else
+            echo "⚠️  ask_gemini tool authentication issue"
+            echo "ASK_GEMINI_READY=false" >> $GITHUB_ENV
+          fi
+        continue-on-error: true
+      
+      - name: Pre-install and verify gcloud-mcp server
+        if: steps.gcp-auth.outputs.auth_success == 'true'
+        run: |
+          echo "📦 Pre-installing gcloud-mcp server..."
+          
+          # Pre-install the gcloud-mcp package globally to speed up startup
+          npm install -g @google-cloud/gcloud-mcp 2>/dev/null || npx -y @google-cloud/gcloud-mcp --help > /dev/null 2>&1
+          
+          # Verify gcloud-mcp can start
+          echo "🔍 Verifying gcloud-mcp server..."
+          timeout 5 npx -y @google-cloud/gcloud-mcp --help > /dev/null 2>&1 && echo "✅ gcloud-mcp server verified" || echo "⚠️ gcloud-mcp verification timed out (may still work)"
+          
+          # Test a simple gcloud command to ensure APIs are accessible
+          echo "🧪 Testing GCP API access..."
+          if gcloud projects describe "$GCP_PROJECT_ID" --format="value(projectId)" > /dev/null 2>&1; then
+            echo "✅ GCP API access confirmed"
+            echo "GCLOUD_MCP_READY=true" >> $GITHUB_ENV
+          else
+            echo "⚠️ GCP API access test failed (firewall may be blocking some domains)"
+            echo "GCLOUD_MCP_READY=partial" >> $GITHUB_ENV
+          fi
+        env:
+          GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+      
+      - name: Setup MCP servers configuration
+        run: |
+          # Create MCP configuration directory
+          mkdir -p ~/.config/copilot-mcp
+          
+          # Build MCP servers configuration
+          cat > ~/.config/copilot-mcp/servers.json << 'EOF'
+          {
+            "mcpServers": {
+              "chained-repository": {
+                "command": "node",
+                "args": ["${{ github.workspace }}/mcp-servers/chained-repository/dist/server.js"],
+                "description": "Chained Repository MCP - Agent system, learnings, automation tools"
+              },
+              "gcloud": {
+                "command": "npx",
+                "args": ["-y", "@google-cloud/gcloud-mcp"],
+                "description": "Google Cloud Platform MCP - Execute gcloud CLI commands"
+              }
+            }
+          }
+          EOF
+          
+          echo "MCP_SERVERS_CONFIG=$HOME/.config/copilot-mcp/servers.json" >> $GITHUB_ENV
+          echo "✅ MCP servers configuration created"
+          
+          # Show configuration for debugging
+          cat ~/.config/copilot-mcp/servers.json
+      
+      - name: Summary
+        run: |
+          echo "## 🤖 Copilot Environment Setup Complete" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Available Tools" >> $GITHUB_STEP_SUMMARY
+          echo "| Tool | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|------|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Node.js | ✅ v20 |" >> $GITHUB_STEP_SUMMARY
+          echo "| Python | ✅ v3.11 |" >> $GITHUB_STEP_SUMMARY
+          echo "| COPILOT_PAT | ${{ env.COPILOT_PAT_AVAILABLE == 'true' && '✅' || '⚠️' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| GCP/gcloud | ${{ env.GCP_AVAILABLE == 'true' && '✅' || '⚠️ Not configured' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| gcloud-mcp | ${{ env.GCLOUD_MCP_READY == 'true' && '✅ Ready' || (env.GCLOUD_MCP_READY == 'partial' && '⚠️ Partial' || '❌ Not available') }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Gemini API | ${{ env.GEMINI_AVAILABLE == 'true' && '✅' || '⚠️ Not configured' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| ask_gemini | ${{ env.ASK_GEMINI_READY == 'true' && '✅ Ready' || '⚠️ Not available' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### MCP Servers" >> $GITHUB_STEP_SUMMARY
+          echo "- chained-repository: Chained repo data access" >> $GITHUB_STEP_SUMMARY
+          echo "- gcloud: Google Cloud Platform CLI (requires GCP secrets)" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ env.GCLOUD_MCP_READY }}" = "true" ]; then
+            echo "### ✅ gcloud-mcp Server" >> $GITHUB_STEP_SUMMARY
+            echo "The gcloud-mcp server is pre-installed and verified. Copilot can use it to execute GCP operations." >> $GITHUB_STEP_SUMMARY
+          elif [ "${{ env.GCLOUD_MCP_READY }}" = "partial" ]; then
+            echo "### ⚠️ gcloud-mcp Server (Partial)" >> $GITHUB_STEP_SUMMARY
+            echo "The gcloud-mcp server is installed but some GCP APIs may be blocked by firewall." >> $GITHUB_STEP_SUMMARY
+          fi
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ env.GEMINI_AVAILABLE }}" = "true" ]; then
+            echo "### ✅ Gemini API (ask_gemini tool)" >> $GITHUB_STEP_SUMMARY
+            echo "The ask_gemini tool is configured and ready. Copilot can escalate to Gemini 3 Pro Preview." >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "**Mode:** ${{ env.GEMINI_MODE }}" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "**Usage:** Say 'ask gemini about [question]' or '@gemini-consultant [question]' in Copilot" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "**Example:**" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            echo 'ask gemini about whether to use REST or GraphQL for this API' >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+          else
+            echo "### ⚠️ Gemini API Not Configured" >> $GITHUB_STEP_SUMMARY
+            echo "The ask_gemini tool is not available. To enable:" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "**Option A: Google AI Studio (Recommended)**" >> $GITHUB_STEP_SUMMARY
+            echo "1. Get API key from https://aistudio.google.com/app/apikey" >> $GITHUB_STEP_SUMMARY
+            echo "2. Add secret GEMINI_API_KEY in Settings → Environments → copilot" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "**Option B: Vertex AI (For GCP users)**" >> $GITHUB_STEP_SUMMARY
+            echo "1. Add secret GOOGLE_API_KEY in Settings → Environments → copilot" >> $GITHUB_STEP_SUMMARY
+            echo "2. Add variable USE_VERTEX_AI=true in Settings → Environments → copilot" >> $GITHUB_STEP_SUMMARY
+          fi

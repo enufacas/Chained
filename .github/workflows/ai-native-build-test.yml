@@ -1,3 +1,13 @@
+# ============================================================================
+# WORKFLOW DISABLED
+# Disabled on: 2025-12-29T02:43:14.994388
+# Original workflow name: AI-Native Control Plane - Build and Test
+# Original triggers: push, pull_request, workflow_dispatch
+# 
+# To re-enable: Use the tools/enable_workflows.py script with the
+# workflow_disable_metadata.json file to restore original triggers.
+# ============================================================================
+
 # ==============================================================================
 # AI-Native Control Plane - Build and Test Workflow
 # ==============================================================================
@@ -15,21 +25,6 @@
 name: AI-Native Control Plane - Build and Test
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - 'services/ai-control-plane/**'
-      - 'services/infra-runner/**'
-      - 'services/state-db/**'
-      - '.github/workflows/ai-native-build-test.yml'
-  
-  pull_request:
-    paths:
-      - 'services/ai-control-plane/**'
-      - 'services/infra-runner/**'
-      - 'services/state-db/**'
-  
   workflow_dispatch:
 
 env:

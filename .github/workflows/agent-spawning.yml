@@ -1,3 +1,13 @@
+# ============================================================================
+# WORKFLOW DISABLED
+# Disabled on: 2025-12-29T02:43:14.994388
+# Original workflow name: Agent System: Spawning
+# Original triggers: schedule, workflow_dispatch
+# 
+# To re-enable: Use the tools/enable_workflows.py script with the
+# workflow_disable_metadata.json file to restore original triggers.
+# ============================================================================
+
 name: "Agent System: Spawning"
 
 # Consolidates multiple agent spawning workflows:
@@ -7,88 +17,8 @@ name: "Agent System: Spawning"
 # - workload-subagent-spawner.yml → Stage: workload-spawner
 
 on:
-  schedule:
-    # Standard spawner: every 3 hours
-    - cron: '0 */3 * * *'
-    # Workload-based spawner: every 2 hours (intelligent sub-agent spawning)
-    - cron: '0 */2 * * *'
   
   workflow_dispatch:
-    inputs:
-      stage:
-        description: 'Which spawning stage to run'
-        required: true
-        type: choice
-        default: 'standard-spawner'
-        options:
-          - standard-spawner
-          - learning-based-spawner
-          - multi-spawner
-          - workload-spawner
-      
-      # Standard spawner options
-      mode:
-        description: '[Standard] Spawning mode'
-        required: false
-        type: choice
-        default: 'mixed'
-        options:
-          - mixed  # 50% existing, 50% new random agents
-          - existing  # Only use existing agent definitions
-          - new  # Always create new random agents
-      specialization:
-        description: '[Standard] Force specific specialization'
-        required: false
-        type: string
-      delete_mode:
-        description: '[Standard] Delete agents before spawning'
-        required: false
-        type: choice
-        default: 'none'
-        options:
-          - none
-          - all
-          - specific
-      delete_agent_ids:
-        description: '[Standard] Agent IDs to delete (comma-separated)'
-        required: false
-        type: string
-      respawn_count:
-        description: '[Standard] Number of agents to spawn after deletion'
-        required: false
-        type: number
-        default: 1
-      
-      # Learning-based spawner options
-      force_spawn:
-        description: '[Learning] Force spawn even if recent spawns exist'
-        required: false
-        type: boolean
-        default: false
-      
-      # Multi-spawner options
-      spawn_count:
-        description: '[Multi] Number of agents to spawn'
-        required: false
-        type: number
-        default: 3
-      batch_mode:
-        description: '[Multi] Batch spawning strategy'
-        required: false
-        type: choice
-        default: 'balanced'
-        options:
-          - balanced  # Mix of existing and new agents
-          - existing  # Only existing agent types
-          - new  # Only new random agents
-          - diverse  # Maximize specialization diversity
-      
-      # Workload spawner options
-      workload_options:
-        description: '[Workload] Options as "max_spawns:5,dry_run:false"'
-        required: false
-        type: string
-        default: 'max_spawns:5,dry_run:false'
 
 permissions:
   contents: write

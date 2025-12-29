@@ -1,0 +1,140 @@
+name: "Agent System: Data Sync"
+
+on:
+  push:
+    paths:
+      - '.github/agent-system/agents/*.json'
+      - '.github/agent-system/metadata/**'
+      - '.github/agent-system/config.json'
+      - '.github/agent-system/hall_of_fame.json'
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  sync-data:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Sync agent data to docs
+        run: |
+          mkdir -p docs/data
+          mkdir -p docs/data/agents
+          
+          # Use registry manager to build a consolidated registry for docs
+          python3 << 'PYEOF'
+          import json
+          import os
+          import sys
+          
+          # Use registry manager
+          sys.path.insert(0, 'tools')
+          from registry_manager import RegistryManager
+          
+          try:
+              registry = RegistryManager()
+              
+              # Build consolidated registry for backward compatibility
+              consolidated = {
+                  "version": "2.0.0",
+                  "agents": registry.list_agents(),
+                  "hall_of_fame": registry.get_hall_of_fame(),
+                  "config": registry.get_config(),
+                  **registry.get_metadata()
+              }
+              
+              # Write consolidated registry for docs
+              with open('docs/data/agent-registry.json', 'w') as f:
+                  json.dump(consolidated, f, indent=2)
+              
+              print("✅ Synced agent registry to GitHub Pages")
+              
+              # Sync individual agent data files
+              agents_dir = 'docs/data/agents'
+              os.makedirs(agents_dir, exist_ok=True)
+              
+              # Sync active agents
+              for agent in consolidated['agents']:
+                  agent_id = agent.get('id')
+                  if not agent_id:
+                      print(f'⚠️ Skipping agent without id: {agent.get("name", "unknown")}')
+                      continue
+                  
+                  try:
+                      agent_file = os.path.join(agents_dir, f'{agent_id}.json')
+                      with open(agent_file, 'w') as f:
+                          json.dump(agent, f, indent=2, ensure_ascii=False)
+                      print(f'✅ Created {agent_file}')
+                  except Exception as e:
+                      print(f'⚠️ Error creating {agent_id}.json: {e}', file=sys.stderr)
+              
+              # Sync hall of fame agents
+              for agent in consolidated['hall_of_fame']:
+                  agent_id = agent.get('id')
+                  if not agent_id:
+                      print(f'⚠️ Skipping Hall of Fame agent without id: {agent.get("name", "unknown")}')
+                      continue
+                  
+                  try:
+                      agent_file = os.path.join(agents_dir, f'{agent_id}.json')
+                      with open(agent_file, 'w') as f:
+                          json.dump(agent, f, indent=2, ensure_ascii=False)
+                      print(f'✅ Created {agent_file} (Hall of Fame)')
+                  except Exception as e:
+                      print(f'⚠️ Error creating {agent_id}.json: {e}', file=sys.stderr)
+              
+              print(f"\n✅ Total synced: {len(consolidated['agents'])} agents, {len(consolidated['hall_of_fame'])} in Hall of Fame")
+              
+          except Exception as e:
+              print(f'❌ Error syncing agent data: {e}', file=sys.stderr)
+              import traceback
+              traceback.print_exc()
+              sys.exit(1)
+          PYEOF
+
+      - name: Commit and create PR
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git add docs/data/
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            # Create a new branch for the PR with unique name using run ID
+            TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+            BRANCH_NAME="agent-data-sync/${TIMESTAMP}-${{ github.run_id }}"
+            git checkout -b "$BRANCH_NAME"
+            
+            # Commit changes
+            git commit -m "📊 Sync agent data to GitHub Pages"
+            
+            # Push branch
+            git push origin "$BRANCH_NAME"
+            
+            # Create PR with consistent date formatting
+            PR_DATE=$(date +%Y-%m-%d)
+            gh pr create \
+              --title "📊 Sync agent data to GitHub Pages - ${PR_DATE}" \
+              --body "## Agent Data Sync"$'\n\n'"This PR syncs agent registry data from \`.github/agent-system/registry.json\` to the \`docs/data/\` directory for GitHub Pages."$'\n\n'"### Changes"$'\n'"- Updated \`docs/data/agent-registry.json\`"$'\n'"- Updated individual agent data files in \`docs/data/agents/\`"$'\n\n'"---"$'\n'"*🤖 Automated data sync workflow*" \
+              --label "agent-system,automated,copilot" \
+              --base main \
+              --head "$BRANCH_NAME"
+            
+            echo "✅ PR created for agent data sync"
+          fi

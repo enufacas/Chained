@@ -1,36 +1,20 @@
+# ============================================================================
+# WORKFLOW DISABLED
+# Disabled on: 2025-12-29T02:43:14.994388
+# Original workflow name: Code Quality: 🤖 Autonomous Reviewer
+# Original triggers: pull_request, pull_request_review, workflow_dispatch
+# 
+# To re-enable: Use the tools/enable_workflows.py script with the
+# workflow_disable_metadata.json file to restore original triggers.
+# ============================================================================
+
 name: "Code Quality: 🤖 Autonomous Reviewer"
 
 # Autonomous code reviewer that learns and improves over time
 # Reviews PRs and evolves criteria based on outcomes
 
 on:
-  pull_request:
-    types: [opened, synchronize, ready_for_review, reopened]
-    paths-ignore:
-      - '**.md'
-      - 'docs/**'
-      - 'learnings/**'
-      - 'analysis/**'
-  
-  pull_request_review:
-    types: [submitted]
-  
-  # Manual trigger for testing and updates
   workflow_dispatch:
-    inputs:
-      action:
-        description: 'Action to perform'
-        required: true
-        type: choice
-        options:
-          - review
-          - update-criteria
-          - show-stats
-        default: 'show-stats'
-      pr_number:
-        description: 'PR number (for review action)'
-        required: false
-        type: string
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.run_id }}

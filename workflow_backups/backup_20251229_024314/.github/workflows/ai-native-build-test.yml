@@ -1,0 +1,262 @@
+# ==============================================================================
+# AI-Native Control Plane - Build and Test Workflow
+# ==============================================================================
+# This workflow builds and tests the AI-Native Control Plane services:
+# - AI Control Plane service
+# - Infra Runner service
+# - State DB migrations
+#
+# Runs on:
+# - Push to main branch (services/** paths)
+# - Pull requests modifying services
+# - Manual dispatch
+# ==============================================================================
+
+name: AI-Native Control Plane - Build and Test
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'services/ai-control-plane/**'
+      - 'services/infra-runner/**'
+      - 'services/state-db/**'
+      - '.github/workflows/ai-native-build-test.yml'
+  
+  pull_request:
+    paths:
+      - 'services/ai-control-plane/**'
+      - 'services/infra-runner/**'
+      - 'services/state-db/**'
+  
+  workflow_dispatch:
+
+env:
+  PYTHON_VERSION: '3.11'
+
+jobs:
+  # ============================================================================
+  # Test Infra Runner Service
+  # ============================================================================
+  test-infra-runner:
+    name: Test Infra Runner
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      
+      - name: Cache pip dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-infra-runner-${{ hashFiles('services/infra-runner/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-infra-runner-
+            ${{ runner.os }}-pip-
+      
+      - name: Install dependencies
+        working-directory: services/infra-runner
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest pytest-cov pytest-asyncio
+      
+      - name: Run syntax check
+        working-directory: services/infra-runner
+        run: |
+          python -m py_compile gcp_client.py main.py
+      
+      - name: Run GCP client tests
+        working-directory: services/infra-runner
+        run: |
+          python test_gcp_client.py
+      
+      - name: Run pytest (if tests exist)
+        working-directory: services/infra-runner
+        run: |
+          if [ -f "test_main.py" ]; then
+            pytest test_main.py -v --cov=. --cov-report=term-missing
+          else
+            echo "No pytest tests found, skipping"
+          fi
+  
+  # ============================================================================
+  # Test AI Control Plane Service
+  # ============================================================================
+  test-ai-control-plane:
+    name: Test AI Control Plane
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      
+      - name: Cache pip dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-control-plane-${{ hashFiles('services/ai-control-plane/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-control-plane-
+            ${{ runner.os }}-pip-
+      
+      - name: Install dependencies
+        working-directory: services/ai-control-plane
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest pytest-cov pytest-asyncio
+      
+      - name: Run syntax check
+        working-directory: services/ai-control-plane
+        run: |
+          python -m py_compile llm.py memory.py main.py
+      
+      - name: Run LLM tests (stub mode)
+        working-directory: services/ai-control-plane
+        run: |
+          if [ -f "test_llm.py" ]; then
+            python test_llm.py
+          else
+            echo "No LLM tests found, skipping"
+          fi
+  
+  # ============================================================================
+  # Test State DB Migrations
+  # ============================================================================
+  test-state-db:
+    name: Test State DB
+    runs-on: ubuntu-latest
+    
+    services:
+      postgres:
+        image: pgvector/pgvector:pg15
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: test_ai_native
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      
+      - name: Install dependencies
+        working-directory: services/state-db
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest pytest-cov
+      
+      - name: Run database migrations
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test_ai_native
+        run: |
+          psql postgresql://postgres:postgres@localhost:5432/test_ai_native -f services/state-db/migrations/001_initial_schema.sql
+          psql postgresql://postgres:postgres@localhost:5432/test_ai_native -f services/state-db/migrations/002_add_vector_support.sql
+      
+      - name: Validate schema
+        working-directory: services/state-db
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test_ai_native
+        run: |
+          if [ -f "validate_schema.py" ]; then
+            python validate_schema.py
+          else
+            echo "No schema validation script, skipping"
+          fi
+      
+      - name: Run vector tests
+        working-directory: services/state-db
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test_ai_native
+        run: |
+          if [ -f "test_vector.py" ]; then
+            python test_vector.py --provider=local
+          else
+            echo "No vector tests found, skipping"
+          fi
+  
+  # ============================================================================
+  # Build Container Images
+  # ============================================================================
+  build-images:
+    name: Build Docker Images
+    runs-on: ubuntu-latest
+    needs: [test-infra-runner, test-ai-control-plane, test-state-db]
+    
+    strategy:
+      matrix:
+        service: [infra-runner, ai-control-plane]
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      
+      - name: Build ${{ matrix.service }} image
+        uses: docker/build-push-action@v5
+        with:
+          context: services/${{ matrix.service }}
+          file: services/${{ matrix.service }}/Dockerfile
+          push: false
+          tags: ${{ matrix.service }}:test
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+      
+      - name: Test ${{ matrix.service }} image
+        run: |
+          docker run --rm ${{ matrix.service }}:test python --version
+
+  # ============================================================================
+  # Summary
+  # ============================================================================
+  build-test-summary:
+    name: Build & Test Summary
+    runs-on: ubuntu-latest
+    needs: [test-infra-runner, test-ai-control-plane, test-state-db, build-images]
+    if: always()
+    
+    steps:
+      - name: Check test results
+        run: |
+          echo "## Test Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- Infra Runner Tests: ${{ needs.test-infra-runner.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "- AI Control Plane Tests: ${{ needs.test-ai-control-plane.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "- State DB Tests: ${{ needs.test-state-db.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Docker Build: ${{ needs.build-images.result }}" >> $GITHUB_STEP_SUMMARY
+          
+          if [ "${{ needs.test-infra-runner.result }}" != "success" ] || \
+             [ "${{ needs.test-ai-control-plane.result }}" != "success" ] || \
+             [ "${{ needs.test-state-db.result }}" != "success" ] || \
+             [ "${{ needs.build-images.result }}" != "success" ]; then
+            echo "❌ Some tests failed" >> $GITHUB_STEP_SUMMARY
+            exit 1
+          else
+            echo "✅ All tests passed" >> $GITHUB_STEP_SUMMARY
+          fi

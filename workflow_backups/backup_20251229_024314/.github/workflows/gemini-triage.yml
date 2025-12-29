@@ -1,0 +1,240 @@
+name: "Gemini: 🏷️ Triage"
+
+# Issue Triage workflow - auto-labels issues based on content analysis
+# Called by gemini-dispatch.yml
+
+on:
+  workflow_call:
+    inputs:
+      additional_context:
+        type: 'string'
+        description: 'Any additional context from the request'
+        required: false
+
+concurrency:
+  group: '${{ github.workflow }}-triage-${{ github.event_name }}-${{ github.event.pull_request.number || github.event.issue.number }}'
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: 'bash'
+
+jobs:
+  triage:
+    runs-on: 'ubuntu-latest'
+    timeout-minutes: 7
+    outputs:
+      available_labels: '${{ steps.get_labels.outputs.available_labels }}'
+      selected_labels: '${{ env.SELECTED_LABELS }}'
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+      issues: 'read'
+      pull-requests: 'read'
+    steps:
+      - name: 'Get repository labels'
+        id: 'get_labels'
+        uses: 'actions/github-script@v7'
+        with:
+          script: |-
+            const labels = [];
+            for await (const response of github.paginate.iterator(github.rest.issues.listLabelsForRepo, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              per_page: 100,
+            })) {
+              labels.push(...response.data);
+            }
+
+            if (!labels || labels.length === 0) {
+              core.setFailed('There are no issue labels in this repository.')
+            }
+
+            const labelNames = labels.map(label => label.name).sort();
+            core.setOutput('available_labels', labelNames.join(','));
+            core.info(`Found ${labelNames.length} labels: ${labelNames.join(', ')}`);
+            return labelNames;
+
+      - name: 'Validate authentication configuration'
+        env:
+          GEMINI_API_KEY: '${{ secrets.GEMINI_API_KEY }}'
+          GOOGLE_API_KEY: '${{ secrets.GOOGLE_API_KEY }}'
+          USE_VERTEX_AI: '${{ vars.GOOGLE_GENAI_USE_VERTEXAI || false }}'
+        run: |
+          # Check if authentication is properly configured
+          if [[ "$USE_VERTEX_AI" == "true" ]]; then
+            if [[ -z "$GOOGLE_API_KEY" ]]; then
+              echo "::error title=Missing Vertex AI Configuration::When GOOGLE_GENAI_USE_VERTEXAI is set to 'true', you must configure the GOOGLE_API_KEY secret."
+              echo ""
+              echo "To fix this issue, follow these steps:"
+              echo "1. Go to Settings > Secrets and variables > Actions"
+              echo "2. Click 'New repository secret'"
+              echo "3. Name: GOOGLE_API_KEY"
+              echo "4. Value: Your Vertex AI API key from Google Cloud Console"
+              echo ""
+              echo "Alternatively, if you prefer to use Google AI Studio instead:"
+              echo "1. Go to Settings > Secrets and variables > Actions > Variables"
+              echo "2. Delete or set GOOGLE_GENAI_USE_VERTEXAI to 'false'"
+              echo "3. Create a GEMINI_API_KEY secret with your Google AI Studio API key"
+              echo ""
+              echo "See docs/GEMINI_CLI_INTEGRATION.md for detailed setup instructions."
+              exit 1
+            fi
+            echo "⚠️  Warning: Using Vertex AI mode. Ensure your API key has 'aiplatform.endpoints.predict' permission."
+            echo "   If you encounter permission errors, see troubleshooting guide in workflow logs."
+          else
+            if [[ -z "$GEMINI_API_KEY" ]]; then
+              echo "::error title=Missing Gemini API Key::No authentication credentials found. You must configure either GEMINI_API_KEY or GOOGLE_API_KEY secret."
+              echo ""
+              echo "Option 1 - Google AI Studio (Recommended for quick start):"
+              echo "1. Get API key from https://aistudio.google.com/app/apikey"
+              echo "2. Go to Settings > Secrets and variables > Actions"
+              echo "3. Create secret: Name=GEMINI_API_KEY, Value=your API key"
+              echo ""
+              echo "Option 2 - Vertex AI (For GCP users):"
+              echo "1. Get API key from Google Cloud Console"
+              echo "2. Create secret: Name=GOOGLE_API_KEY, Value=your Vertex AI API key"
+              echo "3. Create variable: Name=GOOGLE_GENAI_USE_VERTEXAI, Value=true"
+              echo ""
+              echo "See docs/GEMINI_CLI_INTEGRATION.md for detailed setup instructions."
+              exit 1
+            fi
+          fi
+          echo "✅ Authentication configuration validated successfully"
+
+      - name: 'Run Gemini issue analysis'
+        id: 'gemini_analysis'
+        if: |-
+          ${{ steps.get_labels.outputs.available_labels != '' }}
+        uses: 'google-github-actions/run-gemini-cli@v0'
+        env:
+          GITHUB_TOKEN: ''
+          ISSUE_TITLE: '${{ github.event.issue.title }}'
+          ISSUE_BODY: '${{ github.event.issue.body }}'
+          AVAILABLE_LABELS: '${{ steps.get_labels.outputs.available_labels }}'
+        with:
+          # Support both Google AI Studio API Key (GEMINI_API_KEY) and Vertex AI API Key (GOOGLE_API_KEY)
+          gemini_api_key: '${{ secrets.GEMINI_API_KEY }}'
+          google_api_key: '${{ secrets.GOOGLE_API_KEY }}'
+          use_vertex_ai: '${{ vars.GOOGLE_GENAI_USE_VERTEXAI || false }}'
+          gemini_cli_version: '${{ vars.GEMINI_CLI_VERSION || ''latest'' }}'
+          gemini_debug: '${{ fromJSON(vars.DEBUG || vars.ACTIONS_STEP_DEBUG || false) }}'
+          gemini_model: '${{ vars.GEMINI_MODEL || ''gemini-3-pro-preview'' }}'
+          upload_artifacts: '${{ vars.UPLOAD_ARTIFACTS || false }}'
+          workflow_name: 'gemini-triage'
+          settings: |-
+            {
+              "model": {
+                "maxSessionTurns": 25
+              },
+              "telemetry": {
+                "enabled": true,
+                "target": "local",
+                "outfile": ".gemini/telemetry.log"
+              },
+              "tools": {
+                "core": [
+                  "run_shell_command(echo)"
+                ]
+              }
+            }
+          prompt: '/gemini-triage'
+
+      - name: 'Diagnose Vertex AI Permission Errors'
+        if: failure() && steps.gemini_analysis.conclusion == 'failure'
+        env:
+          USE_VERTEX_AI: '${{ vars.GOOGLE_GENAI_USE_VERTEXAI || false }}'
+        run: |
+          # If using Vertex AI mode and the workflow failed, provide helpful troubleshooting
+          if [[ "$USE_VERTEX_AI" == "true" ]]; then
+            echo "::error title=Vertex AI Workflow Failure::The Gemini CLI workflow failed while using Vertex AI mode."
+            echo ""
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            echo "🔐 VERTEX AI TROUBLESHOOTING GUIDE"
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            echo ""
+            echo "Common causes of Vertex AI failures:"
+            echo "  • API key lacks 'aiplatform.endpoints.predict' permission"
+            echo "  • Vertex AI API not enabled for API key"
+            echo "  • Vertex AI API not enabled for GCP project"
+            echo "  • Billing not enabled on GCP project"
+            echo ""
+            echo "📋 SOLUTION OPTIONS:"
+            echo ""
+            echo "Option 1: Enable Vertex AI Permissions (if using GCP API key)"
+            echo "  1. Go to Google Cloud Console: https://console.cloud.google.com"
+            echo "  2. Navigate to APIs & Services > Credentials"
+            echo "  3. Edit your API key and ensure 'Vertex AI API' is enabled under API restrictions"
+            echo "  4. Go to APIs & Services > Library"
+            echo "  5. Enable 'Vertex AI API' if not already enabled"
+            echo "  6. Ensure billing is enabled on your GCP project"
+            echo "  7. Wait a few minutes for permissions to propagate"
+            echo ""
+            echo "Option 2: Switch to Google AI Studio (Recommended - Simpler Setup)"
+            echo "  1. Get a free API key from: https://aistudio.google.com/app/apikey"
+            echo "  2. Go to Settings > Secrets and variables > Actions"
+            echo "  3. Delete the GOOGLE_API_KEY secret"
+            echo "  4. Create a new secret:"
+            echo "     • Name: GEMINI_API_KEY"
+            echo "     • Value: Your Google AI Studio API key"
+            echo "  5. Go to Variables tab and set:"
+            echo "     • Name: GOOGLE_GENAI_USE_VERTEXAI"
+            echo "     • Value: false"
+            echo "  6. Re-run this workflow"
+            echo ""
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            echo "📚 ADDITIONAL RESOURCES:"
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            echo ""
+            echo "• Vertex AI API Keys: https://cloud.google.com/vertex-ai/generative-ai/docs/start/api-keys"
+            echo "• Repository Setup Guide: docs/GEMINI_CLI_INTEGRATION.md"
+            echo "• Original Error: Check 'Run Gemini issue analysis' step logs above for details"
+            echo ""
+            exit 1
+          fi
+          
+          # If not using Vertex AI, show generic error
+          echo "::error title=Gemini CLI Execution Failed::The Gemini CLI encountered an error. Check the 'Run Gemini issue analysis' step above for details."
+          exit 1
+
+  label:
+    runs-on: 'ubuntu-latest'
+    needs:
+      - 'triage'
+    if: |-
+      ${{ needs.triage.outputs.selected_labels != '' }}
+    permissions:
+      contents: 'read'
+      issues: 'write'
+      pull-requests: 'write'
+    steps:
+      - name: 'Apply labels'
+        env:
+          ISSUE_NUMBER: '${{ github.event.issue.number }}'
+          AVAILABLE_LABELS: '${{ needs.triage.outputs.available_labels }}'
+          SELECTED_LABELS: '${{ needs.triage.outputs.selected_labels }}'
+        uses: 'actions/github-script@v7'
+        with:
+          github-token: '${{ secrets.GITHUB_TOKEN }}'
+          script: |-
+            const availableLabels = (process.env.AVAILABLE_LABELS || '').split(',')
+              .map((label) => label.trim())
+              .sort()
+
+            const selectedLabels = (process.env.SELECTED_LABELS || '').split(',')
+              .map((label) => label.trim())
+              .filter((label) => availableLabels.includes(label))
+              .sort()
+
+            const issueNumber = process.env.ISSUE_NUMBER;
+            if (selectedLabels && selectedLabels.length > 0) {
+              await github.rest.issues.setLabels({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issueNumber,
+                labels: selectedLabels,
+              });
+              core.info(`Successfully set labels: ${selectedLabels.join(',')}`);
+            } else {
+              core.info(`Failed to determine labels to set. There may not be enough information in the issue or pull request.`)
+            }

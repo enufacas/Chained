@@ -1,0 +1,320 @@
+name: "A2A: Agent Worker"
+
+# This workflow implements Tier 2 A2A: cross-runner agent communication
+# using GitHub Issues as a message bus.
+#
+# Triggered when:
+# 1. An issue is created with label "a2a-task"
+# 2. Manual workflow_dispatch with issue number
+#
+# The worker:
+# 1. Reads the A2A task from the issue body
+# 2. Executes the assigned agent
+# 3. Posts the result as a comment
+# 4. Updates issue labels to mark completion
+
+on:
+  issues:
+    types: [opened, labeled]
+  
+  workflow_dispatch:
+    inputs:
+      issue_number:
+        description: 'Issue number containing A2A task'
+        required: true
+        type: number
+      agent_name:
+        description: 'Agent name to execute'
+        required: false
+        type: string
+
+jobs:
+  execute-a2a-task:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360  # 6 hours max
+    
+    # Only run if issue has a2a-task label
+    if: |
+      (github.event_name == 'workflow_dispatch') ||
+      (github.event_name == 'issues' && contains(github.event.issue.labels.*.name, 'a2a-task'))
+    
+    steps:
+      - name: Determine issue number
+        id: issue
+        run: |
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            echo "number=${{ github.event.inputs.issue_number }}" >> $GITHUB_OUTPUT
+          else
+            echo "number=${{ github.event.issue.number }}" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+      
+      - name: Parse A2A task from issue
+        id: parse_task
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "📋 Parsing A2A task from issue #${{ steps.issue.outputs.number }}..."
+          
+          # Get issue details
+          issue_json=$(gh api "repos/${{ github.repository }}/issues/${{ steps.issue.outputs.number }}")
+          
+          # Extract agent name from labels
+          agent_name=""
+          if [ -n "${{ github.event.inputs.agent_name }}" ]; then
+            agent_name="${{ github.event.inputs.agent_name }}"
+          else
+            agent_name=$(echo "$issue_json" | jq -r '.labels[] | select(.name | startswith("agent:")) | .name' | head -1 | cut -d: -f2)
+          fi
+          
+          echo "agent=$agent_name" >> $GITHUB_OUTPUT
+          
+          # Extract message payload from issue body
+          issue_body=$(echo "$issue_json" | jq -r '.body')
+          
+          # Save to file for Python processing
+          echo "$issue_body" > /tmp/issue_body.txt
+          
+          echo "Agent: $agent_name"
+          echo "Issue parsed successfully"
+      
+      - name: Acknowledge task
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "✅ Acknowledging task..."
+          
+          TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+          
+          gh issue comment ${{ steps.issue.outputs.number }} --body \
+          "🤖 **Agent ${{ steps.parse_task.outputs.agent }} starting work**
+          
+          **Workflow Run:** [#${{ github.run_number }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+          **Started:** ${TIMESTAMP}
+          
+          ---
+          *This comment was posted by the A2A agent worker*"
+          
+          # Update status label
+          python3 << 'EOF'
+          import os
+          import json
+          import subprocess
+          
+          issue_num = "${{ steps.issue.outputs.number }}"
+          
+          # Get current labels
+          result = subprocess.run(
+              ["gh", "api", f"repos/${{ github.repository }}/issues/{issue_num}"],
+              capture_output=True, text=True, env=os.environ
+          )
+          issue = json.loads(result.stdout)
+          
+          # Remove old status labels, add 'working'
+          labels = [l["name"] for l in issue["labels"] if not l["name"].startswith("status:")]
+          labels.append("status:working")
+          
+          # Update issue
+          subprocess.run(
+              ["gh", "api", "-X", "PATCH",
+               f"repos/${{ github.repository }}/issues/{issue_num}",
+               "-f", f"labels={json.dumps(labels)}"],
+              env=os.environ
+          )
+          
+          print("✅ Status updated to 'working'")
+          EOF
+      
+      - name: Execute agent task
+        id: execute
+        run: |
+          echo "🚀 Executing agent: ${{ steps.parse_task.outputs.agent }}"
+          
+          # Extract A2A message from issue body
+          message=$(python3 << 'EOF'
+          import re
+          import json
+          
+          with open('/tmp/issue_body.txt', 'r') as f:
+              body = f.read()
+          
+          # Extract JSON from code block
+          match = re.search(r'```json\n(.*?)\n```', body, re.DOTALL)
+          if match:
+              message = json.loads(match.group(1))
+              # Extract text from message if present
+              if 'params' in message and 'message' in message['params']:
+                  msg_obj = message['params']['message']
+                  if 'parts' in msg_obj:
+                      for part in msg_obj['parts']:
+                          if part.get('kind') == 'text':
+                              print(part.get('text', ''))
+                              break
+          EOF
+          )
+          
+          echo "Task message: $message"
+          
+          # Execute the agent with the message
+          # For now, this calls the executor directly
+          # In future, this would integrate with actual agent runtime
+          
+          result=$(python3 << 'EOF'
+          import sys
+          import json
+          sys.path.insert(0, '/home/runner/work/Chained/Chained')
+          
+          from tools.a2a.agent_executor import ChainedAgentExecutor
+          from a2a.server.events import EventQueue
+          from a2a.server.agent_execution import RequestContext
+          import asyncio
+          
+          async def execute():
+              agent_name = "${{ steps.parse_task.outputs.agent }}"
+              executor = ChainedAgentExecutor(agent_name)
+              
+              # Create mock context and event queue
+              class MockContext:
+                  task_id = "${{ steps.issue.outputs.number }}"
+                  request = type('obj', (object,), {
+                      'params': type('obj', (object,), {
+                          'message': type('obj', (object,), {
+                              'parts': [type('obj', (object,), {
+                                  'kind': 'text',
+                                  'text': 'Execute task from GitHub issue'
+                              })()]
+                          })()
+                      })()
+                  })()
+              
+              events = []
+              class MockQueue:
+                  async def enqueue_event(self, event):
+                      events.append(event)
+              
+              context = MockContext()
+              queue = MockQueue()
+              
+              try:
+                  await executor.execute(context, queue)
+                  
+                  # Extract result from events
+                  result_text = ""
+                  for event in events:
+                      if hasattr(event, 'text'):
+                          result_text += event.text + "\n"
+                  
+                  return {
+                      "status": "completed",
+                      "result": result_text.strip(),
+                      "agent": agent_name
+                  }
+              except Exception as e:
+                  return {
+                      "status": "failed",
+                      "error": str(e),
+                      "agent": agent_name
+                  }
+          
+          result = asyncio.run(execute())
+          print(json.dumps(result))
+          EOF
+          )
+          
+          echo "result<<EOF" >> $GITHUB_OUTPUT
+          echo "$result" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+      
+      - name: Post result to issue
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "📤 Posting result to issue..."
+          
+          # Parse result
+          result='${{ steps.execute.outputs.result }}'
+          status=$(echo "$result" | jq -r '.status')
+          
+          # Create comment body
+          if [ "$status" == "completed" ]; then
+            icon="✅"
+          else
+            icon="❌"
+          fi
+          
+          gh issue comment ${{ steps.issue.outputs.number }} --body "$icon **Task $status**
+          
+          **Agent:** ${{ steps.parse_task.outputs.agent }}
+          **Completed:** $(date -u +%Y-%m-%dT%H:%M:%SZ)
+          
+          ### A2A Result
+          
+          \`\`\`json
+          $result
+          \`\`\`
+          
+          ---
+          *Posted by A2A agent worker*"
+          
+          # Update status label
+          python3 << 'EOF'
+          import os
+          import json
+          import subprocess
+          
+          issue_num = "${{ steps.issue.outputs.number }}"
+          result = '''${{ steps.execute.outputs.result }}'''
+          result_obj = json.loads(result)
+          status = result_obj.get('status', 'failed')
+          
+          # Get current labels
+          result = subprocess.run(
+              ["gh", "api", f"repos/${{ github.repository }}/issues/{issue_num}"],
+              capture_output=True, text=True, env=os.environ
+          )
+          issue = json.loads(result.stdout)
+          
+          # Remove old status labels, add final status
+          labels = [l["name"] for l in issue["labels"] if not l["name"].startswith("status:")]
+          labels.append(f"status:{status}")
+          
+          # Update issue and close it
+          subprocess.run(
+              ["gh", "api", "-X", "PATCH",
+               f"repos/${{ github.repository }}/issues/{issue_num}",
+               "-f", f"labels={json.dumps(labels)}",
+               "-f", "state=closed"],
+              env=os.environ
+          )
+          
+          print(f"✅ Status updated to '{status}' and issue closed")
+          EOF
+      
+      - name: Summary
+        if: always()
+        run: |
+          echo "## A2A Agent Worker Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Issue:** #${{ steps.issue.outputs.number }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Agent:** ${{ steps.parse_task.outputs.agent }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          result='${{ steps.execute.outputs.result }}'
+          if [ -n "$result" ]; then
+            status=$(echo "$result" | jq -r '.status // "unknown"')
+            echo "**Status:** $status" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Mode:** Tier 2 (GitHub-Mediated A2A)" >> $GITHUB_STEP_SUMMARY

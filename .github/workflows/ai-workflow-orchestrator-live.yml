@@ -1,23 +1,19 @@
+# ============================================================================
+# WORKFLOW DISABLED
+# Disabled on: 2025-12-29T02:43:14.994388
+# Original workflow name: AI Workflow Orchestrator - Live Predictions
+# Original triggers: workflow_dispatch, schedule
+# 
+# To re-enable: Use the tools/enable_workflows.py script with the
+# workflow_disable_metadata.json file to restore original triggers.
+# ============================================================================
+
 name: "AI Workflow Orchestrator - Live Predictions"
 # Created by @create-botter - Enhanced with real-time data collection
 
 on:
+
   workflow_dispatch:
-    inputs:
-      mode:
-        description: 'Orchestrator mode'
-        required: true
-        default: 'status'
-        type: choice
-        options:
-          - status
-          - predict
-          - insights
-          - report
-          - dashboard
-  schedule:
-    # Run daily at 6:00 AM UTC for monitoring
-    - cron: '0 6 * * *'
 
 permissions:
   contents: write

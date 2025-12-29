@@ -1,31 +1,17 @@
+# ============================================================================
+# WORKFLOW DISABLED
+# Disabled on: 2025-12-29T02:43:14.994388
+# Original workflow name: Cleanup: Close Stale Issues and Conflicted PRs
+# Original triggers: schedule, workflow_dispatch
+# 
+# To re-enable: Use the tools/enable_workflows.py script with the
+# workflow_disable_metadata.json file to restore original triggers.
+# ============================================================================
+
 name: "Cleanup: Close Stale Issues and Conflicted PRs"
 
 on:
-  schedule:
-    # Run every hour to check for stale issues and PRs with conflicts
-    - cron: '0 * * * *'
   workflow_dispatch:
-    inputs:
-      issue_hours:
-        description: 'Close issues older than this many hours'
-        required: false
-        default: '2'
-        type: string
-      close_issues:
-        description: 'Enable closing stale issues'
-        required: false
-        default: 'true'
-        type: boolean
-      close_prs:
-        description: 'Enable closing PRs with conflicts'
-        required: false
-        default: 'true'
-        type: boolean
-      dry_run:
-        description: 'Dry run mode (no actual closures)'
-        required: false
-        default: 'false'
-        type: boolean
 
 permissions:
   contents: write

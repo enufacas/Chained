@@ -1,3 +1,13 @@
+# ============================================================================
+# WORKFLOW DISABLED
+# Disabled on: 2025-12-29T02:43:14.994388
+# Original workflow name: System: Goal and Idea
+# Original triggers: schedule, workflow_dispatch
+# 
+# To re-enable: Use the tools/enable_workflows.py script with the
+# workflow_disable_metadata.json file to restore original triggers.
+# ============================================================================
+
 name: "System: Goal and Idea"
 
 # Consolidates goal and idea generation workflows:
@@ -7,52 +17,8 @@ name: "System: Goal and Idea"
 # - idea-generator.yml → Stage: general-ideas
 
 on:
-  schedule:
-    # AI Ideas: once daily at 10 AM UTC (reduced from every 4 hours)
-    - cron: '0 10 * * *'
-    # Daily Goals: 6 AM UTC
-    - cron: '0 6 * * *'
-    # Progress Check: 8 PM UTC
-    - cron: '0 20 * * *'
   
   workflow_dispatch:
-    inputs:
-      stage:
-        description: 'Which stage to run'
-        required: true
-        type: choice
-        default: 'daily-goals'
-        options:
-          - ai-idea-spawner
-          - daily-goals
-          - progress-checker
-          - general-ideas
-      
-      # AI Idea Spawner options
-      focus:
-        description: '[AI Ideas] Focus area'
-        required: false
-        type: choice
-        options:
-          - auto
-          - ai-autonomy
-          - ml-learning
-          - code-generation
-          - agent-systems
-          - performance
-        default: 'auto'
-      
-      # Daily Goals options
-      force_new_goal:
-        description: '[Daily Goals] Force new goal even if one exists'
-        required: false
-        default: 'false'
-      
-      # General Ideas options
-      idea_count:
-        description: '[General] Number of ideas to generate'
-        required: false
-        default: '3'
 
 permissions:
   issues: write

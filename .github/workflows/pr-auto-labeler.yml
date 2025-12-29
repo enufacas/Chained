@@ -1,29 +1,21 @@
+# ============================================================================
+# WORKFLOW DISABLED
+# Disabled on: 2025-12-29T02:43:14.994388
+# Original workflow name: Automation: Smart PR Auto-Labeling
+# Original triggers: pull_request, workflow_dispatch
+# 
+# To re-enable: Use the tools/enable_workflows.py script with the
+# workflow_disable_metadata.json file to restore original triggers.
+# ============================================================================
+
 name: "Automation: Smart PR Auto-Labeling"
 
 # Built by @assert-specialist with specification-driven approach
 # Analyzes PR content and automatically applies appropriate labels
 
 on:
-  pull_request:
-    types: [opened, synchronize, reopened, edited]
-    # Don't run on draft PRs to save resources
-    # Exclude certain paths that don't need labeling
-    paths-ignore:
-      - '.github/copilot-instructions.md'
-      - 'learnings/**'
-      - 'analysis/**'
-    # Note: We intentionally do NOT use 'paths' filters here because
-    # this workflow needs to run on ALL PRs to label them correctly.
-    # Path filters would limit when this runs, breaking the labeling system.
-    # The tools/pr-content-analyzer.py script is a dependency, but changes
-    # to it don't require re-running this on old PRs - only new PRs need labels.
   
   workflow_dispatch:
-    inputs:
-      pr_number:
-        description: 'PR number to analyze and label'
-        required: true
-        type: string
 
 permissions:
   contents: read

@@ -1,11 +1,18 @@
+# ============================================================================
+# WORKFLOW DISABLED
+# Disabled on: 2025-12-29T02:43:14.994388
+# Original workflow name: Workflow Execution Recorder
+# Original triggers: workflow_run
+# 
+# To re-enable: Use the tools/enable_workflows.py script with the
+# workflow_disable_metadata.json file to restore original triggers.
+# ============================================================================
+
 name: "Workflow Execution Recorder"
 # Created by @create-botter - Real execution tracking for AI orchestrator
 
 on:
-  workflow_run:
-    workflows: ["*"]  # Track all workflows
-    types:
-      - completed
+  workflow_dispatch:
 
 permissions:
   contents: write

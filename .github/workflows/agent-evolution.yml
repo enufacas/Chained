@@ -1,20 +1,18 @@
+# ============================================================================
+# WORKFLOW DISABLED
+# Disabled on: 2025-12-29T02:43:14.994388
+# Original workflow name: Evolution: Agent Genetic Algorithm
+# Original triggers: schedule, workflow_dispatch
+# 
+# To re-enable: Use the tools/enable_workflows.py script with the
+# workflow_disable_metadata.json file to restore original triggers.
+# ============================================================================
+
 name: "Evolution: Agent Genetic Algorithm"
 
 on:
-  schedule:
-    # Run weekly on Sundays at midnight UTC (after evaluation)
-    - cron: '5 0 * * 0'
   
   workflow_dispatch:
-    inputs:
-      max_offspring:
-        description: 'Maximum number of offspring to create'
-        required: false
-        default: '2'
-      force_evolution:
-        description: 'Force evolution even if no eligible candidates'
-        required: false
-        default: 'false'
 
 permissions:
   contents: write

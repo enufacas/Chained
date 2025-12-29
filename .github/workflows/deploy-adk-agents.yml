@@ -1,3 +1,13 @@
+# ============================================================================
+# WORKFLOW DISABLED
+# Disabled on: 2025-12-29T02:43:14.994388
+# Original workflow name: Deploy: ADK Agents
+# Original triggers: push, workflow_dispatch
+# 
+# To re-enable: Use the tools/enable_workflows.py script with the
+# workflow_disable_metadata.json file to restore original triggers.
+# ============================================================================
+
 # =============================================================================
 # Deploy ADK A2A Agents to Cloud Run
 # =============================================================================
@@ -26,40 +36,8 @@
 name: "Deploy: ADK Agents"
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - 'infrastructure/docker/adk-agents/**'
-      - 'infrastructure/docker/adk-api-server/**'
-      - 'infrastructure/docker/ag-ui-frontend/**'
-      - 'infrastructure/docker/ag-organism-frontend/**'
-      - 'infrastructure/terraform/adk-agents.tf'
-      - '.github/workflows/deploy-adk-agents.yml'
 
   workflow_dispatch:
-    inputs:
-      environment:
-        description: 'Environment to deploy to'
-        required: true
-        default: 'dev'
-        type: choice
-        options:
-          - dev
-          - staging
-          - prod
-
-      deploy_agents:
-        description: 'Deploy agent containers'
-        required: true
-        default: true
-        type: boolean
-
-      deploy_terraform:
-        description: 'Apply Terraform changes'
-        required: true
-        default: true
-        type: boolean
 
 env:
   GCP_REGION: ${{ secrets.GCP_REGION || 'us-central1' }}

@@ -1,3 +1,13 @@
+# ============================================================================
+# WORKFLOW DISABLED
+# Disabled on: 2025-12-29T02:43:14.994388
+# Original workflow name: System: A/B Testing
+# Original triggers: schedule, workflow_dispatch
+# 
+# To re-enable: Use the tools/enable_workflows.py script with the
+# workflow_disable_metadata.json file to restore original triggers.
+# ============================================================================
+
 name: "System: A/B Testing"
 
 # Consolidated A/B testing workflow
@@ -11,41 +21,8 @@ name: "System: A/B Testing"
 # Each stage can be triggered independently via workflow_dispatch
 
 on:
-  schedule:
-    # Run demo every 6 hours (optimized based on A/B test)
-    - cron: '0 */6 * * *'
-    # Run manager daily for analysis
-    - cron: '0 8 * * *'
-    # Run autonomous orchestrator twice daily
-    - cron: '0 6,18 * * *'
   
   workflow_dispatch:
-    inputs:
-      stage:
-        description: 'Which A/B testing stage to run'
-        required: true
-        type: choice
-        default: 'demo'
-        options:
-          - demo
-          - manager
-          - autonomous
-      action:
-        description: 'Action for manager/autonomous stages'
-        required: false
-        type: choice
-        options:
-          - analyze_all
-          - list_experiments
-          - create_example
-          - auto_create_experiments
-          - analyze_and_optimize
-          - rollout_winners
-        default: 'analyze_all'
-      experiment_id:
-        description: 'Experiment ID (for specific operations)'
-        required: false
-        type: string
 
 permissions:
   contents: write

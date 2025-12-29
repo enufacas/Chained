@@ -1,3 +1,13 @@
+# ============================================================================
+# WORKFLOW DISABLED
+# Disabled on: 2025-12-29T02:43:14.994388
+# Original workflow name: Code Quality: Analysis System
+# Original triggers: push, pull_request, schedule, workflow_dispatch
+# 
+# To re-enable: Use the tools/enable_workflows.py script with the
+# workflow_disable_metadata.json file to restore original triggers.
+# ============================================================================
+
 name: "Code Quality: Analysis System"
 
 # Consolidates code quality workflows:
@@ -6,69 +16,8 @@ name: "Code Quality: Analysis System"
 # - code-golf-optimizer.yml → Stage: golf-optimizer
 
 on:
-  push:
-    branches:
-      - main
-    paths-ignore:
-      - 'analysis/**'
-  
-  pull_request:
-    types: [closed]
-    paths-ignore:
-      - 'analysis/**'
-  
-  schedule:
-    # Archaeologist: Weekly on Mondays at 9 AM UTC
-    - cron: '0 9 * * 1'
-    # Golf Optimizer: Weekly on Mondays at 10 AM UTC
-    - cron: '0 10 * * 1'
   
   workflow_dispatch:
-    inputs:
-      stage:
-        description: 'Which quality stage to run'
-        required: true
-        type: choice
-        default: 'analyzer'
-        options:
-          - analyzer
-          - archaeologist
-          - golf-optimizer
-      
-      # Analyzer options
-      directory:
-        description: '[Analyzer] Directory to analyze'
-        required: false
-        default: '.'
-      mark_as_failure:
-        description: '[Analyzer] Mark as failed merge (for learning)'
-        required: false
-        type: boolean
-        default: false
-      
-      # Archaeologist options
-      max_commits:
-        description: '[Archaeologist] Maximum commits to analyze'
-        required: false
-        default: '100'
-      since:
-        description: '[Archaeologist] Only analyze commits since (e.g., "1 month ago")'
-        required: false
-      
-      # Golf Optimizer options
-      file_path:
-        description: '[Golf] Path to file to optimize (optional)'
-        required: false
-        type: string
-      language:
-        description: '[Golf] Programming language'
-        required: false
-        default: 'python'
-        type: choice
-        options:
-          - python
-          - javascript
-          - bash
 
 permissions:
   contents: write

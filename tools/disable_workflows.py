@@ -32,7 +32,8 @@ def add_disable_metadata(content: str, workflow_info: Dict, disable_date: str) -
 
 def disable_workflow_triggers(file_path: Path, workflow_info: Dict, disable_date: str) -> bool:
     """
-    Disable a workflow by commenting out all triggers except workflow_dispatch.
+    Disable a workflow by modifying triggers to keep only workflow_dispatch.
+    Uses text-based approach to preserve file structure.
     Returns True if workflow was modified, False otherwise.
     """
     try:
@@ -40,9 +41,8 @@ def disable_workflow_triggers(file_path: Path, workflow_info: Dict, disable_date
         with open(file_path, 'r') as f:
             original_content = f.read()
         
-        # Parse YAML
-        with open(file_path, 'r') as f:
-            workflow_data = yaml.safe_load(f)
+        # Parse YAML to verify structure
+        workflow_data = yaml.safe_load(original_content)
         
         # Check if workflow has triggers
         on_section = workflow_data.get('on', workflow_data.get(True, {}))
@@ -50,17 +50,48 @@ def disable_workflow_triggers(file_path: Path, workflow_info: Dict, disable_date
             print(f"  ⚠️  No triggers found in {file_path.name}")
             return False
         
-        # Keep only workflow_dispatch trigger
+        # Get workflow_dispatch config if it exists
+        workflow_dispatch_config = {}
         if isinstance(on_section, dict):
-            workflow_data['on'] = {'workflow_dispatch': on_section.get('workflow_dispatch', {})}
-        else:
-            workflow_data['on'] = {'workflow_dispatch': {}}
+            workflow_dispatch_config = on_section.get('workflow_dispatch', {})
         
-        # Convert back to YAML
-        new_yaml_content = yaml.dump(workflow_data, default_flow_style=False, sort_keys=False)
+        # Create the new on: section preserving workflow_dispatch
+        if workflow_dispatch_config:
+            # Parse just the workflow_dispatch section from original
+            import re
+            
+            # Find the on: section start
+            on_match = re.search(r'^on:\s*$', original_content, re.MULTILINE)
+            if on_match:
+                # Find workflow_dispatch section
+                wd_match = re.search(
+                    r'^\s+workflow_dispatch:.*?(?=^\s+\w+:|^[^\s]|\Z)',
+                    original_content[on_match.end():],
+                    re.MULTILINE | re.DOTALL
+                )
+                
+                if wd_match:
+                    wd_content = wd_match.group(0).rstrip()
+                    new_on_section = f"on:\n{wd_content}\n"
+                else:
+                    new_on_section = "on:\n  workflow_dispatch:\n"
+            else:
+                new_on_section = "on:\n  workflow_dispatch:\n"
+        else:
+            new_on_section = "on:\n  workflow_dispatch:\n"
+        
+        # Replace the on: section with just workflow_dispatch
+        # Find the on: section and replace it
+        import re
+        
+        # Pattern to match on: section (from 'on:' to the next top-level key or jobs:)
+        pattern = r'(^on:.*?)(?=^[a-z_-]+:|^jobs:)'
+        replacement = new_on_section + '\n'
+        
+        new_content = re.sub(pattern, replacement, original_content, flags=re.MULTILINE | re.DOTALL)
         
         # Add metadata header
-        final_content = add_disable_metadata(new_yaml_content, workflow_info, disable_date)
+        final_content = add_disable_metadata(new_content, workflow_info, disable_date)
         
         # Write back to file
         with open(file_path, 'w') as f:
@@ -71,10 +102,12 @@ def disable_workflow_triggers(file_path: Path, workflow_info: Dict, disable_date
         
     except Exception as e:
         print(f"  ❌ Error disabling {file_path.name}: {e}")
+        import traceback
+        traceback.print_exc()
         return False
 
 
-def create_backup(workflows_dir: Path, backup_dir: Path, enabled_workflows: List[Dict]):
+def create_backup(workflows_dir: Path, backup_dir: Path, enabled_workflows: List[Dict], repo_root: Path):
     """Create backup of all enabled workflows before disabling."""
     backup_dir.mkdir(parents=True, exist_ok=True)
     
@@ -82,10 +115,10 @@ def create_backup(workflows_dir: Path, backup_dir: Path, enabled_workflows: List
     backup_count = 0
     
     for workflow in enabled_workflows:
-        src_path = Path(workflow['file'])
+        src_path = repo_root / workflow['file']
         if src_path.exists():
             # Create same directory structure in backup
-            rel_path = src_path.relative_to(workflows_dir.parent.parent)
+            rel_path = Path(workflow['file'])
             backup_path = backup_dir / rel_path
             backup_path.parent.mkdir(parents=True, exist_ok=True)
             
@@ -116,7 +149,7 @@ def disable_all_workflows(repo_root: Path, inventory_file: Path) -> Dict:
     workflows_dir = repo_root / '.github' / 'workflows'
     
     # Create backup
-    backup_count = create_backup(workflows_dir, backup_dir, enabled_workflows)
+    backup_count = create_backup(workflows_dir, backup_dir, enabled_workflows, repo_root)
     
     # Disable workflows
     print(f"\nDisabling workflows...")

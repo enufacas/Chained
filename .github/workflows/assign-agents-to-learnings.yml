@@ -1,21 +1,17 @@
+# ============================================================================
+# WORKFLOW DISABLED
+# Disabled on: 2025-12-29T02:43:14.994388
+# Original workflow name: Agent System: Match to Learnings
+# Original triggers: schedule, workflow_dispatch
+# 
+# To re-enable: Use the tools/enable_workflows.py script with the
+# workflow_disable_metadata.json file to restore original triggers.
+# ============================================================================
+
 name: "Agent System: Match to Learnings"
 
 on:
-  schedule:
-    # Run daily at 09:00 UTC
-    - cron: '0 9 * * *'
   workflow_dispatch:
-    inputs:
-      agent_filter:
-        description: 'Filter agents (all, unassigned, or specific agent ID)'
-        required: false
-        default: 'unassigned'
-        type: string
-      max_assignments:
-        description: 'Maximum number of assignments to create'
-        required: false
-        default: '5'
-        type: string
 
 permissions:
   contents: write

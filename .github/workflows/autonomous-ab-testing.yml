@@ -1,23 +1,17 @@
+# ============================================================================
+# WORKFLOW DISABLED
+# Disabled on: 2025-12-29T02:43:14.994388
+# Original workflow name: Evolution: Autonomous A/B Testing
+# Original triggers: schedule, workflow_dispatch
+# 
+# To re-enable: Use the tools/enable_workflows.py script with the
+# workflow_disable_metadata.json file to restore original triggers.
+# ============================================================================
+
 name: "Evolution: Autonomous A/B Testing"
 
 on:
-  schedule:
-    - cron: '0 2 * * *'
   workflow_dispatch:
-    inputs:
-      dry_run:
-        description: 'Run in dry-run mode (no actual changes)'
-        required: false
-        default: 'false'
-        type: choice
-        options:
-          - 'true'
-          - 'false'
-      max_concurrent:
-        description: 'Maximum concurrent experiments'
-        required: false
-        default: '5'
-        type: number
 
 permissions:
   contents: write

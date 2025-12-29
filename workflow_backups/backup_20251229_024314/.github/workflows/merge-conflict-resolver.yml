@@ -1,0 +1,312 @@
+name: "Automation: Merge Conflict Resolver"
+
+on:
+  pull_request:
+    # Trigger when PR is synchronized (new commits pushed) or reopened
+    # This catches when conflicts might be introduced
+    types: [synchronize, opened, reopened]
+  schedule:
+    # Run every 30 minutes as backup to catch any conflicts
+    - cron: '*/30 * * * *'
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: 'PR number to check for conflicts (leave empty to check all open PRs)'
+        required: false
+        type: string
+
+# Prevent multiple concurrent runs
+concurrency:
+  group: merge-conflict-resolver-${{ github.event.pull_request.number || 'scheduled' }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+jobs:
+  detect-and-resolve-conflicts:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Get PRs to check
+        id: get_prs
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ -n "${{ inputs.pr_number }}" ]; then
+            # Specific PR requested
+            pr_numbers="${{ inputs.pr_number }}"
+          elif [ "${{ github.event_name }}" = "pull_request" ]; then
+            # PR event triggered
+            pr_numbers="${{ github.event.pull_request.number }}"
+          else
+            # Scheduled run - get all open PRs
+            pr_numbers=$(gh pr list --state open --json number --jq '.[].number' | tr '\n' ' ')
+          fi
+          
+          echo "pr_numbers=${pr_numbers}" >> $GITHUB_OUTPUT
+          echo "Found PRs to check: ${pr_numbers}"
+
+      - name: Check for merge conflicts and reassign Copilot
+        env:
+          GH_TOKEN: ${{ secrets.COPILOT_PAT || secrets.GITHUB_TOKEN }}
+        run: |
+          conflicts_found=0
+          
+          for pr_num in ${{ steps.get_prs.outputs.pr_numbers }}; do
+            if [ -z "${pr_num}" ]; then
+              continue
+            fi
+            
+            echo ""
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            echo "Checking PR #${pr_num}"
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            
+            # Get PR details
+            pr_data=$(gh pr view ${pr_num} --json number,title,mergeable,mergeStateStatus,author,labels,state,headRefName,body)
+            pr_state=$(echo "${pr_data}" | jq -r '.state')
+            mergeable=$(echo "${pr_data}" | jq -r '.mergeable')
+            merge_state=$(echo "${pr_data}" | jq -r '.mergeStateStatus')
+            author=$(echo "${pr_data}" | jq -r '.author.login')
+            pr_title=$(echo "${pr_data}" | jq -r '.title')
+            head_branch=$(echo "${pr_data}" | jq -r '.headRefName')
+            pr_body=$(echo "${pr_data}" | jq -r '.body // ""')
+            
+            # Skip closed PRs
+            if [ "${pr_state}" != "OPEN" ]; then
+              echo "⏭️  Skipping PR #${pr_num} - not open (state: ${pr_state})"
+              continue
+            fi
+            
+            echo "PR: ${pr_title}"
+            echo "Author: ${author}"
+            echo "Mergeable: ${mergeable}"
+            echo "Merge State: ${merge_state}"
+            echo "Branch: ${head_branch}"
+            
+            # Check if PR has conflicts
+            if [ "${mergeable}" = "CONFLICTING" ] || [ "${merge_state}" = "DIRTY" ]; then
+              echo "⚠️  PR #${pr_num} has merge conflicts!"
+              conflicts_found=$((conflicts_found + 1))
+              
+              # Check if this is from a trusted source (Copilot/bot/owner)
+              is_trusted=0
+              has_copilot_label=$(echo "${pr_data}" | jq -r '.labels[].name' | grep -c "copilot" || true)
+              
+              if echo "${author}" | grep -qiE "^(github-actions\[bot\]|app/github-actions|dependabot\[bot\]|app/dependabot|app/copilot|copilot)"; then
+                is_trusted=1
+              elif [ "${author}" = "${{ github.repository_owner }}" ] && [ "${has_copilot_label}" -gt 0 ]; then
+                is_trusted=1
+              fi
+              
+              if [ ${is_trusted} -eq 0 ]; then
+                echo "ℹ️  PR #${pr_num} is not from a trusted source, adding label and comment"
+                
+                # Add merge-conflict label
+                gh pr edit ${pr_num} --add-label "merge-conflict" 2>/dev/null || true
+                
+                # Check if we've already commented
+                existing_comment=$(gh pr view ${pr_num} --json comments --jq '.comments[].body' | grep -c "Merge Conflicts Detected" || true)
+                
+                if [ "${existing_comment}" -eq 0 ]; then
+                  gh pr comment ${pr_num} --body "⚠️ **Merge Conflicts Detected**
+
+          This PR has merge conflicts that need to be resolved.
+
+          **Action required:** Please resolve the conflicts and update the PR.
+
+          **To resolve:**
+          1. Pull the latest changes from the base branch
+          2. Resolve conflicts in the affected files
+          3. Commit and push the changes
+
+          ---
+          *Detected by Merge Conflict Resolver workflow*" || true
+                fi
+                
+                continue
+              fi
+              
+              # For trusted sources (Copilot/bots/owner), reassign Copilot
+              echo "✅ PR #${pr_num} is from trusted source, reassigning Copilot"
+              
+              # Add merge-conflict label
+              gh pr edit ${pr_num} --add-label "merge-conflict" 2>/dev/null || true
+              
+              # Create or update an issue for Copilot to resolve the conflict
+              issue_title="Resolve merge conflicts in PR #${pr_num}"
+              
+              # Check if issue already exists for this PR
+              existing_issue=$(gh issue list --state open --search "${issue_title}" --json number --jq '.[0].number' || echo "")
+              
+              if [ -n "${existing_issue}" ]; then
+                echo "📝 Found existing issue #${existing_issue} for PR #${pr_num}"
+                
+                # Update the issue with latest info
+                gh issue comment ${existing_issue} --body "🔄 **Merge Conflict Still Present**
+
+          PR #${pr_num} still has merge conflicts that need resolution.
+
+          **PR Details:**
+          - **Title:** ${pr_title}
+          - **Branch:** \`${head_branch}\`
+          - **Author:** ${author}
+          - **Status:** ${mergeable}
+
+          **Next Steps:**
+          1. Checkout the branch: \`git checkout ${head_branch}\`
+          2. Merge the base branch: \`git merge main\`
+          3. Resolve conflicts in affected files
+          4. Commit and push: \`git add . && git commit -m 'chore: resolve merge conflicts' && git push\`
+
+          **Timestamp:** $(date -u +'%Y-%m-%d %H:%M:%S UTC')
+
+          ---
+          *Updated by Merge Conflict Resolver workflow*" || true
+              else
+                echo "🆕 Creating new issue for PR #${pr_num} conflict resolution"
+                
+                # Match the PR/issue to an appropriate agent
+                echo "🧠 Analyzing PR content for agent matching..."
+                
+                # Use match-issue-to-agent.py to find the best agent
+                # Default to troubleshoot-expert for conflict resolution
+                agent_match=$(python3 tools/match-issue-to-agent.py "${pr_title}" "${pr_body}" 2>/dev/null || echo '{"agent":"troubleshoot-expert","score":80,"confidence":"high","emoji":"🔧","description":"Specialized in resolving conflicts and debugging"}')
+                matched_agent=$(echo "$agent_match" | jq -r '.agent')
+                agent_score=$(echo "$agent_match" | jq -r '.score')
+                agent_confidence=$(echo "$agent_match" | jq -r '.confidence')
+                agent_emoji=$(echo "$agent_match" | jq -r '.emoji')
+                
+                echo "✅ Matched to agent: ${agent_emoji} ${matched_agent}"
+                echo "   Score: ${agent_score} | Confidence: ${agent_confidence}"
+                
+                # Create issue body
+                issue_body="## 🚨 Merge Conflict Resolution Required
+
+          PR #${pr_num} has merge conflicts that need to be resolved.
+
+          ### PR Details
+          - **Title:** ${pr_title}
+          - **Branch:** \`${head_branch}\`
+          - **Author:** ${author}
+          - **Mergeable Status:** ${mergeable}
+          - **Merge State:** ${merge_state}
+
+          ### 🤖 Agent Assignment
+
+          This issue has been assigned to **${agent_emoji} @${matched_agent}** based on intelligent matching.
+
+          **@${matched_agent}** - Please resolve the merge conflicts in PR #${pr_num} using your specialized expertise.
+
+          **IMPORTANT**: Always mention **@${matched_agent}** by name in all conversations related to this issue.
+
+          ### Resolution Steps
+
+          1. **Checkout the branch:**
+             \`\`\`bash
+             git fetch origin ${head_branch}
+             git checkout ${head_branch}
+             \`\`\`
+
+          2. **Merge the base branch:**
+             \`\`\`bash
+             git merge main
+             \`\`\`
+
+          3. **Resolve conflicts:**
+             - Review the conflicted files
+             - Choose the appropriate resolution strategy
+             - Ensure functionality is preserved
+
+          4. **Commit and push:**
+             \`\`\`bash
+             git add .
+             git commit -m 'chore: resolve merge conflicts in PR #${pr_num}'
+             git push origin ${head_branch}
+             \`\`\`
+
+          5. **Verify:** Ensure PR #${pr_num} is now mergeable
+
+          ### Context
+          - **Agent:** @${matched_agent}
+          - **Confidence:** ${agent_confidence}
+          - **Score:** ${agent_score}
+          - **Created:** $(date -u +'%Y-%m-%d %H:%M:%S UTC')
+
+          ### Related
+          - PR: #${pr_num}
+
+          ---
+          *Automatically created by Merge Conflict Resolver workflow*"
+                
+                # Create the issue
+                new_issue=$(gh issue create \
+                  --title "${issue_title}" \
+                  --body "${issue_body}" \
+                  --label "merge-conflict,copilot,agent:${matched_agent}" 2>&1 | grep -oP 'https://github.com/.*/issues/\K\d+' || echo "")
+                
+                if [ -n "${new_issue}" ]; then
+                  echo "✅ Created issue #${new_issue} for conflict resolution"
+                  
+                  # Comment on the PR about the issue
+                  gh pr comment ${pr_num} --body "🤖 **Copilot Reassigned for Conflict Resolution**
+
+          A merge conflict has been detected in this PR. I've created issue #${new_issue} and assigned **@${matched_agent}** to resolve it.
+
+          **Agent Assignment:**
+          - **Agent:** ${agent_emoji} **@${matched_agent}**
+          - **Specialization:** Conflict resolution and debugging
+          - **Issue:** #${new_issue}
+
+          **What happens next:**
+          1. **@${matched_agent}** will analyze the conflicts
+          2. **@${matched_agent}** will resolve them using the appropriate strategy
+          3. **@${matched_agent}** will update this PR with the resolution
+          4. The PR will be ready for review and merge
+
+          **Timestamp:** $(date -u +'%Y-%m-%d %H:%M:%S UTC')
+
+          ---
+          *Automated by Merge Conflict Resolver workflow with intelligent agent matching*" || true
+                else
+                  echo "⚠️  Failed to create issue for PR #${pr_num}"
+                  
+                  # Fallback: just comment on the PR
+                  gh pr comment ${pr_num} --body "⚠️ **Merge Conflicts Detected**
+
+          This PR has merge conflicts that need to be resolved.
+
+          **Attempted automatic reassignment but encountered an issue.**
+
+          Please resolve the conflicts manually:
+          1. Checkout branch \`${head_branch}\`
+          2. Merge \`main\` into your branch
+          3. Resolve conflicts
+          4. Push the changes
+
+          ---
+          *Detected by Merge Conflict Resolver workflow*" || true
+                fi
+              fi
+            else
+              echo "✅ PR #${pr_num} has no merge conflicts"
+            fi
+          done
+          
+          echo ""
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "📊 Summary"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "PRs with conflicts found: ${conflicts_found}"
+          echo "Timestamp: $(date -u +'%Y-%m-%d %H:%M:%S UTC')"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"

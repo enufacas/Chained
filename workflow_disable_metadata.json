@@ -1,0 +1,784 @@
+{
+  "disable_date": "2025-12-29T02:43:14.994388",
+  "backup_location": "workflow_backups/backup_20251229_024314",
+  "total_enabled": 85,
+  "workflows": [
+    {
+      "file": ".github/workflows/a2a-agent-worker.yml",
+      "name": "A2A: Agent Worker",
+      "original_triggers": [
+        "issues",
+        "workflow_dispatch"
+      ],
+      "disabled_date": "2025-12-29T02:43:14.994388"
+    },
+    {
+      "file": ".github/workflows/a2a-test-full-suite.yml",
+      "name": "Test: A2A Full Suite",
+      "original_triggers": [
+        "push",
+        "pull_request",
+        "workflow_dispatch"
+      ],
+      "disabled_date": "2025-12-29T02:43:14.994388"
+    },
+    {
+      "file": ".github/workflows/a2a-test-multi-agent-demo.yml",
+      "name": "Demo: A2A Multi-Agent Collaboration",
+      "original_triggers": [
+        "push",
+        "workflow_dispatch"
+      ],
+      "disabled_date": "2025-12-29T02:43:14.994388"
+    },
+    {
+      "file": ".github/workflows/a2a-test-quick-validation.yml",
+      "name": "Test: A2A Quick Validation",
+      "original_triggers": [
+        "push",
+        "workflow_dispatch"
+      ],
+      "disabled_date": "2025-12-29T02:43:14.994388"
+    },
+    {
+      "file": ".github/workflows/a2a-test-tier1-integration.yml",
+      "name": "Test: A2A Tier 1 Integration",
+      "original_triggers": [
+        "push",
+        "workflow_dispatch"
+      ],
+      "disabled_date": "2025-12-29T02:43:14.994388"
+    },
+    {
+      "file": ".github/workflows/ab-testing-system.yml",
+      "name": "System: A/B Testing",
+      "original_triggers": [
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "disabled_date": "2025-12-29T02:43:14.994388"
+    },
+    {
+      "file": ".github/workflows/actions-generator-agent.yml",
+      "name": "Agent System: Actions Generator",
+      "original_triggers": [
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "disabled_date": "2025-12-29T02:43:14.994388"
+    },
+    {
+      "file": ".github/workflows/adk-a2a-blog-pipeline.yml",
+      "name": "A2A: ADK Blog Pipeline",
+      "original_triggers": [
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "disabled_date": "2025-12-29T02:43:14.994388"
+    },
+    {
+      "file": ".github/workflows/agent-data-sync.yml",
+      "name": "Agent System: Data Sync",
+      "original_triggers": [
+        "push",
+        "workflow_dispatch"
+      ],
+      "disabled_date": "2025-12-29T02:43:14.994388"
+    },
+    {
+      "file": ".github/workflows/agent-evaluator.yml",
+      "name": "Agent System: Evaluator",
+      "original_triggers": [
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "disabled_date": "2025-12-29T02:43:14.994388"
+    },
+    {
+      "file": ".github/workflows/agent-evolution.yml",
+      "name": "Evolution: Agent Genetic Algorithm",
+      "original_triggers": [
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "disabled_date": "2025-12-29T02:43:14.994388"
+    },
+    {
+      "file": ".github/workflows/agent-issue-discussion.yml",
+      "name": "Agent System: Issue Discussion",
+      "original_triggers": [
+        "workflow_dispatch",
+        "issues"
+      ],
+      "disabled_date": "2025-12-29T02:43:14.994388"
+    },
+    {
+      "file": ".github/workflows/agent-missions.yml",
+      "name": "Agent System: Missions",
+      "original_triggers": [
+        "workflow_dispatch",
+        "workflow_run"
+      ],
+      "disabled_date": "2025-12-29T02:43:14.994388"
+    },
+    {
+      "file": ".github/workflows/agent-spawning.yml",
+      "name": "Agent System: Spawning",
+      "original_triggers": [
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "disabled_date": "2025-12-29T02:43:14.994388"
+    },
+    {
+      "file": ".github/workflows/agentops-data-sync.yml",
+      "name": "Data: AgentOps Dashboard Sync",
+      "original_triggers": [
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "disabled_date": "2025-12-29T02:43:14.994388"
+    },
+    {
+      "file": ".github/workflows/ai-friend-daily.yml",
+      "name": "AI: Friend Daily Conversation",
+      "original_triggers": [
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "disabled_date": "2025-12-29T02:43:14.994388"
+    },
+    {
+      "file": ".github/workflows/ai-native-build-test.yml",
+      "name": "AI-Native Control Plane - Build and Test",
+      "original_triggers": [
+        "push",
+        "pull_request",
+        "workflow_dispatch"
+      ],
+      "disabled_date": "2025-12-29T02:43:14.994388"
+    },
+    {
+      "file": ".github/workflows/ai-native-deploy.yml",
+      "name": "AI-Native Control Plane - Deploy",
+      "original_triggers": [
+        "workflow_dispatch",
+        "push"
+      ],
+      "disabled_date": "2025-12-29T02:43:14.994388"
+    },
+    {
+      "file": ".github/workflows/ai-workflow-orchestrator-demo.yml",
+      "name": "Demo: AI Workflow Orchestrator",
+      "original_triggers": [
+        "workflow_dispatch",
+        "schedule"
+      ],
+      "disabled_date": "2025-12-29T02:43:14.994388"
+    },
+    {
+      "file": ".github/workflows/ai-workflow-orchestrator-live.yml",
+      "name": "AI Workflow Orchestrator - Live Predictions",
+      "original_triggers": [
+        "workflow_dispatch",
+        "schedule"
+      ],
+      "disabled_date": "2025-12-29T02:43:14.994388"
+    },
+    {
+      "file": ".github/workflows/apply-commit-strategies.yml",
+      "name": "Learning: Apply Commit Strategies",
+      "original_triggers": [
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "disabled_date": "2025-12-29T02:43:14.994388"
+    },
+    {
+      "file": ".github/workflows/architecture-evolution.yml",
+      "name": "Evolution: Architecture Tracker",
+      "original_triggers": [
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "disabled_date": "2025-12-29T02:43:14.994388"
+    },
+    {
+      "file": ".github/workflows/assign-agents-to-learnings.yml",
+      "name": "Agent System: Match to Learnings",
+      "original_triggers": [
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "disabled_date": "2025-12-29T02:43:14.994388"
+    },
+    {
+      "file": ".github/workflows/auto-review-merge.yml",
+      "name": "Automation: Auto Review & Merge (Improved)",
+      "original_triggers": [
+        "pull_request",
+        "pull_request_review",
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "disabled_date": "2025-12-29T02:43:14.994388"
+    },
+    {
+      "file": ".github/workflows/automated-issue-clustering.yml",
+      "name": "Automation: Issue Clustering",
+      "original_triggers": [
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "disabled_date": "2025-12-29T02:43:14.994388"
+    },
+    {
+      "file": ".github/workflows/autonomous-ab-testing.yml",
+      "name": "Evolution: Autonomous A/B Testing",
+      "original_triggers": [
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "disabled_date": "2025-12-29T02:43:14.994388"
+    },
+    {
+      "file": ".github/workflows/autonomous-code-reviewer.yml",
+      "name": "Code Quality: \ud83e\udd16 Autonomous Reviewer",
+      "original_triggers": [
+        "pull_request",
+        "pull_request_review",
+        "workflow_dispatch"
+      ],
+      "disabled_date": "2025-12-29T02:43:14.994388"
+    },
+    {
+      "file": ".github/workflows/autonomous-issue-prioritizer.yml",
+      "name": "Automation: Issue Prioritizer",
+      "original_triggers": [
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "disabled_date": "2025-12-29T02:43:14.994388"
+    },
+    {
+      "file": ".github/workflows/autonomous-pipeline.yml",
+      "name": "Learning: Autonomous Pipeline",
+      "original_triggers": [
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "disabled_date": "2025-12-29T02:43:14.994388"
+    },
+    {
+      "file": ".github/workflows/autonomous-refactoring-learning.yml",
+      "name": "Learning: Autonomous Refactoring",
+      "original_triggers": [
+        "pull_request",
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "disabled_date": "2025-12-29T02:43:14.994388"
+    },
+    {
+      "file": ".github/workflows/chained_tv.yml",
+      "name": "Content: Chained TV Episode Generator",
+      "original_triggers": [
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "disabled_date": "2025-12-29T02:43:14.994388"
+    },
+    {
+      "file": ".github/workflows/claude-a2a-coordinator.yml",
+      "name": "Claude: \ud83c\udfaf A2A Coordinator",
+      "original_triggers": [
+        "workflow_dispatch",
+        "issue_comment"
+      ],
+      "disabled_date": "2025-12-29T02:43:14.994388"
+    },
+    {
+      "file": ".github/workflows/cleanup-chained-tv-prs.yml",
+      "name": "Cleanup: Chained TV PRs",
+      "original_triggers": [
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "disabled_date": "2025-12-29T02:43:14.994388"
+    },
+    {
+      "file": ".github/workflows/close-stale-issues-and-prs.yml",
+      "name": "Cleanup: Close Stale Issues and Conflicted PRs",
+      "original_triggers": [
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "disabled_date": "2025-12-29T02:43:14.994388"
+    },
+    {
+      "file": ".github/workflows/code-pattern-hypothesis-testing.yml",
+      "name": "AI Code Pattern Hypothesis Testing",
+      "original_triggers": [
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "disabled_date": "2025-12-29T02:43:14.994388"
+    },
+    {
+      "file": ".github/workflows/code-quality.yml",
+      "name": "Code Quality: Analysis System",
+      "original_triggers": [
+        "push",
+        "pull_request",
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "disabled_date": "2025-12-29T02:43:14.994388"
+    },
+    {
+      "file": ".github/workflows/collect-resolved-issues.yml",
+      "name": "Data: Collect Resolved Issues",
+      "original_triggers": [
+        "pull_request",
+        "workflow_dispatch"
+      ],
+      "disabled_date": "2025-12-29T02:43:14.994388"
+    },
+    {
+      "file": ".github/workflows/copilot-graphql-assign.yml",
+      "name": "Automation: Copilot Assignment",
+      "original_triggers": [
+        "issues",
+        "schedule",
+        "workflow_dispatch",
+        "workflow_run"
+      ],
+      "disabled_date": "2025-12-29T02:43:14.994388"
+    },
+    {
+      "file": ".github/workflows/copilot-pr-assignment.yml",
+      "name": "Automation: Copilot PR Assignment",
+      "original_triggers": [
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "disabled_date": "2025-12-29T02:43:14.994388"
+    },
+    {
+      "file": ".github/workflows/copilot-setup-steps.yml",
+      "name": "System: Copilot Setup Steps",
+      "original_triggers": [
+        "workflow_dispatch",
+        "push",
+        "pull_request"
+      ],
+      "disabled_date": "2025-12-29T02:43:14.994388"
+    },
+    {
+      "file": ".github/workflows/creative-coding-challenge-generator.yml",
+      "name": "Content: Creative Coding Challenge",
+      "original_triggers": [
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "disabled_date": "2025-12-29T02:43:14.994388"
+    },
+    {
+      "file": ".github/workflows/creativity-leaderboard.yml",
+      "name": "Content: Creativity Leaderboard",
+      "original_triggers": [
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "disabled_date": "2025-12-29T02:43:14.994388"
+    },
+    {
+      "file": ".github/workflows/daily-learning-reflection.yml",
+      "name": "Learning: Daily Reflection",
+      "original_triggers": [
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "disabled_date": "2025-12-29T02:43:14.994388"
+    },
+    {
+      "file": ".github/workflows/demos-and-experiments.yml",
+      "name": "Demo: Experiments",
+      "original_triggers": [
+        "issues",
+        "pull_request",
+        "workflow_dispatch"
+      ],
+      "disabled_date": "2025-12-29T02:43:14.994388"
+    },
+    {
+      "file": ".github/workflows/deploy-adk-agents.yml",
+      "name": "Deploy: ADK Agents",
+      "original_triggers": [
+        "push",
+        "workflow_dispatch"
+      ],
+      "disabled_date": "2025-12-29T02:43:14.994388"
+    },
+    {
+      "file": ".github/workflows/deploy-gcp-infrastructure.yml",
+      "name": "Deploy: GCP Infrastructure",
+      "original_triggers": [
+        "push",
+        "workflow_dispatch"
+      ],
+      "disabled_date": "2025-12-29T02:43:14.994388"
+    },
+    {
+      "file": ".github/workflows/design-decisions-documenter.yml",
+      "name": "Code Quality: Design Decisions Documenter",
+      "original_triggers": [
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "disabled_date": "2025-12-29T02:43:14.994388"
+    },
+    {
+      "file": ".github/workflows/discover-universal-truths.yml",
+      "name": "AI: \ud83c\udf0c Discover Universal Truths",
+      "original_triggers": [
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "disabled_date": "2025-12-29T02:43:14.994388"
+    },
+    {
+      "file": ".github/workflows/ensure-labels-exist.yml",
+      "name": "Maintenance: Ensure Repository Labels Exist",
+      "original_triggers": [
+        "schedule",
+        "workflow_dispatch",
+        "push"
+      ],
+      "disabled_date": "2025-12-29T02:43:14.994388"
+    },
+    {
+      "file": ".github/workflows/gemini-dispatch.yml",
+      "name": "Gemini: \ud83d\udd00 Dispatch",
+      "original_triggers": [
+        "pull_request_review_comment",
+        "pull_request_review",
+        "issue_comment"
+      ],
+      "disabled_date": "2025-12-29T02:43:14.994388"
+    },
+    {
+      "file": ".github/workflows/gemini-fix.yml",
+      "name": "Gemini: \ud83d\udd27 Fix",
+      "original_triggers": [
+        "workflow_call"
+      ],
+      "disabled_date": "2025-12-29T02:43:14.994388"
+    },
+    {
+      "file": ".github/workflows/gemini-invoke.yml",
+      "name": "Gemini: \u25b6\ufe0f Invoke",
+      "original_triggers": [
+        "workflow_call"
+      ],
+      "disabled_date": "2025-12-29T02:43:14.994388"
+    },
+    {
+      "file": ".github/workflows/gemini-review.yml",
+      "name": "Gemini: \ufffd\ufffd Review",
+      "original_triggers": [
+        "workflow_call"
+      ],
+      "disabled_date": "2025-12-29T02:43:14.994388"
+    },
+    {
+      "file": ".github/workflows/gemini-triage.yml",
+      "name": "Gemini: \ud83c\udff7\ufe0f Triage",
+      "original_triggers": [
+        "workflow_call"
+      ],
+      "disabled_date": "2025-12-29T02:43:14.994388"
+    },
+    {
+      "file": ".github/workflows/generate-reviewer-dashboard.yml",
+      "name": "Data: Reviewer Dashboard",
+      "original_triggers": [
+        "workflow_dispatch",
+        "schedule",
+        "push"
+      ],
+      "disabled_date": "2025-12-29T02:43:14.994388"
+    },
+    {
+      "file": ".github/workflows/github-pages-review.yml",
+      "name": "Documentation: GitHub Pages Review",
+      "original_triggers": [
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "disabled_date": "2025-12-29T02:43:14.994388"
+    },
+    {
+      "file": ".github/workflows/goal-and-idea-system.yml",
+      "name": "System: Goal and Idea",
+      "original_triggers": [
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "disabled_date": "2025-12-29T02:43:14.994388"
+    },
+    {
+      "file": ".github/workflows/handle-cloudrun-errors.yml",
+      "name": "Handle Cloud Run Errors",
+      "original_triggers": [
+        "repository_dispatch"
+      ],
+      "disabled_date": "2025-12-29T02:43:14.994388"
+    },
+    {
+      "file": ".github/workflows/learn-commit-strategies.yml",
+      "name": "Learning: Git Commit Strategies",
+      "original_triggers": [
+        "schedule",
+        "workflow_dispatch",
+        "pull_request"
+      ],
+      "disabled_date": "2025-12-29T02:43:14.994388"
+    },
+    {
+      "file": ".github/workflows/learn-from-copilot.yml",
+      "name": "Learning: GitHub Copilot",
+      "original_triggers": [
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "disabled_date": "2025-12-29T02:43:14.994388"
+    },
+    {
+      "file": ".github/workflows/merge-conflict-resolver.yml",
+      "name": "Automation: Merge Conflict Resolver",
+      "original_triggers": [
+        "pull_request",
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "disabled_date": "2025-12-29T02:43:14.994388"
+    },
+    {
+      "file": ".github/workflows/meta-agent-coordination.yml",
+      "name": "Meta: Agent Coordination",
+      "original_triggers": [
+        "issues",
+        "workflow_dispatch"
+      ],
+      "disabled_date": "2025-12-29T02:43:14.994388"
+    },
+    {
+      "file": ".github/workflows/meta-coordinator.yml",
+      "name": "Meta: Coordinator Orchestration",
+      "original_triggers": [
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "disabled_date": "2025-12-29T02:43:14.994388"
+    },
+    {
+      "file": ".github/workflows/meta-learning-optimizer.yml",
+      "name": "Meta-Learning Workflow Optimizer",
+      "original_triggers": [
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "disabled_date": "2025-12-29T02:43:14.994388"
+    },
+    {
+      "file": ".github/workflows/pattern-matcher.yml",
+      "name": "Code Quality: Pattern Matcher",
+      "original_triggers": [
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "disabled_date": "2025-12-29T02:43:14.994388"
+    },
+    {
+      "file": ".github/workflows/performance-metrics-collection.yml",
+      "name": "Performance: Metrics Collection",
+      "original_triggers": [
+        "schedule",
+        "workflow_run",
+        "workflow_dispatch"
+      ],
+      "disabled_date": "2025-12-29T02:43:14.994388"
+    },
+    {
+      "file": ".github/workflows/pr-auto-labeler.yml",
+      "name": "Automation: Smart PR Auto-Labeling",
+      "original_triggers": [
+        "pull_request",
+        "workflow_dispatch"
+      ],
+      "disabled_date": "2025-12-29T02:43:14.994388"
+    },
+    {
+      "file": ".github/workflows/pr-failure-intelligence.yml",
+      "name": "AI: PR Failure Intelligence System",
+      "original_triggers": [
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "disabled_date": "2025-12-29T02:43:14.994388"
+    },
+    {
+      "file": ".github/workflows/pr-failure-learning.yml",
+      "name": "System: PR Failure Learning",
+      "original_triggers": [
+        "schedule",
+        "pull_request",
+        "workflow_dispatch"
+      ],
+      "disabled_date": "2025-12-29T02:43:14.994388"
+    },
+    {
+      "file": ".github/workflows/prompt-performance-tracker.yml",
+      "name": "AI: Prompt Performance Tracker",
+      "original_triggers": [
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "disabled_date": "2025-12-29T02:43:14.994388"
+    },
+    {
+      "file": ".github/workflows/repetition-detector.yml",
+      "name": "AI: Pattern Repetition Detector",
+      "original_triggers": [
+        "pull_request",
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "disabled_date": "2025-12-29T02:43:14.994388"
+    },
+    {
+      "file": ".github/workflows/rl-resource-optimization.yml",
+      "name": "Evolution: RL Resource Optimization",
+      "original_triggers": [
+        "workflow_dispatch",
+        "schedule"
+      ],
+      "disabled_date": "2025-12-29T02:43:14.994388"
+    },
+    {
+      "file": ".github/workflows/self-documenting-ai-enhanced.yml",
+      "name": "Learning: Self-Documenting AI Enhanced",
+      "original_triggers": [
+        "issues",
+        "workflow_dispatch"
+      ],
+      "disabled_date": "2025-12-29T02:43:14.994388"
+    },
+    {
+      "file": ".github/workflows/self-documenting-ai.yml",
+      "name": "Learning: Self-Documenting AI Discussions",
+      "original_triggers": [
+        "issues",
+        "workflow_dispatch"
+      ],
+      "disabled_date": "2025-12-29T02:43:14.994388"
+    },
+    {
+      "file": ".github/workflows/subagent-cleanup.yml",
+      "name": "Cleanup: Sub-Agent",
+      "original_triggers": [
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "disabled_date": "2025-12-29T02:43:14.994388"
+    },
+    {
+      "file": ".github/workflows/suggest-collaborations.yml",
+      "name": "Agent System: Suggest Collaborations",
+      "original_triggers": [
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "disabled_date": "2025-12-29T02:43:14.994388"
+    },
+    {
+      "file": ".github/workflows/system-kickoff.yml",
+      "name": "System: Kickoff",
+      "original_triggers": [
+        "push",
+        "workflow_dispatch"
+      ],
+      "disabled_date": "2025-12-29T02:43:14.994388"
+    },
+    {
+      "file": ".github/workflows/system-monitor.yml",
+      "name": "System: Monitor",
+      "original_triggers": [
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "disabled_date": "2025-12-29T02:43:14.994388"
+    },
+    {
+      "file": ".github/workflows/update-agent-investments.yml",
+      "name": "Agent System: Investment Updates",
+      "original_triggers": [
+        "pull_request"
+      ],
+      "disabled_date": "2025-12-29T02:43:14.994388"
+    },
+    {
+      "file": ".github/workflows/update-changelog.yml",
+      "name": "Update Changelog",
+      "original_triggers": [
+        "pull_request"
+      ],
+      "disabled_date": "2025-12-29T02:43:14.994388"
+    },
+    {
+      "file": ".github/workflows/update-context-summaries.yml",
+      "name": "Data: Update Context Summaries",
+      "original_triggers": [
+        "schedule",
+        "workflow_dispatch",
+        "push"
+      ],
+      "disabled_date": "2025-12-29T02:43:14.994388"
+    },
+    {
+      "file": ".github/workflows/workflow-data-collection.yml",
+      "name": "Data: Workflow Execution Collection",
+      "original_triggers": [
+        "workflow_dispatch",
+        "schedule"
+      ],
+      "disabled_date": "2025-12-29T02:43:14.994388"
+    },
+    {
+      "file": ".github/workflows/workflow-execution-recorder.yml",
+      "name": "Workflow Execution Recorder",
+      "original_triggers": [
+        "workflow_run"
+      ],
+      "disabled_date": "2025-12-29T02:43:14.994388"
+    },
+    {
+      "file": ".github/workflows/workflow-execution-tracker.yml",
+      "name": "Workflow Execution Tracker",
+      "original_triggers": [
+        "workflow_run"
+      ],
+      "disabled_date": "2025-12-29T02:43:14.994388"
+    },
+    {
+      "file": ".github/workflows/workflow-validation.yml",
+      "name": "CI: Workflow Validation",
+      "original_triggers": [
+        "pull_request",
+        "workflow_dispatch"
+      ],
+      "disabled_date": "2025-12-29T02:43:14.994388"
+    }
+  ]
+}

@@ -1,3 +1,13 @@
+# ============================================================================
+# WORKFLOW DISABLED
+# Disabled on: 2025-12-29T02:43:14.994388
+# Original workflow name: AI: Prompt Performance Tracker
+# Original triggers: schedule, workflow_dispatch
+# 
+# To re-enable: Use the tools/enable_workflows.py script with the
+# workflow_disable_metadata.json file to restore original triggers.
+# ============================================================================
+
 name: "AI: Prompt Performance Tracker"
 
 # This workflow tracks the performance of the self-improving prompt generator
@@ -5,23 +15,7 @@ name: "AI: Prompt Performance Tracker"
 # It helps ensure the prompt generator continues to improve over time.
 
 on:
-  # Run daily to analyze recent outcomes
-  schedule:
-    - cron: '0 2 * * *'  # 2 AM UTC daily
-  
-  # Allow manual triggering for immediate analysis
   workflow_dispatch:
-    inputs:
-      days_to_analyze:
-        description: 'Number of days to analyze'
-        required: false
-        default: '7'
-        type: string
-      refresh_learnings:
-        description: 'Refresh learning insights from TLDR'
-        required: false
-        default: true
-        type: boolean
 
 permissions:
   issues: write

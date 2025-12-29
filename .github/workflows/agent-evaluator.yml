@@ -1,17 +1,17 @@
+# ============================================================================
+# WORKFLOW DISABLED
+# Disabled on: 2025-12-29T02:43:14.994388
+# Original workflow name: Agent System: Evaluator
+# Original triggers: schedule, workflow_dispatch
+# 
+# To re-enable: Use the tools/enable_workflows.py script with the
+# workflow_disable_metadata.json file to restore original triggers.
+# ============================================================================
+
 name: "Agent System: Evaluator"
 
 on:
-  schedule:
-    # Run daily at midnight UTC
-    - cron: '0 0 * * *'
   workflow_dispatch:
-    inputs:
-      force_evaluation:
-        description: 'Force evaluation even if already run today'
-        required: false
-        type: boolean
-        default: false
-
 
 permissions:
   contents: write

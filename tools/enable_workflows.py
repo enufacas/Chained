@@ -30,7 +30,7 @@ def remove_disable_metadata(content: str) -> str:
     return content
 
 
-def restore_workflow_triggers(file_path: Path, original_triggers: List[str], metadata: Dict) -> bool:
+def restore_workflow_triggers(file_path: Path, original_triggers: List[str], metadata: Dict, repo_root: Path) -> bool:
     """
     Restore original triggers to a disabled workflow.
     Returns True if successful, False otherwise.
@@ -47,20 +47,18 @@ def restore_workflow_triggers(file_path: Path, original_triggers: List[str], met
         workflow_data = yaml.safe_load(clean_content)
         
         # Find the original workflow in backup
-        backup_location = Path('/home/runner/work/Chained/Chained') / metadata['backup_location'] / file_path.name
+        # The backup has the full directory structure
+        relative_path = file_path.relative_to(repo_root)
+        backup_location = repo_root / metadata['backup_location'] / relative_path
         
         if backup_location.exists():
             # Load original workflow from backup
             with open(backup_location, 'r') as f:
-                original_workflow = yaml.safe_load(f)
+                original_content = f.read()
             
-            # Restore original 'on' section
-            workflow_data['on'] = original_workflow.get('on', original_workflow.get(True, {}))
-            
-            # Write back to file
-            new_content = yaml.dump(workflow_data, default_flow_style=False, sort_keys=False)
+            # Write original content back (complete restore)
             with open(file_path, 'w') as f:
-                f.write(new_content)
+                f.write(original_content)
             
             return True
         else:
@@ -69,6 +67,8 @@ def restore_workflow_triggers(file_path: Path, original_triggers: List[str], met
             
     except Exception as e:
         print(f"  ❌ Error restoring {file_path.name}: {e}")
+        import traceback
+        traceback.print_exc()
         return False
 
 
@@ -100,7 +100,7 @@ def enable_workflows(repo_root: Path, metadata_file: Path, specific_workflow: Op
         
         if file_path.exists():
             print(f"Re-enabling: {workflow['name']}")
-            success = restore_workflow_triggers(file_path, workflow['original_triggers'], metadata)
+            success = restore_workflow_triggers(file_path, workflow['original_triggers'], metadata, repo_root)
             
             if success:
                 print(f"  ✅ Restored triggers: {', '.join(workflow['original_triggers'])}")

@@ -1,0 +1,486 @@
+name: "Meta: Coordinator Orchestration"
+
+# This workflow invokes the meta-coordinator-system agent to orchestrate
+# the entire agent assignment system.
+#
+# The agent continuously assesses system state and takes appropriate actions:
+# - Assign agents to issues
+# - Manage review cycles
+# - Auto-merge approved PRs (processes all eligible PRs; intelligent retry for UNKNOWN status)
+# - Handle exceptions
+#
+# Recent improvements:
+# - Intelligent retry logic: Waits up to 40s for GitHub to calculate merge status
+# - No PR limit: Processes all eligible PRs (workflow timeout naturally limits if needed)
+# - Increased timeout: 15 minutes (from 5) to handle larger PR queues
+
+on:
+  schedule:
+    # Run every 2 hours (cost-optimized from 15 min)
+    # Reduces scheduled runs by 88% while maintaining system coordination
+    - cron: '0 */2 * * *'
+  
+  workflow_dispatch:
+    inputs:
+      focus_area:
+        description: 'Focus area: all, prs, issues, reviews'
+        required: false
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - prs
+          - issues
+          - reviews
+      dry_run:
+        description: 'Dry run (no changes made)'
+        required: false
+        default: false
+        type: boolean
+  
+  # Optional: React to events for immediate response
+  # Commented out initially - can enable after testing
+  # issues:
+  #   types: [opened]
+  # pull_request:
+  #   types: [opened, synchronize, labeled]
+  # pull_request_review:
+  #   types: [submitted]
+
+concurrency:
+  group: meta-coordinator-system
+  cancel-in-progress: false  # Let runs complete
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+  actions: read
+
+jobs:
+  orchestrate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15  # Increased from 5min to handle multiple PRs with retry logic
+                          # With 40s max per PR, this allows ~20 PRs safely
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Ensure required labels exist
+        env:
+          GH_TOKEN: ${{ secrets.COPILOT_PAT || secrets.GITHUB_TOKEN }}
+        run: |
+          echo "🏷️  Ensuring required labels exist..."
+          
+          # Create labels if they don't exist (idempotent operation)
+          gh label create "meta-coordination" --color "FF6B6B" --description "Meta-coordination system orchestration" --force || true
+          gh label create "automated" --color "FBCA04" --description "Automated action" --force || true
+          gh label create "system-orchestration" --color "0E8A16" --description "System orchestration task" --force || true
+          
+          echo "✅ Labels ready"
+      
+      - name: Quick assessment (cost protection)
+        id: assess
+        env:
+          GH_TOKEN: ${{ secrets.COPILOT_PAT || secrets.GITHUB_TOKEN }}
+        run: |
+          echo "🔍 Quick assessment: Is there work to do?"
+          
+          # Count items needing attention
+          open_prs=$(gh pr list --state open --json number --jq 'length' --limit 200)
+          open_issues=$(gh issue list --state open --json number --jq 'length' --limit 200)
+          
+          echo "📊 Current state:"
+          echo "  - Open PRs: ${open_prs}"
+          echo "  - Open issues: ${open_issues}"
+          
+          # Save to environment for memory tracking
+          echo "OPEN_PRS_START=${open_prs}" >> $GITHUB_ENV
+          echo "OPEN_ISSUES_START=${open_issues}" >> $GITHUB_ENV
+          
+          # Decide if we should skip (nothing to do)
+          if [ "${open_prs}" = "0" ] && [ "${open_issues}" = "0" ]; then
+            echo "✅ System idle - no work needed"
+            echo "skip=true" >> $GITHUB_OUTPUT
+          else
+            echo "🎯 Work detected - proceeding with coordination"
+            echo "skip=false" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Phase 0 - Stale PR Cleanup
+        if: steps.assess.outputs.skip != 'true'
+        id: cleanup
+        env:
+          GH_TOKEN: ${{ secrets.COPILOT_PAT || secrets.GITHUB_TOKEN }}
+        run: |
+          echo "🧹 Phase 0: Proactive Stale PR Cleanup"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo ""
+          
+          # Run cleanup script with proper error handling
+          # Script now outputs JSON summary for reliable parsing
+          if ! ./tools/cleanup-stale-prs.sh 2>&1 | tee /tmp/cleanup_output.txt; then
+            echo "⚠️  Warning: Cleanup script encountered errors"
+            echo ""
+            cat /tmp/cleanup_output.txt || echo "No output captured"
+            echo ""
+            echo "Continuing with remaining workflow steps..."
+            echo ""
+            # Set zero counts if cleanup failed
+            echo "CLEANUP_CONFLICTS=0" >> $GITHUB_ENV
+            echo "CLEANUP_NO_ACTIVITY=0" >> $GITHUB_ENV
+            echo "CLEANUP_ORPHANED=0" >> $GITHUB_ENV
+            echo "CLEANUP_DRAFT=0" >> $GITHUB_ENV
+            echo "CLEANUP_TOTAL=0" >> $GITHUB_ENV
+          else
+            # Parse JSON summary (more reliable than grep)
+            if [ -f /tmp/cleanup_summary.json ]; then
+              # Extract all counts in a single jq call for efficiency
+              counts=$(jq -r '[.by_reason.merge_conflicts, .by_reason.no_activity, .by_reason.orphaned, .by_reason.abandoned_draft, .total_closed] | @tsv' /tmp/cleanup_summary.json)
+              read -r conflicts_closed no_activity_closed orphaned_closed draft_closed total_closed <<< "$counts"
+            else
+              # Fallback to text parsing if JSON not available
+              conflicts_closed=$(grep "Merge conflicts" /tmp/cleanup_output.txt | grep -oP '\d+' | tail -1 || echo "0")
+              no_activity_closed=$(grep "No activity" /tmp/cleanup_output.txt | grep -oP '\d+' | tail -1 || echo "0")
+              orphaned_closed=$(grep "Orphaned" /tmp/cleanup_output.txt | grep -oP '\d+' | tail -1 || echo "0")
+              draft_closed=$(grep "Abandoned draft" /tmp/cleanup_output.txt | grep -oP '\d+' | tail -1 || echo "0")
+              total_closed=$((conflicts_closed + no_activity_closed + orphaned_closed + draft_closed))
+            fi
+            
+            # Save to environment for coordination issue
+            echo "CLEANUP_CONFLICTS=${conflicts_closed}" >> $GITHUB_ENV
+            echo "CLEANUP_NO_ACTIVITY=${no_activity_closed}" >> $GITHUB_ENV
+            echo "CLEANUP_ORPHANED=${orphaned_closed}" >> $GITHUB_ENV
+            echo "CLEANUP_DRAFT=${draft_closed}" >> $GITHUB_ENV
+            echo "CLEANUP_TOTAL=${total_closed}" >> $GITHUB_ENV
+            
+            echo ""
+            echo "✅ Cleanup complete: ${total_closed} stale PRs closed"
+            echo ""
+            cat /tmp/cleanup_output.txt || echo "No cleanup details available"
+          fi
+      
+      - name: Phase 1 - Auto-Merge Eligible PRs
+        if: steps.assess.outputs.skip != 'true'
+        id: automerge
+        env:
+          GH_TOKEN: ${{ secrets.COPILOT_PAT || secrets.GITHUB_TOKEN }}
+        run: |
+          echo "🔀 Phase 1: Auto-Merge Eligible PRs"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo ""
+          
+          # Get eligible PRs (mergeable, no WIP, trusted author, not draft OR draft without WIP)
+          gh pr list --state open --limit 100 \
+            --json number,title,isDraft,mergeable,author,statusCheckRollup \
+            > /tmp/all_prs.json
+          
+          # Find PRs eligible for auto-merge:
+          # - MERGEABLE status
+          # - Not draft OR draft without WIP marker
+          # - No WIP marker in title
+          # - Trusted author (copilot, github-actions, owner)
+          # - No CI checks OR CI checks passing
+          eligible_prs=$(jq -r '.[] | select(
+            .mergeable == "MERGEABLE" and
+            (.title | test("\\[WIP\\]|^WIP:|WIP\\s"; "i") | not) and
+            (.author.login | test("^app/copilot|^copilot|^app/github-actions|^github-actions"; "i"))
+          ) | .number' /tmp/all_prs.json)
+          
+          merged_count=0
+          failed_count=0
+          pr_count=0
+          
+          echo "Eligible PRs found: $(echo "$eligible_prs" | wc -w)"
+          echo ""
+          
+          # Process all eligible PRs (no artificial limit)
+          # Workflow timeout (15 min) will naturally limit processing if needed
+          # With 40s max per PR, we can safely handle ~20 PRs
+          for pr in $eligible_prs; do
+            pr_count=$((pr_count + 1))
+            
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            echo "[${pr_count}] Processing PR #${pr}..."
+            echo ""
+            
+            # Run auto-merge script
+            if ./tools/auto-merge-pr.sh ${pr}; then
+              echo "✅ Merged PR #${pr}"
+              merged_count=$((merged_count + 1))
+            else
+              exit_code=$?
+              if [ $exit_code -eq 1 ]; then
+                echo "⚠️  PR #${pr} not eligible (see output above)"
+              else
+                echo "❌ PR #${pr} merge failed"
+                failed_count=$((failed_count + 1))
+              fi
+            fi
+            
+            echo ""
+            sleep 1  # Rate limiting
+          done
+          
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "Auto-Merge Summary"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "PRs processed: ${pr_count}"
+          echo "Successfully merged: ${merged_count}"
+          echo "Failed: ${failed_count}"
+          echo ""
+          
+          # Save to environment for reporting
+          echo "AUTOMERGE_PROCESSED=${pr_count}" >> $GITHUB_ENV
+          echo "AUTOMERGE_MERGED=${merged_count}" >> $GITHUB_ENV
+          echo "AUTOMERGE_FAILED=${failed_count}" >> $GITHUB_ENV
+      
+      - name: Phase 2 - PR State Analysis (Monitoring)
+        if: steps.assess.outputs.skip != 'true'
+        id: monitoring
+        env:
+          GH_TOKEN: ${{ secrets.COPILOT_PAT || secrets.GITHUB_TOKEN }}
+        run: |
+          echo "📊 Phase 2: PR State Analysis"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo ""
+          
+          # Get all PR states (after auto-merge)
+          gh pr list --state open --limit 200 \
+            --json number,title,mergeable,isDraft,author \
+            > /tmp/all_prs.json
+          
+          # Count by state
+          mergeable=$(jq '[.[] | select(.mergeable == "MERGEABLE" and .isDraft == false)] | length' /tmp/all_prs.json)
+          mergeable_draft=$(jq '[.[] | select(.mergeable == "MERGEABLE" and .isDraft == true)] | length' /tmp/all_prs.json)
+          conflicting=$(jq '[.[] | select(.mergeable == "CONFLICTING")] | length' /tmp/all_prs.json)
+          draft=$(jq '[.[] | select(.isDraft == true)] | length' /tmp/all_prs.json)
+          unknown=$(jq '[.[] | select(.mergeable == "UNKNOWN")] | length' /tmp/all_prs.json)
+          
+          # Save to environment
+          echo "MERGEABLE_PRS=${mergeable}" >> $GITHUB_ENV
+          echo "MERGEABLE_DRAFT_PRS=${mergeable_draft}" >> $GITHUB_ENV
+          echo "CONFLICTING_PRS=${conflicting}" >> $GITHUB_ENV
+          echo "DRAFT_PRS=${draft}" >> $GITHUB_ENV
+          echo "UNKNOWN_PRS=${unknown}" >> $GITHUB_ENV
+          
+          echo "PR State Summary (after auto-merge):"
+          echo "  - ✅ Mergeable (non-draft): ${mergeable}"
+          echo "  - ✅ Mergeable (draft): ${mergeable_draft}"
+          echo "  - ❌ Conflicting: ${conflicting}"
+          echo "  - 📝 Draft (total): ${draft}"
+          echo "  - ❓ Unknown: ${unknown}"
+          echo ""
+      
+      - name: Phase 3 - Create coordination request
+        if: steps.assess.outputs.skip != 'true'
+        id: create_request
+        env:
+          GH_TOKEN: ${{ secrets.COPILOT_PAT || secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          TRIGGER_EVENT: ${{ github.event_name }}
+          FOCUS_AREA: ${{ inputs.focus_area || 'all' }}
+          DRY_RUN: ${{ inputs.dry_run || 'false' }}
+        run: |
+          TIMESTAMP=$(date -u +"%Y-%m-%d %H:%M:%S UTC")
+          RUN_ID="${{ github.run_id }}"
+          
+          # Create the coordination issue (assignment will be done in next step)
+          ISSUE_TITLE="🎯 Meta-Coordination: $(date +%H:%M)"
+          
+          echo "Creating coordination issue..."
+          
+          # Validate template file exists
+          TEMPLATE_FILE=".github/workflows/templates/meta-coordinator-issue-body.md"
+          if [ ! -f "${TEMPLATE_FILE}" ]; then
+            echo "❌ Template file not found: ${TEMPLATE_FILE}"
+            echo "   Cannot create coordination issue without template"
+            exit 1
+          fi
+          
+          # Read issue body from template file (avoids 21000 char expression limit)
+          ISSUE_BODY=$(cat "${TEMPLATE_FILE}")
+          
+          # Substitute variables in the issue body
+          ISSUE_BODY="${ISSUE_BODY//\$\{TRIGGER_EVENT\}/${TRIGGER_EVENT}}"
+          ISSUE_BODY="${ISSUE_BODY//\$\{FOCUS_AREA\}/${FOCUS_AREA}}"
+          ISSUE_BODY="${ISSUE_BODY//\$\{GITHUB_REPOSITORY\}/${GITHUB_REPOSITORY}}"
+          ISSUE_BODY="${ISSUE_BODY//\$\{TIMESTAMP\}/${TIMESTAMP}}"
+          ISSUE_BODY="${ISSUE_BODY//\$\{RUN_ID\}/${RUN_ID}}"
+          ISSUE_BODY="${ISSUE_BODY//\$\{DRY_RUN\}/${DRY_RUN}}"
+          
+          # Substitute workflow output variables (from earlier phases)
+          # Phase 1 - Auto-Merge
+          ISSUE_BODY="${ISSUE_BODY//\$\{AUTOMERGE_PROCESSED\}/${AUTOMERGE_PROCESSED:-0}}"
+          ISSUE_BODY="${ISSUE_BODY//\$\{AUTOMERGE_MERGED\}/${AUTOMERGE_MERGED:-0}}"
+          ISSUE_BODY="${ISSUE_BODY//\$\{AUTOMERGE_FAILED\}/${AUTOMERGE_FAILED:-0}}"
+          
+          # Phase 0 - Cleanup
+          ISSUE_BODY="${ISSUE_BODY//\$\{CLEANUP_TOTAL\}/${CLEANUP_TOTAL:-0}}"
+          ISSUE_BODY="${ISSUE_BODY//\$\{CLEANUP_CONFLICTS\}/${CLEANUP_CONFLICTS:-0}}"
+          ISSUE_BODY="${ISSUE_BODY//\$\{CLEANUP_NO_ACTIVITY\}/${CLEANUP_NO_ACTIVITY:-0}}"
+          ISSUE_BODY="${ISSUE_BODY//\$\{CLEANUP_ORPHANED\}/${CLEANUP_ORPHANED:-0}}"
+          ISSUE_BODY="${ISSUE_BODY//\$\{CLEANUP_DRAFT\}/${CLEANUP_DRAFT:-0}}"
+          
+          # Phase 2 - PR State Monitoring
+          ISSUE_BODY="${ISSUE_BODY//\$\{MERGEABLE_PRS\}/${MERGEABLE_PRS:-0}}"
+          ISSUE_BODY="${ISSUE_BODY//\$\{CONFLICTING_PRS\}/${CONFLICTING_PRS:-0}}"
+          ISSUE_BODY="${ISSUE_BODY//\$\{DRAFT_PRS\}/${DRAFT_PRS:-0}}"
+          ISSUE_BODY="${ISSUE_BODY//\$\{UNKNOWN_PRS\}/${UNKNOWN_PRS:-0}}"
+          
+          # Starting counts
+          ISSUE_BODY="${ISSUE_BODY//\$\{OPEN_PRS_START\}/${OPEN_PRS_START:-0}}"
+          ISSUE_BODY="${ISSUE_BODY//\$\{OPEN_ISSUES_START\}/${OPEN_ISSUES_START:-0}}"
+          
+          # Write issue body to file to handle large content reliably
+          echo "$ISSUE_BODY" > /tmp/issue_body.md
+          
+          # Create the coordination issue (without assignee - will assign via GraphQL after)
+          echo "Creating coordination issue..."
+          
+          issue_url=$(gh issue create \
+            --repo "${GITHUB_REPOSITORY}" \
+            --title "${ISSUE_TITLE}" \
+            --body-file /tmp/issue_body.md \
+            --label "meta-coordination,automated,system-orchestration" 2>&1)
+          
+          if [ $? -ne 0 ] || [ -z "${issue_url}" ]; then
+            echo "❌ Failed to create coordination issue"
+            echo "Error output: ${issue_url}"
+            exit 1
+          fi
+          
+          # Extract issue number from URL
+          issue_number=$(echo "${issue_url}" | grep -oP '/issues/\K\d+' | head -1)
+          
+          if [ -z "${issue_number}" ]; then
+            echo "❌ Could not extract issue number from: ${issue_url}"
+            exit 1
+          fi
+          
+          echo "✅ Created coordination issue #${issue_number}"
+          echo "   URL: ${issue_url}"
+          echo "issue_number=${issue_number}" >> $GITHUB_OUTPUT
+          echo "issue_url=${issue_url}" >> $GITHUB_OUTPUT
+      
+      - name: Phase 4 - Assign Copilot to coordination issue
+        if: steps.assess.outputs.skip != 'true' && steps.create_request.outputs.issue_number != ''
+        env:
+          GH_TOKEN: ${{ secrets.COPILOT_PAT || secrets.GITHUB_TOKEN }}
+          GITHUB_EVENT_NAME: ${{ github.event_name }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_REPOSITORY_OWNER: ${{ github.repository_owner }}
+          GITHUB_REPOSITORY_NAME: ${{ github.event.repository.name }}
+          INPUT_ISSUE_NUMBER: ${{ steps.create_request.outputs.issue_number }}
+          ISSUE_NUMBER: ${{ steps.create_request.outputs.issue_number }}
+        run: |
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "Assigning Copilot via GraphQL API"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo ""
+          echo "Using proven assignment script: tools/assign-copilot-to-issue.sh"
+          echo "Issue #${ISSUE_NUMBER}"
+          echo "Agent: @meta-coordinator-system"
+          echo ""
+          
+          # Use the proven assignment script that handles:
+          # - Agent directive injection into issue body
+          # - Custom agent actor ID discovery
+          # - GraphQL API assignment
+          # - Proactive learning guidance
+          # - Race condition protection
+          if ! ./tools/assign-copilot-to-issue.sh; then
+            echo ""
+            echo "❌ Failed to assign Copilot to coordination issue #${ISSUE_NUMBER}"
+            echo "   Issue was created but assignment failed"
+            echo "   This creates an orphaned coordination issue"
+            echo ""
+            
+            # Post error comment to issue
+            gh issue comment "${ISSUE_NUMBER}" --body '## ⚠️ Assignment Failed
+          
+          This meta-coordination issue was created but **Copilot assignment failed**.
+          
+          **Impact:**
+          - No Copilot session will start
+          - System orchestration will not occur
+          - Issue will sit idle (orphaned)
+          
+          **Manual Recovery Steps:**
+          1. Check workflow logs: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          2. Verify environment variables are set correctly
+          3. Re-run the workflow with `workflow_dispatch`
+          4. Or manually assign using:
+             ```bash
+             export GH_TOKEN=$GITHUB_TOKEN
+             export INPUT_ISSUE_NUMBER='"${ISSUE_NUMBER}"'
+             ./tools/assign-copilot-to-issue.sh
+             ```
+          
+          **If unable to fix:**
+          Close this issue and create a new coordination request.
+          
+          *Automated error detection by meta-coordinator workflow*' || echo "Failed to post error comment"
+            
+            exit 1
+          fi
+          
+          echo ""
+          echo "✅ Successfully assigned Copilot to issue #${ISSUE_NUMBER}"
+          echo "   Copilot session will start momentarily"
+      
+      - name: Skip notification
+        if: steps.assess.outputs.skip == 'true'
+        run: |
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "System Idle - Skipping Coordination"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo ""
+          echo "✅ No open PRs or issues requiring attention"
+          echo "💰 Skipping Copilot session (cost protection)"
+          echo "🔄 Next check in 2 hours"
+      
+      - name: Monitor coordination progress
+        if: steps.assess.outputs.skip != 'true' && steps.create_request.outputs.issue_number != ''
+        env:
+          GH_TOKEN: ${{ secrets.COPILOT_PAT || secrets.GITHUB_TOKEN }}
+          ISSUE_NUMBER: ${{ steps.create_request.outputs.issue_number }}
+          ISSUE_URL: ${{ steps.create_request.outputs.issue_url }}
+        run: |
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "Coordination Request Created & Assigned"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo ""
+          echo "Issue: #${ISSUE_NUMBER}"
+          echo "URL: ${ISSUE_URL:-${{ github.server_url }}/${{ github.repository }}/issues/${ISSUE_NUMBER}}"
+          echo "Agent: @meta-coordinator-system"
+          echo "Status: Assigned to Copilot"
+          echo ""
+          echo "Copilot will:"
+          echo "1. Assess system state"
+          echo "2. Take necessary actions"
+          echo "3. Report results"
+          echo "4. Close this issue"
+          echo ""
+          echo "Copilot will complete this coordination autonomously"
+      
+      - name: Summary
+        if: always()
+        run: |
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "Meta-Coordination Workflow Complete"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo ""
+          echo "Trigger: ${{ github.event_name }}"
+          echo "Focus: ${{ inputs.focus_area || 'all' }}"
+          echo "Dry run: ${{ inputs.dry_run || 'false' }}"
+          echo ""
+          echo "✅ Coordination issue created and Copilot assigned in one step"
+          echo "📋 @meta-coordinator-system will orchestrate system state"
+          echo "🔄 Next run in 2 hours (if scheduled)"
