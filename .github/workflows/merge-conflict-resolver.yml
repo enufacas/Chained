@@ -1,21 +1,18 @@
+# ============================================================================
+# WORKFLOW DISABLED
+# Disabled on: 2025-12-29T02:43:14.994388
+# Original workflow name: Automation: Merge Conflict Resolver
+# Original triggers: pull_request, schedule, workflow_dispatch
+# 
+# To re-enable: Use the tools/enable_workflows.py script with the
+# workflow_disable_metadata.json file to restore original triggers.
+# ============================================================================
+
 name: "Automation: Merge Conflict Resolver"
 
 on:
-  pull_request:
-    # Trigger when PR is synchronized (new commits pushed) or reopened
-    # This catches when conflicts might be introduced
-    types: [synchronize, opened, reopened]
-  schedule:
-    # Run every 30 minutes as backup to catch any conflicts
-    - cron: '*/30 * * * *'
   workflow_dispatch:
-    inputs:
-      pr_number:
-        description: 'PR number to check for conflicts (leave empty to check all open PRs)'
-        required: false
-        type: string
 
-# Prevent multiple concurrent runs
 concurrency:
   group: merge-conflict-resolver-${{ github.event.pull_request.number || 'scheduled' }}
   cancel-in-progress: false

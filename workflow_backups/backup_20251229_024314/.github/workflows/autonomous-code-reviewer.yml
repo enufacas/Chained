@@ -1,0 +1,347 @@
+name: "Code Quality: 🤖 Autonomous Reviewer"
+
+# Autonomous code reviewer that learns and improves over time
+# Reviews PRs and evolves criteria based on outcomes
+
+on:
+  pull_request:
+    types: [opened, synchronize, ready_for_review, reopened]
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+      - 'learnings/**'
+      - 'analysis/**'
+  
+  pull_request_review:
+    types: [submitted]
+  
+  # Manual trigger for testing and updates
+  workflow_dispatch:
+    inputs:
+      action:
+        description: 'Action to perform'
+        required: true
+        type: choice
+        options:
+          - review
+          - update-criteria
+          - show-stats
+        default: 'show-stats'
+      pr_number:
+        description: 'PR number (for review action)'
+        required: false
+        type: string
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+jobs:
+  review-pr:
+    # Only run on PR events, not reviews or manual dispatch with other actions
+    if: github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && inputs.action == 'review')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      
+      - name: Determine PR number
+        id: pr_number
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            pr_num="${{ inputs.pr_number }}"
+          else
+            pr_num="${{ github.event.pull_request.number }}"
+          fi
+          echo "pr_number=${pr_num}" >> $GITHUB_OUTPUT
+          echo "Reviewing PR #${pr_num}"
+      
+      - name: Perform autonomous review
+        id: review
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          pr_num="${{ steps.pr_number.outputs.pr_number }}"
+          output_file="learnings/review_history/review_${pr_num}_$(date +%Y%m%d_%H%M%S).json"
+          
+          echo "🤖 Performing autonomous code review on PR #${pr_num}"
+          
+          if python3 tools/autonomous-code-reviewer.py --review ${pr_num} --output "${output_file}" --verbose; then
+            echo "✅ Review complete"
+            echo "output_file=${output_file}" >> $GITHUB_OUTPUT
+            
+            # Extract key metrics
+            overall_score=$(cat "${output_file}" | jq -r '.overall_score' 2>/dev/null || echo "0")
+            passed=$(cat "${output_file}" | jq -r '.passed' 2>/dev/null || echo "false")
+            confidence=$(cat "${output_file}" | jq -r '.confidence' 2>/dev/null || echo "0.5")
+            
+            echo "overall_score=${overall_score}" >> $GITHUB_OUTPUT
+            echo "passed=${passed}" >> $GITHUB_OUTPUT
+            echo "confidence=${confidence}" >> $GITHUB_OUTPUT
+            echo "review_success=true" >> $GITHUB_OUTPUT
+          else
+            echo "⚠️ Review failed"
+            echo "review_success=false" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Post review comment
+        if: steps.review.outputs.review_success == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          pr_num="${{ steps.pr_number.outputs.pr_number }}"
+          output_file="${{ steps.review.outputs.output_file }}"
+          overall_score="${{ steps.review.outputs.overall_score }}"
+          passed="${{ steps.review.outputs.passed }}"
+          confidence="${{ steps.review.outputs.confidence }}"
+          
+          # Load full review data
+          issues_count=$(cat "${output_file}" | jq '.issues_found | length' 2>/dev/null || echo "0")
+          suggestions=$(cat "${output_file}" | jq -r '.suggestions[]' 2>/dev/null | sed 's/^/- /' || echo "- No specific suggestions")
+          
+          # Format score as percentage
+          score_pct=$(python3 -c "print(f'{float(\"${overall_score}\") * 100:.1f}%')")
+          confidence_pct=$(python3 -c "print(f'{float(\"${confidence}\") * 100:.1f}%')")
+          
+          # Determine emoji and status
+          if [ "${passed}" = "true" ]; then
+            emoji="✅"
+            status="**PASSED**"
+          else
+            emoji="⚠️"
+            status="**NEEDS IMPROVEMENT**"
+          fi
+          
+          # Determine confidence indicator
+          confidence_float=$(python3 -c "print(float('${confidence}'))")
+          if (( $(echo "$confidence_float > 0.7" | bc -l) )); then
+            confidence_emoji="🎯"
+            confidence_desc="High confidence"
+          elif (( $(echo "$confidence_float > 0.5" | bc -l) )); then
+            confidence_emoji="📊"
+            confidence_desc="Moderate confidence"
+          else
+            confidence_emoji="🔍"
+            confidence_desc="Low confidence (needs more data)"
+          fi
+          
+          # Create review comment
+          comment="## ${emoji} Autonomous Code Review"$'\n\n'"**Status:** ${status}"$'\n'"**Overall Score:** ${score_pct}"$'\n'"**Confidence:** ${confidence_emoji} ${confidence_pct} (${confidence_desc})"$'\n\n'"### Review Summary"$'\n\n'"This PR has been automatically reviewed by the autonomous code reviewer system."$'\n\n'"**Issues Found:** ${issues_count}"$'\n\n'"### Suggestions for Improvement"$'\n\n'"${suggestions}"$'\n\n'"### About This Review"$'\n\n'"The autonomous code reviewer learns from PR outcomes to continuously improve its criteria. This review evaluates:"$'\n'"- Code complexity and maintainability"$'\n'"- Code style and formatting"$'\n'"- Documentation quality"$'\n'"- Test coverage"$'\n'"- Security considerations"$'\n\n'"**Confidence Scoring:** The system tracks its prediction accuracy and adjusts confidence accordingly. Higher confidence means the system has more data and proven accuracy."$'\n\n'"**Note:** This is an automated assessment. Manual review by tech leads may still be required for protected paths."$'\n\n'"---"$'\n'"*🤖 Autonomous Code Reviewer v1.0 - Enhanced by **@construct-specialist***"$'\n'"*This system learns and improves with each review cycle*"
+          
+          # Post comment
+          gh pr comment ${pr_num} --body "${comment}" --repo ${{ github.repository }}
+          
+          echo "✅ Review comment posted to PR #${pr_num}"
+  
+  learn-from-outcome:
+    # Run when a PR is closed (merged or not)
+    if: github.event_name == 'pull_request' && github.event.action == 'closed'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      
+      - name: Determine outcome
+        id: outcome
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          pr_num="${{ github.event.pull_request.number }}"
+          
+          # Check if merged
+          if [ "${{ github.event.pull_request.merged }}" = "true" ]; then
+            outcome="merged"
+          else
+            # Check for revision labels or change requests
+            labels=$(gh pr view ${pr_num} --json labels --jq '.labels[].name' || echo "")
+            if echo "${labels}" | grep -qE "tech-lead-changes-requested|changes-requested"; then
+              outcome="rejected"
+            else
+              outcome="abandoned"
+            fi
+          fi
+          
+          echo "outcome=${outcome}" >> $GITHUB_OUTPUT
+          echo "PR #${pr_num} outcome: ${outcome}"
+      
+      - name: Learn from outcome
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          pr_num="${{ github.event.pull_request.number }}"
+          outcome="${{ steps.outcome.outputs.outcome }}"
+          
+          echo "🎓 Learning from PR #${pr_num} outcome: ${outcome}"
+          
+          if python3 tools/autonomous-code-reviewer.py --learn-from-outcome ${pr_num} --outcome ${outcome} --verbose; then
+            echo "✅ Learning complete"
+          else
+            echo "⚠️ Learning failed (no review found for this PR)"
+          fi
+      
+      - name: Commit updated criteria
+        if: success()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # Add learning data
+          git add learnings/review_criteria.json 2>/dev/null || true
+          git add learnings/review_history/ 2>/dev/null || true
+          
+          if git diff --staged --quiet; then
+            echo "No criteria updates to commit"
+          else
+            # Create unique branch
+            TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+            BRANCH_NAME="auto-reviewer-learning/${TIMESTAMP}-${{ github.run_id }}"
+            git checkout -b "$BRANCH_NAME"
+            
+            git commit -m "🎓 Update autonomous reviewer criteria from PR #${{ github.event.pull_request.number }}" \
+                       -m "Learned from PR outcome: ${{ steps.outcome.outputs.outcome }}" \
+                       -m "" \
+                       -m "The autonomous code reviewer has updated its criteria based on this PR outcome." \
+                       -m "This improves future review accuracy." \
+                       -m "" \
+                       -m "Updated by: @create-botter Autonomous Code Reviewer"
+            
+            # Push branch
+            git push origin "$BRANCH_NAME"
+            
+            # Create PR
+            PR_DATE=$(date +%Y-%m-%d)
+            gh pr create \
+              --title "🎓 Autonomous reviewer learning update - ${PR_DATE}" \
+              --body "## Autonomous Reviewer Learning Update"$'\n\n'"The autonomous code reviewer has learned from PR #${{ github.event.pull_request.number }} (outcome: ${{ steps.outcome.outputs.outcome }})."$'\n\n'"### Changes"$'\n'"- Updated review criteria weights and thresholds"$'\n'"- Added outcome to learning history"$'\n'"- Improved prediction accuracy for future reviews"$'\n\n'"This PR will be auto-merged."$'\n\n'"---"$'\n'"*🤖 Created by workflow: [${{ github.workflow }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})*" \
+              --label "automated,copilot,agent-system,auto-merge" \
+              --base main \
+              --head "$BRANCH_NAME"
+            
+            echo "✅ Learning PR created"
+          fi
+  
+  update-criteria:
+    # Batch update criteria from historical data
+    if: github.event_name == 'workflow_dispatch' && inputs.action == 'update-criteria'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      
+      - name: Batch update criteria
+        run: |
+          echo "📊 Performing batch criteria update from historical data"
+          
+          if python3 tools/autonomous-code-reviewer.py --update-criteria --verbose; then
+            echo "✅ Criteria updated successfully"
+          else
+            echo "⚠️ Criteria update failed"
+            exit 1
+          fi
+      
+      - name: Commit updated criteria
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          git add learnings/review_criteria.json
+          
+          if git diff --staged --quiet; then
+            echo "No criteria changes"
+          else
+            TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+            BRANCH_NAME="auto-reviewer-batch-update/${TIMESTAMP}-${{ github.run_id }}"
+            git checkout -b "$BRANCH_NAME"
+            
+            git commit -m "📊 Batch update autonomous reviewer criteria" \
+                       -m "Performed comprehensive criteria update from historical review outcomes."
+            
+            git push origin "$BRANCH_NAME"
+            
+            PR_DATE=$(date +%Y-%m-%d)
+            gh pr create \
+              --title "📊 Autonomous reviewer batch criteria update - ${PR_DATE}" \
+              --body "## Batch Criteria Update"$'\n\n'"Comprehensive update of review criteria based on historical outcomes."$'\n\n'"---"$'\n'"*🤖 Created by workflow: [${{ github.workflow }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})*" \
+              --label "automated,copilot,agent-system,auto-merge" \
+              --base main \
+              --head "$BRANCH_NAME"
+          fi
+  
+  show-stats:
+    # Show reviewer statistics
+    if: github.event_name == 'workflow_dispatch' && inputs.action == 'show-stats'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      
+      - name: Get statistics
+        run: |
+          echo "📊 Autonomous Code Reviewer Statistics"
+          echo "======================================="
+          
+          python3 tools/autonomous-code-reviewer.py --show-stats --verbose
+      
+      - name: Generate workflow summary
+        run: |
+          echo "# 🤖 Autonomous Code Reviewer Statistics" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          stats_output=$(python3 tools/autonomous-code-reviewer.py --show-stats)
+          
+          echo '```json' >> $GITHUB_STEP_SUMMARY
+          echo "${stats_output}" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "---" >> $GITHUB_STEP_SUMMARY
+          echo "*Built by **@create-botter** - Self-improving autonomous review system*" >> $GITHUB_STEP_SUMMARY

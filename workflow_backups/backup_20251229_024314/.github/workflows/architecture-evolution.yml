@@ -1,0 +1,209 @@
+name: "Evolution: Architecture Tracker"
+
+on:
+  schedule:
+    # Run every 12 hours
+    - cron: '0 */12 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: analysis-architecture-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  track-architecture:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Get full history
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt || echo "No additional dependencies needed"
+
+      - name: Run Architecture Tracker
+        id: track
+        run: |
+          echo "Running architecture analysis..."
+          python3 tools/architecture-tracker.py \
+            --repo-path . \
+            --output-dir analysis/architecture \
+            --compare \
+            --mermaid || {
+              echo "⚠️ Architecture tracker failed"
+              exit 1
+            }
+          
+          echo "Analysis complete!"
+          
+          # Extract metrics with error handling
+          if [ -f analysis/architecture/latest.json ]; then
+            python3 << 'PYEOF' >> $GITHUB_OUTPUT
+          import json
+          import sys
+          
+          try:
+              with open('analysis/architecture/latest.json', 'r') as f:
+                  data = json.load(f)
+              
+              metrics = data.get('metrics', {})
+              total_files = metrics.get('total_files', 0)
+              total_lines = metrics.get('total_lines', 0)
+              total_components = metrics.get('total_components', 0)
+              
+              print(f"total_files={total_files}")
+              print(f"total_lines={total_lines}")
+              print(f"total_components={total_components}")
+              
+          except Exception as e:
+              print(f"⚠️ Error extracting metrics: {e}", file=sys.stderr)
+              print("total_files=0")
+              print("total_lines=0")
+              print("total_components=0")
+          PYEOF
+          else
+            echo "⚠️ Latest.json not found"
+            echo "total_files=0" >> $GITHUB_OUTPUT
+            echo "total_lines=0" >> $GITHUB_OUTPUT
+            echo "total_components=0" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Copy data to GitHub Pages
+        run: |
+          # Create docs/data directory if it doesn't exist
+          mkdir -p docs/data/architecture
+          
+          # Copy architecture data to docs for GitHub Pages
+          if [ -d analysis/architecture ]; then
+            cp -r analysis/architecture/* docs/data/architecture/
+            echo "Copied architecture data to docs/data/architecture/"
+          fi
+
+      - name: Generate summary
+        id: summary
+        run: |
+          if [ -f analysis/architecture/evolution.json ]; then
+            # Extract snapshot count with error handling
+            python3 << 'PYEOF' >> $GITHUB_OUTPUT
+          import json
+          import sys
+          
+          try:
+              with open('analysis/architecture/evolution.json', 'r') as f:
+                  evolution = json.load(f)
+              
+              snapshot_count = len(evolution.get('snapshots', []))
+              print(f"snapshot_count={snapshot_count}")
+              
+          except Exception as e:
+              print(f"snapshot_count=0")
+          PYEOF
+            
+            echo "📊 Architecture tracking summary:" >> $GITHUB_STEP_SUMMARY
+            echo "- Total files tracked: ${{ steps.track.outputs.total_files }}" >> $GITHUB_STEP_SUMMARY
+            echo "- Total lines of code: ${{ steps.track.outputs.total_lines }}" >> $GITHUB_STEP_SUMMARY
+            echo "- Total components: ${{ steps.track.outputs.total_components }}" >> $GITHUB_STEP_SUMMARY
+            echo "- Historical snapshots: $(grep -oP 'snapshot_count=\K\d+' $GITHUB_OUTPUT | tail -1)" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "🔗 View evolution: https://enufacas.github.io/Chained/architecture-evolution.html" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "snapshot_count=0" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Commit and create PR
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # Add architecture files
+          git add analysis/architecture/
+          git add docs/data/architecture/
+          
+          # Add Mermaid diagram if it exists
+          if [ -f analysis/architecture/architecture.mmd ]; then
+            git add analysis/architecture/architecture.mmd
+          fi
+          
+          if git diff --staged --quiet; then
+            echo "No architecture changes to commit"
+          else
+            # Create a new branch for the PR with unique name using run ID
+            TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+            BRANCH_NAME="architecture-evolution/${TIMESTAMP}-${{ github.run_id }}"
+            git checkout -b "$BRANCH_NAME"
+            
+            # Pull latest main to avoid conflicts
+            git fetch origin main
+            git merge origin/main --no-edit || {
+              # If merge conflicts, keep our changes
+              git checkout --ours analysis/
+              git add analysis/
+              git commit --no-edit
+            }
+            
+            # Commit changes
+            git commit -m "🏗️ Update architecture evolution tracking" \
+                       -m "Files: ${{ steps.track.outputs.total_files }}" \
+                       -m "Lines: ${{ steps.track.outputs.total_lines }}" \
+                       -m "Components: ${{ steps.track.outputs.total_components }}" \
+                       -m "Snapshots: ${{ steps.summary.outputs.snapshot_count }}"
+            
+            # Push branch
+            git push origin "$BRANCH_NAME"
+            
+            # Create PR with consistent date formatting
+            PR_DATE=$(date +%Y-%m-%d)
+            
+            # Create PR body using printf to avoid YAML parsing issues
+            printf '%s\n' \
+              "## Architecture Evolution Update" \
+              "" \
+              "This PR updates the architecture evolution tracking data." \
+              "" \
+              "### Metrics" \
+              "- **Files:** ${{ steps.track.outputs.total_files }}" \
+              "- **Lines:** ${{ steps.track.outputs.total_lines }}" \
+              "- **Components:** ${{ steps.track.outputs.total_components }}" \
+              "- **Snapshots:** ${{ steps.summary.outputs.snapshot_count }}" \
+              "" \
+              "### Changes" \
+              "- Updated architecture snapshots in \`analysis/architecture/\`" \
+              "- Updated architecture data in \`docs/data/architecture/\` for GitHub Pages" \
+              "- Updated Mermaid diagram if changed" \
+              "" \
+              "---" \
+              "*🤖 Automated architecture tracking workflow*" \
+              > /tmp/pr-body.md
+            
+            gh pr create \
+              --title "🏗️ Update architecture evolution tracking - ${PR_DATE}" \
+              --body-file /tmp/pr-body.md \
+              --label "architecture,automated,copilot" \
+              --base main \
+              --head "$BRANCH_NAME"
+            
+            echo "✅ PR created for architecture evolution tracking"
+          fi
+
+      - name: Log activity
+        run: |
+          echo "Architecture evolution tracking completed"
+          echo "Files: ${{ steps.track.outputs.total_files }}"
+          echo "Lines: ${{ steps.track.outputs.total_lines }}"
+          echo "Components: ${{ steps.track.outputs.total_components }}"
+          echo "Snapshots: ${{ steps.summary.outputs.snapshot_count }}"
+          echo "Timestamp: $(date -u +'%Y-%m-%d %H:%M:%S UTC')"

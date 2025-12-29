@@ -1,19 +1,16 @@
+# ============================================================================
+# WORKFLOW DISABLED
+# Disabled on: 2025-12-29T02:43:14.994388
+# Original workflow name: Test: A2A Full Suite
+# Original triggers: push, pull_request, workflow_dispatch
+# 
+# To re-enable: Use the tools/enable_workflows.py script with the
+# workflow_disable_metadata.json file to restore original triggers.
+# ============================================================================
+
 name: "Test: A2A Full Suite"
 
 on:
-  push:
-    branches:
-      - 'copilot/implement-agent-orchestration'
-    paths:
-      - 'tools/a2a/**'
-      - 'tests/test_a2a_*.py'
-      - 'examples/a2a_*.py'
-      - '.github/workflows/a2a-test-*.yml'
-  pull_request:
-    types: [opened, synchronize]
-    paths:
-      - 'tools/a2a/**'
-      - 'tests/test_a2a_*.py'
   workflow_dispatch:
 
 permissions:

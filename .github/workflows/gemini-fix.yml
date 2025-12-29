@@ -1,3 +1,13 @@
+# ============================================================================
+# WORKFLOW DISABLED
+# Disabled on: 2025-12-29T02:43:14.994388
+# Original workflow name: Gemini: 🔧 Fix
+# Original triggers: workflow_call
+# 
+# To re-enable: Use the tools/enable_workflows.py script with the
+# workflow_disable_metadata.json file to restore original triggers.
+# ============================================================================
+
 name: "Gemini: 🔧 Fix"
 
 # Issue Fixer workflow - automatically analyzes issues, implements fixes, and creates PRs
@@ -13,12 +23,7 @@ name: "Gemini: 🔧 Fix"
 # Uses the gemini-issue-fixer prompt from google-github-actions/run-gemini-cli
 
 on:
-  workflow_call:
-    inputs:
-      additional_context:
-        type: 'string'
-        description: 'Any additional context from the request'
-        required: false
+  workflow_dispatch:
 
 concurrency:
   group: '${{ github.workflow }}-fix-${{ github.event_name }}-${{ github.event.pull_request.number || github.event.issue.number }}'

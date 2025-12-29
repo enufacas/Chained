@@ -1,0 +1,230 @@
+name: "Data: Workflow Execution Collection"
+# Created by @create-botter
+# Automatically collects workflow execution data to feed the AI predictor
+
+on:
+  workflow_dispatch:
+    inputs:
+      limit:
+        description: 'Maximum number of runs to collect'
+        required: false
+        default: '100'
+        type: string
+      mode:
+        description: 'Collection mode'
+        required: true
+        default: 'collect'
+        type: choice
+        options:
+          - collect
+          - stats
+          - report
+  schedule:
+    # Run daily at 2:00 AM UTC to collect workflow data
+    - cron: '0 2 * * *'
+  # NOTE: workflow_run trigger with wildcard removed to avoid excessive executions
+  # The scheduled daily collection is sufficient for data gathering
+  # Manual dispatch is available for on-demand collection
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  collect-data:
+    runs-on: ubuntu-latest
+    # Limit concurrent runs to prevent conflicts
+    concurrency:
+      group: workflow-data-collection
+      cancel-in-progress: false
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Install dependencies
+        run: |
+          # PyYAML is optional - collector works without it but some integrations may need it
+          if pip install 'PyYAML>=6.0'; then
+            echo "✓ PyYAML installed successfully"
+          else
+            echo "ℹ️ PyYAML installation failed (may be optional for basic data collection)"
+          fi
+      
+      - name: Determine collection parameters
+        id: params
+        run: |
+          # Set default limit
+          if [ -n "${{ github.event.inputs.limit }}" ]; then
+            echo "limit=${{ github.event.inputs.limit }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "limit=100" >> "$GITHUB_OUTPUT"
+          fi
+          
+          # Set mode
+          if [ -n "${{ github.event.inputs.mode }}" ]; then
+            echo "mode=${{ github.event.inputs.mode }}" >> "$GITHUB_OUTPUT"
+          elif [ "${{ github.event_name }}" = "workflow_run" ]; then
+            # For workflow_run triggers, just collect recent data
+            echo "mode=collect" >> "$GITHUB_OUTPUT"
+            echo "limit=20" >> "$GITHUB_OUTPUT"
+          else
+            # Scheduled runs collect more data
+            echo "mode=collect" >> "$GITHUB_OUTPUT"
+          fi
+      
+      - name: Collect workflow execution data
+        id: collect
+        run: |
+          echo "🚀 @create-botter - Workflow Execution Data Collector"
+          echo "=================================================="
+          echo ""
+          
+          MODE="${{ steps.params.outputs.mode }}"
+          LIMIT="${{ steps.params.outputs.limit }}"
+          
+          echo "Mode: $MODE"
+          echo "Limit: $LIMIT"
+          echo ""
+          
+          case "$MODE" in
+            "collect")
+              echo "📥 Collecting workflow execution data..."
+              python3 tools/github_actions_data_collector.py --collect --limit "$LIMIT"
+              ;;
+            "stats")
+              echo "📊 Showing workflow execution statistics..."
+              python3 tools/github_actions_data_collector.py --stats
+              ;;
+            "report")
+              echo "📋 Generating comprehensive report..."
+              python3 tools/github_actions_data_collector.py --report
+              ;;
+            *)
+              echo "Unknown mode: $MODE"
+              exit 1
+              ;;
+          esac
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Check for new data files
+        id: check_changes
+        run: |
+          git add -A
+          if git diff --staged --quiet; then
+            echo "has_changes=false" >> "$GITHUB_OUTPUT"
+            echo "ℹ️ No new data to commit"
+          else
+            echo "has_changes=true" >> "$GITHUB_OUTPUT"
+            echo "✓ New data collected"
+          fi
+      
+      - name: Commit collected data (if changes exist)
+        if: steps.check_changes.outputs.has_changes == 'true' && github.event_name != 'workflow_run'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # Create branch for PR
+          TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+          BRANCH_NAME="workflow-data-collection/${TIMESTAMP}-${{ github.run_id }}"
+          
+          git checkout -b "$BRANCH_NAME"
+          git add .github/workflow-history/
+          git commit -m "chore: Collect workflow execution data by @create-botter"
+          git push origin "$BRANCH_NAME"
+          
+          # Create PR with fallback for missing labels
+          gh pr create \
+            --title "📊 Workflow Execution Data Collection" \
+            --body "## 📥 Workflow Data Collection"$'\n\n'"**@create-botter** has collected workflow execution data from GitHub Actions."$'\n\n'"### What's Included"$'\n'"- Real workflow execution times"$'\n'"- Success/failure rates"$'\n'"- Resource usage estimates"$'\n'"- Historical patterns"$'\n\n'"### Purpose"$'\n'"This data feeds the AI-powered workflow orchestrator to:"$'\n'"- Improve execution time predictions"$'\n'"- Optimize workflow scheduling"$'\n'"- Detect performance trends"$'\n'"- Reduce resource contention"$'\n\n'"---"$'\n\n'"*Collected by **@create-botter** - AI Workflow Data Collector* 🏭" \
+            --label "automated,workflow-optimization" \
+            --base main \
+            --head "$BRANCH_NAME" || {
+              echo "⚠️ PR creation with labels failed, retrying without labels..."
+              gh pr create \
+                --title "📊 Workflow Execution Data Collection" \
+                --body "**@create-botter** has collected workflow execution data." \
+                --base main \
+                --head "$BRANCH_NAME"
+            }
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Create summary
+        run: |
+          {
+            echo "## 📊 Workflow Data Collection Summary"
+            echo ""
+            echo "**@create-botter** has processed workflow execution data."
+            echo ""
+          } >> "$GITHUB_STEP_SUMMARY"
+          
+          # Get statistics
+          python3 << 'EOF' >> "$GITHUB_STEP_SUMMARY"
+          import json
+          from pathlib import Path
+          
+          history_file = Path('.github/workflow-history/executions.json')
+          
+          if history_file.exists():
+              try:
+                  with open(history_file, 'r') as f:
+                      data = json.load(f)
+                  
+                  executions = data.get('executions', [])
+                  total = len(executions)
+                  
+                  print(f"### 📈 Data Overview")
+                  print(f"")
+                  print(f"- **Total Executions Recorded**: {total}")
+                  print(f"- **Last Updated**: {data.get('last_updated', 'N/A')}")
+                  print(f"")
+                  
+                  if executions:
+                      # Group by workflow
+                      workflows = {}
+                      for exec_data in executions:
+                          wf_name = exec_data.get('workflow_name', 'unknown')
+                          if wf_name not in workflows:
+                              workflows[wf_name] = {'count': 0, 'success': 0, 'total_duration': 0}
+                          workflows[wf_name]['count'] += 1
+                          if exec_data.get('success'):
+                              workflows[wf_name]['success'] += 1
+                          workflows[wf_name]['total_duration'] += exec_data.get('duration_seconds', 0)
+                      
+                      print(f"### 🔄 Workflow Statistics")
+                      print(f"")
+                      print(f"| Workflow | Runs | Success Rate | Avg Duration |")
+                      print(f"|----------|------|--------------|--------------|")
+                      
+                      for wf_name, stats in sorted(workflows.items())[:10]:
+                          success_rate = (stats['success'] / stats['count']) * 100
+                          avg_duration = stats['total_duration'] / stats['count']
+                          wf_short = wf_name[:30] + '...' if len(wf_name) > 30 else wf_name
+                          print(f"| {wf_short} | {stats['count']} | {success_rate:.0f}% | {avg_duration:.0f}s |")
+                      
+                      if len(workflows) > 10:
+                          print(f"| ... and {len(workflows) - 10} more | | | |")
+                      
+                      print(f"")
+              except Exception as e:
+                  print(f"⚠️ Could not parse history: {e}")
+          else:
+              print(f"ℹ️ No execution history file found yet.")
+              print(f"")
+              print(f"Run `--collect` to start gathering workflow data.")
+          EOF
+          
+          {
+            echo ""
+            echo "---"
+            echo ""
+            echo "*🤖 Created by workflow: [${{ github.workflow }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})*"
+          } >> "$GITHUB_STEP_SUMMARY"

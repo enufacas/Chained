@@ -1,3 +1,13 @@
+# ============================================================================
+# WORKFLOW DISABLED
+# Disabled on: 2025-12-29T02:43:14.994388
+# Original workflow name: AI-Native Control Plane - Deploy
+# Original triggers: workflow_dispatch, push
+# 
+# To re-enable: Use the tools/enable_workflows.py script with the
+# workflow_disable_metadata.json file to restore original triggers.
+# ============================================================================
+
 # ==============================================================================
 # AI-Native Control Plane - Deploy to GCP
 # ==============================================================================
@@ -20,31 +30,8 @@
 name: AI-Native Control Plane - Deploy
 
 on:
+
   workflow_dispatch:
-    inputs:
-      environment:
-        description: 'Environment to deploy'
-        required: true
-        type: choice
-        options:
-          - dev
-          - staging
-          - production
-        default: 'dev'
-      
-      skip_tests:
-        description: 'Skip tests (not recommended for production)'
-        required: false
-        type: boolean
-        default: false
-  
-  push:
-    branches:
-      - main
-    paths:
-      - 'services/**'
-      - 'infrastructure/terraform/ai-native/**'
-      - '.github/workflows/ai-native-deploy.yml'
 
 env:
   GCP_REGION: us-central1

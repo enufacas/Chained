@@ -1,0 +1,337 @@
+# ==============================================================================
+# AI-Native Control Plane - Deploy to GCP
+# ==============================================================================
+# This workflow deploys the AI-Native Control Plane to Google Cloud Platform:
+# - Builds and pushes Docker images to Artifact Registry
+# - Runs Terraform to deploy infrastructure
+# - Runs database migrations
+# - Validates deployment
+#
+# Requires:
+# - GCP_PROJECT_ID secret
+# - GCP_SA_KEY secret (service account with required permissions)
+# - TF_VAR_alert_email secret (optional)
+#
+# Runs on:
+# - Manual dispatch (with environment selection)
+# - Push to main branch (auto-deploy to dev)
+# ==============================================================================
+
+name: AI-Native Control Plane - Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy'
+        required: true
+        type: choice
+        options:
+          - dev
+          - staging
+          - production
+        default: 'dev'
+      
+      skip_tests:
+        description: 'Skip tests (not recommended for production)'
+        required: false
+        type: boolean
+        default: false
+  
+  push:
+    branches:
+      - main
+    paths:
+      - 'services/**'
+      - 'infrastructure/terraform/ai-native/**'
+      - '.github/workflows/ai-native-deploy.yml'
+
+env:
+  GCP_REGION: us-central1
+  PYTHON_VERSION: '3.11'
+  TERRAFORM_VERSION: '1.6.0'
+
+jobs:
+  # ============================================================================
+  # Setup and Validation
+  # ============================================================================
+  setup:
+    name: Setup Deployment
+    runs-on: ubuntu-latest
+    outputs:
+      environment: ${{ steps.set-env.outputs.environment }}
+      image-tag: ${{ steps.set-tag.outputs.tag }}
+    
+    steps:
+      - name: Determine environment
+        id: set-env
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "environment=${{ inputs.environment }}" >> $GITHUB_OUTPUT
+          else
+            echo "environment=dev" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Set image tag
+        id: set-tag
+        run: |
+          SHORT_SHA=$(echo ${{ github.sha }} | cut -c1-7)
+          TAG="${{ github.ref_name }}-${SHORT_SHA}-$(date +%Y%m%d-%H%M%S)"
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+      
+      - name: Validate secrets
+        run: |
+          if [ -z "${{ secrets.GCP_PROJECT_ID }}" ]; then
+            echo "❌ GCP_PROJECT_ID secret not set"
+            exit 1
+          fi
+          if [ -z "${{ secrets.GCP_SA_KEY }}" ]; then
+            echo "❌ GCP_SA_KEY secret not set"
+            exit 1
+          fi
+          echo "✅ All required secrets are set"
+
+  # ============================================================================
+  # Run Tests (unless skipped)
+  # ============================================================================
+  test:
+    name: Run Tests
+    needs: setup
+    if: ${{ !inputs.skip_tests }}
+    uses: ./.github/workflows/ai-native-build-test.yml
+
+  # ============================================================================
+  # Build and Push Container Images
+  # ============================================================================
+  build-and-push:
+    name: Build and Push Images
+    runs-on: ubuntu-latest
+    needs: [setup, test]
+    if: always() && (needs.test.result == 'success' || needs.test.result == 'skipped')
+    
+    permissions:
+      contents: read
+      id-token: write
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+      
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+      
+      - name: Configure Docker for GCR
+        run: |
+          gcloud auth configure-docker ${{ env.GCP_REGION }}-docker.pkg.dev
+      
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      
+      - name: Build and push Infra Runner
+        uses: docker/build-push-action@v5
+        with:
+          context: services/infra-runner
+          file: services/infra-runner/Dockerfile
+          push: true
+          tags: |
+            ${{ env.GCP_REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/chained/infra-runner:${{ needs.setup.outputs.image-tag }}
+            ${{ env.GCP_REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/chained/infra-runner:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+      
+      - name: Build and push AI Control Plane
+        uses: docker/build-push-action@v5
+        with:
+          context: services/ai-control-plane
+          file: services/ai-control-plane/Dockerfile
+          push: true
+          tags: |
+            ${{ env.GCP_REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/chained/ai-control-plane:${{ needs.setup.outputs.image-tag }}
+            ${{ env.GCP_REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/chained/ai-control-plane:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  # ============================================================================
+  # Deploy Infrastructure with Terraform
+  # ============================================================================
+  terraform-deploy:
+    name: Deploy with Terraform
+    runs-on: ubuntu-latest
+    needs: [setup, build-and-push]
+    environment: ${{ needs.setup.outputs.environment }}
+    
+    permissions:
+      contents: read
+      id-token: write
+    
+    defaults:
+      run:
+        working-directory: infrastructure/terraform/ai-native
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+      
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+      
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TERRAFORM_VERSION }}
+      
+      - name: Create terraform.tfvars
+        run: |
+          cat > terraform.tfvars <<EOF
+          project_id  = "${{ secrets.GCP_PROJECT_ID }}"
+          region      = "${{ env.GCP_REGION }}"
+          environment = "${{ needs.setup.outputs.environment }}"
+          
+          # Container images
+          ai_native_control_plane_image = "${{ env.GCP_REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/chained/ai-control-plane:${{ needs.setup.outputs.image-tag }}"
+          ai_native_infra_runner_image  = "${{ env.GCP_REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/chained/infra-runner:${{ needs.setup.outputs.image-tag }}"
+          
+          # Database config
+          ai_native_db_tier      = "${{ needs.setup.outputs.environment == 'production' && 'db-custom-2-7680' || 'db-f1-micro' }}"
+          ai_native_db_disk_size = ${{ needs.setup.outputs.environment == 'production' && '50' || '10' }}
+          
+          # LLM provider
+          ai_native_llm_provider = "gemini"
+          
+          # Alert email
+          alert_email = "${{ secrets.TF_VAR_alert_email || '' }}"
+          EOF
+          
+          echo "📋 Terraform variables configured for AI-Native Control Plane deployment"
+      
+      - name: Terraform Init
+        run: terraform init
+      
+      - name: Terraform Validate
+        run: terraform validate
+      
+      - name: Terraform Plan
+        id: plan
+        run: |
+          terraform plan -out=tfplan -no-color
+          echo "plan_exitcode=$?" >> $GITHUB_OUTPUT
+      
+      - name: Terraform Apply
+        if: steps.plan.outputs.plan_exitcode == '0'
+        run: terraform apply -auto-approve tfplan
+      
+      - name: Get deployment outputs
+        id: outputs
+        run: |
+          CONTROL_PLANE_URL=$(terraform output -raw ai_native_control_plane_url 2>/dev/null || echo "")
+          INFRA_RUNNER_URL=$(terraform output -raw ai_native_infra_runner_url 2>/dev/null || echo "")
+          DB_INSTANCE=$(terraform output -raw ai_native_database_instance 2>/dev/null || echo "")
+          
+          echo "control_plane_url=$CONTROL_PLANE_URL" >> $GITHUB_OUTPUT
+          echo "infra_runner_url=$INFRA_RUNNER_URL" >> $GITHUB_OUTPUT
+          echo "db_instance=$DB_INSTANCE" >> $GITHUB_OUTPUT
+
+      - name: Display deployment summary
+        run: |
+          echo "## 🚀 Deployment Complete" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Environment**: ${{ needs.setup.outputs.environment }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Image Tag**: ${{ needs.setup.outputs.image-tag }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Service URLs" >> $GITHUB_STEP_SUMMARY
+          echo "- **AI Control Plane**: ${{ steps.outputs.outputs.control_plane_url }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Infra Runner**: ${{ steps.outputs.outputs.infra_runner_url }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Database" >> $GITHUB_STEP_SUMMARY
+          echo "- **Instance**: ${{ steps.outputs.outputs.db_instance }}" >> $GITHUB_STEP_SUMMARY
+
+  # ============================================================================
+  # Validate Deployment
+  # ============================================================================
+  validate:
+    name: Validate Deployment
+    runs-on: ubuntu-latest
+    needs: [terraform-deploy]
+    
+    steps:
+      - name: Wait for services to start
+        run: sleep 30
+      
+      - name: Check AI Control Plane health
+        run: |
+          CONTROL_PLANE_URL="${{ needs.terraform-deploy.outputs.control_plane_url }}"
+          if [ -n "$CONTROL_PLANE_URL" ]; then
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}" $CONTROL_PLANE_URL/health)
+            if [ "$STATUS" = "200" ]; then
+              echo "✅ AI Control Plane is healthy"
+            else
+              echo "❌ AI Control Plane health check failed (HTTP $STATUS)"
+              exit 1
+            fi
+          else
+            echo "⚠️ Control Plane URL not available, skipping health check"
+          fi
+      
+      - name: Check Infra Runner health
+        run: |
+          INFRA_RUNNER_URL="${{ needs.terraform-deploy.outputs.infra_runner_url }}"
+          if [ -n "$INFRA_RUNNER_URL" ]; then
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}" $INFRA_RUNNER_URL/health)
+            if [ "$STATUS" = "200" ]; then
+              echo "✅ Infra Runner is healthy"
+            else
+              echo "❌ Infra Runner health check failed (HTTP $STATUS)"
+              exit 1
+            fi
+          else
+            echo "⚠️ Infra Runner URL not available, skipping health check"
+          fi
+
+  # ============================================================================
+  # Post-Deployment Summary
+  # ============================================================================
+  summary:
+    name: Deployment Summary
+    runs-on: ubuntu-latest
+    needs: [setup, terraform-deploy, validate]
+    if: always()
+    
+    steps:
+      - name: Generate summary
+        run: |
+          echo "# AI-Native Control Plane Deployment" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Environment**: ${{ needs.setup.outputs.environment }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Status**: ${{ needs.validate.result == 'success' && '✅ Success' || '❌ Failed' }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          if [ "${{ needs.validate.result }}" = "success" ]; then
+            echo "## Next Steps" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "1. **Set API Keys** (if not already set):" >> $GITHUB_STEP_SUMMARY
+            echo '   ```bash' >> $GITHUB_STEP_SUMMARY
+            echo '   echo -n "YOUR_KEY" | gcloud secrets versions add ai-native-gemini-api-key --data-file=-' >> $GITHUB_STEP_SUMMARY
+            echo '   ```' >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "2. **Run Database Migrations** (if needed):" >> $GITHUB_STEP_SUMMARY
+            echo '   ```bash' >> $GITHUB_STEP_SUMMARY
+            echo '   gcloud sql connect DB_INSTANCE --user=ai_native_admin --database=ai_native_control_plane' >> $GITHUB_STEP_SUMMARY
+            echo '   ```' >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "3. **Test the System**:" >> $GITHUB_STEP_SUMMARY
+            echo '   ```bash' >> $GITHUB_STEP_SUMMARY
+            echo '   curl -X POST CONTROL_PLANE_URL/execute \' >> $GITHUB_STEP_SUMMARY
+            echo '     -H "Content-Type: application/json" \' >> $GITHUB_STEP_SUMMARY
+            echo '     -d '"'"'{"user_request": "Create a blog", "user_id": "test"}'"'"'' >> $GITHUB_STEP_SUMMARY
+            echo '   ```' >> $GITHUB_STEP_SUMMARY
+          fi

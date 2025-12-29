@@ -1,0 +1,293 @@
+name: "Claude: 🎯 A2A Coordinator"
+
+# Phase 3A Implementation: Multi-agent task decomposition and orchestration
+# This workflow coordinates multiple Claude AI agents to solve complex tasks
+# through sequential or parallel delegation.
+#
+# Supports two authentication methods:
+# 1. Direct Anthropic API (ANTHROPIC_API_KEY secret)
+# 2. Google Vertex AI with OIDC (GCP workload identity federation)
+#
+# For Vertex AI setup, see: docs/VERTEX_AI_CLAUDE_SETUP.md
+
+on:
+  workflow_dispatch:
+    inputs:
+      issue_number:
+        description: 'Issue number to process for A2A orchestration'
+        required: true
+        type: number
+      orchestration_tier:
+        description: 'Orchestration tier: tier1 (sequential) or tier2 (parallel)'
+        required: false
+        default: 'tier1'
+        type: choice
+        options:
+          - tier1
+          - tier2
+      use_vertex:
+        description: 'Use Google Vertex AI instead of direct Anthropic API'
+        required: false
+        default: 'false'
+        type: choice
+        options:
+          - 'true'
+          - 'false'
+
+  issue_comment:
+    types:
+      - 'created'
+
+defaults:
+  run:
+    shell: 'bash'
+
+jobs:
+  check_trigger:
+    runs-on: 'ubuntu-latest'
+    permissions:
+      contents: 'read'
+    outputs:
+      should_run: '${{ steps.check.outputs.should_run }}'
+      issue_number: '${{ steps.check.outputs.issue_number }}'
+      orchestration_tier: '${{ steps.check.outputs.orchestration_tier }}'
+      use_vertex: '${{ steps.check.outputs.use_vertex }}'
+    steps:
+      - name: 'Check if workflow should run'
+        id: 'check'
+        run: |
+          # Check if this is a workflow_dispatch or @claude-a2a-coordinator command
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "should_run=true" >> $GITHUB_OUTPUT
+            echo "issue_number=${{ inputs.issue_number }}" >> $GITHUB_OUTPUT
+            echo "orchestration_tier=${{ inputs.orchestration_tier }}" >> $GITHUB_OUTPUT
+            echo "use_vertex=${{ inputs.use_vertex }}" >> $GITHUB_OUTPUT
+          elif [ "${{ github.event_name }}" = "issue_comment" ]; then
+            comment_body="${{ github.event.comment.body }}"
+            if [[ "$comment_body" =~ ^@claude-a2a-coordinator ]]; then
+              # Check user permissions
+              author_association="${{ github.event.comment.author_association }}"
+              if [[ "$author_association" =~ ^(OWNER|MEMBER|COLLABORATOR)$ ]]; then
+                echo "should_run=true" >> $GITHUB_OUTPUT
+                echo "issue_number=${{ github.event.issue.number }}" >> $GITHUB_OUTPUT
+                # Extract tier if specified, default to tier1
+                if [[ "$comment_body" =~ tier2 ]]; then
+                  echo "orchestration_tier=tier2" >> $GITHUB_OUTPUT
+                else
+                  echo "orchestration_tier=tier1" >> $GITHUB_OUTPUT
+                fi
+                # Check for vertex flag
+                if [[ "$comment_body" =~ vertex ]]; then
+                  echo "use_vertex=true" >> $GITHUB_OUTPUT
+                else
+                  echo "use_vertex=${{ vars.CLAUDE_USE_VERTEX || 'false' }}" >> $GITHUB_OUTPUT
+                fi
+              else
+                echo "should_run=false" >> $GITHUB_OUTPUT
+                echo "⚠️ User does not have permission to trigger A2A coordinator"
+              fi
+            else
+              echo "should_run=false" >> $GITHUB_OUTPUT
+            fi
+          else
+            echo "should_run=false" >> $GITHUB_OUTPUT
+          fi
+
+  # Optional: Authenticate to Google Cloud for Vertex AI
+  vertex_auth:
+    needs: 'check_trigger'
+    if: needs.check_trigger.outputs.should_run == 'true' && needs.check_trigger.outputs.use_vertex == 'true'
+    runs-on: 'ubuntu-latest'
+    permissions:
+      contents: 'read'
+      id-token: 'write'  # Required for OIDC
+    outputs:
+      authenticated: '${{ steps.auth.outputs.success }}'
+    steps:
+      - name: 'Authenticate to Google Cloud'
+        id: 'auth'
+        uses: 'google-github-actions/auth@v2'
+        with:
+          workload_identity_provider: '${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}'
+          service_account: '${{ secrets.GCP_SERVICE_ACCOUNT }}'
+        continue-on-error: true
+      
+      - name: 'Check authentication result'
+        run: |
+          if [ "${{ steps.auth.outcome }}" = "success" ]; then
+            echo "success=true" >> $GITHUB_OUTPUT
+            echo "✅ Authenticated to Google Cloud for Vertex AI"
+          else
+            echo "success=false" >> $GITHUB_OUTPUT
+            echo "⚠️ Failed to authenticate to Google Cloud"
+            echo "Falling back to direct Anthropic API if available"
+          fi
+
+  coordinator:
+    needs: ['check_trigger', 'vertex_auth']
+    if: |
+      always() &&
+      needs.check_trigger.outputs.should_run == 'true' &&
+      (needs.vertex_auth.result == 'success' || needs.vertex_auth.result == 'skipped')
+    runs-on: 'ubuntu-latest'
+    timeout-minutes: 30
+    permissions:
+      contents: 'write'
+      id-token: 'write'
+      issues: 'write'
+      pull-requests: 'write'
+    steps:
+      - name: 'Checkout repository'
+        uses: 'actions/checkout@v4'
+
+      - name: 'Set up Python'
+        uses: 'actions/setup-python@v5'
+        with:
+          python-version: '3.11'
+
+      - name: 'Install dependencies'
+        run: |
+          pip install anthropic requests PyGithub
+          pip install -r requirements.txt
+
+      - name: 'Authenticate to Google Cloud (if Vertex AI)'
+        id: 'gcp_auth'
+        if: needs.check_trigger.outputs.use_vertex == 'true'
+        uses: 'google-github-actions/auth@v2'
+        with:
+          workload_identity_provider: '${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}'
+          service_account: '${{ secrets.GCP_SERVICE_ACCOUNT }}'
+        continue-on-error: true
+
+      - name: 'Determine provider based on auth result'
+        id: 'provider'
+        env:
+          USE_VERTEX: '${{ needs.check_trigger.outputs.use_vertex }}'
+          GCP_AUTH_OUTCOME: '${{ steps.gcp_auth.outcome }}'
+        run: |
+          # Determine actual provider to use
+          if [ "$USE_VERTEX" = "true" ] && [ "$GCP_AUTH_OUTCOME" = "success" ]; then
+            echo "use_vertex=true" >> $GITHUB_OUTPUT
+            echo "provider_name=Google Vertex AI" >> $GITHUB_OUTPUT
+            echo "✅ Using Vertex AI (GCP auth successful)"
+          else
+            echo "use_vertex=false" >> $GITHUB_OUTPUT
+            echo "provider_name=Direct Anthropic API" >> $GITHUB_OUTPUT
+            if [ "$USE_VERTEX" = "true" ]; then
+              echo "⚠️ Vertex AI requested but GCP auth failed - falling back to direct Anthropic API"
+            else
+              echo "✅ Using direct Anthropic API"
+            fi
+          fi
+
+      - name: 'Acknowledge coordination request'
+        env:
+          GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+          ISSUE_NUMBER: '${{ needs.check_trigger.outputs.issue_number }}'
+          PROVIDER_NAME: '${{ steps.provider.outputs.provider_name }}'
+          TIER: '${{ needs.check_trigger.outputs.orchestration_tier }}'
+          RUN_URL: '${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}'
+        run: |
+          gh issue comment "$ISSUE_NUMBER" --body "🎯 **Claude A2A Coordinator Activated**
+
+          I'm analyzing this task and will decompose it into specialized sub-tasks for collaborative agent execution.
+
+          **Provider**: ${PROVIDER_NAME}
+          **Orchestration Tier**: ${TIER}
+          **Progress**: [Track in workflow logs](${RUN_URL})
+
+          Please wait while I coordinate the multi-agent workflow..."
+
+      - name: 'Analyze task and create execution plan'
+        id: 'analyze'
+        env:
+          ANTHROPIC_API_KEY: '${{ secrets.ANTHROPIC_API_KEY }}'
+          CLAUDE_CODE_USE_VERTEX: '${{ steps.provider.outputs.use_vertex }}'
+          ANTHROPIC_VERTEX_PROJECT_ID: '${{ vars.ANTHROPIC_VERTEX_PROJECT_ID }}'
+          CLOUD_ML_REGION: '${{ vars.CLOUD_ML_REGION || ''us-east5'' }}'
+          GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+          ISSUE_NUMBER: '${{ needs.check_trigger.outputs.issue_number }}'
+          ORCHESTRATION_TIER: '${{ needs.check_trigger.outputs.orchestration_tier }}'
+        run: |
+          python3 tools/a2a/claude_task_analyzer.py
+
+      - name: 'Execute Tier 1 orchestration (sequential)'
+        if: needs.check_trigger.outputs.orchestration_tier == 'tier1'
+        env:
+          ANTHROPIC_API_KEY: '${{ secrets.ANTHROPIC_API_KEY }}'
+          CLAUDE_CODE_USE_VERTEX: '${{ steps.provider.outputs.use_vertex }}'
+          ANTHROPIC_VERTEX_PROJECT_ID: '${{ vars.ANTHROPIC_VERTEX_PROJECT_ID }}'
+          CLOUD_ML_REGION: '${{ vars.CLOUD_ML_REGION || ''us-east5'' }}'
+          GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+          ISSUE_NUMBER: '${{ needs.check_trigger.outputs.issue_number }}'
+          EXECUTION_PLAN: '${{ steps.analyze.outputs.execution_plan }}'
+        run: |
+          python3 tools/a2a/claude_tier1_orchestrator.py
+
+      - name: 'Execute Tier 2 orchestration (parallel)'
+        if: needs.check_trigger.outputs.orchestration_tier == 'tier2'
+        env:
+          ANTHROPIC_API_KEY: '${{ secrets.ANTHROPIC_API_KEY }}'
+          CLAUDE_CODE_USE_VERTEX: '${{ steps.provider.outputs.use_vertex }}'
+          ANTHROPIC_VERTEX_PROJECT_ID: '${{ vars.ANTHROPIC_VERTEX_PROJECT_ID }}'
+          CLOUD_ML_REGION: '${{ vars.CLOUD_ML_REGION || ''us-east5'' }}'
+          GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+          ISSUE_NUMBER: '${{ needs.check_trigger.outputs.issue_number }}'
+          EXECUTION_PLAN: '${{ steps.analyze.outputs.execution_plan }}'
+        run: |
+          python3 tools/a2a/claude_tier2_orchestrator.py
+
+      - name: 'Aggregate and report results'
+        env:
+          ANTHROPIC_API_KEY: '${{ secrets.ANTHROPIC_API_KEY }}'
+          CLAUDE_CODE_USE_VERTEX: '${{ steps.provider.outputs.use_vertex }}'
+          ANTHROPIC_VERTEX_PROJECT_ID: '${{ vars.ANTHROPIC_VERTEX_PROJECT_ID }}'
+          CLOUD_ML_REGION: '${{ vars.CLOUD_ML_REGION || ''us-east5'' }}'
+          GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+          ISSUE_NUMBER: '${{ needs.check_trigger.outputs.issue_number }}'
+        run: |
+          python3 tools/a2a/claude_result_aggregator.py
+
+      - name: 'Handle errors'
+        if: failure()
+        env:
+          GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+          ISSUE_NUMBER: '${{ needs.check_trigger.outputs.issue_number }}'
+          USE_VERTEX: '${{ steps.provider.outputs.use_vertex }}'
+          REQUESTED_VERTEX: '${{ needs.check_trigger.outputs.use_vertex }}'
+          GCP_AUTH_OUTCOME: '${{ steps.gcp_auth.outcome }}'
+          RUN_URL: '${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}'
+        run: |
+          # Build troubleshooting message based on context
+          troubleshoot_items=()
+          
+          # Check if Vertex AI was requested but auth failed
+          if [ "$REQUESTED_VERTEX" = "true" ] && [ "$GCP_AUTH_OUTCOME" != "success" ]; then
+            troubleshoot_items+=("- ⚠️ **Vertex AI authentication failed** - workflow attempted fallback to direct API")
+            troubleshoot_items+=("- Verify GCP_WORKLOAD_IDENTITY_PROVIDER secret format (should be: projects/PROJECT_NUMBER/locations/global/workloadIdentityPools/POOL_ID/providers/PROVIDER_ID)")
+            troubleshoot_items+=("- Check GCP_SERVICE_ACCOUNT secret is correct")
+            troubleshoot_items+=("- See docs/VERTEX_AI_CLAUDE_SETUP.md for setup guide")
+          fi
+          
+          if [ "$USE_VERTEX" = "true" ]; then
+            troubleshoot_items+=("- Verify ANTHROPIC_VERTEX_PROJECT_ID variable is set")
+            troubleshoot_items+=("- Ensure service account has Vertex AI permissions")
+          else
+            troubleshoot_items+=("- Verify ANTHROPIC_API_KEY secret is configured")
+            troubleshoot_items+=("- Check if API key has valid credits")
+          fi
+          
+          troubleshoot_items+=("- Check if issue description provides enough context")
+          troubleshoot_items+=("- Try re-running with simpler scope")
+          
+          # Join array elements with newlines
+          troubleshoot_msg=$(printf '%s\n' "${troubleshoot_items[@]}")
+          
+          gh issue comment "$ISSUE_NUMBER" --body "❌ **Claude A2A Coordination Failed**
+
+          The multi-agent orchestration encountered an error. Please check the [workflow logs](${RUN_URL}) for details.
+
+          **Troubleshooting**:
+          ${troubleshoot_msg}
+
+          You can retry by commenting \\\`@claude-a2a-coordinator\\\` or use workflow_dispatch."

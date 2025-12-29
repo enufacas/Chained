@@ -1,0 +1,100 @@
+name: "Automation: Copilot Assignment"
+
+# ⚠️ DEPRECATED - REPLACED BY META-COORDINATOR
+# This workflow has been disabled and replaced by the meta-coordinator-system agent.
+# The meta-coordinator.yml workflow now handles all agent assignments.
+# To re-enable this workflow, remove the 'if: false' condition below.
+# See: .github/workflows/META_COORDINATOR_IMPLEMENTATION.md
+
+on:
+  issues:
+    types: [opened]
+  schedule:
+    # Run every 15 minutes to check for unassigned issues
+    - cron: '*/15 * * * *'
+  workflow_dispatch:
+    inputs:
+      issue_number:
+        description: 'Issue number to assign to Copilot (leave empty to process all open issues)'
+        required: false
+        type: string
+  workflow_run:
+    # Trigger after workflows that may create issues
+    workflows:
+      - "Idea Generation: Progress Checker"
+      - "World Model Update"
+    types:
+      - completed
+
+# Prevent multiple concurrent runs of this workflow
+# This prevents race conditions where multiple workflow instances
+# try to assign Copilot to the same issue simultaneously
+concurrency:
+  group: copilot-assignment-${{ github.event.issue.number || github.event.workflow_run.id || 'scheduled' }}
+  cancel-in-progress: false
+
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  assign-to-copilot:
+    runs-on: ubuntu-latest
+    # ⚠️ WORKFLOW DISABLED - Replaced by meta-coordinator-system
+    if: false
+    # Original condition (disabled):
+    # if: |
+    #   github.event_name == 'issues' ||
+    #   github.event_name == 'schedule' ||
+    #   github.event_name == 'workflow_dispatch' ||
+    #   (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success')
+    steps:
+      - name: Check for PAT configuration
+        env:
+          GH_TOKEN: ${{ secrets.COPILOT_PAT }}
+        run: |
+          if [ -z "$GH_TOKEN" ]; then
+            echo "⚠️ WARNING: COPILOT_PAT secret is not configured!"
+            echo ""
+            echo "The default GITHUB_TOKEN cannot assign issues to Copilot due to licensing restrictions."
+            echo "You must create a Personal Access Token (PAT) with 'repo' scope and add it as a secret."
+            echo ""
+            echo "See COPILOT_SETUP.md for detailed setup instructions."
+            echo ""
+            echo "📚 Documentation: https://docs.github.com/en/copilot/how-tos/use-copilot-agents/coding-agent/create-a-pr"
+            echo ""
+            echo "Proceeding with GITHUB_TOKEN (will likely fail to find Copilot actor)..."
+          else
+            echo "✅ COPILOT_PAT is configured"
+          fi
+      
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -q PyYAML
+      
+      - name: Discover and process issues
+        env:
+          # IMPORTANT: Use a Personal Access Token (PAT) instead of GITHUB_TOKEN
+          # The default GITHUB_TOKEN does not have permissions to assign Copilot
+          # See: https://docs.github.com/en/copilot/how-tos/use-copilot-agents/coding-agent/create-a-pr
+          # Create a PAT with 'repo' scope and add it as a secret named COPILOT_PAT
+          GH_TOKEN: ${{ secrets.COPILOT_PAT || secrets.GITHUB_TOKEN }}
+          # Pass GitHub context as environment variables to the script
+          GITHUB_EVENT_NAME: ${{ github.event_name }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_REPOSITORY_OWNER: ${{ github.repository_owner }}
+          GITHUB_REPOSITORY_NAME: ${{ github.event.repository.name }}
+          INPUT_ISSUE_NUMBER: ${{ inputs.issue_number }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+        run: |
+          # Execute the Copilot assignment script (extracted to avoid GitHub Actions expression length limits)
+          ./tools/assign-copilot-to-issue.sh

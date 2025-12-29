@@ -1,36 +1,17 @@
+# ============================================================================
+# WORKFLOW DISABLED
+# Disabled on: 2025-12-29T02:43:14.994388
+# Original workflow name: Learning: Autonomous Pipeline
+# Original triggers: schedule, workflow_dispatch
+# 
+# To re-enable: Use the tools/enable_workflows.py script with the
+# workflow_disable_metadata.json file to restore original triggers.
+# ============================================================================
+
 name: "Learning: Autonomous Pipeline"
 
 on:
-  schedule:
-    # Run twice daily - morning and evening UTC
-    - cron: '0 8,20 * * *'
   workflow_dispatch:
-    inputs:
-      skip_learning:
-        description: 'Skip learning collection stage'
-        required: false
-        type: boolean
-        default: false
-      skip_world_update:
-        description: 'Skip world model update stage'
-        required: false
-        type: boolean
-        default: false
-      skip_missions:
-        description: 'Skip agent missions stage'
-        required: false
-        type: boolean
-        default: false
-      skip_assignment:
-        description: 'Skip agent assignment stage'
-        required: false
-        type: boolean
-        default: false
-      include_self_reinforcement:
-        description: 'Include self-reinforcement stage'
-        required: false
-        type: boolean
-        default: false
 
 permissions:
   contents: write

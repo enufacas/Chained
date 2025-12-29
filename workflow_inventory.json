@@ -1,0 +1,1299 @@
+{
+  "enabled": [
+    {
+      "file": ".github/workflows/a2a-agent-worker.yml",
+      "name": "A2A: Agent Worker",
+      "is_archived": false,
+      "has_triggers": true,
+      "triggers": [
+        "issues",
+        "workflow_dispatch"
+      ],
+      "enabled": true
+    },
+    {
+      "file": ".github/workflows/a2a-test-full-suite.yml",
+      "name": "Test: A2A Full Suite",
+      "is_archived": false,
+      "has_triggers": true,
+      "triggers": [
+        "push",
+        "pull_request",
+        "workflow_dispatch"
+      ],
+      "enabled": true
+    },
+    {
+      "file": ".github/workflows/a2a-test-multi-agent-demo.yml",
+      "name": "Demo: A2A Multi-Agent Collaboration",
+      "is_archived": false,
+      "has_triggers": true,
+      "triggers": [
+        "push",
+        "workflow_dispatch"
+      ],
+      "enabled": true
+    },
+    {
+      "file": ".github/workflows/a2a-test-quick-validation.yml",
+      "name": "Test: A2A Quick Validation",
+      "is_archived": false,
+      "has_triggers": true,
+      "triggers": [
+        "push",
+        "workflow_dispatch"
+      ],
+      "enabled": true
+    },
+    {
+      "file": ".github/workflows/a2a-test-tier1-integration.yml",
+      "name": "Test: A2A Tier 1 Integration",
+      "is_archived": false,
+      "has_triggers": true,
+      "triggers": [
+        "push",
+        "workflow_dispatch"
+      ],
+      "enabled": true
+    },
+    {
+      "file": ".github/workflows/ab-testing-system.yml",
+      "name": "System: A/B Testing",
+      "is_archived": false,
+      "has_triggers": true,
+      "triggers": [
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "enabled": true
+    },
+    {
+      "file": ".github/workflows/actions-generator-agent.yml",
+      "name": "Agent System: Actions Generator",
+      "is_archived": false,
+      "has_triggers": true,
+      "triggers": [
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "enabled": true
+    },
+    {
+      "file": ".github/workflows/adk-a2a-blog-pipeline.yml",
+      "name": "A2A: ADK Blog Pipeline",
+      "is_archived": false,
+      "has_triggers": true,
+      "triggers": [
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "enabled": true
+    },
+    {
+      "file": ".github/workflows/agent-data-sync.yml",
+      "name": "Agent System: Data Sync",
+      "is_archived": false,
+      "has_triggers": true,
+      "triggers": [
+        "push",
+        "workflow_dispatch"
+      ],
+      "enabled": true
+    },
+    {
+      "file": ".github/workflows/agent-evaluator.yml",
+      "name": "Agent System: Evaluator",
+      "is_archived": false,
+      "has_triggers": true,
+      "triggers": [
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "enabled": true
+    },
+    {
+      "file": ".github/workflows/agent-evolution.yml",
+      "name": "Evolution: Agent Genetic Algorithm",
+      "is_archived": false,
+      "has_triggers": true,
+      "triggers": [
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "enabled": true
+    },
+    {
+      "file": ".github/workflows/agent-issue-discussion.yml",
+      "name": "Agent System: Issue Discussion",
+      "is_archived": false,
+      "has_triggers": true,
+      "triggers": [
+        "workflow_dispatch",
+        "issues"
+      ],
+      "enabled": true
+    },
+    {
+      "file": ".github/workflows/agent-missions.yml",
+      "name": "Agent System: Missions",
+      "is_archived": false,
+      "has_triggers": true,
+      "triggers": [
+        "workflow_dispatch",
+        "workflow_run"
+      ],
+      "enabled": true
+    },
+    {
+      "file": ".github/workflows/agent-spawning.yml",
+      "name": "Agent System: Spawning",
+      "is_archived": false,
+      "has_triggers": true,
+      "triggers": [
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "enabled": true
+    },
+    {
+      "file": ".github/workflows/agentops-data-sync.yml",
+      "name": "Data: AgentOps Dashboard Sync",
+      "is_archived": false,
+      "has_triggers": true,
+      "triggers": [
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "enabled": true
+    },
+    {
+      "file": ".github/workflows/ai-friend-daily.yml",
+      "name": "AI: Friend Daily Conversation",
+      "is_archived": false,
+      "has_triggers": true,
+      "triggers": [
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "enabled": true
+    },
+    {
+      "file": ".github/workflows/ai-native-build-test.yml",
+      "name": "AI-Native Control Plane - Build and Test",
+      "is_archived": false,
+      "has_triggers": true,
+      "triggers": [
+        "push",
+        "pull_request",
+        "workflow_dispatch"
+      ],
+      "enabled": true
+    },
+    {
+      "file": ".github/workflows/ai-native-deploy.yml",
+      "name": "AI-Native Control Plane - Deploy",
+      "is_archived": false,
+      "has_triggers": true,
+      "triggers": [
+        "workflow_dispatch",
+        "push"
+      ],
+      "enabled": true
+    },
+    {
+      "file": ".github/workflows/ai-workflow-orchestrator-demo.yml",
+      "name": "Demo: AI Workflow Orchestrator",
+      "is_archived": false,
+      "has_triggers": true,
+      "triggers": [
+        "workflow_dispatch",
+        "schedule"
+      ],
+      "enabled": true
+    },
+    {
+      "file": ".github/workflows/ai-workflow-orchestrator-live.yml",
+      "name": "AI Workflow Orchestrator - Live Predictions",
+      "is_archived": false,
+      "has_triggers": true,
+      "triggers": [
+        "workflow_dispatch",
+        "schedule"
+      ],
+      "enabled": true
+    },
+    {
+      "file": ".github/workflows/apply-commit-strategies.yml",
+      "name": "Learning: Apply Commit Strategies",
+      "is_archived": false,
+      "has_triggers": true,
+      "triggers": [
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "enabled": true
+    },
+    {
+      "file": ".github/workflows/architecture-evolution.yml",
+      "name": "Evolution: Architecture Tracker",
+      "is_archived": false,
+      "has_triggers": true,
+      "triggers": [
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "enabled": true
+    },
+    {
+      "file": ".github/workflows/assign-agents-to-learnings.yml",
+      "name": "Agent System: Match to Learnings",
+      "is_archived": false,
+      "has_triggers": true,
+      "triggers": [
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "enabled": true
+    },
+    {
+      "file": ".github/workflows/auto-review-merge.yml",
+      "name": "Automation: Auto Review & Merge (Improved)",
+      "is_archived": false,
+      "has_triggers": true,
+      "triggers": [
+        "pull_request",
+        "pull_request_review",
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "enabled": true
+    },
+    {
+      "file": ".github/workflows/automated-issue-clustering.yml",
+      "name": "Automation: Issue Clustering",
+      "is_archived": false,
+      "has_triggers": true,
+      "triggers": [
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "enabled": true
+    },
+    {
+      "file": ".github/workflows/autonomous-ab-testing.yml",
+      "name": "Evolution: Autonomous A/B Testing",
+      "is_archived": false,
+      "has_triggers": true,
+      "triggers": [
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "enabled": true
+    },
+    {
+      "file": ".github/workflows/autonomous-code-reviewer.yml",
+      "name": "Code Quality: \ud83e\udd16 Autonomous Reviewer",
+      "is_archived": false,
+      "has_triggers": true,
+      "triggers": [
+        "pull_request",
+        "pull_request_review",
+        "workflow_dispatch"
+      ],
+      "enabled": true
+    },
+    {
+      "file": ".github/workflows/autonomous-issue-prioritizer.yml",
+      "name": "Automation: Issue Prioritizer",
+      "is_archived": false,
+      "has_triggers": true,
+      "triggers": [
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "enabled": true
+    },
+    {
+      "file": ".github/workflows/autonomous-pipeline.yml",
+      "name": "Learning: Autonomous Pipeline",
+      "is_archived": false,
+      "has_triggers": true,
+      "triggers": [
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "enabled": true
+    },
+    {
+      "file": ".github/workflows/autonomous-refactoring-learning.yml",
+      "name": "Learning: Autonomous Refactoring",
+      "is_archived": false,
+      "has_triggers": true,
+      "triggers": [
+        "pull_request",
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "enabled": true
+    },
+    {
+      "file": ".github/workflows/chained_tv.yml",
+      "name": "Content: Chained TV Episode Generator",
+      "is_archived": false,
+      "has_triggers": true,
+      "triggers": [
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "enabled": true
+    },
+    {
+      "file": ".github/workflows/claude-a2a-coordinator.yml",
+      "name": "Claude: \ud83c\udfaf A2A Coordinator",
+      "is_archived": false,
+      "has_triggers": true,
+      "triggers": [
+        "workflow_dispatch",
+        "issue_comment"
+      ],
+      "enabled": true
+    },
+    {
+      "file": ".github/workflows/cleanup-chained-tv-prs.yml",
+      "name": "Cleanup: Chained TV PRs",
+      "is_archived": false,
+      "has_triggers": true,
+      "triggers": [
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "enabled": true
+    },
+    {
+      "file": ".github/workflows/close-stale-issues-and-prs.yml",
+      "name": "Cleanup: Close Stale Issues and Conflicted PRs",
+      "is_archived": false,
+      "has_triggers": true,
+      "triggers": [
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "enabled": true
+    },
+    {
+      "file": ".github/workflows/code-pattern-hypothesis-testing.yml",
+      "name": "AI Code Pattern Hypothesis Testing",
+      "is_archived": false,
+      "has_triggers": true,
+      "triggers": [
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "enabled": true
+    },
+    {
+      "file": ".github/workflows/code-quality.yml",
+      "name": "Code Quality: Analysis System",
+      "is_archived": false,
+      "has_triggers": true,
+      "triggers": [
+        "push",
+        "pull_request",
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "enabled": true
+    },
+    {
+      "file": ".github/workflows/collect-resolved-issues.yml",
+      "name": "Data: Collect Resolved Issues",
+      "is_archived": false,
+      "has_triggers": true,
+      "triggers": [
+        "pull_request",
+        "workflow_dispatch"
+      ],
+      "enabled": true
+    },
+    {
+      "file": ".github/workflows/copilot-graphql-assign.yml",
+      "name": "Automation: Copilot Assignment",
+      "is_archived": false,
+      "has_triggers": true,
+      "triggers": [
+        "issues",
+        "schedule",
+        "workflow_dispatch",
+        "workflow_run"
+      ],
+      "enabled": true
+    },
+    {
+      "file": ".github/workflows/copilot-pr-assignment.yml",
+      "name": "Automation: Copilot PR Assignment",
+      "is_archived": false,
+      "has_triggers": true,
+      "triggers": [
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "enabled": true
+    },
+    {
+      "file": ".github/workflows/copilot-setup-steps.yml",
+      "name": "System: Copilot Setup Steps",
+      "is_archived": false,
+      "has_triggers": true,
+      "triggers": [
+        "workflow_dispatch",
+        "push",
+        "pull_request"
+      ],
+      "enabled": true
+    },
+    {
+      "file": ".github/workflows/creative-coding-challenge-generator.yml",
+      "name": "Content: Creative Coding Challenge",
+      "is_archived": false,
+      "has_triggers": true,
+      "triggers": [
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "enabled": true
+    },
+    {
+      "file": ".github/workflows/creativity-leaderboard.yml",
+      "name": "Content: Creativity Leaderboard",
+      "is_archived": false,
+      "has_triggers": true,
+      "triggers": [
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "enabled": true
+    },
+    {
+      "file": ".github/workflows/daily-learning-reflection.yml",
+      "name": "Learning: Daily Reflection",
+      "is_archived": false,
+      "has_triggers": true,
+      "triggers": [
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "enabled": true
+    },
+    {
+      "file": ".github/workflows/demos-and-experiments.yml",
+      "name": "Demo: Experiments",
+      "is_archived": false,
+      "has_triggers": true,
+      "triggers": [
+        "issues",
+        "pull_request",
+        "workflow_dispatch"
+      ],
+      "enabled": true
+    },
+    {
+      "file": ".github/workflows/deploy-adk-agents.yml",
+      "name": "Deploy: ADK Agents",
+      "is_archived": false,
+      "has_triggers": true,
+      "triggers": [
+        "push",
+        "workflow_dispatch"
+      ],
+      "enabled": true
+    },
+    {
+      "file": ".github/workflows/deploy-gcp-infrastructure.yml",
+      "name": "Deploy: GCP Infrastructure",
+      "is_archived": false,
+      "has_triggers": true,
+      "triggers": [
+        "push",
+        "workflow_dispatch"
+      ],
+      "enabled": true
+    },
+    {
+      "file": ".github/workflows/design-decisions-documenter.yml",
+      "name": "Code Quality: Design Decisions Documenter",
+      "is_archived": false,
+      "has_triggers": true,
+      "triggers": [
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "enabled": true
+    },
+    {
+      "file": ".github/workflows/discover-universal-truths.yml",
+      "name": "AI: \ud83c\udf0c Discover Universal Truths",
+      "is_archived": false,
+      "has_triggers": true,
+      "triggers": [
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "enabled": true
+    },
+    {
+      "file": ".github/workflows/ensure-labels-exist.yml",
+      "name": "Maintenance: Ensure Repository Labels Exist",
+      "is_archived": false,
+      "has_triggers": true,
+      "triggers": [
+        "schedule",
+        "workflow_dispatch",
+        "push"
+      ],
+      "enabled": true
+    },
+    {
+      "file": ".github/workflows/gemini-dispatch.yml",
+      "name": "Gemini: \ud83d\udd00 Dispatch",
+      "is_archived": false,
+      "has_triggers": true,
+      "triggers": [
+        "pull_request_review_comment",
+        "pull_request_review",
+        "issue_comment"
+      ],
+      "enabled": true
+    },
+    {
+      "file": ".github/workflows/gemini-fix.yml",
+      "name": "Gemini: \ud83d\udd27 Fix",
+      "is_archived": false,
+      "has_triggers": true,
+      "triggers": [
+        "workflow_call"
+      ],
+      "enabled": true
+    },
+    {
+      "file": ".github/workflows/gemini-invoke.yml",
+      "name": "Gemini: \u25b6\ufe0f Invoke",
+      "is_archived": false,
+      "has_triggers": true,
+      "triggers": [
+        "workflow_call"
+      ],
+      "enabled": true
+    },
+    {
+      "file": ".github/workflows/gemini-review.yml",
+      "name": "Gemini: \ufffd\ufffd Review",
+      "is_archived": false,
+      "has_triggers": true,
+      "triggers": [
+        "workflow_call"
+      ],
+      "enabled": true
+    },
+    {
+      "file": ".github/workflows/gemini-triage.yml",
+      "name": "Gemini: \ud83c\udff7\ufe0f Triage",
+      "is_archived": false,
+      "has_triggers": true,
+      "triggers": [
+        "workflow_call"
+      ],
+      "enabled": true
+    },
+    {
+      "file": ".github/workflows/generate-reviewer-dashboard.yml",
+      "name": "Data: Reviewer Dashboard",
+      "is_archived": false,
+      "has_triggers": true,
+      "triggers": [
+        "workflow_dispatch",
+        "schedule",
+        "push"
+      ],
+      "enabled": true
+    },
+    {
+      "file": ".github/workflows/github-pages-review.yml",
+      "name": "Documentation: GitHub Pages Review",
+      "is_archived": false,
+      "has_triggers": true,
+      "triggers": [
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "enabled": true
+    },
+    {
+      "file": ".github/workflows/goal-and-idea-system.yml",
+      "name": "System: Goal and Idea",
+      "is_archived": false,
+      "has_triggers": true,
+      "triggers": [
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "enabled": true
+    },
+    {
+      "file": ".github/workflows/handle-cloudrun-errors.yml",
+      "name": "Handle Cloud Run Errors",
+      "is_archived": false,
+      "has_triggers": true,
+      "triggers": [
+        "repository_dispatch"
+      ],
+      "enabled": true
+    },
+    {
+      "file": ".github/workflows/learn-commit-strategies.yml",
+      "name": "Learning: Git Commit Strategies",
+      "is_archived": false,
+      "has_triggers": true,
+      "triggers": [
+        "schedule",
+        "workflow_dispatch",
+        "pull_request"
+      ],
+      "enabled": true
+    },
+    {
+      "file": ".github/workflows/learn-from-copilot.yml",
+      "name": "Learning: GitHub Copilot",
+      "is_archived": false,
+      "has_triggers": true,
+      "triggers": [
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "enabled": true
+    },
+    {
+      "file": ".github/workflows/merge-conflict-resolver.yml",
+      "name": "Automation: Merge Conflict Resolver",
+      "is_archived": false,
+      "has_triggers": true,
+      "triggers": [
+        "pull_request",
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "enabled": true
+    },
+    {
+      "file": ".github/workflows/meta-agent-coordination.yml",
+      "name": "Meta: Agent Coordination",
+      "is_archived": false,
+      "has_triggers": true,
+      "triggers": [
+        "issues",
+        "workflow_dispatch"
+      ],
+      "enabled": true
+    },
+    {
+      "file": ".github/workflows/meta-coordinator.yml",
+      "name": "Meta: Coordinator Orchestration",
+      "is_archived": false,
+      "has_triggers": true,
+      "triggers": [
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "enabled": true
+    },
+    {
+      "file": ".github/workflows/meta-learning-optimizer.yml",
+      "name": "Meta-Learning Workflow Optimizer",
+      "is_archived": false,
+      "has_triggers": true,
+      "triggers": [
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "enabled": true
+    },
+    {
+      "file": ".github/workflows/pattern-matcher.yml",
+      "name": "Code Quality: Pattern Matcher",
+      "is_archived": false,
+      "has_triggers": true,
+      "triggers": [
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "enabled": true
+    },
+    {
+      "file": ".github/workflows/performance-metrics-collection.yml",
+      "name": "Performance: Metrics Collection",
+      "is_archived": false,
+      "has_triggers": true,
+      "triggers": [
+        "schedule",
+        "workflow_run",
+        "workflow_dispatch"
+      ],
+      "enabled": true
+    },
+    {
+      "file": ".github/workflows/pr-auto-labeler.yml",
+      "name": "Automation: Smart PR Auto-Labeling",
+      "is_archived": false,
+      "has_triggers": true,
+      "triggers": [
+        "pull_request",
+        "workflow_dispatch"
+      ],
+      "enabled": true
+    },
+    {
+      "file": ".github/workflows/pr-failure-intelligence.yml",
+      "name": "AI: PR Failure Intelligence System",
+      "is_archived": false,
+      "has_triggers": true,
+      "triggers": [
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "enabled": true
+    },
+    {
+      "file": ".github/workflows/pr-failure-learning.yml",
+      "name": "System: PR Failure Learning",
+      "is_archived": false,
+      "has_triggers": true,
+      "triggers": [
+        "schedule",
+        "pull_request",
+        "workflow_dispatch"
+      ],
+      "enabled": true
+    },
+    {
+      "file": ".github/workflows/prompt-performance-tracker.yml",
+      "name": "AI: Prompt Performance Tracker",
+      "is_archived": false,
+      "has_triggers": true,
+      "triggers": [
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "enabled": true
+    },
+    {
+      "file": ".github/workflows/repetition-detector.yml",
+      "name": "AI: Pattern Repetition Detector",
+      "is_archived": false,
+      "has_triggers": true,
+      "triggers": [
+        "pull_request",
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "enabled": true
+    },
+    {
+      "file": ".github/workflows/rl-resource-optimization.yml",
+      "name": "Evolution: RL Resource Optimization",
+      "is_archived": false,
+      "has_triggers": true,
+      "triggers": [
+        "workflow_dispatch",
+        "schedule"
+      ],
+      "enabled": true
+    },
+    {
+      "file": ".github/workflows/self-documenting-ai-enhanced.yml",
+      "name": "Learning: Self-Documenting AI Enhanced",
+      "is_archived": false,
+      "has_triggers": true,
+      "triggers": [
+        "issues",
+        "workflow_dispatch"
+      ],
+      "enabled": true
+    },
+    {
+      "file": ".github/workflows/self-documenting-ai.yml",
+      "name": "Learning: Self-Documenting AI Discussions",
+      "is_archived": false,
+      "has_triggers": true,
+      "triggers": [
+        "issues",
+        "workflow_dispatch"
+      ],
+      "enabled": true
+    },
+    {
+      "file": ".github/workflows/subagent-cleanup.yml",
+      "name": "Cleanup: Sub-Agent",
+      "is_archived": false,
+      "has_triggers": true,
+      "triggers": [
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "enabled": true
+    },
+    {
+      "file": ".github/workflows/suggest-collaborations.yml",
+      "name": "Agent System: Suggest Collaborations",
+      "is_archived": false,
+      "has_triggers": true,
+      "triggers": [
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "enabled": true
+    },
+    {
+      "file": ".github/workflows/system-kickoff.yml",
+      "name": "System: Kickoff",
+      "is_archived": false,
+      "has_triggers": true,
+      "triggers": [
+        "push",
+        "workflow_dispatch"
+      ],
+      "enabled": true
+    },
+    {
+      "file": ".github/workflows/system-monitor.yml",
+      "name": "System: Monitor",
+      "is_archived": false,
+      "has_triggers": true,
+      "triggers": [
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "enabled": true
+    },
+    {
+      "file": ".github/workflows/update-agent-investments.yml",
+      "name": "Agent System: Investment Updates",
+      "is_archived": false,
+      "has_triggers": true,
+      "triggers": [
+        "pull_request"
+      ],
+      "enabled": true
+    },
+    {
+      "file": ".github/workflows/update-changelog.yml",
+      "name": "Update Changelog",
+      "is_archived": false,
+      "has_triggers": true,
+      "triggers": [
+        "pull_request"
+      ],
+      "enabled": true
+    },
+    {
+      "file": ".github/workflows/update-context-summaries.yml",
+      "name": "Data: Update Context Summaries",
+      "is_archived": false,
+      "has_triggers": true,
+      "triggers": [
+        "schedule",
+        "workflow_dispatch",
+        "push"
+      ],
+      "enabled": true
+    },
+    {
+      "file": ".github/workflows/workflow-data-collection.yml",
+      "name": "Data: Workflow Execution Collection",
+      "is_archived": false,
+      "has_triggers": true,
+      "triggers": [
+        "workflow_dispatch",
+        "schedule"
+      ],
+      "enabled": true
+    },
+    {
+      "file": ".github/workflows/workflow-execution-recorder.yml",
+      "name": "Workflow Execution Recorder",
+      "is_archived": false,
+      "has_triggers": true,
+      "triggers": [
+        "workflow_run"
+      ],
+      "enabled": true
+    },
+    {
+      "file": ".github/workflows/workflow-execution-tracker.yml",
+      "name": "Workflow Execution Tracker",
+      "is_archived": false,
+      "has_triggers": true,
+      "triggers": [
+        "workflow_run"
+      ],
+      "enabled": true
+    },
+    {
+      "file": ".github/workflows/workflow-validation.yml",
+      "name": "CI: Workflow Validation",
+      "is_archived": false,
+      "has_triggers": true,
+      "triggers": [
+        "pull_request",
+        "workflow_dispatch"
+      ],
+      "enabled": true
+    }
+  ],
+  "disabled": [
+    {
+      "file": ".github/workflows/a2a-local-orchestration.yml",
+      "name": "A2A: Local Orchestration Example",
+      "is_archived": false,
+      "has_triggers": false,
+      "triggers": [
+        "workflow_dispatch"
+      ],
+      "enabled": false
+    },
+    {
+      "file": ".github/workflows/a2a-multi-agent.yml",
+      "name": "A2A: Multi-Agent Orchestration",
+      "is_archived": false,
+      "has_triggers": false,
+      "triggers": [
+        "workflow_dispatch"
+      ],
+      "enabled": false
+    },
+    {
+      "file": ".github/workflows/a2a-parallel-agents.yml",
+      "name": "A2A: Parallel Agent Orchestration",
+      "is_archived": false,
+      "has_triggers": false,
+      "triggers": [
+        "workflow_dispatch"
+      ],
+      "enabled": false
+    },
+    {
+      "file": ".github/workflows/archive/actions-generator-agent-DEMO.yml",
+      "name": "GitHub Actions Generator Agent (Using Custom Actions)",
+      "is_archived": true,
+      "has_triggers": false,
+      "triggers": [
+        "workflow_dispatch"
+      ],
+      "enabled": false
+    },
+    {
+      "file": ".github/workflows/archive/autonomous-code-reviewer.yml",
+      "name": "Autonomous Code Reviewer",
+      "is_archived": true,
+      "has_triggers": true,
+      "triggers": [
+        "pull_request"
+      ],
+      "enabled": false
+    },
+    {
+      "file": ".github/workflows/archive/cleanup-old-learning-files.yml",
+      "name": "Cleanup: Old Learning Files",
+      "is_archived": true,
+      "has_triggers": true,
+      "triggers": [
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "enabled": false
+    },
+    {
+      "file": ".github/workflows/archive/code-pattern-hypothesis-testing.yml",
+      "name": "AI Code Pattern Hypothesis Testing",
+      "is_archived": true,
+      "has_triggers": true,
+      "triggers": [
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "enabled": false
+    },
+    {
+      "file": ".github/workflows/archive/dynamic-orchestrator.yml",
+      "name": "Orchestrator: Dynamic Scheduling",
+      "is_archived": true,
+      "has_triggers": true,
+      "triggers": [
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "enabled": false
+    },
+    {
+      "file": ".github/workflows/archive/example-ab-testing-workflow.yml",
+      "name": "Example Workflow with A/B Testing",
+      "is_archived": true,
+      "has_triggers": false,
+      "triggers": [
+        "workflow_dispatch"
+      ],
+      "enabled": false
+    },
+    {
+      "file": ".github/workflows/archive/example-copilot-mcp.yml",
+      "name": "Example: Copilot with MCP",
+      "is_archived": true,
+      "has_triggers": false,
+      "triggers": [
+        "workflow_dispatch"
+      ],
+      "enabled": false
+    },
+    {
+      "file": ".github/workflows/archive/example-enhanced-actions.yml",
+      "name": "Example - Enhanced Custom Actions",
+      "is_archived": true,
+      "has_triggers": false,
+      "triggers": [
+        "workflow_dispatch"
+      ],
+      "enabled": false
+    },
+    {
+      "file": ".github/workflows/archive/learn-commit-strategies.yml",
+      "name": "Learning: Git Commit Strategies",
+      "is_archived": true,
+      "has_triggers": true,
+      "triggers": [
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "enabled": false
+    },
+    {
+      "file": ".github/workflows/archive/mentorship-monitoring.yml",
+      "name": "Mentorship Monitoring Dashboard",
+      "is_archived": true,
+      "has_triggers": true,
+      "triggers": [
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "enabled": false
+    },
+    {
+      "file": ".github/workflows/archive/meta-learning-optimizer.yml",
+      "name": "Meta-Learning Workflow Optimizer",
+      "is_archived": true,
+      "has_triggers": true,
+      "triggers": [
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "enabled": false
+    },
+    {
+      "file": ".github/workflows/archive/neural-workflow-adaptation.yml",
+      "name": "\ud83e\udde0 Neural Workflow Adaptation",
+      "is_archived": true,
+      "has_triggers": true,
+      "triggers": [
+        "workflow_run",
+        "workflow_dispatch",
+        "schedule"
+      ],
+      "enabled": false
+    },
+    {
+      "file": ".github/workflows/archive/prompt-auto-tuner.yml",
+      "name": "AI: Prompt Auto-Tuner",
+      "is_archived": true,
+      "has_triggers": true,
+      "triggers": [
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "enabled": false
+    },
+    {
+      "file": ".github/workflows/archive/prompt-generator-integration.yml",
+      "name": "AI: Prompt Generator Integration",
+      "is_archived": true,
+      "has_triggers": false,
+      "triggers": [
+        "workflow_dispatch"
+      ],
+      "enabled": false
+    },
+    {
+      "file": ".github/workflows/archive/review-criteria-learning.yml",
+      "name": "Review Criteria Learning",
+      "is_archived": true,
+      "has_triggers": true,
+      "triggers": [
+        "schedule",
+        "workflow_dispatch"
+      ],
+      "enabled": false
+    },
+    {
+      "file": ".github/workflows/archive/self-reinforcement.yml",
+      "name": "Self-Reinforcement Learning",
+      "is_archived": true,
+      "has_triggers": false,
+      "triggers": [
+        "workflow_dispatch"
+      ],
+      "enabled": false
+    },
+    {
+      "file": ".github/workflows/archive/setup-tech-lead-labels.yml",
+      "name": "Setup Tech Lead Review Labels",
+      "is_archived": true,
+      "has_triggers": true,
+      "triggers": [
+        "workflow_dispatch",
+        "push"
+      ],
+      "enabled": false
+    },
+    {
+      "file": ".github/workflows/archive/validate-instructions-size.yml",
+      "name": "Validate Copilot Instructions Size",
+      "is_archived": true,
+      "has_triggers": true,
+      "triggers": [
+        "pull_request",
+        "workflow_dispatch"
+      ],
+      "enabled": false
+    },
+    {
+      "file": ".github/workflows/combined-learning.yml",
+      "name": "Learning: Combined Sources",
+      "is_archived": false,
+      "has_triggers": false,
+      "triggers": [
+        "workflow_dispatch"
+      ],
+      "enabled": false
+    },
+    {
+      "file": ".github/workflows/create-ai-friend-follow-ups.yml",
+      "name": "AI: Friend Create Follow-ups",
+      "is_archived": false,
+      "has_triggers": false,
+      "triggers": [
+        "workflow_dispatch"
+      ],
+      "enabled": false
+    },
+    {
+      "file": ".github/workflows/debug-custom-agents.yml",
+      "name": "Agent System: Debug Custom Agents",
+      "is_archived": false,
+      "has_triggers": false,
+      "triggers": [
+        "workflow_dispatch"
+      ],
+      "enabled": false
+    },
+    {
+      "file": ".github/workflows/example-workflow-ab-test.yml",
+      "name": "Demo: Workflow A/B Test Example",
+      "is_archived": false,
+      "has_triggers": false,
+      "triggers": [
+        "workflow_dispatch"
+      ],
+      "enabled": false
+    },
+    {
+      "file": ".github/workflows/initialize-adk-tracking-issue.yml",
+      "name": "Initialize ADK Pipeline Tracking Issue",
+      "is_archived": false,
+      "has_triggers": false,
+      "triggers": [
+        "workflow_dispatch"
+      ],
+      "enabled": false
+    },
+    {
+      "file": ".github/workflows/inspect-issue-assignment.yml",
+      "name": "Agent System: Inspect Assignment",
+      "is_archived": false,
+      "has_triggers": false,
+      "triggers": [
+        "workflow_dispatch"
+      ],
+      "enabled": false
+    },
+    {
+      "file": ".github/workflows/learn-from-hackernews.yml",
+      "name": "Learning: Hacker News",
+      "is_archived": false,
+      "has_triggers": false,
+      "triggers": [
+        "workflow_dispatch"
+      ],
+      "enabled": false
+    },
+    {
+      "file": ".github/workflows/learn-from-tldr.yml",
+      "name": "Learning: TLDR Tech",
+      "is_archived": false,
+      "has_triggers": false,
+      "triggers": [
+        "workflow_dispatch"
+      ],
+      "enabled": false
+    },
+    {
+      "file": ".github/workflows/self-improving-prompt-demo.yml",
+      "name": "AI: Self-Improving Prompt Generator Demo",
+      "is_archived": false,
+      "has_triggers": false,
+      "triggers": [
+        "workflow_dispatch"
+      ],
+      "enabled": false
+    },
+    {
+      "file": ".github/workflows/test-new-actions.yml",
+      "name": "Test New Custom Actions",
+      "is_archived": false,
+      "has_triggers": false,
+      "triggers": [
+        "workflow_dispatch"
+      ],
+      "enabled": false
+    },
+    {
+      "file": ".github/workflows/workflow-failure-handler.yml",
+      "name": "System: Workflow Failure Handler",
+      "is_archived": false,
+      "has_triggers": false,
+      "triggers": [
+        "workflow_dispatch"
+      ],
+      "enabled": false
+    },
+    {
+      "file": ".github/workflows/world-update.yml",
+      "name": "System: World Model Update",
+      "is_archived": false,
+      "has_triggers": false,
+      "triggers": [
+        "workflow_dispatch"
+      ],
+      "enabled": false
+    }
+  ],
+  "total": 118,
+  "enabled_count": 85,
+  "disabled_count": 33,
+  "inventory_date": "2025-12-29T02:38:21.097688"
+}

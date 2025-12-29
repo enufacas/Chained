@@ -1,0 +1,275 @@
+name: "AI Workflow Orchestrator - Live Predictions"
+# Created by @create-botter - Enhanced with real-time data collection
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'Orchestrator mode'
+        required: true
+        default: 'status'
+        type: choice
+        options:
+          - status
+          - predict
+          - insights
+          - report
+          - dashboard
+  schedule:
+    # Run daily at 6:00 AM UTC for monitoring
+    - cron: '0 6 * * *'
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+  actions: read
+
+jobs:
+  orchestrator:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Install dependencies
+        run: |
+          pip install PyYAML>=6.0
+      
+      - name: Run AI Orchestrator
+        id: orchestrator
+        run: |
+          echo "🔮 @create-botter - AI Workflow Orchestrator with Live Data"
+          echo "=================================================================="
+          
+          # Determine mode
+          MODE="${{ github.event.inputs.mode }}"
+          if [ -z "$MODE" ]; then
+            MODE="status"
+          fi
+          
+          echo "Mode: $MODE"
+          echo ""
+          
+          case "$MODE" in
+            "status")
+              echo "📊 System Status Check..."
+              python3 tools/workflow_prediction_service.py --status
+              ;;
+            "predict")
+              echo "🔮 Generating Predictions for All Workflows..."
+              python3 tools/workflow_prediction_service.py --all
+              ;;
+            "insights")
+              echo "📈 Workflow Insights Analysis..."
+              # Get top 5 most active workflows
+              if [ -f ".github/workflow-history/executions.json" ]; then
+                python3 << 'EOF'
+          import json
+          from collections import Counter
+          
+          with open('.github/workflow-history/executions.json', 'r') as f:
+              data = json.load(f)
+          
+          # Count executions per workflow
+          workflow_counts = Counter(
+              exec['workflow_name'] 
+              for exec in data.get('executions', [])
+          )
+          
+          # Get top 5
+          top_workflows = workflow_counts.most_common(5)
+          
+          print("Top 5 Active Workflows:")
+          for workflow, count in top_workflows:
+              print(f"  • {workflow}: {count} executions")
+          
+          # Get insights for each
+          import subprocess
+          print("\nDetailed Insights:\n")
+          for workflow, _ in top_workflows:
+              subprocess.run(['python3', 'tools/workflow_prediction_service.py', '--insights', workflow])
+          EOF
+              else
+                echo "No execution history found yet. Run some workflows first!"
+              fi
+              ;;
+            "report")
+              echo "📑 Comprehensive Report Generation..."
+              echo ""
+              echo "=== System Status ==="
+              python3 tools/workflow_prediction_service.py --status
+              echo ""
+              echo "=== All Predictions ==="
+              python3 tools/workflow_prediction_service.py --all
+              ;;
+            "dashboard")
+              echo "📊 Generating Dashboard Data..."
+              python3 tools/workflow_prediction_service.py --all --json > /tmp/predictions.json
+              python3 tools/workflow_prediction_service.py --status --json > /tmp/status.json
+              
+              # Create dashboard summary
+              python3 << 'EOF'
+          import json
+          
+          # Load data
+          with open('/tmp/predictions.json', 'r') as f:
+              predictions = json.load(f)
+          with open('/tmp/status.json', 'r') as f:
+              status = json.load(f)
+          
+          print("="*70)
+          print("🎯 AI Workflow Orchestrator Dashboard")
+          print("="*70)
+          print()
+          
+          # System overview
+          if status['status'] == 'active':
+              stats = status['statistics']
+              print(f"📈 System Overview:")
+              print(f"  • Status: {status['status'].upper()}")
+              print(f"  • Total Executions: {stats['total_executions']}")
+              print(f"  • Workflows Tracked: {stats['workflows_tracked']}")
+              print(f"  • Success Rate: {stats['success_rate']*100:.1f}%")
+              print(f"  • Avg Duration: {stats['average_duration_seconds']:.1f}s")
+              
+              if 'data_range' in stats:
+                  dr = stats['data_range']
+                  print(f"  • Data Range: {dr['days']} days")
+          else:
+              print(f"⚠️  Status: {status['status']}")
+              print(f"   {status['message']}")
+          
+          print()
+          
+          # Predictions overview
+          if predictions['success']:
+              print(f"🔮 Predictions Available:")
+              print(f"  • Total Workflows: {predictions['total_workflows']}")
+              print(f"  • Historical Data: {predictions['metadata']['historical_executions']} executions")
+              print()
+              
+              # High confidence predictions
+              high_conf = [p for p in predictions['predictions'] if p['confidence'] > 0.7]
+              if high_conf:
+                  print(f"✨ High Confidence Predictions ({len(high_conf)}):")
+                  for pred in high_conf[:5]:
+                      print(f"  • {pred['workflow']}: {pred['confidence']*100:.0f}% confident")
+                      print(f"    Schedule: {pred['recommended_time']}, Duration: {pred['expected_duration_seconds']:.0f}s")
+              
+              # Resource intensive workflows
+              high_impact = [p for p in predictions['predictions'] if p['resource_impact'] == 'high']
+              if high_impact:
+                  print()
+                  print(f"⚡ High Resource Impact ({len(high_impact)}):")
+                  for pred in high_impact[:5]:
+                      print(f"  • {pred['workflow']}: {pred['expected_duration_seconds']:.0f}s")
+          
+          print()
+          print("="*70)
+          EOF
+              ;;
+            *)
+              echo "Unknown mode: $MODE"
+              exit 1
+              ;;
+          esac
+      
+      - name: Create GitHub Step Summary
+        run: |
+          echo "## 🔮 AI Workflow Orchestrator Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**@create-botter** has analyzed workflow execution patterns." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          MODE="${{ github.event.inputs.mode }}"
+          if [ -z "$MODE" ]; then
+            MODE="status"
+          fi
+          
+          echo "**Mode**: $MODE" >> $GITHUB_STEP_SUMMARY
+          echo "**Timestamp**: $(date -u +"%Y-%m-%d %H:%M:%S UTC")" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          # Add status information
+          if [ -f ".github/workflow-history/executions.json" ]; then
+            python3 << 'EOF' >> $GITHUB_STEP_SUMMARY
+          import json
+          
+          with open('.github/workflow-history/executions.json', 'r') as f:
+              data = json.load(f)
+          
+          total = data.get('total_executions', 0)
+          last_updated = data.get('last_updated', 'N/A')
+          
+          print(f"### 📊 Current Status")
+          print(f"")
+          print(f"- **Total Executions Tracked**: {total}")
+          print(f"- **Last Updated**: {last_updated}")
+          print(f"")
+          
+          if total > 0:
+              # Count successes
+              executions = data.get('executions', [])
+              successes = sum(1 for e in executions if e.get('success', False))
+              success_rate = (successes / total * 100) if total > 0 else 0
+              
+              # Count workflows
+              workflows = set(e.get('workflow_name') for e in executions)
+              
+              print(f"- **Success Rate**: {success_rate:.1f}%")
+              print(f"- **Unique Workflows**: {len(workflows)}")
+              print(f"")
+              print(f"### 🎯 System Capabilities")
+              print(f"")
+              print(f"The AI orchestrator can now:")
+              print(f"- ✅ Predict execution times based on {total} historical runs")
+              print(f"- ✅ Recommend optimal scheduling times")
+              print(f"- ✅ Identify resource-intensive workflows")
+              print(f"- ✅ Detect execution patterns and anomalies")
+          else:
+              print(f"### ℹ️ Getting Started")
+              print(f"")
+              print(f"The system needs workflow execution data to make predictions.")
+              print(f"Data will be collected automatically as workflows run.")
+          EOF
+          else
+            echo "### ℹ️ No Data Yet" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "The workflow execution recorder will collect data automatically." >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "---" >> $GITHUB_STEP_SUMMARY
+          echo "*Enhanced by **@create-botter** 🏭 - Vision: Self-learning workflow optimization*" >> $GITHUB_STEP_SUMMARY
+      
+      - name: Generate alert for issues (if needed)
+        if: github.event.inputs.mode == 'status'
+        run: |
+          # Check if there are any concerning patterns
+          if [ -f ".github/workflow-history/executions.json" ]; then
+            python3 << 'EOF'
+          import json
+          
+          with open('.github/workflow-history/executions.json', 'r') as f:
+              data = json.load(f)
+          
+          executions = data.get('executions', [])
+          if not executions:
+              exit(0)
+          
+          # Check for low success rates
+          recent = executions[-20:] if len(executions) >= 20 else executions
+          successes = sum(1 for e in recent if e.get('success', False))
+          success_rate = (successes / len(recent)) if recent else 1.0
+          
+          if success_rate < 0.7:
+              print(f"⚠️ WARNING: Recent success rate is {success_rate*100:.1f}%")
+              print(f"Consider investigating workflow failures.")
+          EOF
+          fi

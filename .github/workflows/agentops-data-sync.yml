@@ -1,16 +1,17 @@
+# ============================================================================
+# WORKFLOW DISABLED
+# Disabled on: 2025-12-29T02:43:14.994388
+# Original workflow name: Data: AgentOps Dashboard Sync
+# Original triggers: schedule, workflow_dispatch
+# 
+# To re-enable: Use the tools/enable_workflows.py script with the
+# workflow_disable_metadata.json file to restore original triggers.
+# ============================================================================
+
 name: "Data: AgentOps Dashboard Sync"
 
 on:
-  schedule:
-    # Run every 6 hours to reduce PR noise while keeping dashboard data reasonably fresh
-    - cron: '0 */6 * * *'
   workflow_dispatch:
-    inputs:
-      fetch_limit:
-        description: 'Number of recent runs to fetch per workflow'
-        required: false
-        type: number
-        default: 50
 
 permissions:
   contents: write

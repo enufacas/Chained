@@ -1,0 +1,145 @@
+name: Workflow Execution Tracker
+# Created by @create-botter
+# 
+# Automatically tracks workflow execution times and feeds data back
+# to the AI-powered workflow orchestrator for improved predictions.
+
+on:
+  workflow_run:
+    workflows: ["*"]
+    types: [completed]
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  track-execution:
+    runs-on: ubuntu-latest
+    # Only track for completed runs (not in progress)
+    if: github.event.workflow_run.status == 'completed'
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Install dependencies
+        run: |
+          pip install PyYAML>=6.0
+      
+      - name: Extract and record execution data
+        id: track
+        run: |
+          echo "🎯 @create-botter - Workflow Execution Tracker"
+          echo "============================================="
+          echo ""
+          echo "Workflow: ${{ github.event.workflow_run.name }}"
+          echo "Conclusion: ${{ github.event.workflow_run.conclusion }}"
+          echo "Created: ${{ github.event.workflow_run.created_at }}"
+          echo "Updated: ${{ github.event.workflow_run.updated_at }}"
+          echo ""
+          
+          # Calculate duration in seconds using Python
+          python3 << 'EOF'
+          import os
+          import sys
+          from datetime import datetime, timezone
+          
+          sys.path.insert(0, 'tools')
+          
+          from ai_workflow_predictor import AIWorkflowPredictor
+          
+          # Get workflow information from environment
+          workflow_name = os.environ.get('WORKFLOW_NAME', 'unknown')
+          created_at = os.environ.get('CREATED_AT', '')
+          updated_at = os.environ.get('UPDATED_AT', '')
+          conclusion = os.environ.get('CONCLUSION', 'unknown')
+          
+          # Parse timestamps
+          try:
+              start_time = datetime.fromisoformat(created_at.replace('Z', '+00:00'))
+              end_time = datetime.fromisoformat(updated_at.replace('Z', '+00:00'))
+              duration_seconds = (end_time - start_time).total_seconds()
+          except Exception as e:
+              print(f"⚠️ Could not parse timestamps: {e}")
+              duration_seconds = 0
+          
+          success = conclusion == 'success'
+          
+          print(f"📊 Recording execution data:")
+          print(f"  Workflow: {workflow_name}")
+          print(f"  Duration: {duration_seconds:.0f}s ({duration_seconds/60:.1f} min)")
+          print(f"  Success: {success}")
+          
+          # Record execution in predictor
+          predictor = AIWorkflowPredictor()
+          predictor.record_execution(
+              workflow_name=workflow_name,
+              start_time=start_time,
+              duration_seconds=duration_seconds,
+              success=success,
+              resource_usage={
+                  'conclusion': conclusion,
+                  'run_id': os.environ.get('RUN_ID', ''),
+              }
+          )
+          
+          print(f"✅ Execution data recorded successfully")
+          
+          # Output for GitHub Actions
+          with open(os.environ.get('GITHUB_OUTPUT', '/dev/null'), 'a') as f:
+              f.write(f"duration={duration_seconds:.0f}\n")
+              f.write(f"success={success}\n")
+          EOF
+        env:
+          WORKFLOW_NAME: ${{ github.event.workflow_run.name }}
+          CREATED_AT: ${{ github.event.workflow_run.created_at }}
+          UPDATED_AT: ${{ github.event.workflow_run.updated_at }}
+          CONCLUSION: ${{ github.event.workflow_run.conclusion }}
+          RUN_ID: ${{ github.event.workflow_run.id }}
+      
+      - name: Run anomaly detection
+        id: anomaly
+        run: |
+          echo ""
+          echo "🔍 Running anomaly detection..."
+          python3 tools/workflow_anomaly_detector.py --check "${{ github.event.workflow_run.name }}" || true
+        continue-on-error: true
+      
+      - name: Commit execution data
+        run: |
+          # Check if there are changes to commit
+          if [ -d ".github/workflow-history" ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            
+            git add .github/workflow-history/
+            
+            if git diff --staged --quiet; then
+              echo "No changes to commit"
+            else
+              git commit -m "chore: track execution for ${{ github.event.workflow_run.name }}"
+              git push origin ${GITHUB_REF#refs/heads/} || echo "Push failed (likely PR branch or permissions)"
+            fi
+          fi
+        continue-on-error: true
+      
+      - name: Create summary
+        run: |
+          echo "## 📊 Workflow Execution Tracked" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**@create-botter** has recorded execution data for the AI workflow orchestrator." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Metric | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Workflow | ${{ github.event.workflow_run.name }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Duration | ${{ steps.track.outputs.duration }}s |" >> $GITHUB_STEP_SUMMARY
+          echo "| Success | ${{ steps.track.outputs.success }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Conclusion | ${{ github.event.workflow_run.conclusion }} |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "This data improves future workflow scheduling predictions. 🔮" >> $GITHUB_STEP_SUMMARY

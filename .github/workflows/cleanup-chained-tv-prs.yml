@@ -1,16 +1,17 @@
+# ============================================================================
+# WORKFLOW DISABLED
+# Disabled on: 2025-12-29T02:43:14.994388
+# Original workflow name: Cleanup: Chained TV PRs
+# Original triggers: schedule, workflow_dispatch
+# 
+# To re-enable: Use the tools/enable_workflows.py script with the
+# workflow_disable_metadata.json file to restore original triggers.
+# ============================================================================
+
 name: "Cleanup: Chained TV PRs"
 
 on:
-  schedule:
-    # Run daily at 3 AM UTC to clean up old Chained TV PRs
-    - cron: '0 3 * * *'
   workflow_dispatch:
-    inputs:
-      days_old:
-        description: 'Close PRs older than this many days'
-        required: false
-        default: '7'
-        type: string
 
 permissions:
   contents: write

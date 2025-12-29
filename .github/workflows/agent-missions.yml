@@ -1,17 +1,20 @@
+# ============================================================================
+# WORKFLOW DISABLED
+# Disabled on: 2025-12-29T02:43:14.994388
+# Original workflow name: Agent System: Missions
+# Original triggers: workflow_dispatch, workflow_run
+# 
+# To re-enable: Use the tools/enable_workflows.py script with the
+# workflow_disable_metadata.json file to restore original triggers.
+# ============================================================================
+
 name: "Agent System: Missions"
 
 # NOTE: This workflow is now part of the autonomous-pipeline.yml
 # It can still be triggered manually or by workflow_run for backward compatibility
 on:
+
   workflow_dispatch:
-    inputs:
-      learning_source:
-        description: 'Source of learning that triggered missions'
-        required: false
-        type: string
-  workflow_run:
-    workflows: ["World Model Update"]
-    types: [completed]
 
 permissions:
   contents: write

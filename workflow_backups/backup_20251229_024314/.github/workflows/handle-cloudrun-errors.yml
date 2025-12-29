@@ -1,0 +1,72 @@
+name: "Handle Cloud Run Errors"
+
+on:
+  repository_dispatch:
+    types: [cloudrun-error]
+
+jobs:
+  triage-error:
+    name: "Triage Cloud Run Error"
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+    
+    steps:
+      - name: Extract error details
+        id: error
+        run: |
+          echo "service=${{ github.event.client_payload.service }}" >> $GITHUB_OUTPUT
+          echo "error_hash=${{ github.event.client_payload.error_hash }}" >> $GITHUB_OUTPUT
+          {
+            echo "error_message<<EOF"
+            echo "${{ github.event.client_payload.error_message }}"
+            echo "EOF"
+          } >> $GITHUB_OUTPUT
+          echo "severity=${{ github.event.client_payload.severity || 'ERROR' }}" >> $GITHUB_OUTPUT
+      
+      - name: Create issue for error
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh issue create \
+            --repo "${{ github.repository }}" \
+            --title "🚨 Cloud Run Error: ${{ steps.error.outputs.service }}" \
+            --body "## Error Details
+          
+          - **Service**: \`${{ steps.error.outputs.service }}\`
+          - **Severity**: \`${{ steps.error.outputs.severity }}\`
+          - **Hash**: \`${{ steps.error.outputs.error_hash }}\`
+          - **Message**: ${{ steps.error.outputs.error_message }}
+          - **Timestamp**: ${{ github.event.client_payload.timestamp }}
+          
+          ## Stack Trace
+          \`\`\`
+          ${{ github.event.client_payload.stack_trace }}
+          \`\`\`
+          
+          ## Additional Context
+          - **Region**: ${{ github.event.client_payload.region }}
+          - **Environment**: ${{ github.event.client_payload.environment }}
+          - **Task Type**: ${{ github.event.client_payload.task_type }}
+          
+          ## Console Links
+          ${{ github.event.client_payload.run_console_url && format('- [Cloud Run Console]({0})', github.event.client_payload.run_console_url) || '' }}
+          ${{ github.event.client_payload.a2a_ui_url && format('- [A2A UI]({0})', github.event.client_payload.a2a_ui_url) || '' }}
+          
+          ---
+          
+          *🤖 Created by workflow: [${{ github.workflow }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})*
+          *📡 Auto-created by error-observer agent via repository_dispatch*" \
+            --label "bug,automated,cloud-run-error"
+      
+      - name: Summary
+        run: |
+          echo "## 🚨 Cloud Run Error Triaged" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Service**: ${{ steps.error.outputs.service }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Severity**: ${{ steps.error.outputs.severity }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Error Hash**: \`${{ steps.error.outputs.error_hash }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Message**: ${{ steps.error.outputs.error_message }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Issue created for automated triage." >> $GITHUB_STEP_SUMMARY

@@ -1,3 +1,13 @@
+# ============================================================================
+# WORKFLOW DISABLED
+# Disabled on: 2025-12-29T02:43:14.994388
+# Original workflow name: Meta: Coordinator Orchestration
+# Original triggers: schedule, workflow_dispatch
+# 
+# To re-enable: Use the tools/enable_workflows.py script with the
+# workflow_disable_metadata.json file to restore original triggers.
+# ============================================================================
+
 name: "Meta: Coordinator Orchestration"
 
 # This workflow invokes the meta-coordinator-system agent to orchestrate
@@ -15,37 +25,8 @@ name: "Meta: Coordinator Orchestration"
 # - Increased timeout: 15 minutes (from 5) to handle larger PR queues
 
 on:
-  schedule:
-    # Run every 2 hours (cost-optimized from 15 min)
-    # Reduces scheduled runs by 88% while maintaining system coordination
-    - cron: '0 */2 * * *'
   
   workflow_dispatch:
-    inputs:
-      focus_area:
-        description: 'Focus area: all, prs, issues, reviews'
-        required: false
-        default: 'all'
-        type: choice
-        options:
-          - all
-          - prs
-          - issues
-          - reviews
-      dry_run:
-        description: 'Dry run (no changes made)'
-        required: false
-        default: false
-        type: boolean
-  
-  # Optional: React to events for immediate response
-  # Commented out initially - can enable after testing
-  # issues:
-  #   types: [opened]
-  # pull_request:
-  #   types: [opened, synchronize, labeled]
-  # pull_request_review:
-  #   types: [submitted]
 
 concurrency:
   group: meta-coordinator-system

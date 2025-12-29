@@ -1,0 +1,320 @@
+name: "Automation: Issue Prioritizer"
+
+on:
+  schedule:
+    # Run every 6 hours
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+    inputs:
+      record_outcomes:
+        description: 'Record outcomes for closed issues'
+        required: false
+        default: 'true'
+      show_stats:
+        description: 'Display statistics'
+        required: false
+        default: 'true'
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+jobs:
+  prioritize-issues:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Fetch open issues
+        id: fetch_issues
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "Fetching open issues..."
+          gh issue list \
+            --json number,title,body,labels,state,createdAt,author,comments \
+            --limit 100 \
+            --state open > /tmp/open_issues.json
+          
+          issue_count=$(jq length /tmp/open_issues.json)
+          echo "Found $issue_count open issues"
+          echo "issue_count=$issue_count" >> $GITHUB_OUTPUT
+      
+      - name: Transform issue data
+        run: |
+          # Transform GitHub issue format to prioritizer format
+          python3 << 'EOF'
+          import json
+          
+          with open('/tmp/open_issues.json', 'r') as f:
+              gh_issues = json.load(f)
+          
+          # Transform to prioritizer format
+          issues = []
+          for issue in gh_issues:
+              issues.append({
+                  'number': issue['number'],
+                  'title': issue['title'],
+                  'body': issue.get('body', ''),
+                  'labels': [label['name'] for label in issue.get('labels', [])],
+                  'state': issue['state'],
+                  'created_at': issue['createdAt'],
+                  'author': issue['author']['login'],
+                  'comments': issue.get('comments', 0)
+              })
+          
+          with open('/tmp/prioritizer_issues.json', 'w') as f:
+              json.dump(issues, f, indent=2)
+          
+          print(f"Transformed {len(issues)} issues for prioritization")
+          EOF
+      
+      - name: Prioritize issues
+        if: steps.fetch_issues.outputs.issue_count > 0
+        run: |
+          echo "Running autonomous issue prioritizer..."
+          python3 tools/autonomous_issue_prioritizer.py \
+            --action prioritize \
+            --issue-data /tmp/prioritizer_issues.json \
+            --output /tmp/recommendations.json
+          
+          echo "Prioritization complete!"
+          
+          # Display top 10 recommendations
+          echo "Top 10 Priority Issues:"
+          python3 << 'EOF'
+          import json
+          
+          with open('/tmp/recommendations.json', 'r') as f:
+              recs = json.load(f)
+          
+          for i, rec in enumerate(recs[:10], 1):
+              print(f"{i}. Issue #{rec['issue_number']}")
+              print(f"   Priority: {rec['priority_score']:.3f}")
+              print(f"   Strategy: {rec['selected_arm']}")
+              print(f"   Confidence: {rec['confidence']:.3f}")
+              print()
+          EOF
+      
+      - name: Record outcomes for closed issues
+        if: github.event.inputs.record_outcomes != 'false'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "Checking recently closed issues..."
+          
+          # Get issues closed in the last 6 hours
+          gh issue list \
+            --json number,closedAt,labels \
+            --limit 50 \
+            --state closed > /tmp/closed_issues.json
+          
+          # Record outcomes based on closure
+          python3 << 'EOF'
+          import json
+          import subprocess
+          from datetime import datetime, timedelta, timezone
+          
+          with open('/tmp/closed_issues.json', 'r') as f:
+              closed = json.load(f)
+          
+          # Filter to recently closed (last 6 hours)
+          cutoff = datetime.now(timezone.utc) - timedelta(hours=6)
+          
+          for issue in closed:
+              if not issue.get('closedAt'):
+                  continue
+              
+              closed_at = datetime.fromisoformat(issue['closedAt'].replace('Z', '+00:00'))
+              
+              if closed_at < cutoff:
+                  continue
+              
+              # Determine success based on labels
+              labels = [label['name'] for label in issue.get('labels', [])]
+              
+              # Success if: fixed, resolved, completed
+              # Failure if: won't fix, invalid, duplicate
+              success = any(label in labels for label in ['fixed', 'resolved', 'completed'])
+              failure = any(label in labels for label in ['wontfix', 'invalid', 'duplicate'])
+              
+              # Default to success if closed and not marked as failure
+              outcome = success or not failure
+              
+              # Record outcome
+              issue_num = issue['number']
+              flag = '--success' if outcome else ''
+              
+              cmd = f"python3 tools/autonomous_issue_prioritizer.py --action record --issue-number {issue_num} {flag}"
+              
+              try:
+                  subprocess.run(cmd, shell=True, check=True)
+                  status = "SUCCESS" if outcome else "FAILURE"
+                  print(f"Recorded {status} for issue #{issue_num}")
+              except Exception as e:
+                  print(f"Failed to record outcome for #{issue_num}: {e}")
+          EOF
+      
+      - name: Display statistics
+        if: github.event.inputs.show_stats != 'false'
+        run: |
+          echo "=== Prioritizer Statistics ==="
+          python3 tools/autonomous_issue_prioritizer.py --action stats
+      
+      - name: Apply priority labels
+        if: steps.fetch_issues.outputs.issue_count > 0
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "Applying priority labels to issues..."
+          
+          python3 << 'EOF'
+          import json
+          import subprocess
+          
+          with open('/tmp/recommendations.json', 'r') as f:
+              recs = json.load(f)
+          
+          # Define priority tiers
+          high_threshold = 0.75
+          medium_threshold = 0.50
+          
+          for rec in recs[:20]:  # Apply to top 20
+              issue_num = rec['issue_number']
+              score = rec['priority_score']
+              
+              # Determine priority label
+              if score >= high_threshold:
+                  priority = 'priority-high'
+              elif score >= medium_threshold:
+                  priority = 'priority-medium'
+              else:
+                  priority = 'priority-low'
+              
+              # Apply label
+              try:
+                  subprocess.run(
+                      f'gh issue edit {issue_num} --add-label "{priority}"',
+                      shell=True,
+                      check=False  # Don't fail if label already exists
+                  )
+                  print(f"Applied {priority} to issue #{issue_num}")
+              except Exception as e:
+                  print(f"Failed to label #{issue_num}: {e}")
+          
+          print(f"\nLabeled top 20 priority issues")
+          EOF
+      
+      - name: Create priority report
+        if: steps.fetch_issues.outputs.issue_count > 0
+        run: |
+          echo "Generating priority report..."
+          
+          python3 << 'EOF'
+          import json
+          from datetime import datetime
+          
+          with open('/tmp/recommendations.json', 'r') as f:
+              recs = json.load(f)
+          
+          # Generate markdown report
+          report = []
+          report.append("# 🎯 Issue Priority Report")
+          report.append("")
+          report.append(f"**Generated:** {datetime.now().strftime('%Y-%m-%d %H:%M:%S UTC')}")
+          report.append(f"**Total Issues Analyzed:** {len(recs)}")
+          report.append("")
+          report.append("## 🏆 Top 10 Priority Issues")
+          report.append("")
+          report.append("| Rank | Issue | Priority | Strategy | Confidence |")
+          report.append("|------|-------|----------|----------|------------|")
+          
+          for i, rec in enumerate(recs[:10], 1):
+              issue_num = rec['issue_number']
+              score = rec['priority_score']
+              arm = rec['selected_arm']
+              conf = rec['confidence']
+              
+              report.append(f"| {i} | #{issue_num} | {score:.3f} | {arm} | {conf:.3f} |")
+          
+          report.append("")
+          report.append("## 📊 Strategy Distribution")
+          report.append("")
+          
+          # Count strategies
+          from collections import Counter
+          strategies = Counter(rec['selected_arm'] for rec in recs[:20])
+          
+          for strategy, count in strategies.most_common():
+              report.append(f"- **{strategy}**: {count} issues")
+          
+          report.append("")
+          report.append("---")
+          report.append("*Generated by Autonomous Issue Prioritizer using Multi-Armed Bandits*")
+          
+          # Save report
+          with open('/tmp/priority_report.md', 'w') as f:
+              f.write('\n'.join(report))
+          
+          # Also print to console
+          print('\n'.join(report))
+          EOF
+      
+      - name: Commit updated state
+        run: |
+          # Commit the updated prioritizer state
+          if [ -f tools/data/issue_prioritizer_state.json ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            
+            git add tools/data/issue_prioritizer_state.json
+            
+            if ! git diff --staged --quiet; then
+              git commit -m "chore: update autonomous issue prioritizer state [skip ci]"
+              git push
+              echo "State updated and committed"
+            else
+              echo "No state changes to commit"
+            fi
+          fi
+      
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        if: steps.fetch_issues.outputs.issue_count > 0
+        with:
+          name: priority-analysis
+          path: |
+            /tmp/recommendations.json
+            /tmp/priority_report.md
+          retention-days: 30
+
+  summary:
+    runs-on: ubuntu-latest
+    needs: prioritize-issues
+    if: always()
+    
+    steps:
+      - name: Job summary
+        run: |
+          echo "## 🤖 Autonomous Issue Prioritizer" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Workflow completed successfully!" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "The multi-armed bandit system has analyzed open issues and updated priorities." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Next Steps:**" >> $GITHUB_STEP_SUMMARY
+          echo "- Check issue labels for updated priorities" >> $GITHUB_STEP_SUMMARY
+          echo "- Review the priority report artifact" >> $GITHUB_STEP_SUMMARY
+          echo "- System continues learning from issue outcomes" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "*🤖 Created by workflow: Autonomous Issue Prioritizer - @create-botter*" >> $GITHUB_STEP_SUMMARY

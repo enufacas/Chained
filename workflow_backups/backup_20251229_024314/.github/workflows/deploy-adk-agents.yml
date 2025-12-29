@@ -1,0 +1,843 @@
+# =============================================================================
+# Deploy ADK A2A Agents to Cloud Run
+# =============================================================================
+# This workflow builds and deploys the ADK-based A2A agents to GCP Cloud Run.
+#
+# Services Deployed:
+# - adk-api-server: API server for google/adk-web (bridges ADK API to A2A)
+# - ag-ui-frontend: CopilotKit-powered A2A Pipeline Visualization UI
+# - ag-organism-frontend: 2D Canvas visualization of A2A agent coordination
+# - academic-research: Discovers research topics for blog content
+# - blog-writer: Writes and publishes blog posts
+# - google-trends: Analyzes Google Trends for SEO optimization
+# - code-reviewer: Reviews code and provides feedback
+# - data-analyst: Analyzes data and generates insights
+# - image-generator: Generates images for blog posts
+# - error-observer: A2A system agent for error observation and GitHub dispatch
+# - log-consumer: Processes Cloud Run logs and converts to error events
+#
+# Reference:
+# - ADK Cloud Run: https://google.github.io/adk-docs/deploy/cloud-run/
+# - A2A Protocol: https://a2a-protocol.org/
+# - google/adk-web: https://github.com/google/adk-web
+# - AG-UI Protocol: https://docs.ag-ui.com/
+# =============================================================================
+
+name: "Deploy: ADK Agents"
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'infrastructure/docker/adk-agents/**'
+      - 'infrastructure/docker/adk-api-server/**'
+      - 'infrastructure/docker/ag-ui-frontend/**'
+      - 'infrastructure/docker/ag-organism-frontend/**'
+      - 'infrastructure/terraform/adk-agents.tf'
+      - '.github/workflows/deploy-adk-agents.yml'
+
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        default: 'dev'
+        type: choice
+        options:
+          - dev
+          - staging
+          - prod
+
+      deploy_agents:
+        description: 'Deploy agent containers'
+        required: true
+        default: true
+        type: boolean
+
+      deploy_terraform:
+        description: 'Apply Terraform changes'
+        required: true
+        default: true
+        type: boolean
+
+env:
+  GCP_REGION: ${{ secrets.GCP_REGION || 'us-central1' }}
+  GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  # ===========================================================================
+  # Validate Configuration
+  # ===========================================================================
+  validate:
+    name: "Validate Configuration"
+    runs-on: ubuntu-latest
+    outputs:
+      deploy_agents: ${{ steps.check.outputs.deploy_agents }}
+      deploy_terraform: ${{ steps.check.outputs.deploy_terraform }}
+      environment: ${{ steps.check.outputs.environment }}
+
+    steps:
+      - name: Check configuration
+        id: check
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            echo "deploy_agents=${{ inputs.deploy_agents }}" >> $GITHUB_OUTPUT
+            echo "deploy_terraform=${{ inputs.deploy_terraform }}" >> $GITHUB_OUTPUT
+            echo "environment=${{ inputs.environment }}" >> $GITHUB_OUTPUT
+          else
+            echo "deploy_agents=true" >> $GITHUB_OUTPUT
+            echo "deploy_terraform=true" >> $GITHUB_OUTPUT
+            echo "environment=dev" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Validate secrets
+        env:
+          GCP_PROJECT_ID_SECRET: ${{ secrets.GCP_PROJECT_ID }}
+          GCP_SA_KEY_SECRET: ${{ secrets.GCP_SA_KEY }}
+          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GEMINI_API_KEY_SECRET_NAME: ${{ secrets.GEMINI_API_KEY_SECRET_NAME }}
+          GOOGLE_API_KEY_SECRET_NAME: ${{ secrets.GOOGLE_API_KEY_SECRET_NAME }}
+        run: |
+          if [[ -z "$GCP_PROJECT_ID_SECRET" ]]; then
+            echo "❌ GCP_PROJECT_ID secret not configured"
+            echo "See infrastructure/README.md for setup instructions"
+            exit 1
+          fi
+
+          if [[ -z "$GCP_SA_KEY_SECRET" ]]; then
+            echo "❌ GCP_SA_KEY secret not configured"
+            exit 1
+          fi
+
+          echo "✅ Required secrets configured"
+          
+          # Check for API keys - both direct values and Secret Manager references
+          if [[ -n "$GOOGLE_API_KEY" ]]; then
+            echo "✅ GOOGLE_API_KEY configured (direct value)"
+          elif [[ -n "$GEMINI_API_KEY" ]]; then
+            echo "✅ GEMINI_API_KEY configured (direct value)"
+          elif [[ -n "$GEMINI_API_KEY_SECRET_NAME" ]]; then
+            echo "✅ GEMINI_API_KEY_SECRET_NAME configured (Secret Manager)"
+          elif [[ -n "$GOOGLE_API_KEY_SECRET_NAME" ]]; then
+            echo "✅ GOOGLE_API_KEY_SECRET_NAME configured (Secret Manager)"
+          else
+            echo ""
+            echo "⚠️ WARNING: No API key configured!"
+            echo "   Agents will NOT be able to generate AI content."
+            echo ""
+            echo "   To enable Gemini AI, configure ONE of:"
+            echo "   1. GOOGLE_API_KEY - Direct API key value (recommended)"
+            echo "   2. GEMINI_API_KEY - Direct Gemini API key value"
+            echo "   3. GEMINI_API_KEY_SECRET_NAME - Secret Manager reference"
+            echo ""
+          fi
+
+  # ===========================================================================
+  # Build Agent Containers
+  # ===========================================================================
+  build:
+    name: "Build ${{ matrix.agent }} Agent"
+    runs-on: ubuntu-latest
+    needs: validate
+    if: needs.validate.outputs.deploy_agents == 'true'
+
+    strategy:
+      matrix:
+        agent:
+          - academic-research
+          - blog-writer
+          - google-trends
+          - code-reviewer
+          - data-analyst
+          - image-generator
+          - error-observer
+          - log-consumer
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Setup gcloud CLI
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          project_id: ${{ env.GCP_PROJECT_ID }}
+
+      - name: Configure Docker for Artifact Registry
+        run: |
+          gcloud auth configure-docker ${{ env.GCP_REGION }}-docker.pkg.dev --quiet
+
+      - name: Build and push container
+        run: |
+          IMAGE="${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/chained/${{ matrix.agent }}:${{ github.sha }}"
+          IMAGE_LATEST="${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/chained/${{ matrix.agent }}:latest"
+
+          echo "🔨 Building ${{ matrix.agent }} agent..."
+
+          # Create build context with shared code
+          cd infrastructure/docker/adk-agents
+
+          # Build with proper context
+          docker build \
+            -f ${{ matrix.agent }}/Dockerfile \
+            -t $IMAGE \
+            -t $IMAGE_LATEST \
+            .
+
+          echo "📤 Pushing to Artifact Registry..."
+          docker push $IMAGE
+          docker push $IMAGE_LATEST
+
+          echo "✅ ${{ matrix.agent }} agent built and pushed"
+
+      - name: Summary
+        run: |
+          echo "## 🐳 Container Built: ${{ matrix.agent }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Image**: \`${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/chained/${{ matrix.agent }}:${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
+
+  # ===========================================================================
+  # Build ADK API Server
+  # ===========================================================================
+  build-api-server:
+    name: "Build ADK API Server"
+    runs-on: ubuntu-latest
+    needs: validate
+    if: needs.validate.outputs.deploy_agents == 'true'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Setup gcloud CLI
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          project_id: ${{ env.GCP_PROJECT_ID }}
+
+      - name: Configure Docker for Artifact Registry
+        run: |
+          gcloud auth configure-docker ${{ env.GCP_REGION }}-docker.pkg.dev --quiet
+
+      - name: Build and push ADK API Server
+        run: |
+          IMAGE="${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/chained/adk-api-server:${{ github.sha }}"
+          IMAGE_LATEST="${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/chained/adk-api-server:latest"
+
+          echo "🔨 Building ADK API Server..."
+
+          cd infrastructure/docker/adk-api-server
+
+          docker build \
+            -t $IMAGE \
+            -t $IMAGE_LATEST \
+            .
+
+          echo "📤 Pushing to Artifact Registry..."
+          docker push $IMAGE
+          docker push $IMAGE_LATEST
+
+          echo "✅ ADK API Server built and pushed"
+
+      - name: Summary
+        run: |
+          echo "## 🐳 Container Built: ADK API Server" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Image**: \`${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/chained/adk-api-server:${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "The ADK API Server provides the backend for google/adk-web." >> $GITHUB_STEP_SUMMARY
+
+  # ===========================================================================
+  # Build AG-UI Frontend
+  # ===========================================================================
+  build-ag-ui-frontend:
+    name: "Build AG-UI Frontend"
+    runs-on: ubuntu-latest
+    needs: validate
+    if: needs.validate.outputs.deploy_agents == 'true'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Setup gcloud CLI
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          project_id: ${{ env.GCP_PROJECT_ID }}
+
+      - name: Configure Docker for Artifact Registry
+        run: |
+          gcloud auth configure-docker ${{ env.GCP_REGION }}-docker.pkg.dev --quiet
+
+      - name: Build and push AG-UI Frontend
+        run: |
+          IMAGE="${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/chained/ag-ui-frontend:${{ github.sha }}"
+          IMAGE_LATEST="${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/chained/ag-ui-frontend:latest"
+
+          echo "🔨 Building AG-UI Frontend..."
+
+          cd infrastructure/docker/ag-ui-frontend
+
+          docker build \
+            -t $IMAGE \
+            -t $IMAGE_LATEST \
+            .
+
+          echo "📤 Pushing to Artifact Registry..."
+          docker push $IMAGE
+          docker push $IMAGE_LATEST
+
+          echo "✅ AG-UI Frontend built and pushed"
+
+      - name: Summary
+        run: |
+          echo "## 🐳 Container Built: AG-UI Frontend" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Image**: \`${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/chained/ag-ui-frontend:${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "The AG-UI Frontend provides CopilotKit-powered A2A Pipeline Visualization." >> $GITHUB_STEP_SUMMARY
+
+  build-ag-organism-frontend:
+    name: "Build AG-Organism Frontend"
+    runs-on: ubuntu-latest
+    needs: validate
+    if: needs.validate.outputs.deploy_agents == 'true'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Setup gcloud CLI
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          project_id: ${{ env.GCP_PROJECT_ID }}
+
+      - name: Configure Docker for Artifact Registry
+        run: |
+          gcloud auth configure-docker ${{ env.GCP_REGION }}-docker.pkg.dev --quiet
+
+      - name: Build and push AG-Organism Frontend
+        run: |
+          IMAGE="${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/chained/ag-organism-frontend:${{ github.sha }}"
+          IMAGE_LATEST="${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/chained/ag-organism-frontend:latest"
+
+          echo "🔨 Building AG-Organism Frontend..."
+
+          cd infrastructure/docker/ag-organism-frontend
+
+          docker build \
+            -t $IMAGE \
+            -t $IMAGE_LATEST \
+            .
+
+          echo "📤 Pushing to Artifact Registry..."
+          docker push $IMAGE
+          docker push $IMAGE_LATEST
+
+          echo "✅ AG-Organism Frontend built and pushed"
+
+      - name: Summary
+        run: |
+          echo "## 🐳 Container Built: AG-Organism Frontend" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Image**: \`${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/chained/ag-organism-frontend:${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "The AG-Organism Frontend provides 3D visualization of A2A agent coordination." >> $GITHUB_STEP_SUMMARY
+
+  # ===========================================================================
+  # Deploy with Terraform
+  # ===========================================================================
+  terraform:
+    name: "Deploy Terraform"
+    runs-on: ubuntu-latest
+    needs: [validate, build, build-api-server, build-ag-ui-frontend, build-ag-organism-frontend]
+    if: always() && needs.validate.outputs.deploy_terraform == 'true' && (needs.build.result == 'success' || needs.build.result == 'skipped') && (needs.build-api-server.result == 'success' || needs.build-api-server.result == 'skipped') && (needs.build-ag-ui-frontend.result == 'success' || needs.build-ag-ui-frontend.result == 'skipped') && (needs.build-ag-organism-frontend.result == 'success' || needs.build-ag-organism-frontend.result == 'skipped')
+
+    defaults:
+      run:
+        working-directory: infrastructure/terraform/base
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: '1.6.0'
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Setup gcloud CLI
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          project_id: ${{ env.GCP_PROJECT_ID }}
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Import existing resources
+        run: |
+          # Import existing service account if it exists
+          SA_EMAIL="chained-adk-agents@${{ env.GCP_PROJECT_ID }}.iam.gserviceaccount.com"
+          
+          # Check if service account exists in GCP
+          echo "Checking for existing service account: $SA_EMAIL"
+          if gcloud iam service-accounts describe "$SA_EMAIL" 2>&1; then
+            echo "✅ Found existing service account: $SA_EMAIL"
+            
+            # Check if already in Terraform state
+            echo "Checking Terraform state for service account..."
+            if terraform state show google_service_account.adk_agents 2>&1 | grep -q "account_id"; then
+              echo "✅ Service account already in Terraform state"
+            else
+              echo "📥 Importing service account into Terraform state..."
+              if terraform import \
+                -var="project_id=${{ env.GCP_PROJECT_ID }}" \
+                -var="region=${{ env.GCP_REGION }}" \
+                -var="environment=${{ needs.validate.outputs.environment }}" \
+                -var="image_tag=${{ github.sha }}" \
+                -var="google_api_key=${{ secrets.GOOGLE_API_KEY || '' }}" \
+                -var="gemini_api_key=${{ secrets.GEMINI_API_KEY || '' }}" \
+                -var="gemini_api_key_secret=${{ secrets.GEMINI_API_KEY_SECRET_NAME || '' }}" \
+                -var="google_api_key_secret=${{ secrets.GOOGLE_API_KEY_SECRET_NAME || '' }}" \
+                -var="git_repo=${{ vars.GIT_REPO || '' }}" \
+                google_service_account.adk_agents \
+                "projects/${{ env.GCP_PROJECT_ID }}/serviceAccounts/$SA_EMAIL"; then
+                echo "✅ Successfully imported service account"
+              else
+                echo "⚠️ Import failed - this may be okay if the resource doesn't need importing"
+              fi
+            fi
+          else
+            echo "ℹ️ Service account does not exist in GCP, will be created"
+          fi
+
+          # Import existing storage bucket if it exists
+          BLOG_BUCKET="${{ env.GCP_PROJECT_ID }}-chained-blog"
+          
+          echo "Checking for existing blog storage bucket: $BLOG_BUCKET"
+          if gsutil ls -b "gs://$BLOG_BUCKET" 2>/dev/null; then
+            echo "✅ Found existing blog storage bucket: $BLOG_BUCKET"
+            
+            # Check if already in Terraform state
+            echo "Checking Terraform state for storage bucket..."
+            if terraform state show google_storage_bucket.blog >/dev/null 2>&1; then
+              echo "✅ Blog bucket already in Terraform state"
+            else
+              echo "📥 Importing blog storage bucket into Terraform state..."
+              if terraform import \
+                -var="project_id=${{ env.GCP_PROJECT_ID }}" \
+                -var="region=${{ env.GCP_REGION }}" \
+                -var="environment=${{ needs.validate.outputs.environment }}" \
+                -var="image_tag=${{ github.sha }}" \
+                -var="google_api_key=${{ secrets.GOOGLE_API_KEY || '' }}" \
+                -var="gemini_api_key=${{ secrets.GEMINI_API_KEY || '' }}" \
+                -var="gemini_api_key_secret=${{ secrets.GEMINI_API_KEY_SECRET_NAME || '' }}" \
+                -var="google_api_key_secret=${{ secrets.GOOGLE_API_KEY_SECRET_NAME || '' }}" \
+                -var="git_repo=${{ vars.GIT_REPO || '' }}" \
+                google_storage_bucket.blog \
+                "$BLOG_BUCKET"; then
+                echo "✅ Successfully imported blog storage bucket"
+              else
+                echo "⚠️ Import failed for blog storage bucket - this may be okay if the resource doesn't need importing"
+              fi
+            fi
+          else
+            echo "ℹ️ Blog storage bucket does not exist in GCP, will be created"
+          fi
+
+          # Import existing Cloud Run services if they exist
+          # Service name to Terraform resource mapping
+          declare -A SERVICES=(
+            ["chained-academic-research"]="google_cloud_run_v2_service.academic_research"
+            ["chained-blog-writer"]="google_cloud_run_v2_service.blog_writer"
+            ["chained-google-trends"]="google_cloud_run_v2_service.google_trends"
+            ["chained-code-reviewer"]="google_cloud_run_v2_service.code_reviewer"
+            ["chained-data-analyst"]="google_cloud_run_v2_service.data_analyst"
+            ["chained-image-generator"]="google_cloud_run_v2_service.image_generator"
+            ["chained-error-observer"]="google_cloud_run_v2_service.error_observer"
+            ["chained-log-consumer"]="google_cloud_run_v2_service.log_consumer"
+            ["chained-adk-api-server"]="google_cloud_run_v2_service.adk_api_server"
+            ["chained-ag-ui-frontend"]="google_cloud_run_v2_service.ag_ui_frontend"
+            ["chained-ag-organism-frontend"]="google_cloud_run_v2_service.ag_organism_frontend"
+          )
+
+          for SERVICE_NAME in "${!SERVICES[@]}"; do
+            TF_RESOURCE="${SERVICES[$SERVICE_NAME]}"
+
+            echo "Checking for existing Cloud Run service: $SERVICE_NAME"
+            if gcloud run services describe "$SERVICE_NAME" --region="${{ env.GCP_REGION }}" 2>/dev/null; then
+              echo "✅ Found existing Cloud Run service: $SERVICE_NAME"
+
+              # Check if already in Terraform state using exit code
+              echo "Checking Terraform state for $TF_RESOURCE..."
+              if terraform state show "$TF_RESOURCE" >/dev/null 2>&1; then
+                echo "✅ $SERVICE_NAME already in Terraform state"
+              else
+                echo "📥 Importing $SERVICE_NAME into Terraform state..."
+                if terraform import \
+                  -var="project_id=${{ env.GCP_PROJECT_ID }}" \
+                  -var="region=${{ env.GCP_REGION }}" \
+                  -var="environment=${{ needs.validate.outputs.environment }}" \
+                  -var="image_tag=${{ github.sha }}" \
+                  -var="google_api_key=${{ secrets.GOOGLE_API_KEY || '' }}" \
+                  -var="gemini_api_key=${{ secrets.GEMINI_API_KEY || '' }}" \
+                  -var="gemini_api_key_secret=${{ secrets.GEMINI_API_KEY_SECRET_NAME || '' }}" \
+                  -var="google_api_key_secret=${{ secrets.GOOGLE_API_KEY_SECRET_NAME || '' }}" \
+                  -var="git_repo=${{ vars.GIT_REPO || '' }}" \
+                  "$TF_RESOURCE" \
+                  "projects/${{ env.GCP_PROJECT_ID }}/locations/${{ env.GCP_REGION }}/services/$SERVICE_NAME"; then
+                  echo "✅ Successfully imported $SERVICE_NAME"
+                else
+                  echo "⚠️ Import failed for $SERVICE_NAME - this may be okay if the resource doesn't need importing"
+                fi
+              fi
+            else
+              echo "ℹ️ Cloud Run service $SERVICE_NAME does not exist in GCP, will be created"
+            fi
+          done
+
+      - name: Terraform Plan
+        run: |
+          terraform plan \
+            -var="project_id=${{ env.GCP_PROJECT_ID }}" \
+            -var="region=${{ env.GCP_REGION }}" \
+            -var="environment=${{ needs.validate.outputs.environment }}" \
+            -var="image_tag=${{ github.sha }}" \
+            -var="google_api_key=${{ secrets.GOOGLE_API_KEY || '' }}" \
+            -var="gemini_api_key=${{ secrets.GEMINI_API_KEY || '' }}" \
+            -var="gemini_api_key_secret=${{ secrets.GEMINI_API_KEY_SECRET_NAME || '' }}" \
+            -var="google_api_key_secret=${{ secrets.GOOGLE_API_KEY_SECRET_NAME || '' }}" \
+            -var="git_repo=${{ vars.GIT_REPO || '' }}" \
+            -target=google_cloud_run_v2_service.academic_research \
+            -target=google_cloud_run_v2_service.blog_writer \
+            -target=google_cloud_run_v2_service.google_trends \
+            -target=google_cloud_run_v2_service.code_reviewer \
+            -target=google_cloud_run_v2_service.data_analyst \
+            -target=google_cloud_run_v2_service.image_generator \
+            -target=google_cloud_run_v2_service.adk_api_server \
+            -target=google_cloud_run_v2_service.ag_ui_frontend \
+            -target=google_cloud_run_v2_service.ag_organism_frontend \
+            -target=google_cloud_run_v2_service.error_observer \
+            -target=google_cloud_run_v2_service.log_consumer \
+            -target=google_service_account.adk_agents \
+            -target=google_cloud_run_v2_service_iam_member.academic_research_public \
+            -target=google_cloud_run_v2_service_iam_member.blog_writer_public \
+            -target=google_cloud_run_v2_service_iam_member.google_trends_public \
+            -target=google_cloud_run_v2_service_iam_member.code_reviewer_public \
+            -target=google_cloud_run_v2_service_iam_member.data_analyst_public \
+            -target=google_cloud_run_v2_service_iam_member.image_generator_public \
+            -target=google_cloud_run_v2_service_iam_member.adk_api_server_public \
+            -target=google_cloud_run_v2_service_iam_member.ag_ui_frontend_public \
+            -target=google_cloud_run_v2_service_iam_member.ag_organism_frontend_public \
+            -target=google_cloud_run_v2_service_iam_member.error_observer_public \
+            -target=google_cloud_run_v2_service_iam_member.log_consumer_public \
+            -out=tfplan
+
+      - name: Terraform Apply
+        run: terraform apply -auto-approve tfplan
+
+      - name: Get service URLs
+        id: urls
+        run: |
+          echo "academic_research_url=$(terraform output -raw academic_research_url 2>/dev/null || echo '')" >> $GITHUB_OUTPUT
+          echo "blog_writer_url=$(terraform output -raw blog_writer_url 2>/dev/null || echo '')" >> $GITHUB_OUTPUT
+          echo "google_trends_url=$(terraform output -raw google_trends_url 2>/dev/null || echo '')" >> $GITHUB_OUTPUT
+          echo "code_reviewer_url=$(terraform output -raw code_reviewer_url 2>/dev/null || echo '')" >> $GITHUB_OUTPUT
+          echo "data_analyst_url=$(terraform output -raw data_analyst_url 2>/dev/null || echo '')" >> $GITHUB_OUTPUT
+          echo "image_generator_url=$(terraform output -raw image_generator_url 2>/dev/null || echo '')" >> $GITHUB_OUTPUT
+          echo "adk_api_server_url=$(terraform output -raw adk_api_server_url 2>/dev/null || echo '')" >> $GITHUB_OUTPUT
+          echo "ag_ui_frontend_url=$(terraform output -raw ag_ui_frontend_url 2>/dev/null || echo '')" >> $GITHUB_OUTPUT
+          echo "ag_organism_frontend_url=$(terraform output -raw ag_organism_frontend_url 2>/dev/null || echo '')" >> $GITHUB_OUTPUT
+          echo "error_observer_url=$(terraform output -raw error_observer_url 2>/dev/null || echo '')" >> $GITHUB_OUTPUT
+          echo "log_consumer_url=$(terraform output -raw log_consumer_url 2>/dev/null || echo '')" >> $GITHUB_OUTPUT
+
+      - name: Summary
+        run: |
+          echo "## 🚀 ADK Agents Deployed" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### AG-UI Frontend (CopilotKit Visualization)" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Service | URL |" >> $GITHUB_STEP_SUMMARY
+          echo "|---------|-----|" >> $GITHUB_STEP_SUMMARY
+          echo "| **AG-UI Frontend** | ${{ steps.urls.outputs.ag_ui_frontend_url }} |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### ADK API Server (for google/adk-web)" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Service | URL |" >> $GITHUB_STEP_SUMMARY
+          echo "|---------|-----|" >> $GITHUB_STEP_SUMMARY
+          echo "| **ADK API Server** | ${{ steps.urls.outputs.adk_api_server_url }} |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### A2A Agents" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Agent | URL |" >> $GITHUB_STEP_SUMMARY
+          echo "|-------|-----|" >> $GITHUB_STEP_SUMMARY
+          echo "| Academic Research | ${{ steps.urls.outputs.academic_research_url }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Blog Writer | ${{ steps.urls.outputs.blog_writer_url }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Google Trends | ${{ steps.urls.outputs.google_trends_url }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Code Reviewer | ${{ steps.urls.outputs.code_reviewer_url }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Data Analyst | ${{ steps.urls.outputs.data_analyst_url }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Image Generator | ${{ steps.urls.outputs.image_generator_url }} |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### System Agents" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Agent | URL |" >> $GITHUB_STEP_SUMMARY
+          echo "|-------|-----|" >> $GITHUB_STEP_SUMMARY
+          echo "| Error Observer | ${{ steps.urls.outputs.error_observer_url }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Log Consumer | ${{ steps.urls.outputs.log_consumer_url }} |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 📋 Endpoints" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**AG-UI Frontend:**" >> $GITHUB_STEP_SUMMARY
+          echo "- UI: \`GET /\`" >> $GITHUB_STEP_SUMMARY
+          echo "- CopilotKit API: \`POST /api/copilotkit\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**ADK API Server (for adk-web):**" >> $GITHUB_STEP_SUMMARY
+          echo "- List Apps: \`GET /list-apps\`" >> $GITHUB_STEP_SUMMARY
+          echo "- Run Agent: \`POST /run\`" >> $GITHUB_STEP_SUMMARY
+          echo "- Run SSE: \`POST /run_sse\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**A2A Agent Endpoints:**" >> $GITHUB_STEP_SUMMARY
+          echo "- Agent Card: \`GET /.well-known/agent.json\`" >> $GITHUB_STEP_SUMMARY
+          echo "- Send Message: \`POST /a2a/tasks\`" >> $GITHUB_STEP_SUMMARY
+          echo "- Health Check: \`GET /health\`" >> $GITHUB_STEP_SUMMARY
+
+  # ===========================================================================
+  # Verify Deployment
+  # ===========================================================================
+  verify:
+    name: "Verify Deployment"
+    runs-on: ubuntu-latest
+    needs: [validate, terraform]
+    if: always() && needs.terraform.result == 'success'
+
+    steps:
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Setup gcloud CLI
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          project_id: ${{ env.GCP_PROJECT_ID }}
+
+      - name: Verify agent health
+        run: |
+          echo "🔍 Verifying ADK agent deployments..."
+
+          for agent in academic-research blog-writer google-trends code-reviewer data-analyst image-generator error-observer log-consumer; do
+            URL=$(gcloud run services describe chained-$agent \
+              --region ${{ env.GCP_REGION }} \
+              --format 'value(status.url)' 2>/dev/null || echo "")
+
+            if [[ -n "$URL" ]]; then
+              # Check health
+              STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$URL/health" || echo "000")
+
+              if [[ "$STATUS" == "200" ]]; then
+                echo "✅ $agent: healthy ($URL)"
+
+                # Check agent card
+                CARD=$(curl -s "$URL/.well-known/agent.json" | head -c 100)
+                echo "   Agent card: ${CARD}..."
+              else
+                echo "⚠️ $agent: HTTP $STATUS"
+              fi
+            else
+              echo "❌ $agent: not deployed"
+            fi
+          done
+
+          # Verify ADK API Server
+          echo ""
+          echo "🔍 Verifying ADK API Server..."
+          API_SERVER_URL=$(gcloud run services describe chained-adk-api-server \
+            --region ${{ env.GCP_REGION }} \
+            --format 'value(status.url)' 2>/dev/null || echo "")
+
+          if [[ -n "$API_SERVER_URL" ]]; then
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$API_SERVER_URL/health" || echo "000")
+            if [[ "$STATUS" == "200" ]]; then
+              echo "✅ ADK API Server: healthy ($API_SERVER_URL)"
+
+              # Check list-apps endpoint
+              APPS=$(curl -s "$API_SERVER_URL/list-apps" | head -c 200)
+              echo "   Available apps: ${APPS}..."
+            else
+              echo "⚠️ ADK API Server: HTTP $STATUS"
+            fi
+          else
+            echo "❌ ADK API Server: not deployed"
+          fi
+
+          # Verify AG-UI Frontend
+          echo ""
+          echo "🔍 Verifying AG-UI Frontend..."
+          AG_UI_URL=$(gcloud run services describe chained-ag-ui-frontend \
+            --region ${{ env.GCP_REGION }} \
+            --format 'value(status.url)' 2>/dev/null || echo "")
+
+          if [[ -n "$AG_UI_URL" ]]; then
+            # Check the main page (Next.js serves at root)
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$AG_UI_URL" || echo "000")
+            if [[ "$STATUS" == "200" ]]; then
+              echo "✅ AG-UI Frontend: healthy ($AG_UI_URL)"
+            else
+              echo "⚠️ AG-UI Frontend: HTTP $STATUS"
+            fi
+          else
+            echo "❌ AG-UI Frontend: not deployed"
+          fi
+
+      - name: Verify Environment Variables
+        run: |
+          echo "🔍 Verifying AG-UI Frontend environment variables..."
+          echo ""
+          
+          # Check Cloud Run service configuration for ERROR_OBSERVER_URL
+          echo "Checking Cloud Run service configuration..."
+          ERROR_OBSERVER_ENV=$(gcloud run services describe chained-ag-ui-frontend \
+            --region ${{ env.GCP_REGION }} \
+            --format='json' | jq -r '.spec.template.spec.containers[0].env[] | select(.name=="ERROR_OBSERVER_URL") | .value')
+          
+          if [[ -n "$ERROR_OBSERVER_ENV" && "$ERROR_OBSERVER_ENV" != "null" ]]; then
+            echo "✅ ERROR_OBSERVER_URL is set in Cloud Run config: $ERROR_OBSERVER_ENV"
+          else
+            echo "❌ ERROR_OBSERVER_URL is NOT set in Cloud Run config"
+            exit 1
+          fi
+          
+          # Wait for new revision to be ready and serving traffic
+          echo ""
+          echo "Waiting for latest revision to be ready..."
+          AG_UI_URL=$(gcloud run services describe chained-ag-ui-frontend \
+            --region ${{ env.GCP_REGION }} \
+            --format 'value(status.url)')
+          
+          # Get the latest revision name
+          LATEST_REVISION=$(gcloud run services describe chained-ag-ui-frontend \
+            --region ${{ env.GCP_REGION }} \
+            --format 'value(status.latestReadyRevisionName)')
+          echo "Latest revision: $LATEST_REVISION"
+          
+          # Wait up to 2 minutes for revision to be ready
+          MAX_WAIT=120
+          WAIT_INTERVAL=10
+          ELAPSED=0
+          
+          while [[ $ELAPSED -lt $MAX_WAIT ]]; do
+            REVISION_STATUS=$(gcloud run revisions describe "$LATEST_REVISION" \
+              --region ${{ env.GCP_REGION }} \
+              --format 'value(status.conditions[0].status)' 2>/dev/null || echo "Unknown")
+            
+            if [[ "$REVISION_STATUS" == "True" ]]; then
+              echo "✅ Revision is ready and serving traffic"
+              break
+            fi
+            
+            echo "Waiting for revision to be ready... ($ELAPSED/$MAX_WAIT seconds)"
+            sleep $WAIT_INTERVAL
+            ELAPSED=$((ELAPSED + WAIT_INTERVAL))
+          done
+          
+          if [[ $ELAPSED -ge $MAX_WAIT ]]; then
+            echo "⚠️ Timeout waiting for revision to be ready"
+          fi
+          
+          # Check runtime availability via debug endpoint
+          echo ""
+          echo "Checking runtime availability..."
+          
+          # Retry up to 3 times with 10 second delays to handle cold starts
+          MAX_RETRIES=3
+          RETRY_COUNT=0
+          
+          while [[ $RETRY_COUNT -lt $MAX_RETRIES ]]; do
+            RUNTIME_CHECK=$(curl -s "$AG_UI_URL/api/debug/env" | jq -r '.envStatus.ERROR_OBSERVER_URL.set')
+            
+            if [[ "$RUNTIME_CHECK" == "true" ]]; then
+              echo "✅ ERROR_OBSERVER_URL is available at runtime"
+              break
+            fi
+            
+            RETRY_COUNT=$((RETRY_COUNT + 1))
+            if [[ $RETRY_COUNT -lt $MAX_RETRIES ]]; then
+              echo "Attempt $RETRY_COUNT/$MAX_RETRIES: ERROR_OBSERVER_URL not yet available, retrying in 10 seconds..."
+              sleep 10
+            fi
+          done
+          
+          if [[ "$RUNTIME_CHECK" != "true" ]]; then
+            echo "❌ ERROR_OBSERVER_URL is set in Cloud Run config but not available at runtime after $MAX_RETRIES attempts"
+            echo "   This indicates the new revision is not picking up the environment variable"
+            echo "   Debugging info:"
+            echo "   - Latest revision: $LATEST_REVISION"
+            echo "   - Service URL: $AG_UI_URL"
+            echo "   - Debug endpoint response:"
+            curl -s "$AG_UI_URL/api/debug/env" | jq '.'
+            exit 1
+          fi
+          
+          # Verify error observer service exists
+          echo ""
+          echo "Checking error observer service..."
+          ERROR_OBSERVER_URL=$(gcloud run services describe chained-error-observer \
+            --region ${{ env.GCP_REGION }} \
+            --format 'value(status.url)' 2>/dev/null || echo "")
+          
+          if [[ -n "$ERROR_OBSERVER_URL" ]]; then
+            echo "✅ Error observer service is deployed: $ERROR_OBSERVER_URL"
+          else
+            echo "❌ Error observer service not found"
+            exit 1
+          fi
+
+      - name: Summary
+        run: |
+          echo "## ✅ Deployment Verified" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "All ADK services are healthy and responding." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 🔗 Next Steps" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "1. **Use AG-UI Frontend** (CopilotKit visualization):" >> $GITHUB_STEP_SUMMARY
+          echo "   - Visit the deployed AG-UI Frontend URL" >> $GITHUB_STEP_SUMMARY
+          echo "   - Interact with agents through the CopilotKit chat interface" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "2. **Use adk-web UI** (alternative):" >> $GITHUB_STEP_SUMMARY
+          echo "   - Clone: \`git clone https://github.com/google/adk-web\`" >> $GITHUB_STEP_SUMMARY
+          echo "   - Configure API URL in adk-web settings" >> $GITHUB_STEP_SUMMARY
+          echo "   - Run: \`npm start\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "3. Test the pipeline: Run the \`adk-a2a-blog-pipeline\` workflow" >> $GITHUB_STEP_SUMMARY
+          echo "4. View agent cards at \`/.well-known/agent.json\`" >> $GITHUB_STEP_SUMMARY
+          echo "5. Monitor in Cloud Console" >> $GITHUB_STEP_SUMMARY

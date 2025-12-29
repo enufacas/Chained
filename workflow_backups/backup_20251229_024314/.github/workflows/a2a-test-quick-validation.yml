@@ -1,0 +1,66 @@
+name: "Test: A2A Quick Validation"
+
+on:
+  push:
+    branches:
+      - 'copilot/implement-agent-orchestration'
+    paths:
+      - 'tools/a2a/**'
+      - 'tests/test_a2a_*.py'
+      - '.github/workflows/a2a-test-*.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  quick-validation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      
+      - name: Test agent card generation (102 agents)
+        run: |
+          echo "=== Testing Agent Card Generation ==="
+          python3 tests/test_a2a_agent_cards.py
+      
+      - name: Test basic imports
+        run: |
+          echo "=== Testing A2A Module Imports ==="
+          python3 -c "from tools.a2a import generate_agent_card, ChainedAgentExecutor, get_discovery_service"
+          echo "✅ All imports successful"
+      
+      - name: Test discovery service
+        run: |
+          echo "=== Testing Discovery Service ==="
+          python3 -c "
+          from tools.a2a import get_discovery_service
+          discovery = get_discovery_service()
+          print(f'✅ Discovery service initialized')
+          print(f'Registry file: {discovery.registry.registry_file}')
+          "
+      
+      - name: Validation summary
+        if: success()
+        run: |
+          echo "🎉 Quick Validation Complete!"
+          echo ""
+          echo "✅ Agent card generation: PASSED (102/102 agents)"
+          echo "✅ Module imports: PASSED"
+          echo "✅ Discovery service: PASSED"
+          echo ""
+          echo "All basic validations passed. Ready for deeper testing."

@@ -1,0 +1,1733 @@
+name: "Learning: Autonomous Pipeline"
+
+on:
+  schedule:
+    # Run twice daily - morning and evening UTC
+    - cron: '0 8,20 * * *'
+  workflow_dispatch:
+    inputs:
+      skip_learning:
+        description: 'Skip learning collection stage'
+        required: false
+        type: boolean
+        default: false
+      skip_world_update:
+        description: 'Skip world model update stage'
+        required: false
+        type: boolean
+        default: false
+      skip_missions:
+        description: 'Skip agent missions stage'
+        required: false
+        type: boolean
+        default: false
+      skip_assignment:
+        description: 'Skip agent assignment stage'
+        required: false
+        type: boolean
+        default: false
+      include_self_reinforcement:
+        description: 'Include self-reinforcement stage'
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+  actions: write
+
+jobs:
+  # ============================================================================
+  # STAGE 0: SETUP - Ensure Required Labels
+  # ============================================================================
+  
+  ensure-labels:
+    name: "Stage 0: Ensure Required Labels"
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install requests
+
+      - name: Ensure required labels
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python3 << 'EOF'
+          import requests
+          import os
+          
+          GITHUB_TOKEN = os.environ['GH_TOKEN']
+          REPO = os.environ['GITHUB_REPOSITORY']
+          
+          headers = {
+              'Authorization': f'token {GITHUB_TOKEN}',
+              'Accept': 'application/vnd.github.v3+json'
+          }
+          
+          required_labels = [
+              {'name': 'learning', 'color': '0E8A16', 'description': 'Learning-related'},
+              {'name': 'agent-mission', 'color': 'D93F0B', 'description': 'Agent mission'},
+              {'name': 'ai-generated', 'color': '1D76DB', 'description': 'AI-generated'},
+              {'name': 'automated', 'color': 'FBCA04', 'description': 'Automated'},
+              {'name': 'pipeline', 'color': '5319E7', 'description': 'Pipeline workflow'},
+              {'name': 'auto-merge', 'color': 'BFD4F2', 'description': 'Auto-merge eligible'},
+              {'name': 'world-model', 'color': '006B75', 'description': 'World model updates'},
+          ]
+          
+          url = f'https://api.github.com/repos/{REPO}/labels'
+          response = requests.get(url, headers=headers)
+          existing_labels = {label['name'].lower() for label in response.json()}
+          
+          for label in required_labels:
+              if label['name'].lower() not in existing_labels:
+                  requests.post(url, headers=headers, json=label)
+                  print(f"✓ Created label: {label['name']}")
+              else:
+                  print(f"✓ Label exists: {label['name']}")
+          
+          print("✅ All required labels ready")
+          EOF
+
+  # ============================================================================
+  # STAGE 1: LEARNING COLLECTION (Parallel)
+  # ============================================================================
+  
+  learn-tldr:
+    name: "Stage 1a: Learn from TLDR"
+    runs-on: ubuntu-latest
+    needs: ensure-labels
+    if: inputs.skip_learning != true
+    outputs:
+      learning_count: ${{ steps.fetch.outputs.learning_count }}
+      learning_file: ${{ steps.fetch.outputs.learning_file }}
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install beautifulsoup4 requests feedparser lxml html5lib
+
+      - name: Fetch TLDR content
+        id: fetch
+        run: |
+          python3 << 'PYTHON_SCRIPT'
+          import requests
+          import json
+          import re
+          from datetime import datetime, timezone
+          from bs4 import BeautifulSoup
+          import os
+          import time
+          import feedparser
+          
+          print("🔥 Fetching TLDR Tech content...")
+          
+          class WebContentFetcher:
+              def __init__(self):
+                  self.session = requests.Session()
+                  self.session.headers.update({
+                      'User-Agent': 'Mozilla/5.0 (compatible; ChainedAI/1.0)'
+                  })
+              
+              def fetch(self, url):
+                  try:
+                      response = self.session.get(url, timeout=10, allow_redirects=True)
+                      if response.status_code == 200:
+                          soup = BeautifulSoup(response.text, 'html.parser')
+                          for element in soup(['script', 'style', 'nav', 'footer', 'iframe']):
+                              element.decompose()
+                          content = soup.find('article') or soup.find('main') or soup.find('body')
+                          if content:
+                              text = content.get_text(separator='\n', strip=True)
+                              lines = [line.strip() for line in text.split('\n') if line.strip()]
+                              text = '\n'.join(lines)
+                              if len(text) > 2000:
+                                  text = text[:2000] + '\n\n[Content truncated...]'
+                              return text
+                  except Exception as e:
+                      print(f"  Warning: Could not fetch {url}: {e}")
+                  return None
+          
+          fetcher = WebContentFetcher()
+          rss_urls = [
+              'https://tldr.tech/api/rss/tech',
+              'https://tldr.tech/api/rss/ai',
+          ]
+          
+          all_entries = []
+          for rss_url in rss_urls:
+              try:
+                  print(f"Fetching RSS: {rss_url}")
+                  feed = feedparser.parse(rss_url)
+                  for entry in feed.entries[:10]:
+                      all_entries.append(entry)
+                  print(f"  Found {len(feed.entries)} entries")
+              except Exception as e:
+                  print(f"  Error fetching {rss_url}: {e}")
+          
+          learnings = []
+          for entry in all_entries[:20]:
+              title = entry.get('title', '')
+              link = entry.get('link', '')
+              summary = entry.get('summary', '')[:500]
+              
+              learning = {
+                  'source': 'tldr',
+                  'title': title,
+                  'url': link,
+                  'summary': summary,
+                  'collected_at': datetime.now(timezone.utc).isoformat()
+              }
+              learnings.append(learning)
+          
+          data = {
+              'source': 'tldr',
+              'timestamp': datetime.now(timezone.utc).isoformat(),
+              'learnings': learnings,
+              'count': len(learnings)
+          }
+          
+          os.makedirs('learnings', exist_ok=True)
+          filename = f"learnings/tldr_{datetime.now().strftime('%Y%m%d')}.json"
+          with open(filename, 'w') as f:
+              json.dump(data, f, indent=2)
+          
+          print(f"✅ Collected {len(learnings)} TLDR learnings → {filename}")
+          
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+              f.write(f"learning_count={len(learnings)}\n")
+              f.write(f"learning_file={filename}\n")
+          PYTHON_SCRIPT
+
+      - name: Upload TLDR learnings
+        uses: actions/upload-artifact@v4
+        with:
+          name: tldr-learnings
+          path: learnings/tldr_*.json
+          retention-days: 7
+
+  learn-hackernews:
+    name: "Stage 1b: Learn from Hacker News"
+    runs-on: ubuntu-latest
+    needs: ensure-labels
+    if: inputs.skip_learning != true
+    outputs:
+      story_count: ${{ steps.fetch.outputs.story_count }}
+      learning_file: ${{ steps.fetch.outputs.learning_file }}
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install requests beautifulsoup4 lxml html5lib
+
+      - name: Fetch Hacker News
+        id: fetch
+        run: |
+          python3 << 'PYTHON_SCRIPT'
+          import requests
+          import json
+          from datetime import datetime, timezone
+          import os
+          
+          print("🗞️ Fetching Hacker News top stories...")
+          
+          try:
+              response = requests.get('https://hacker-news.firebaseio.com/v0/topstories.json', timeout=10)
+              story_ids = response.json()[:30]
+              print(f"Found {len(story_ids)} top story IDs")
+          except Exception as e:
+              print(f"Error fetching story IDs: {e}")
+              story_ids = []
+          
+          stories = []
+          for story_id in story_ids[:20]:
+              try:
+                  story_response = requests.get(f'https://hacker-news.firebaseio.com/v0/item/{story_id}.json', timeout=5)
+                  story = story_response.json()
+                  
+                  if story and story.get('type') == 'story':
+                      stories.append({
+                          'source': 'hackernews',
+                          'title': story.get('title', ''),
+                          'url': story.get('url', ''),
+                          'score': story.get('score', 0),
+                          'comments': story.get('descendants', 0),
+                          'collected_at': datetime.now(timezone.utc).isoformat()
+                      })
+              except Exception as e:
+                  print(f"Error fetching story {story_id}: {e}")
+          
+          data = {
+              'source': 'hackernews',
+              'timestamp': datetime.now(timezone.utc).isoformat(),
+              'stories': stories,
+              'count': len(stories)
+          }
+          
+          os.makedirs('learnings', exist_ok=True)
+          filename = f"learnings/hn_{datetime.now().strftime('%Y%m%d')}.json"
+          with open(filename, 'w') as f:
+              json.dump(data, f, indent=2)
+          
+          print(f"✅ Collected {len(stories)} HN stories → {filename}")
+          
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+              f.write(f"story_count={len(stories)}\n")
+              f.write(f"learning_file={filename}\n")
+          PYTHON_SCRIPT
+
+      - name: Upload HN learnings
+        uses: actions/upload-artifact@v4
+        with:
+          name: hn-learnings
+          path: learnings/hn_*.json
+          retention-days: 7
+
+  learn-github-trending:
+    name: "Stage 1c: Learn from GitHub Trending"
+    runs-on: ubuntu-latest
+    needs: ensure-labels
+    if: inputs.skip_learning != true
+    outputs:
+      repo_count: ${{ steps.fetch.outputs.repo_count }}
+      learning_file: ${{ steps.fetch.outputs.learning_file }}
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install beautifulsoup4 requests lxml html5lib
+
+      - name: Fetch GitHub Trending
+        id: fetch
+        run: |
+          python3 << 'PYTHON_SCRIPT'
+          import json
+          import os
+          from datetime import datetime, timezone
+          import sys
+          
+          print("🔥 Fetching GitHub Trending Repositories...")
+          
+          sys.path.insert(0, 'tools')
+          import importlib.util
+          spec = importlib.util.spec_from_file_location('fetcher', 'tools/fetch-github-trending.py')
+          fetcher_module = importlib.util.module_from_spec(spec)
+          spec.loader.exec_module(fetcher_module)
+          GitHubTrendingFetcher = fetcher_module.GitHubTrendingFetcher
+          
+          fetcher = GitHubTrendingFetcher()
+          languages = ['python', 'javascript', 'go', 'rust', 'typescript']
+          
+          all_repos = []
+          language_results = fetcher.fetch_multiple_languages(languages, since='daily', max_per_lang=5)
+          
+          for lang, repos in language_results.items():
+              all_repos.extend(repos)
+          
+          data = {
+              'source': 'github_trending',
+              'timestamp': datetime.now(timezone.utc).isoformat(),
+              'repositories': all_repos,
+              'count': len(all_repos)
+          }
+          
+          os.makedirs('learnings', exist_ok=True)
+          filename = f"learnings/github_trending_{datetime.now().strftime('%Y%m%d')}.json"
+          with open(filename, 'w') as f:
+              json.dump(data, f, indent=2)
+          
+          print(f"✅ Collected {len(all_repos)} GitHub repos → {filename}")
+          
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+              f.write(f"repo_count={len(all_repos)}\n")
+              f.write(f"learning_file={filename}\n")
+          PYTHON_SCRIPT
+
+      - name: Upload GitHub Trending learnings
+        uses: actions/upload-artifact@v4
+        with:
+          name: github-learnings
+          path: learnings/github_trending_*.json
+          retention-days: 7
+
+  learn-github-copilot:
+    name: "Stage 1d: Learn from GitHub Copilot"
+    runs-on: ubuntu-latest
+    needs: ensure-labels
+    if: inputs.skip_learning != true
+    outputs:
+      copilot_count: ${{ steps.fetch.outputs.copilot_count }}
+      learning_file: ${{ steps.fetch.outputs.learning_file }}
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install beautifulsoup4 requests lxml html5lib
+
+      - name: Fetch GitHub Copilot learnings
+        id: fetch
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python3 << 'PYTHON_SCRIPT'
+          import json
+          import os
+          import subprocess
+          import sys
+          from datetime import datetime, timezone
+          
+          print("🤖 Fetching GitHub Copilot learning content...")
+          
+          # Run the GitHub Copilot fetcher
+          try:
+              env = os.environ.copy()
+              result = subprocess.run(
+                  ['python3', 'tools/fetch-github-copilot.py', '--docs', '5', '--reddit', '2', '--discussions', '3'],
+                  capture_output=True,
+                  text=True,
+                  env=env,
+                  timeout=60
+              )
+              
+              if result.stderr:
+                  print(result.stderr, file=sys.stderr)
+              
+              if result.returncode == 0:
+                  output = result.stdout
+                  try:
+                      data = json.loads(output)
+                      learnings = data.get('learnings', [])
+                      
+                      os.makedirs('learnings', exist_ok=True)
+                      timestamp = datetime.now(timezone.utc).strftime('%Y%m%d')
+                      filename = f'learnings/copilot_{timestamp}.json'
+                      
+                      with open(filename, 'w') as f:
+                          json.dump(data, f, indent=2)
+                      
+                      print(f"✅ Collected {len(learnings)} GitHub Copilot learnings → {filename}")
+                      
+                      with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+                          f.write(f"copilot_count={len(learnings)}\n")
+                          f.write(f"learning_file={filename}\n")
+                  except json.JSONDecodeError as e:
+                      print(f"Warning: Could not parse fetcher output: {e}")
+                      with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+                          f.write(f"copilot_count=0\n")
+                          f.write(f"learning_file=none\n")
+              else:
+                  print(f"Warning: Fetcher returned error code {result.returncode}")
+                  with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+                      f.write(f"copilot_count=0\n")
+                      f.write(f"learning_file=none\n")
+          except subprocess.TimeoutExpired:
+              print("Warning: Fetcher timed out")
+              with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+                  f.write(f"copilot_count=0\n")
+                  f.write(f"learning_file=none\n")
+          except Exception as e:
+              print(f"Warning: Error running fetcher: {e}")
+              with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+                  f.write(f"copilot_count=0\n")
+                  f.write(f"learning_file=none\n")
+          
+          PYTHON_SCRIPT
+
+      - name: Upload Copilot learnings
+        uses: actions/upload-artifact@v4
+        with:
+          name: copilot-learnings
+          path: learnings/copilot_*.json
+          retention-days: 7
+
+  # ============================================================================
+  # STAGE 2: COMBINE LEARNINGS
+  # ============================================================================
+  
+  combine-learnings:
+    name: "Stage 2: Combine All Learnings"
+    runs-on: ubuntu-latest
+    needs: [learn-tldr, learn-hackernews, learn-github-trending, learn-github-copilot]
+    if: always() && !cancelled() && inputs.skip_learning != true
+    outputs:
+      total_learnings: ${{ steps.analyze.outputs.total_learnings }}
+      combined_file: ${{ steps.analyze.outputs.combined_file }}
+      has_learnings: ${{ steps.analyze.outputs.has_learnings }}
+      pr_number: ${{ steps.learning_pr.outputs.pr_number }}
+      pr_created: ${{ steps.learning_pr.outputs.pr_created }}
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Download all learning artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: learnings-artifacts
+
+      - name: Combine learnings
+        id: analyze
+        run: |
+          python3 << 'PYTHON_SCRIPT'
+          import json
+          import os
+          from datetime import datetime, timezone
+          from pathlib import Path
+          
+          print("🧠 Combining all learning sources...")
+          
+          # Collect all learning files
+          all_learnings = []
+          learnings_dir = Path('learnings-artifacts')
+          
+          if learnings_dir.exists():
+              for subdir in learnings_dir.iterdir():
+                  if subdir.is_dir():
+                      for file in subdir.glob('*.json'):
+                          print(f"Loading: {file}")
+                          try:
+                              with open(file) as f:
+                                  data = json.load(f)
+                                  if 'learnings' in data:
+                                      all_learnings.extend(data['learnings'])
+                                  elif 'stories' in data:
+                                      all_learnings.extend(data['stories'])
+                                  elif 'repositories' in data:
+                                      all_learnings.extend(data['repositories'])
+                          except Exception as e:
+                              print(f"Error loading {file}: {e}")
+          
+          print(f"Total learnings combined: {len(all_learnings)}")
+          
+          # Create combined analysis
+          combined = {
+              'timestamp': datetime.now(timezone.utc).isoformat(),
+              'total_learnings': len(all_learnings),
+              'sources': {
+                  'tldr': len([l for l in all_learnings if l.get('source') == 'tldr']),
+                  'hackernews': len([l for l in all_learnings if l.get('source') == 'hackernews']),
+                  'github_trending': len([l for l in all_learnings if l.get('source') == 'github_trending'])
+              },
+              'learnings': all_learnings
+          }
+          
+          # Save combined file
+          os.makedirs('learnings', exist_ok=True)
+          combined_file = f"learnings/combined_analysis_{datetime.now().strftime('%Y%m%d')}.json"
+          with open(combined_file, 'w') as f:
+              json.dump(combined, f, indent=2)
+          
+          print(f"✅ Combined learnings saved → {combined_file}")
+          print(f"   TLDR: {combined['sources']['tldr']}")
+          print(f"   HN: {combined['sources']['hackernews']}")
+          print(f"   GitHub: {combined['sources']['github_trending']}")
+          
+          has_learnings = 'true' if len(all_learnings) > 0 else 'false'
+          
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+              f.write(f"total_learnings={len(all_learnings)}\n")
+              f.write(f"combined_file={combined_file}\n")
+              f.write(f"has_learnings={has_learnings}\n")
+          PYTHON_SCRIPT
+
+      - name: Create PR with learnings
+        id: learning_pr
+        if: steps.analyze.outputs.has_learnings == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          git add learnings/
+          
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+            echo "pr_created=false" >> $GITHUB_OUTPUT
+          else
+            TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+            BRANCH_NAME="learning-pipeline/${TIMESTAMP}-${{ github.run_id }}"
+            
+            git checkout -b "$BRANCH_NAME"
+            git commit -m "🧠 Learning Pipeline - $(date +%Y-%m-%d)"
+            git push origin "$BRANCH_NAME"
+            
+            # Create PR
+            PR_URL=$(gh pr create \
+              --title "🧠 Learning Pipeline - $(date +%Y-%m-%d)" \
+              --body "## 🧠 Autonomous Learning Pipeline
+
+            **Total Learnings:** ${{ steps.analyze.outputs.total_learnings }}
+            **Pipeline Run:** [View Details](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+
+            This PR contains combined learnings from:
+            - 📰 TLDR Tech
+            - 🗞️ Hacker News  
+            - 🔥 GitHub Trending
+
+            **Note:** This PR will be auto-merged by the next pipeline stage.
+
+            Next stages: Merge → World Update → Agent Missions
+            " \
+              --label "automated,learning,pipeline,auto-merge,copilot" \
+              --base main \
+              --head "$BRANCH_NAME")
+            
+            # Extract PR number
+            PR_NUMBER=$(echo "$PR_URL" | grep -oE '[0-9]+$')
+            echo "Created PR #${PR_NUMBER}: ${PR_URL}"
+            echo "pr_number=${PR_NUMBER}" >> $GITHUB_OUTPUT
+            echo "pr_created=true" >> $GITHUB_OUTPUT
+          fi
+
+  # ============================================================================
+  # STAGE 2.5: MERGE LEARNING PR
+  # ============================================================================
+  
+  merge-learning-pr:
+    name: "Stage 2.5: Merge Learning PR"
+    runs-on: ubuntu-latest
+    needs: combine-learnings
+    if: always() && !cancelled() && needs.combine-learnings.outputs.pr_created == 'true'
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Merge PR directly
+        env:
+          GH_TOKEN: ${{ secrets.COPILOT_PAT || secrets.GITHUB_TOKEN }}
+        run: |
+          PR_NUMBER="${{ needs.combine-learnings.outputs.pr_number }}"
+          echo "🔄 Merging Learning PR #$PR_NUMBER directly..."
+          
+          # Wait a few seconds for CI checks to start
+          echo "⏳ Waiting 5 seconds for PR to be ready..."
+          sleep 5
+          
+          # Check PR mergeable state
+          PR_DATA=$(gh pr view "$PR_NUMBER" --json mergeable,mergeStateStatus,state)
+          MERGEABLE=$(echo "$PR_DATA" | jq -r '.mergeable')
+          MERGE_STATE=$(echo "$PR_DATA" | jq -r '.mergeStateStatus')
+          PR_STATE=$(echo "$PR_DATA" | jq -r '.state')
+          
+          echo "📊 PR Status:"
+          echo "   State: $PR_STATE"
+          echo "   Mergeable: $MERGEABLE"
+          echo "   Merge State: $MERGE_STATE"
+          
+          # Check if already merged
+          if [ "$PR_STATE" = "MERGED" ]; then
+            echo "✅ PR #$PR_NUMBER is already merged!"
+            exit 0
+          fi
+          
+          # Attempt merge with auto strategy (squash for cleaner history)
+          echo "🚀 Attempting to merge PR #$PR_NUMBER..."
+          if gh pr merge "$PR_NUMBER" --repo ${{ github.repository }} --auto --squash --delete-branch; then
+            echo "✅ PR #$PR_NUMBER merge initiated successfully!"
+            echo "🎉 Learning PR merged - continuing to world model update"
+            
+            # Brief wait to confirm merge completed
+            sleep 2
+            FINAL_STATE=$(gh pr view "$PR_NUMBER" --json state --jq '.state')
+            if [ "$FINAL_STATE" = "MERGED" ]; then
+              echo "✅ Merge confirmed!"
+            else
+              echo "ℹ️  Merge is processing (state: $FINAL_STATE)"
+            fi
+          else
+            echo "⚠️  Merge command failed, checking if PR can be force merged..."
+            
+            # Try regular merge without auto flag
+            if gh pr merge "$PR_NUMBER" --repo ${{ github.repository }} --squash --delete-branch; then
+              echo "✅ PR #$PR_NUMBER merged successfully (direct merge)!"
+              echo "🎉 Learning PR merged - continuing to world model update"
+            else
+              echo "❌ Failed to merge PR #$PR_NUMBER"
+              echo "This may indicate:"
+              echo "  - Merge conflicts"
+              echo "  - Required checks not passing"
+              echo "  - Branch protection rules blocking"
+              echo ""
+              echo "Check PR status at: https://github.com/${{ github.repository }}/pull/$PR_NUMBER"
+              exit 1
+            fi
+          fi
+
+  # ============================================================================
+  # STAGE 3: WORLD MODEL UPDATE
+  # ============================================================================
+  
+  world-update:
+    name: "Stage 3: Update World Model"
+    runs-on: ubuntu-latest
+    needs: [combine-learnings, merge-learning-pr]
+    if: always() && !cancelled() && needs.combine-learnings.outputs.has_learnings == 'true' && inputs.skip_world_update != true
+    outputs:
+      world_tick: ${{ steps.update.outputs.world_tick }}
+      has_changes: ${{ steps.update.outputs.has_changes }}
+      pr_number: ${{ steps.world_pr.outputs.pr_number }}
+      pr_created: ${{ steps.world_pr.outputs.pr_created }}
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Update world model
+        id: update
+        run: |
+          echo "🌍 Updating world model..."
+          
+          # Sync agents from registry to world
+          python3 world/sync_agents_to_world.py 2>&1 || echo "⚠️ Agent sync warning (continuing)"
+          
+          # Sync learnings to world ideas
+          python3 world/sync_learnings_to_ideas.py 2>&1 || echo "⚠️ Learning sync warning (continuing)"
+          
+          # Update agent state
+          python3 scripts/update_agent.py 2>&1 || echo "⚠️ Agent state update warning (continuing)"
+          
+          # Sync to docs for GitHub Pages
+          mkdir -p docs/world
+          cp world/world_state.json docs/world/
+          cp world/knowledge.json docs/world/
+          
+          # Extract world tick
+          WORLD_TICK=$(python3 -c "import json; print(json.load(open('world/world_state.json'))['tick'])" 2>/dev/null || echo "unknown")
+          
+          echo "world_tick=${WORLD_TICK}" >> $GITHUB_OUTPUT
+          
+          # Check for changes
+          git add world/ docs/world/
+          if git diff --staged --quiet; then
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+            echo "No world changes"
+          else
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+            echo "✅ World updated (tick: ${WORLD_TICK})"
+          fi
+
+      - name: Create PR with world updates
+        id: world_pr
+        if: steps.update.outputs.has_changes == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+          BRANCH_NAME="world-pipeline/${TIMESTAMP}-${{ github.run_id }}"
+          
+          git checkout -b "$BRANCH_NAME"
+          git commit -m "🌍 World Model Update - Pipeline"
+          git push origin "$BRANCH_NAME"
+          
+          # Create PR
+          PR_URL=$(gh pr create \
+            --title "🌍 World Model Update - $(date +%Y-%m-%d)" \
+            --body "## 🌍 World Model Update
+
+          **World Tick:** ${{ steps.update.outputs.world_tick }}
+          **Pipeline Run:** [View Details](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+
+          Updates:
+          - ✅ Agent positions synchronized
+          - ✅ Learning ideas integrated
+          - ✅ World tick incremented
+
+          **Note:** This PR will be auto-merged by the next pipeline stage.
+
+          Next stages: Merge → Agent Missions
+          " \
+            --label "automated,world-model,pipeline,auto-merge,copilot" \
+            --base main \
+            --head "$BRANCH_NAME")
+          
+          # Extract PR number
+          PR_NUMBER=$(echo "$PR_URL" | grep -oE '[0-9]+$')
+          echo "Created PR #${PR_NUMBER}: ${PR_URL}"
+          echo "pr_number=${PR_NUMBER}" >> $GITHUB_OUTPUT
+          echo "pr_created=true" >> $GITHUB_OUTPUT
+
+  # ============================================================================
+  # STAGE 3.5: MERGE WORLD PR
+  # ============================================================================
+  
+  merge-world-pr:
+    name: "Stage 3.5: Merge World PR"
+    runs-on: ubuntu-latest
+    needs: world-update
+    if: always() && !cancelled() && needs.world-update.outputs.pr_created == 'true'
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Merge PR directly
+        env:
+          GH_TOKEN: ${{ secrets.COPILOT_PAT || secrets.GITHUB_TOKEN }}
+        run: |
+          PR_NUMBER="${{ needs.world-update.outputs.pr_number }}"
+          echo "🔄 Merging World PR #$PR_NUMBER directly..."
+          
+          # Wait a few seconds for CI checks to start
+          echo "⏳ Waiting 5 seconds for PR to be ready..."
+          sleep 5
+          
+          # Check PR mergeable state
+          PR_DATA=$(gh pr view "$PR_NUMBER" --json mergeable,mergeStateStatus,state)
+          MERGEABLE=$(echo "$PR_DATA" | jq -r '.mergeable')
+          MERGE_STATE=$(echo "$PR_DATA" | jq -r '.mergeStateStatus')
+          PR_STATE=$(echo "$PR_DATA" | jq -r '.state')
+          
+          echo "📊 PR Status:"
+          echo "   State: $PR_STATE"
+          echo "   Mergeable: $MERGEABLE"
+          echo "   Merge State: $MERGE_STATE"
+          
+          # Check if already merged
+          if [ "$PR_STATE" = "MERGED" ]; then
+            echo "✅ PR #$PR_NUMBER is already merged!"
+            exit 0
+          fi
+          
+          # Attempt merge with auto strategy (squash for cleaner history)
+          echo "🚀 Attempting to merge PR #$PR_NUMBER..."
+          if gh pr merge "$PR_NUMBER" --repo ${{ github.repository }} --auto --squash --delete-branch; then
+            echo "✅ PR #$PR_NUMBER merge initiated successfully!"
+            echo "🎉 World model PR merged - continuing to agent missions"
+            
+            # Brief wait to confirm merge completed
+            sleep 2
+            FINAL_STATE=$(gh pr view "$PR_NUMBER" --json state --jq '.state')
+            if [ "$FINAL_STATE" = "MERGED" ]; then
+              echo "✅ Merge confirmed!"
+            else
+              echo "ℹ️  Merge is processing (state: $FINAL_STATE)"
+            fi
+          else
+            echo "⚠️  Merge command failed, checking if PR can be force merged..."
+            
+            # Try regular merge without auto flag
+            if gh pr merge "$PR_NUMBER" --repo ${{ github.repository }} --squash --delete-branch; then
+              echo "✅ PR #$PR_NUMBER merged successfully (direct merge)!"
+              echo "🎉 World model PR merged - continuing to agent missions"
+            else
+              echo "❌ Failed to merge PR #$PR_NUMBER"
+              echo "This may indicate:"
+              echo "  - Merge conflicts"
+              echo "  - Required checks not passing"
+              echo "  - Branch protection rules blocking"
+              echo ""
+              echo "Check PR status at: https://github.com/${{ github.repository }}/pull/$PR_NUMBER"
+              exit 1
+            fi
+          fi
+
+  # ============================================================================
+  # STAGE 4: AGENT MISSIONS
+  # ============================================================================
+  
+  agent-missions:
+    name: "Stage 4: Create Agent Missions"
+    runs-on: ubuntu-latest
+    needs: [world-update, merge-world-pr]
+    if: always() && !cancelled() && needs.world-update.outputs.has_changes == 'true' && inputs.skip_missions != true
+    outputs:
+      mission_count: ${{ steps.create.outputs.mission_count }}
+      pr_number: ${{ steps.mission_pr.outputs.pr_number }}
+      pr_created: ${{ steps.mission_pr.outputs.pr_created }}
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install requests PyYAML
+
+      - name: Sync mission flags with history
+        run: |
+          echo "🔄 Synchronizing mission_created flags with missions_history.json"
+          python3 tools/sync_mission_flags.py
+
+      - name: Create missions
+        id: create
+        run: |
+          python3 << 'EOF'
+          import json
+          import os
+          import subprocess
+          import hashlib
+          from datetime import datetime, timezone
+          
+          print("🎯 Creating agent missions...")
+          
+          # Load world state
+          with open('world/world_state.json', 'r') as f:
+              world_state = json.load(f)
+          
+          # Load knowledge
+          with open('world/knowledge.json', 'r') as f:
+              knowledge = json.load(f)
+          
+          agents = world_state.get('agents', [])
+          ideas = knowledge.get('ideas', [])
+          
+          # **@align-wizard** Fix: Filter out ideas that already have missions created
+          # Find recent learning-based ideas that haven't been assigned yet
+          learning_ideas = [idea for idea in ideas if idea.get('source') == 'learning_analysis']
+          ideas_without_missions = [idea for idea in learning_ideas if not idea.get('mission_created')]
+          recent_ideas = ideas_without_missions[:5]
+          
+          print(f"Total learning ideas: {len(learning_ideas)}")
+          print(f"Ideas without missions: {len(ideas_without_missions)}")
+          print(f"Processing {len(recent_ideas)} recent ideas")
+          
+          if not recent_ideas:
+              print("No recent ideas for missions")
+              with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+                  f.write(f"mission_count=0\n")
+              exit(0)
+          
+          # Load previous missions to avoid duplicates
+          previous_mission_hashes = set()
+          try:
+              if os.path.exists('.github/agent-system/missions_history.json'):
+                  with open('.github/agent-system/missions_history.json', 'r') as f:
+                      history = json.load(f)
+                      previous_mission_hashes = set(history.get('mission_hashes', []))
+                      print(f"Loaded {len(previous_mission_hashes)} previous mission hashes")
+          except Exception as e:
+              print(f"Note: Could not load mission history: {e}")
+          
+          missions = []
+          agent_assignment_count = {}  # Track how many times each agent has been assigned
+          diversity_weight = 0.7  # Strong diversity preference (same as agent_learning_matcher.py)
+          
+          for idea in recent_ideas:
+              idea_id = idea.get('id', 'unknown')
+              idea_title = idea.get('title', 'Unknown')
+              idea_patterns = idea.get('patterns', [])
+              idea_regions = idea.get('inspiration_regions', [])
+              idea_summary = idea.get('summary', '')[:200]
+              
+              # Create a hash of the idea to detect duplicates
+              mission_content = f"{idea_id}:{idea_title}:{':'.join(sorted(idea_patterns))}"
+              mission_hash = hashlib.md5(mission_content.encode()).hexdigest()
+              
+              # Skip if we've already created a mission for this idea
+              if mission_hash in previous_mission_hashes:
+                  print(f"  ⏭️  Skipping duplicate mission for '{idea_title}' (hash: {mission_hash[:8]})")
+                  continue
+              
+              # Use the existing match-issue-to-agent.py tool for intelligent matching
+              # Combine title, summary, and patterns into a description for matching
+              match_text = f"{idea_title}. {idea_summary}. Patterns: {', '.join(idea_patterns)}"
+              
+              try:
+                  # Call match-issue-to-agent.py to get the best agent
+                  result = subprocess.run(
+                      ['python3', 'tools/match-issue-to-agent.py', match_text],
+                      capture_output=True,
+                      text=True,
+                      check=True
+                  )
+                  match_data = json.loads(result.stdout)
+                  matched_specialization = match_data.get('agent')
+                  match_score = match_data.get('score', 0)
+                  match_confidence = match_data.get('confidence', 'unknown')
+                  all_scores = match_data.get('all_scores', {})
+                  
+                  # Apply diversity penalty (like agent_learning_matcher.py)
+                  # This prevents one agent from monopolizing all missions
+                  adjusted_scores = []
+                  for agent_spec, base_score in all_scores.items():
+                      # Penalty increases with each assignment (0%, 70%, 90%)
+                      assignment_count = agent_assignment_count.get(agent_spec, 0)
+                      penalty = assignment_count * diversity_weight
+                      adjusted_score = base_score * (1.0 - min(penalty, 0.9))  # Cap at 90%
+                      adjusted_scores.append((agent_spec, adjusted_score, base_score))
+                  
+                  # Sort by adjusted score to find best agent after diversity penalty
+                  adjusted_scores.sort(key=lambda x: x[1], reverse=True)
+                  
+                  if adjusted_scores:
+                      matched_specialization = adjusted_scores[0][0]
+                      adjusted_score = adjusted_scores[0][1]
+                      match_score = adjusted_scores[0][2]  # Original score for logging
+                      
+                      print(f"  ✅ Matched '{idea_title}' to @{matched_specialization} (score: {match_score}, adjusted: {adjusted_score:.3f}, confidence: {match_confidence})")
+                      
+                      # Show if diversity penalty was applied
+                      if agent_assignment_count.get(matched_specialization, 0) > 0:
+                          rank = agent_assignment_count[matched_specialization] + 1
+                          print(f"     ℹ️  Assignment #{rank} for @{matched_specialization} (diversity penalty applied)")
+                  else:
+                      print(f"  ⚠️  No valid agents found for '{idea_title}'")
+                      continue
+                  
+                  # Find the agent details from world state or create from specialization
+                  agent_details = None
+                  for agent in agents:
+                      if agent.get('specialization') == matched_specialization:
+                          agent_details = agent
+                          break
+                  
+                  # If not in world_state.json, check if agent file exists
+                  if not agent_details:
+                      agent_file = f'.github/agents/{matched_specialization}.md'
+                      if os.path.exists(agent_file):
+                          # Agent file exists, use specialization as fallback
+                          agent_details = {
+                              'id': matched_specialization,
+                              'label': matched_specialization.replace('-', ' ').title(),
+                              'specialization': matched_specialization
+                          }
+                          print(f"  ℹ️  Using agent file for @{matched_specialization} (not in world_state.json)")
+                      else:
+                          print(f"  ⚠️  Matched agent @{matched_specialization} not found in world state or agent files, skipping")
+                          continue
+                  
+                  best_agent = {
+                      'agent_id': agent_details.get('id'),
+                      'agent_name': agent_details.get('label', 'Unknown'),
+                      'specialization': matched_specialization,
+                      'score': match_score
+                  }
+                  
+                  # Update assignment count for diversity penalty tracking
+                  agent_assignment_count[matched_specialization] = agent_assignment_count.get(matched_specialization, 0) + 1
+                  
+              except subprocess.CalledProcessError as e:
+                  print(f"  ⚠️  Error matching agent for '{idea_title}': {e.stderr}")
+                  continue
+              except json.JSONDecodeError as e:
+                  print(f"  ⚠️  Error parsing match result for '{idea_title}': {e}")
+                  continue
+              except Exception as e:
+                  print(f"  ⚠️  Unexpected error for '{idea_title}': {e}")
+                  continue
+              
+              missions.append({
+                  'idea_id': idea_id,
+                  'idea_title': idea_title,
+                  'idea_summary': idea_summary,
+                  'patterns': idea_patterns,
+                  'agent': best_agent,  # Single agent, not list
+                  'regions': [r.get('region_id', 'unknown') for r in idea_regions],
+                  'mission_hash': mission_hash
+              })
+          
+          # Save missions
+          with open('missions_data.json', 'w') as f:
+              json.dump(missions, f, indent=2)
+          
+          # Update mission history to prevent duplicates in future runs
+          try:
+              os.makedirs('.github/agent-system', exist_ok=True)
+              new_hashes = [m['mission_hash'] for m in missions]
+              all_hashes = list(previous_mission_hashes) + new_hashes
+              # Keep only the last 100 mission hashes to prevent unbounded growth
+              all_hashes = all_hashes[-100:]
+              
+              with open('.github/agent-system/missions_history.json', 'w') as f:
+                  json.dump({
+                      'last_updated': datetime.now(timezone.utc).isoformat(),
+                      'mission_hashes': all_hashes
+                  }, f, indent=2)
+              print(f"📝 Updated mission history with {len(new_hashes)} new hashes")
+          except Exception as e:
+              print(f"⚠️  Could not update mission history: {e}")
+          
+          # Print agent distribution summary
+          if missions:
+              print()
+              print("📊 Agent Distribution Summary:")
+              agent_counts = {}
+              for mission in missions:
+                  agent_spec = mission['agent']['specialization']
+                  agent_counts[agent_spec] = agent_counts.get(agent_spec, 0) + 1
+              
+              for agent_spec, count in sorted(agent_counts.items(), key=lambda x: x[1], reverse=True):
+                  print(f"   • @{agent_spec}: {count} assignment(s)")
+              
+              unique_agents = len(agent_counts)
+              total_missions = len(missions)
+              diversity_pct = (unique_agents / total_missions * 100) if total_missions > 0 else 0
+              print(f"\n   Diversity: {unique_agents}/{total_missions} unique agents ({diversity_pct:.0f}%)")
+              
+              if diversity_pct >= 80:
+                  print(f"   ✅ Excellent diversity!")
+              elif diversity_pct >= 60:
+                  print(f"   ✓ Good diversity")
+              else:
+                  print(f"   ⚠️  Low diversity (consider lowering min_score threshold)")
+          
+          print(f"✅ Created {len(missions)} new missions (skipped duplicates)")
+          
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+              f.write(f"mission_count={len(missions)}\n")
+          EOF
+
+      - name: Create mission issues
+        if: steps.create.outputs.mission_count > 0
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Use existing tool if available
+          if [ -f tools/create_mission_issues.py ]; then
+            chmod +x tools/create_mission_issues.py
+            python3 tools/create_mission_issues.py || echo "⚠️ Issue creation failed"
+          else
+            echo "ℹ️ Mission issues tool not found, skipping issue creation"
+          fi
+
+      - name: Upload mission assignments artifact
+        if: steps.create.outputs.mission_count > 0
+        uses: actions/upload-artifact@v4
+        with:
+          name: mission-assignments
+          path: created_missions.json
+          retention-days: 1
+
+      - name: Update world state with agent missions
+        if: steps.create.outputs.mission_count > 0
+        run: |
+          python3 << 'EOF'
+          import json
+          import sys
+          import os
+          from datetime import datetime, timezone
+          sys.path.insert(0, 'world')
+          from world_state_manager import load_world_state, save_world_state, update_agent_mission
+          
+          # Load missions data
+          try:
+              with open('missions_data.json', 'r') as f:
+                  missions = json.load(f)
+          except FileNotFoundError:
+              print("⚠️  No missions_data.json found")
+              missions = []
+          
+          # Load created issues mapping (if available)
+          issue_mapping = {}
+          if os.path.exists('created_missions.json'):
+              try:
+                  with open('created_missions.json', 'r') as f:
+                      created_missions = json.load(f)
+                      for cm in created_missions:
+                          mission_id = cm.get('mission_id')
+                          issue_number = cm.get('issue_number')
+                          if mission_id and issue_number:
+                              issue_mapping[mission_id] = issue_number
+              except:
+                  pass
+          
+          # Load and update world state
+          world_state = load_world_state()
+          
+          # Update each agent with their mission
+          updated_count = 0
+          for mission in missions:
+              agent = mission.get('agent', {})
+              agent_spec = agent.get('specialization')
+              agent_id = agent.get('agent_id')
+              
+              if not agent_spec:
+                  continue
+              
+              mission_id = mission.get('idea_id', mission.get('mission_hash', 'unknown'))
+              mission_title = mission.get('idea_title', 'Untitled Mission')
+              issue_number = issue_mapping.get(mission_id)
+              
+              # Try to update agent (by ID first, then by specialization)
+              success = update_agent_mission(
+                  world_state,
+                  agent_id or agent_spec,
+                  mission_id,
+                  mission_title,
+                  issue_number
+              )
+              
+              if success:
+                  updated_count += 1
+                  issue_info = f" (Issue #{issue_number})" if issue_number else ""
+                  print(f"✅ Updated @{agent_spec}: {mission_title}{issue_info}")
+              else:
+                  print(f"ℹ️  Agent @{agent_spec} not found in world_state (using fallback)")
+          
+          # Increment world tick
+          world_state['tick'] = world_state.get('tick', 0) + 1
+          world_state['time'] = datetime.now(timezone.utc).isoformat()
+          
+          # Update metrics
+          if 'metrics' not in world_state:
+              world_state['metrics'] = {}
+          world_state['metrics']['active_missions'] = len(missions)
+          
+          # Save updated world state
+          save_world_state(world_state)
+          
+          print()
+          print(f"✅ World state updated:")
+          print(f"   Tick: {world_state['tick']}")
+          print(f"   Agents updated: {updated_count}/{len(missions)}")
+          print(f"   Active missions: {len(missions)}")
+          EOF
+
+      - name: Create PR with mission updates
+        id: mission_pr
+        if: steps.create.outputs.mission_count > 0
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          git add world/ .github/agent-system/missions_history.json
+          
+          if git diff --staged --quiet; then
+            echo "No changes"
+            echo "pr_created=false" >> $GITHUB_OUTPUT
+          else
+            TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+            BRANCH_NAME="missions-pipeline/${TIMESTAMP}-${{ github.run_id }}"
+            
+            git checkout -b "$BRANCH_NAME"
+            git commit -m "🎯 Agent Missions - Pipeline"
+            git push origin "$BRANCH_NAME"
+            
+            # Create PR
+            PR_URL=$(gh pr create \
+              --title "🎯 Agent Missions - $(date +%Y-%m-%d)" \
+              --body "## 🎯 Agent Missions Created
+
+            **Missions:** ${{ steps.create.outputs.mission_count }}
+            **Pipeline Run:** [View Details](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+
+            Created by **@meta-coordinator** via autonomous pipeline.
+
+            **Note:** This PR will be auto-merged by the next pipeline stage to complete the cycle.
+            " \
+              --label "automated,agent-mission,pipeline,auto-merge,copilot" \
+              --base main \
+              --head "$BRANCH_NAME")
+            
+            # Extract PR number
+            PR_NUMBER=$(echo "$PR_URL" | grep -oE '[0-9]+$')
+            echo "Created PR #${PR_NUMBER}: ${PR_URL}"
+            echo "pr_number=${PR_NUMBER}" >> $GITHUB_OUTPUT
+            echo "pr_created=true" >> $GITHUB_OUTPUT
+          fi
+
+  # ============================================================================
+  # STAGE 4.5: MERGE MISSION PR
+  # ============================================================================
+  
+  merge-mission-pr:
+    name: "Stage 4.5: Merge Mission PR"
+    runs-on: ubuntu-latest
+    needs: agent-missions
+    if: always() && !cancelled() && needs.agent-missions.outputs.pr_created == 'true'
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Merge PR directly
+        env:
+          GH_TOKEN: ${{ secrets.COPILOT_PAT || secrets.GITHUB_TOKEN }}
+        run: |
+          PR_NUMBER="${{ needs.agent-missions.outputs.pr_number }}"
+          echo "🔄 Merging Mission PR #$PR_NUMBER directly..."
+          
+          # Wait a few seconds for CI checks to start
+          echo "⏳ Waiting 5 seconds for PR to be ready..."
+          sleep 5
+          
+          # Check PR mergeable state
+          PR_DATA=$(gh pr view "$PR_NUMBER" --json mergeable,mergeStateStatus,state)
+          MERGEABLE=$(echo "$PR_DATA" | jq -r '.mergeable')
+          MERGE_STATE=$(echo "$PR_DATA" | jq -r '.mergeStateStatus')
+          PR_STATE=$(echo "$PR_DATA" | jq -r '.state')
+          
+          echo "📊 PR Status:"
+          echo "   State: $PR_STATE"
+          echo "   Mergeable: $MERGEABLE"
+          echo "   Merge State: $MERGE_STATE"
+          
+          # Check if already merged
+          if [ "$PR_STATE" = "MERGED" ]; then
+            echo "✅ PR #$PR_NUMBER is already merged!"
+            exit 0
+          fi
+          
+          # Attempt merge with auto strategy (squash for cleaner history)
+          echo "🚀 Attempting to merge PR #$PR_NUMBER..."
+          if gh pr merge "$PR_NUMBER" --repo ${{ github.repository }} --auto --squash --delete-branch; then
+            echo "✅ PR #$PR_NUMBER merge initiated successfully!"
+            echo "🎉 Pipeline complete - all PRs merged!"
+            
+            # Brief wait to confirm merge completed
+            sleep 2
+            FINAL_STATE=$(gh pr view "$PR_NUMBER" --json state --jq '.state')
+            if [ "$FINAL_STATE" = "MERGED" ]; then
+              echo "✅ Merge confirmed!"
+            else
+              echo "ℹ️  Merge is processing (state: $FINAL_STATE)"
+            fi
+          else
+            echo "⚠️  Merge command failed, checking if PR can be force merged..."
+            
+            # Try regular merge without auto flag
+            if gh pr merge "$PR_NUMBER" --repo ${{ github.repository }} --squash --delete-branch; then
+              echo "✅ PR #$PR_NUMBER merged successfully (direct merge)!"
+              echo "🎉 Pipeline complete - all PRs merged!"
+            else
+              echo "❌ Failed to merge PR #$PR_NUMBER"
+              echo "This may indicate:"
+              echo "  - Merge conflicts"
+              echo "  - Required checks not passing"
+              echo "  - Branch protection rules blocking"
+              echo ""
+              echo "Check PR status at: https://github.com/${{ github.repository }}/pull/$PR_NUMBER"
+              exit 1
+            fi
+          fi
+
+  # ============================================================================
+  # STAGE 4.75: ASSIGN AGENTS TO MISSIONS
+  # ============================================================================
+  
+  assign-agents-to-missions:
+    name: "Stage 4.75: Assign Agents to Missions"
+    runs-on: ubuntu-latest
+    needs: [agent-missions, merge-mission-pr]
+    if: always() && !cancelled() && needs.agent-missions.outputs.mission_count > 0 && inputs.skip_assignment != true
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: main
+      
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      
+      - name: Install dependencies
+        run: |
+          pip install requests
+      
+      - name: Download mission assignments artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: mission-assignments
+        continue-on-error: true
+      
+      - name: Assign agents to mission issues
+        env:
+          GH_TOKEN: ${{ secrets.COPILOT_PAT || secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_REPOSITORY_OWNER: ${{ github.repository_owner }}
+          GITHUB_REPOSITORY_NAME: ${{ github.event.repository.name }}
+        run: |
+          chmod +x tools/assign-agent-directly.sh
+          
+          echo "🎯 Stage 4.75: Assigning agents to mission issues"
+          echo "=================================================="
+          echo ""
+          
+          # Check if created_missions.json exists
+          if [ ! -f created_missions.json ]; then
+            echo "⚠️  No created_missions.json found"
+            echo "This means either:"
+            echo "  1. No missions were created in Stage 4"
+            echo "  2. The create_mission_issues.py script didn't run"
+            echo ""
+            echo "ℹ️  Checking for mission issues to assign..."
+            
+            # Try to find recent mission issues without assignment
+            RECENT_MISSION_ISSUES=$(gh issue list \
+              --repo "$GITHUB_REPOSITORY" \
+              --label "agent-mission" \
+              --state open \
+              --limit 20 \
+              --json number,createdAt,labels \
+              --jq '[.[] | select(.labels | map(.name) | contains(["agent-mission"]) and (contains(["copilot-assigned"]) | not))] | .[].number')
+            
+            if [ -z "$RECENT_MISSION_ISSUES" ]; then
+              echo "ℹ️  No unassigned mission issues found, skipping assignment"
+              exit 0
+            fi
+            
+            echo "Found unassigned mission issues: $RECENT_MISSION_ISSUES"
+            echo "⚠️  Cannot determine agent specialization without created_missions.json"
+            echo "These issues will be picked up by the scheduled copilot-graphql-assign workflow"
+            exit 0
+          fi
+          
+          # Read created issues and assign agents
+          echo "📋 Reading mission assignments from created_missions.json"
+          
+          # Count missions
+          MISSION_COUNT=$(jq '. | length' created_missions.json)
+          echo "Found $MISSION_COUNT missions to assign"
+          echo ""
+          
+          # Track assignment results
+          SUCCESS_COUNT=0
+          FAILED_COUNT=0
+          
+          # Use jq to parse the JSON and iterate
+          jq -r '.[] | "\(.issue_number) \(.agent_specialization)"' created_missions.json | while read -r issue_number agent_specialization; do
+            if [ -n "$issue_number" ] && [ -n "$agent_specialization" ]; then
+              echo ""
+              echo "═══════════════════════════════════════════"
+              echo "🎯 Assigning #$issue_number to @$agent_specialization"
+              echo "═══════════════════════════════════════════"
+              
+              if ./tools/assign-agent-directly.sh "$issue_number" "$agent_specialization"; then
+                echo "✅ Successfully assigned #$issue_number to @$agent_specialization"
+                SUCCESS_COUNT=$((SUCCESS_COUNT + 1))
+              else
+                echo "❌ Failed to assign #$issue_number to @$agent_specialization"
+                FAILED_COUNT=$((FAILED_COUNT + 1))
+                # Continue with other assignments even if one fails
+              fi
+            fi
+          done
+          
+          echo ""
+          echo "=================================================="
+          echo "📊 Assignment Summary"
+          echo "=================================================="
+          echo "Total missions: $MISSION_COUNT"
+          echo "Successfully assigned: $SUCCESS_COUNT"
+          echo "Failed: $FAILED_COUNT"
+          echo ""
+          
+          if [ $FAILED_COUNT -gt 0 ]; then
+            echo "⚠️  Some assignments failed. Common causes:"
+            echo "  1. Missing COPILOT_PAT secret (default GITHUB_TOKEN can't assign Copilot)"
+            echo "  2. Copilot not enabled for this repository"
+            echo "  3. Network or API issues"
+            echo ""
+            echo "ℹ️  Failed assignments will be retried by:"
+            echo "  - Scheduled copilot-graphql-assign workflow (runs every 15 minutes)"
+            echo "  - Manual workflow dispatch"
+            echo ""
+          fi
+          
+          echo "✅ Stage 4.75 complete - Agent assignment process finished"
+
+  # ============================================================================
+  # STAGE 4.9: SYNC WORLD STATE TO DOCS
+  # ============================================================================
+  
+  sync-world-to-docs:
+    name: "Stage 4.9: Sync World State to Docs"
+    runs-on: ubuntu-latest
+    needs: [merge-mission-pr]
+    if: always() && !cancelled() && needs.agent-missions.outputs.mission_count > 0
+    outputs:
+      pr_number: ${{ steps.sync_pr.outputs.pr_number }}
+      pr_created: ${{ steps.sync_pr.outputs.pr_created }}
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: main  # Pull latest with merged mission updates
+      
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      
+      - name: Sync world state to docs
+        id: sync
+        run: |
+          echo "🌍 Syncing world state to docs for GitHub Pages..."
+          echo ""
+          
+          # Create docs/world directory if it doesn't exist
+          mkdir -p docs/world
+          
+          # Copy world state to docs
+          cp world/world_state.json docs/world/ 2>&1 || echo "⚠️ world_state.json not found"
+          cp world/knowledge.json docs/world/ 2>&1 || echo "⚠️ knowledge.json not found"
+          
+          # Check what changed
+          git add docs/world/
+          
+          if git diff --staged --quiet; then
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+            echo "ℹ️  No changes to sync"
+          else
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+            
+            # Show what changed
+            echo "✅ Changes detected:"
+            git diff --staged --stat
+            
+            # Extract tick
+            WORLD_TICK=$(python3 -c "import json; print(json.load(open('world/world_state.json'))['tick'])" 2>/dev/null || echo "unknown")
+            echo ""
+            echo "World tick: ${WORLD_TICK}"
+            echo "world_tick=${WORLD_TICK}" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Create PR with docs sync
+        id: sync_pr
+        if: steps.sync.outputs.has_changes == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+          BRANCH_NAME="sync-world-docs/${TIMESTAMP}-${{ github.run_id }}"
+          
+          git checkout -b "$BRANCH_NAME"
+          git commit -m "📚 Sync World State to Docs - Pipeline"
+          git push origin "$BRANCH_NAME"
+          
+          # Create PR
+          PR_URL=$(gh pr create \
+            --title "📚 Sync World State to Docs - $(date +%Y-%m-%d)" \
+            --body "## 📚 World State Documentation Sync
+          
+          **World Tick:** ${{ steps.sync.outputs.world_tick }}
+          **Pipeline Run:** [View Details](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+          
+          Updates:
+          - ✅ Agent mission assignments synced to docs
+          - ✅ World state published to GitHub Pages
+          - ✅ Agent status updated (working/exploring)
+          
+          This ensures the GitHub Pages site reflects the latest agent missions and world state.
+          
+          **Note:** This PR will be auto-merged to complete the documentation sync.
+          " \
+            --label "automated,documentation,world-model,auto-merge,copilot" \
+            --base main \
+            --head "$BRANCH_NAME")
+          
+          # Extract PR number
+          PR_NUMBER=$(echo "$PR_URL" | grep -oE '[0-9]+$')
+          echo "Created PR #${PR_NUMBER}: ${PR_URL}"
+          echo "pr_number=${PR_NUMBER}" >> $GITHUB_OUTPUT
+          echo "pr_created=true" >> $GITHUB_OUTPUT
+
+  # ============================================================================
+  # STAGE 4.95: MERGE DOCS SYNC PR
+  # ============================================================================
+  
+  merge-docs-sync-pr:
+    name: "Stage 4.95: Merge Docs Sync PR"
+    runs-on: ubuntu-latest
+    needs: sync-world-to-docs
+    if: always() && !cancelled() && needs.sync-world-to-docs.outputs.pr_created == 'true'
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Merge PR directly
+        env:
+          GH_TOKEN: ${{ secrets.COPILOT_PAT || secrets.GITHUB_TOKEN }}
+        run: |
+          PR_NUMBER="${{ needs.sync-world-to-docs.outputs.pr_number }}"
+          echo "🔄 Merging Docs Sync PR #$PR_NUMBER directly..."
+          
+          # Wait a few seconds for CI checks to start
+          echo "⏳ Waiting 5 seconds for PR to be ready..."
+          sleep 5
+          
+          # Check PR mergeable state
+          PR_DATA=$(gh pr view "$PR_NUMBER" --json mergeable,mergeStateStatus,state)
+          MERGEABLE=$(echo "$PR_DATA" | jq -r '.mergeable')
+          MERGE_STATE=$(echo "$PR_DATA" | jq -r '.mergeStateStatus')
+          PR_STATE=$(echo "$PR_DATA" | jq -r '.state')
+          
+          echo "📊 PR Status:"
+          echo "   State: $PR_STATE"
+          echo "   Mergeable: $MERGEABLE"
+          echo "   Merge State: $MERGE_STATE"
+          
+          # Check if already merged
+          if [ "$PR_STATE" = "MERGED" ]; then
+            echo "✅ PR #$PR_NUMBER is already merged!"
+            echo "🎉 World state now published to GitHub Pages"
+            exit 0
+          fi
+          
+          # Attempt merge with auto strategy (squash for cleaner history)
+          echo "🚀 Attempting to merge PR #$PR_NUMBER..."
+          if gh pr merge "$PR_NUMBER" --repo ${{ github.repository }} --auto --squash --delete-branch; then
+            echo "✅ Docs sync PR #$PR_NUMBER merged successfully!"
+            echo "🎉 World state now published to GitHub Pages"
+            
+            # Brief wait to confirm merge completed
+            sleep 2
+            FINAL_STATE=$(gh pr view "$PR_NUMBER" --json state --jq '.state')
+            if [ "$FINAL_STATE" = "MERGED" ]; then
+              echo "✅ Merge confirmed!"
+            else
+              echo "ℹ️  Merge is processing (state: $FINAL_STATE)"
+            fi
+          else
+            echo "⚠️  Merge command failed, checking if PR can be force merged..."
+            
+            # Try regular merge without auto flag
+            if gh pr merge "$PR_NUMBER" --repo ${{ github.repository }} --squash --delete-branch; then
+              echo "✅ Docs sync PR #$PR_NUMBER merged successfully (direct merge)!"
+              echo "🎉 World state now published to GitHub Pages"
+            else
+              # Don't fail pipeline for docs sync - it's not critical
+              echo "⚠️  Failed to merge docs sync PR #$PR_NUMBER"
+              echo "This is not critical - docs sync can happen later"
+              echo "Check PR status at: https://github.com/${{ github.repository }}/pull/$PR_NUMBER"
+              echo "Continuing pipeline execution..."
+              exit 0
+            fi
+          fi
+
+  # ============================================================================
+  # STAGE 5: SELF-REINFORCEMENT (Optional)
+  # ============================================================================
+  
+  self-reinforcement:
+    name: "Stage 5: Self-Reinforcement (Optional)"
+    runs-on: ubuntu-latest
+    needs: [agent-missions, merge-mission-pr]
+    if: always() && !cancelled() && inputs.include_self_reinforcement == true
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install requests
+
+      - name: Collect insights
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "🔄 Collecting insights from completed work..."
+          echo "ℹ️  Self-reinforcement runs separately on daily schedule"
+          echo "✅ Pipeline complete"
+
+  # ============================================================================
+  # FINAL: PIPELINE SUMMARY
+  # ============================================================================
+  
+  pipeline-summary:
+    name: "Pipeline Summary"
+    runs-on: ubuntu-latest
+    needs: [combine-learnings, merge-learning-pr, world-update, merge-world-pr, agent-missions, merge-mission-pr, assign-agents-to-missions, sync-world-to-docs, merge-docs-sync-pr]
+    if: always() && !cancelled()
+    
+    steps:
+      - name: Log pipeline results
+        run: |
+          echo "════════════════════════════════════════"
+          echo "🚀 AUTONOMOUS LEARNING PIPELINE COMPLETE"
+          echo "════════════════════════════════════════"
+          echo ""
+          echo "Stage 1: Learning Collection"
+          echo "  Status: ✅ Complete"
+          echo ""
+          echo "Stage 2: Combine Learnings"
+          echo "  Total: ${{ needs.combine-learnings.outputs.total_learnings || 'N/A' }}"
+          echo "  Status: ${{ needs.combine-learnings.result }}"
+          echo ""
+          echo "Stage 3: World Update"
+          echo "  Tick: ${{ needs.world-update.outputs.world_tick || 'N/A' }}"
+          echo "  Status: ${{ needs.world-update.result }}"
+          echo ""
+          echo "Stage 4: Agent Missions"
+          echo "  Missions: ${{ needs.agent-missions.outputs.mission_count || 'N/A' }}"
+          echo "  Status: ${{ needs.agent-missions.result }}"
+          echo ""
+          echo "Stage 4.75: Assign Agents to Missions"
+          echo "  Status: ${{ needs.assign-agents-to-missions.result }}"
+          echo ""
+          echo "Pipeline Run: ${{ github.run_id }}"
+          echo "Timestamp: $(date -u +'%Y-%m-%d %H:%M:%S UTC')"
+          echo "════════════════════════════════════════"

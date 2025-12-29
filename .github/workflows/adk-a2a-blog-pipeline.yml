@@ -1,3 +1,13 @@
+# ============================================================================
+# WORKFLOW DISABLED
+# Disabled on: 2025-12-29T02:43:14.994388
+# Original workflow name: A2A: ADK Blog Pipeline
+# Original triggers: schedule, workflow_dispatch
+# 
+# To re-enable: Use the tools/enable_workflows.py script with the
+# workflow_disable_metadata.json file to restore original triggers.
+# ============================================================================
+
 # =============================================================================
 # ADK A2A Blog Pipeline - Scheduled Workflow
 # =============================================================================
@@ -21,29 +31,8 @@
 name: "A2A: ADK Blog Pipeline"
 
 on:
-  schedule:
-    # Run every 6 hours
-    - cron: '0 */6 * * *'
 
   workflow_dispatch:
-    inputs:
-      topic_query:
-        description: 'Optional: Specific topic to research (leave empty for auto-discovery)'
-        required: false
-        default: ''
-        type: string
-
-      dry_run:
-        description: 'Dry run mode (skip actual deployment)'
-        required: false
-        default: false
-        type: boolean
-
-      debug:
-        description: 'Enable debug logging'
-        required: false
-        default: false
-        type: boolean
 
 env:
   GCP_REGION: ${{ secrets.GCP_REGION || 'us-central1' }}

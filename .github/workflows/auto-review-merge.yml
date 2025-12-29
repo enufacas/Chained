@@ -1,3 +1,13 @@
+# ============================================================================
+# WORKFLOW DISABLED
+# Disabled on: 2025-12-29T02:43:14.994388
+# Original workflow name: Automation: Auto Review & Merge (Improved)
+# Original triggers: pull_request, pull_request_review, schedule, workflow_dispatch
+# 
+# To re-enable: Use the tools/enable_workflows.py script with the
+# workflow_disable_metadata.json file to restore original triggers.
+# ============================================================================
+
 name: "Automation: Auto Review & Merge (Improved)"
 
 # ⚠️ DEPRECATED - FULLY REPLACED BY META-COORDINATOR
@@ -17,24 +27,7 @@ name: "Automation: Auto Review & Merge (Improved)"
 # maintainable workflow with clear stages. It replaces the fragile tech-lead-review system.
 
 on:
-  pull_request:
-    types: [opened, synchronize, ready_for_review, reopened]
-    paths-ignore:
-      - '**.md'
-      - 'docs/**'
-      - 'learnings/**'
-      - 'analysis/**'
-  pull_request_review:
-    types: [submitted]
-  schedule:
-    # Run every 15 minutes to sweep and check all PRs
-    - cron: '*/15 * * * *'
   workflow_dispatch:
-    inputs:
-      pr_number:
-        description: 'PR number to review and merge'
-        required: false
-        type: string
 
 concurrency:
   group: ${{ github.event_name == 'schedule' && 'auto-review-scheduled' || format('auto-review-pr-{0}', github.event.pull_request.number || inputs.pr_number) }}

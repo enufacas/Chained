@@ -1,0 +1,201 @@
+name: "Gemini: �� Review"
+
+# PR Review workflow - provides code review with inline suggestions
+# Called by gemini-dispatch.yml
+
+on:
+  workflow_call:
+    inputs:
+      additional_context:
+        type: 'string'
+        description: 'Any additional context from the request'
+        required: false
+
+concurrency:
+  group: '${{ github.workflow }}-review-${{ github.event_name }}-${{ github.event.pull_request.number || github.event.issue.number }}'
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: 'bash'
+
+jobs:
+  review:
+    runs-on: 'ubuntu-latest'
+    timeout-minutes: 7
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+      issues: 'write'
+      pull-requests: 'write'
+    steps:
+      - name: 'Checkout repository'
+        uses: 'actions/checkout@v4'
+
+      - name: 'Validate authentication configuration'
+        env:
+          GEMINI_API_KEY: '${{ secrets.GEMINI_API_KEY }}'
+          GOOGLE_API_KEY: '${{ secrets.GOOGLE_API_KEY }}'
+          USE_VERTEX_AI: '${{ vars.GOOGLE_GENAI_USE_VERTEXAI || false }}'
+        run: |
+          # Check if authentication is properly configured
+          if [[ "$USE_VERTEX_AI" == "true" ]]; then
+            if [[ -z "$GOOGLE_API_KEY" ]]; then
+              echo "::error title=Missing Vertex AI Configuration::When GOOGLE_GENAI_USE_VERTEXAI is set to 'true', you must configure the GOOGLE_API_KEY secret."
+              echo ""
+              echo "To fix this issue, follow these steps:"
+              echo "1. Go to Settings > Secrets and variables > Actions"
+              echo "2. Click 'New repository secret'"
+              echo "3. Name: GOOGLE_API_KEY"
+              echo "4. Value: Your Vertex AI API key from Google Cloud Console"
+              echo ""
+              echo "Alternatively, if you prefer to use Google AI Studio instead:"
+              echo "1. Go to Settings > Secrets and variables > Actions > Variables"
+              echo "2. Delete or set GOOGLE_GENAI_USE_VERTEXAI to 'false'"
+              echo "3. Create a GEMINI_API_KEY secret with your Google AI Studio API key"
+              echo ""
+              echo "See docs/GEMINI_CLI_INTEGRATION.md for detailed setup instructions."
+              exit 1
+            fi
+            echo "⚠️  Warning: Using Vertex AI mode. Ensure your API key has 'aiplatform.endpoints.predict' permission."
+            echo "   If you encounter permission errors, see troubleshooting guide in workflow logs."
+          else
+            if [[ -z "$GEMINI_API_KEY" ]]; then
+              echo "::error title=Missing Gemini API Key::No authentication credentials found. You must configure either GEMINI_API_KEY or GOOGLE_API_KEY secret."
+              echo ""
+              echo "Option 1 - Google AI Studio (Recommended for quick start):"
+              echo "1. Get API key from https://aistudio.google.com/app/apikey"
+              echo "2. Go to Settings > Secrets and variables > Actions"
+              echo "3. Create secret: Name=GEMINI_API_KEY, Value=your API key"
+              echo ""
+              echo "Option 2 - Vertex AI (For GCP users):"
+              echo "1. Get API key from Google Cloud Console"
+              echo "2. Create secret: Name=GOOGLE_API_KEY, Value=your Vertex AI API key"
+              echo "3. Create variable: Name=GOOGLE_GENAI_USE_VERTEXAI, Value=true"
+              echo ""
+              echo "See docs/GEMINI_CLI_INTEGRATION.md for detailed setup instructions."
+              exit 1
+            fi
+          fi
+          echo "✅ Authentication configuration validated successfully"
+
+      - name: 'Run Gemini pull request review'
+        uses: 'google-github-actions/run-gemini-cli@v0'
+        id: 'gemini_pr_review'
+        env:
+          GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+          ISSUE_TITLE: '${{ github.event.pull_request.title || github.event.issue.title }}'
+          ISSUE_BODY: '${{ github.event.pull_request.body || github.event.issue.body }}'
+          PULL_REQUEST_NUMBER: '${{ github.event.pull_request.number || github.event.issue.number }}'
+          REPOSITORY: '${{ github.repository }}'
+          ADDITIONAL_CONTEXT: '${{ inputs.additional_context }}'
+        with:
+          # Support both Google AI Studio API Key (GEMINI_API_KEY) and Vertex AI API Key (GOOGLE_API_KEY)
+          gemini_api_key: '${{ secrets.GEMINI_API_KEY }}'
+          google_api_key: '${{ secrets.GOOGLE_API_KEY }}'
+          use_vertex_ai: '${{ vars.GOOGLE_GENAI_USE_VERTEXAI || false }}'
+          gemini_cli_version: '${{ vars.GEMINI_CLI_VERSION || ''latest'' }}'
+          gemini_debug: '${{ fromJSON(vars.DEBUG || vars.ACTIONS_STEP_DEBUG || false) }}'
+          gemini_model: '${{ vars.GEMINI_MODEL || ''gemini-3-pro-preview'' }}'
+          upload_artifacts: '${{ vars.UPLOAD_ARTIFACTS || false }}'
+          workflow_name: 'gemini-review'
+          settings: |-
+            {
+              "model": {
+                "maxSessionTurns": 25
+              },
+              "telemetry": {
+                "enabled": true,
+                "target": "local",
+                "outfile": ".gemini/telemetry.log"
+              },
+              "mcpServers": {
+                "github": {
+                  "command": "docker",
+                  "args": [
+                    "run",
+                    "-i",
+                    "--rm",
+                    "-e",
+                    "GITHUB_PERSONAL_ACCESS_TOKEN",
+                    "ghcr.io/github/github-mcp-server:v0.18.0"
+                  ],
+                  "includeTools": [
+                    "add_comment_to_pending_review",
+                    "create_pending_pull_request_review",
+                    "pull_request_read",
+                    "submit_pending_pull_request_review"
+                  ],
+                  "env": {
+                    "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_TOKEN}"
+                  }
+                }
+              },
+              "tools": {
+                "core": [
+                  "run_shell_command(cat)",
+                  "run_shell_command(echo)",
+                  "run_shell_command(grep)",
+                  "run_shell_command(head)",
+                  "run_shell_command(tail)"
+                ]
+              }
+            }
+          prompt: '/gemini-review'
+
+      - name: 'Diagnose Vertex AI Permission Errors'
+        if: failure() && steps.gemini_pr_review.conclusion == 'failure'
+        env:
+          USE_VERTEX_AI: '${{ vars.GOOGLE_GENAI_USE_VERTEXAI || false }}'
+        run: |
+          # If using Vertex AI mode and the workflow failed, provide helpful troubleshooting
+          if [[ "$USE_VERTEX_AI" == "true" ]]; then
+            echo "::error title=Vertex AI Workflow Failure::The Gemini CLI workflow failed while using Vertex AI mode."
+            echo ""
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            echo "🔐 VERTEX AI TROUBLESHOOTING GUIDE"
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            echo ""
+            echo "Common causes of Vertex AI failures:"
+            echo "  • API key lacks 'aiplatform.endpoints.predict' permission"
+            echo "  • Vertex AI API not enabled for API key"
+            echo "  • Vertex AI API not enabled for GCP project"
+            echo "  • Billing not enabled on GCP project"
+            echo ""
+            echo "📋 SOLUTION OPTIONS:"
+            echo ""
+            echo "Option 1: Enable Vertex AI Permissions (if using GCP API key)"
+            echo "  1. Go to Google Cloud Console: https://console.cloud.google.com"
+            echo "  2. Navigate to APIs & Services > Credentials"
+            echo "  3. Edit your API key and ensure 'Vertex AI API' is enabled under API restrictions"
+            echo "  4. Go to APIs & Services > Library"
+            echo "  5. Enable 'Vertex AI API' if not already enabled"
+            echo "  6. Ensure billing is enabled on your GCP project"
+            echo "  7. Wait a few minutes for permissions to propagate"
+            echo ""
+            echo "Option 2: Switch to Google AI Studio (Recommended - Simpler Setup)"
+            echo "  1. Get a free API key from: https://aistudio.google.com/app/apikey"
+            echo "  2. Go to Settings > Secrets and variables > Actions"
+            echo "  3. Delete the GOOGLE_API_KEY secret"
+            echo "  4. Create a new secret:"
+            echo "     • Name: GEMINI_API_KEY"
+            echo "     • Value: Your Google AI Studio API key"
+            echo "  5. Go to Variables tab and set:"
+            echo "     • Name: GOOGLE_GENAI_USE_VERTEXAI"
+            echo "     • Value: false"
+            echo "  6. Re-run this workflow"
+            echo ""
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            echo "📚 ADDITIONAL RESOURCES:"
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            echo ""
+            echo "• Vertex AI API Keys: https://cloud.google.com/vertex-ai/generative-ai/docs/start/api-keys"
+            echo "• Repository Setup Guide: docs/GEMINI_CLI_INTEGRATION.md"
+            echo "• Original Error: Check 'Run Gemini CLI' step logs above for details"
+            echo ""
+            exit 1
+          fi
+          
+          # If not using Vertex AI, show generic error
+          echo "::error title=Gemini CLI Execution Failed::The Gemini CLI encountered an error. Check the 'Run Gemini pull request review' step above for details."
+          exit 1

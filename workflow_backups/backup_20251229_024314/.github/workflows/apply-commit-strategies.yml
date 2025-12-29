@@ -1,0 +1,352 @@
+name: "Learning: Apply Commit Strategies"
+
+# Workflow that applies learned commit strategies to improve commit quality
+# Part of the autonomous commit strategy learning system by @create-botter
+on:
+  schedule:
+    # Run weekly on Monday at 03:00 UTC to review and apply strategies
+    - cron: '0 3 * * 1'
+  workflow_dispatch:
+    inputs:
+      strategy_type:
+        description: 'Type of strategy to apply'
+        required: false
+        type: choice
+        options:
+          - all
+          - message_format
+          - commit_size
+          - file_organization
+        default: 'all'
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+# Prevent concurrent runs
+concurrency:
+  group: apply-commit-strategies-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  apply-strategies:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full history for analysis
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Generate strategy recommendations
+        id: recommendations
+        run: |
+          python3 << 'PYTHON_SCRIPT'
+          import json
+          import os
+          import sys
+          
+          print("💡 Generating commit strategy recommendations...")
+          
+          # Add tools directory to path
+          sys.path.insert(0, 'tools')
+          
+          # Import the commit strategy learner
+          import importlib.util
+          spec = importlib.util.spec_from_file_location('learner', 'tools/commit-strategy-learner.py')
+          learner_module = importlib.util.module_from_spec(spec)
+          spec.loader.exec_module(learner_module)
+          
+          CommitStrategyLearner = learner_module.CommitStrategyLearner
+          
+          # Initialize learner
+          learner = CommitStrategyLearner(repo_path='.', verbose=True)
+          
+          # Get strategy type from input
+          strategy_type = os.environ.get('INPUT_STRATEGY_TYPE', 'all')
+          
+          print(f"Generating recommendations for: {strategy_type}")
+          
+          # Generate context-specific recommendations
+          contexts = ['general', 'feature', 'bugfix', 'refactor']
+          all_recommendations = []
+          
+          for context in contexts:
+              try:
+                  recs = learner.generate_recommendations(
+                      context=context,
+                      min_confidence=0.6  # Lower threshold to get more recommendations
+                  )
+                  all_recommendations.extend(recs)
+              except Exception as e:
+                  print(f"Warning: Could not generate recommendations for {context}: {e}")
+          
+          if not all_recommendations:
+              print("⚠️  No recommendations available")
+              with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+                  f.write(f"has_recommendations=false\n")
+              sys.exit(0)
+          
+          # Deduplicate by recommendation_id
+          unique_recs = {}
+          for rec in all_recommendations:
+              if rec.recommendation_id not in unique_recs:
+                  unique_recs[rec.recommendation_id] = rec
+          
+          recommendations = list(unique_recs.values())
+          
+          # Sort by confidence
+          recommendations.sort(key=lambda r: r.confidence_score, reverse=True)
+          
+          print(f"✓ Generated {len(recommendations)} unique recommendations")
+          
+          # Create strategy application guide
+          guide_lines = [
+              "# Commit Strategy Application Guide",
+              "",
+              f"Generated: {learner.strategies_data.get('last_updated', 'unknown')}",
+              "",
+              "## Top Recommendations",
+              ""
+          ]
+          
+          for i, rec in enumerate(recommendations[:5], 1):
+              guide_lines.extend([
+                  f"### {i}. {rec.title}",
+                  "",
+                  f"**Confidence:** {rec.confidence_score:.1%}",
+                  f"**Trend:** {rec.trend}",
+                  f"**Contexts:** {', '.join(rec.applicable_contexts)}",
+                  "",
+                  rec.description,
+                  "",
+                  f"**Why:** {rec.rationale}",
+                  "",
+                  f"**Expected Improvement:** {rec.expected_improvement}",
+                  "",
+                  "---",
+                  ""
+              ])
+          
+          # Save guide
+          os.makedirs('docs/guides', exist_ok=True)
+          guide_path = 'docs/guides/commit-strategy-guide.md'
+          
+          with open(guide_path, 'w') as f:
+              f.write('\n'.join(guide_lines))
+          
+          print(f"✓ Created strategy guide at {guide_path}")
+          
+          # Output for GitHub Actions
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+              f.write(f"has_recommendations=true\n")
+              f.write(f"recommendation_count={len(recommendations)}\n")
+              f.write(f"guide_path={guide_path}\n")
+              if recommendations:
+                  top_rec = recommendations[0]
+                  f.write(f"top_recommendation={top_rec.title}\n")
+                  f.write(f"top_confidence={top_rec.confidence_score:.1%}\n")
+          
+          PYTHON_SCRIPT
+        env:
+          INPUT_STRATEGY_TYPE: ${{ github.event.inputs.strategy_type || 'all' }}
+
+      - name: Analyze trends
+        if: steps.recommendations.outputs.has_recommendations == 'true'
+        id: trends
+        run: |
+          python3 << 'PYTHON_SCRIPT'
+          import json
+          import os
+          import sys
+          
+          print("📈 Analyzing commit strategy trends...")
+          
+          sys.path.insert(0, 'tools')
+          
+          import importlib.util
+          spec = importlib.util.spec_from_file_location('learner', 'tools/commit-strategy-learner.py')
+          learner_module = importlib.util.module_from_spec(spec)
+          spec.loader.exec_module(learner_module)
+          
+          CommitStrategyLearner = learner_module.CommitStrategyLearner
+          learner = CommitStrategyLearner(repo_path='.', verbose=True)
+          
+          trends = learner.analyze_trends(period_days=30)
+          
+          if trends["status"] == "insufficient_data":
+              print(f"⚠️  {trends['message']}")
+              with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+                  f.write(f"has_trends=false\n")
+          else:
+              print(f"✓ Overall trend: {trends['overall_trend']}")
+              
+              with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+                  f.write(f"has_trends=true\n")
+                  f.write(f"overall_trend={trends['overall_trend']}\n")
+          
+          PYTHON_SCRIPT
+
+      - name: Store branch name for PR
+        id: branch_info
+        if: steps.recommendations.outputs.has_recommendations == 'true'
+        run: |
+          TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+          BRANCH_NAME="learning/apply-strategies-${TIMESTAMP}-${{ github.run_id }}"
+          echo "branch_name=${BRANCH_NAME}" >> $GITHUB_OUTPUT
+          echo "workflow_run_url=${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> $GITHUB_OUTPUT
+
+      - name: Create PR with strategy guide
+        if: steps.recommendations.outputs.has_recommendations == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GUIDE_PATH: ${{ steps.recommendations.outputs.guide_path }}
+          TOP_REC: ${{ steps.recommendations.outputs.top_recommendation }}
+          TOP_CONF: ${{ steps.recommendations.outputs.top_confidence }}
+          REC_COUNT: ${{ steps.recommendations.outputs.recommendation_count }}
+          TREND: ${{ steps.trends.outputs.overall_trend || 'unknown' }}
+          WORKFLOW_URL: ${{ steps.branch_info.outputs.workflow_run_url }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # Add strategy guide
+          git add docs/guides/
+          
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+          
+          # Create branch
+          BRANCH_NAME="${{ steps.branch_info.outputs.branch_name }}"
+          git checkout -b "${BRANCH_NAME}"
+          
+          # Commit changes
+          git commit -m "docs: update commit strategy guide - ${REC_COUNT} recommendations by @create-botter"
+          
+          git push origin "${BRANCH_NAME}"
+          
+          # Create PR body
+          cat > /tmp/pr_body.txt << 'EOF_MARKER'
+          ## 💡 Commit Strategy Application
+
+          **@create-botter** has analyzed the repository's commit patterns and generated actionable recommendations to improve commit quality.
+
+          ### 📊 Summary
+
+          - **Recommendations Generated:** ${REC_COUNT}
+          - **Overall Trend:** ${TREND}
+          - **Top Recommendation:** ${TOP_REC} (${TOP_CONF} confidence)
+
+          ### 📖 What's Changed
+
+          - Updated commit strategy guide at `${GUIDE_PATH}`
+          - Includes top 5 recommendations with rationale
+          - Context-specific strategies for different work types
+
+          ### 🎯 Next Steps
+
+          1. Review the recommendations in the strategy guide
+          2. Apply relevant strategies to your commits
+          3. The system will continue learning and refining recommendations
+
+          ### 🔄 Continuous Learning
+
+          This is part of the autonomous learning system that:
+          - Analyzes commit history continuously
+          - Identifies successful patterns
+          - Generates actionable recommendations
+          - Tracks effectiveness over time
+
+          ---
+
+          *🤖 Created by workflow: [Apply Learned Commit Strategies](${WORKFLOW_URL})*
+          *✨ Powered by autonomous learning infrastructure (@create-botter)*
+          EOF_MARKER
+          
+          # Substitute environment variables in PR body using sed (compatible with all runners)
+          sed -e "s|\${REC_COUNT}|${REC_COUNT}|g" \
+              -e "s|\${TREND}|${TREND}|g" \
+              -e "s|\${TOP_REC}|${TOP_REC}|g" \
+              -e "s|\${TOP_CONF}|${TOP_CONF}|g" \
+              -e "s|\${GUIDE_PATH}|${GUIDE_PATH}|g" \
+              -e "s|\${WORKFLOW_URL}|${WORKFLOW_URL}|g" \
+              /tmp/pr_body.txt > /tmp/pr_body_final.txt
+          
+          # Create PR
+          gh pr create \
+            --title "💡 Apply Learned Commit Strategies - $(date -u +%Y-%m-%d)" \
+            --body-file /tmp/pr_body_final.txt \
+            --label "automated,learning,infrastructure,create-botter" \
+            --base main \
+            --head "${BRANCH_NAME}"
+          
+          echo "✅ PR created successfully"
+
+      - name: Create feedback issue
+        if: steps.recommendations.outputs.has_recommendations == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REC_COUNT: ${{ steps.recommendations.outputs.recommendation_count }}
+          TOP_REC: ${{ steps.recommendations.outputs.top_recommendation }}
+          TREND: ${{ steps.trends.outputs.overall_trend || 'unknown' }}
+        run: |
+          ISSUE_TITLE="💡 Commit Strategy Recommendations Available - $(date +%Y-%m-%d)"
+          
+          cat > /tmp/issue.txt << 'EOF_MARKER'
+          ## 💡 Commit Strategy Recommendations
+
+          The autonomous learning system has generated new commit strategy recommendations based on repository analysis.
+
+          **Summary:**
+          - Recommendations: ${REC_COUNT}
+          - Overall Trend: ${TREND}
+          - Top Recommendation: ${TOP_REC}
+
+          **Action Items:**
+          - Review the PR with updated strategy guide
+          - Consider applying recommendations to improve commit quality
+          - Share feedback on which strategies are most helpful
+
+          **About This System:**
+
+          This is part of the autonomous commit strategy learning infrastructure created by **@create-botter**. The system:
+          
+          - Continuously analyzes commit patterns
+          - Learns from successful merges
+          - Generates actionable, context-aware recommendations
+          - Tracks improvement trends over time
+          - Adapts based on repository evolution
+
+          ---
+
+          *🤖 Automated analysis by @create-botter's learning infrastructure*
+          EOF_MARKER
+          
+          # Substitute environment variables using sed
+          sed -e "s|\${REC_COUNT}|${REC_COUNT}|g" \
+              -e "s|\${TREND}|${TREND}|g" \
+              -e "s|\${TOP_REC}|${TOP_REC}|g" \
+              /tmp/issue.txt > /tmp/issue_final.txt
+          
+          gh issue create \
+            --title "${ISSUE_TITLE}" \
+            --body-file /tmp/issue_final.txt \
+            --label "learning,automated,infrastructure,create-botter" || echo "Issue creation skipped or failed"
+
+      - name: Log activity
+        run: |
+          echo "===================="
+          echo "Commit Strategy Application Complete"
+          echo "===================="
+          echo "Recommendations: ${{ steps.recommendations.outputs.recommendation_count || 0 }}"
+          echo "Top Recommendation: ${{ steps.recommendations.outputs.top_recommendation || 'none' }}"
+          echo "Trend: ${{ steps.trends.outputs.overall_trend || 'unknown' }}"
+          echo "By: @create-botter"
+          echo "Timestamp: $(date -u +'%Y-%m-%d %H:%M:%S UTC')"

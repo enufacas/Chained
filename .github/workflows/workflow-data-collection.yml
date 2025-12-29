@@ -1,30 +1,20 @@
+# ============================================================================
+# WORKFLOW DISABLED
+# Disabled on: 2025-12-29T02:43:14.994388
+# Original workflow name: Data: Workflow Execution Collection
+# Original triggers: workflow_dispatch, schedule
+# 
+# To re-enable: Use the tools/enable_workflows.py script with the
+# workflow_disable_metadata.json file to restore original triggers.
+# ============================================================================
+
 name: "Data: Workflow Execution Collection"
 # Created by @create-botter
 # Automatically collects workflow execution data to feed the AI predictor
 
 on:
+
   workflow_dispatch:
-    inputs:
-      limit:
-        description: 'Maximum number of runs to collect'
-        required: false
-        default: '100'
-        type: string
-      mode:
-        description: 'Collection mode'
-        required: true
-        default: 'collect'
-        type: choice
-        options:
-          - collect
-          - stats
-          - report
-  schedule:
-    # Run daily at 2:00 AM UTC to collect workflow data
-    - cron: '0 2 * * *'
-  # NOTE: workflow_run trigger with wildcard removed to avoid excessive executions
-  # The scheduled daily collection is sufficient for data gathering
-  # Manual dispatch is available for on-demand collection
 
 permissions:
   contents: write

@@ -1,3 +1,13 @@
+# ============================================================================
+# WORKFLOW DISABLED
+# Disabled on: 2025-12-29T02:43:14.994388
+# Original workflow name: Claude: 🎯 A2A Coordinator
+# Original triggers: workflow_dispatch, issue_comment
+# 
+# To re-enable: Use the tools/enable_workflows.py script with the
+# workflow_disable_metadata.json file to restore original triggers.
+# ============================================================================
+
 name: "Claude: 🎯 A2A Coordinator"
 
 # Phase 3A Implementation: Multi-agent task decomposition and orchestration
@@ -11,32 +21,8 @@ name: "Claude: 🎯 A2A Coordinator"
 # For Vertex AI setup, see: docs/VERTEX_AI_CLAUDE_SETUP.md
 
 on:
-  workflow_dispatch:
-    inputs:
-      issue_number:
-        description: 'Issue number to process for A2A orchestration'
-        required: true
-        type: number
-      orchestration_tier:
-        description: 'Orchestration tier: tier1 (sequential) or tier2 (parallel)'
-        required: false
-        default: 'tier1'
-        type: choice
-        options:
-          - tier1
-          - tier2
-      use_vertex:
-        description: 'Use Google Vertex AI instead of direct Anthropic API'
-        required: false
-        default: 'false'
-        type: choice
-        options:
-          - 'true'
-          - 'false'
 
-  issue_comment:
-    types:
-      - 'created'
+  workflow_dispatch:
 
 defaults:
   run:

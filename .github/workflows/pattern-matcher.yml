@@ -1,19 +1,17 @@
+# ============================================================================
+# WORKFLOW DISABLED
+# Disabled on: 2025-12-29T02:43:14.994388
+# Original workflow name: Code Quality: Pattern Matcher
+# Original triggers: schedule, workflow_dispatch
+# 
+# To re-enable: Use the tools/enable_workflows.py script with the
+# workflow_disable_metadata.json file to restore original triggers.
+# ============================================================================
+
 name: "Code Quality: Pattern Matcher"
 
 on:
-  schedule:
-    # Run weekly on Mondays at 10 AM UTC (consolidated with other code quality checks)
-    - cron: '0 10 * * 1'
   workflow_dispatch:
-    inputs:
-      directory:
-        description: 'Directory to scan (default: entire repo)'
-        required: false
-        default: '.'
-      severity_filter:
-        description: 'Minimum severity to report (error/warning/info)'
-        required: false
-        default: 'info'
 
 permissions:
   issues: write

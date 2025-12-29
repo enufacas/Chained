@@ -1,28 +1,17 @@
+# ============================================================================
+# WORKFLOW DISABLED
+# Disabled on: 2025-12-29T02:43:14.994388
+# Original workflow name: AI: PR Failure Intelligence System
+# Original triggers: schedule, workflow_dispatch
+# 
+# To re-enable: Use the tools/enable_workflows.py script with the
+# workflow_disable_metadata.json file to restore original triggers.
+# ============================================================================
+
 name: "AI: PR Failure Intelligence System"
 
 on:
-  # Run weekly alongside pr-failure-learning
-  schedule:
-    - cron: '30 0 * * 0'  # Every Sunday at 00:30 UTC (30 min after pr-failure-learning)
-  
-  # Manual trigger for testing
   workflow_dispatch:
-    inputs:
-      analyze_patterns:
-        description: 'Analyze code patterns'
-        required: false
-        type: boolean
-        default: true
-      generate_profiles:
-        description: 'Generate agent profiles'
-        required: false
-        type: boolean
-        default: true
-      predict_risks:
-        description: 'Generate risk predictions'
-        required: false
-        type: boolean
-        default: false
 
 permissions:
   contents: write

@@ -1,16 +1,17 @@
+# ============================================================================
+# WORKFLOW DISABLED
+# Disabled on: 2025-12-29T02:43:14.994388
+# Original workflow name: Agent System: Actions Generator
+# Original triggers: schedule, workflow_dispatch
+# 
+# To re-enable: Use the tools/enable_workflows.py script with the
+# workflow_disable_metadata.json file to restore original triggers.
+# ============================================================================
+
 name: "Agent System: Actions Generator"
 
 on:
-  schedule:
-    # Run weekly on Mondays at 8 AM UTC
-    - cron: '0 8 * * 1'
   workflow_dispatch:
-    inputs:
-      generate_actions:
-        description: 'Actually generate and commit actions'
-        required: false
-        type: boolean
-        default: false
 
 permissions:
   contents: write

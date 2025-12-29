@@ -1,3 +1,13 @@
+# ============================================================================
+# WORKFLOW DISABLED
+# Disabled on: 2025-12-29T02:43:14.994388
+# Original workflow name: Demo: Experiments
+# Original triggers: issues, pull_request, workflow_dispatch
+# 
+# To re-enable: Use the tools/enable_workflows.py script with the
+# workflow_disable_metadata.json file to restore original triggers.
+# ============================================================================
+
 name: "Demo: Experiments"
 
 # Consolidated workflow for demonstration and experimental features
@@ -10,33 +20,7 @@ name: "Demo: Experiments"
 # Each experiment can be triggered independently via workflow_dispatch
 
 on:
-  # Issue labeled for NL to Code translation
-  issues:
-    types: [labeled]
-  
-  # PR events for Tech Lead review
-  pull_request:
-    types: [opened, ready_for_review, synchronize]
-  
-  # Manual triggers with stage selection
   workflow_dispatch:
-    inputs:
-      stage:
-        description: 'Which demo/experiment to run'
-        required: true
-        type: choice
-        default: 'nl-to-code'
-        options:
-          - nl-to-code
-          - tech-lead-review
-      issue_number:
-        description: 'Issue number (for nl-to-code stage)'
-        required: false
-        type: string
-      pr_number:
-        description: 'PR number (for tech-lead-review stage)'
-        required: false
-        type: string
 
 permissions:
   contents: read

@@ -1,29 +1,17 @@
+# ============================================================================
+# WORKFLOW DISABLED
+# Disabled on: 2025-12-29T02:43:14.994388
+# Original workflow name: System: PR Failure Learning
+# Original triggers: schedule, pull_request, workflow_dispatch
+# 
+# To re-enable: Use the tools/enable_workflows.py script with the
+# workflow_disable_metadata.json file to restore original triggers.
+# ============================================================================
+
 name: "System: PR Failure Learning"
 
 on:
-  # Run weekly to collect and analyze PR failures
-  schedule:
-    - cron: '0 0 * * 0'  # Every Sunday at midnight UTC
-  
-  # Run when PRs are closed (both merged and unmerged)
-  pull_request:
-    types: [closed]
-    # Note: No 'paths' filters - we want to learn from ALL PR closures.
-    # The tools/pr-failure-learner.py script is a dependency, not a trigger condition.
-    # We need to run on every PR close to collect failure data across all changes.
-  
-  # Manual trigger for testing
   workflow_dispatch:
-    inputs:
-      since_days:
-        description: 'Number of days to look back'
-        required: false
-        default: '30'
-      analyze_only:
-        description: 'Only analyze existing data without collecting new failures'
-        required: false
-        type: boolean
-        default: false
 
 permissions:
   contents: write

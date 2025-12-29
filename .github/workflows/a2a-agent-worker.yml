@@ -1,3 +1,13 @@
+# ============================================================================
+# WORKFLOW DISABLED
+# Disabled on: 2025-12-29T02:43:14.994388
+# Original workflow name: A2A: Agent Worker
+# Original triggers: issues, workflow_dispatch
+# 
+# To re-enable: Use the tools/enable_workflows.py script with the
+# workflow_disable_metadata.json file to restore original triggers.
+# ============================================================================
+
 name: "A2A: Agent Worker"
 
 # This workflow implements Tier 2 A2A: cross-runner agent communication
@@ -14,19 +24,8 @@ name: "A2A: Agent Worker"
 # 4. Updates issue labels to mark completion
 
 on:
-  issues:
-    types: [opened, labeled]
   
   workflow_dispatch:
-    inputs:
-      issue_number:
-        description: 'Issue number containing A2A task'
-        required: true
-        type: number
-      agent_name:
-        description: 'Agent name to execute'
-        required: false
-        type: string
 
 jobs:
   execute-a2a-task:

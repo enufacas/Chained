@@ -1,9 +1,16 @@
+# ============================================================================
+# WORKFLOW DISABLED
+# Disabled on: 2025-12-29T02:43:14.994388
+# Original workflow name: Evolution: Architecture Tracker
+# Original triggers: schedule, workflow_dispatch
+# 
+# To re-enable: Use the tools/enable_workflows.py script with the
+# workflow_disable_metadata.json file to restore original triggers.
+# ============================================================================
+
 name: "Evolution: Architecture Tracker"
 
 on:
-  schedule:
-    # Run every 12 hours
-    - cron: '0 */12 * * *'
   workflow_dispatch:
 
 permissions:

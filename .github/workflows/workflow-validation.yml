@@ -1,21 +1,17 @@
+# ============================================================================
+# WORKFLOW DISABLED
+# Disabled on: 2025-12-29T02:43:14.994388
+# Original workflow name: CI: Workflow Validation
+# Original triggers: pull_request, workflow_dispatch
+# 
+# To re-enable: Use the tools/enable_workflows.py script with the
+# workflow_disable_metadata.json file to restore original triggers.
+# ============================================================================
+
 name: "CI: Workflow Validation"
 
 on:
-  pull_request:
-    paths:
-      - '.github/workflows/**/*.yml'
-      - '.github/workflows/**/*.yaml'
-      - 'tools/**/*.py'
-      - 'tools/**/*.sh'
-      - 'scripts/**/*.py'
-      - 'scripts/**/*.sh'
-    types: [opened, synchronize, reopened, ready_for_review]
   workflow_dispatch:
-    inputs:
-      workflow_file:
-        description: 'Specific workflow file to validate (optional)'
-        required: false
-        type: string
 
 permissions:
   contents: read

@@ -1,0 +1,416 @@
+name: "Data: AgentOps Dashboard Sync"
+
+on:
+  schedule:
+    # Run every 6 hours to reduce PR noise while keeping dashboard data reasonably fresh
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+    inputs:
+      fetch_limit:
+        description: 'Number of recent runs to fetch per workflow'
+        required: false
+        type: number
+        default: 50
+
+permissions:
+  contents: write
+  actions: read
+  pull-requests: write
+  issues: read
+
+jobs:
+  sync-agentops-data:
+    name: "Sync AgentOps Dashboard Data"
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      
+      - name: Install dependencies
+        run: |
+          pip install requests PyYAML
+      
+      - name: Fetch AgentOps data
+        id: fetch
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          FETCH_LIMIT: ${{ inputs.fetch_limit || 50 }}
+        run: |
+          python3 << 'EOF'
+          import json
+          import os
+          import requests
+          from datetime import datetime, timezone, timedelta
+          
+          print("🔄 Fetching AgentOps dashboard data...")
+          
+          GITHUB_TOKEN = os.environ['GH_TOKEN']
+          REPO = os.environ['GITHUB_REPOSITORY']
+          FETCH_LIMIT = int(float(os.environ.get('FETCH_LIMIT', '50')))
+          
+          headers = {
+              'Authorization': f'token {GITHUB_TOKEN}',
+              'Accept': 'application/vnd.github.v3+json'
+          }
+          
+          # Key workflows to monitor for AgentOps
+          workflows_to_monitor = [
+              'copilot-graphql-assign.yml',
+              'autonomous-pipeline.yml',
+              'learn-from-copilot.yml',
+              'agent-missions.yml',
+              'agent-evaluator.yml',
+              'self-reinforcement.yml'
+          ]
+          
+          all_runs = []
+          
+          for workflow_file in workflows_to_monitor:
+              print(f"\n📊 Fetching runs for {workflow_file}...")
+              
+              url = f'https://api.github.com/repos/{REPO}/actions/workflows/{workflow_file}/runs'
+              params = {'per_page': min(FETCH_LIMIT, 100)}
+              
+              try:
+                  response = requests.get(url, headers=headers, params=params, timeout=10)
+                  
+                  if response.status_code == 200:
+                      data = response.json()
+                      runs = data.get('workflow_runs', [])
+                      
+                      print(f"   Found {len(runs)} runs")
+                      
+                      for run in runs:
+                          # Calculate duration
+                          created_at = datetime.fromisoformat(run['created_at'].replace('Z', '+00:00'))
+                          updated_at = datetime.fromisoformat(run['updated_at'].replace('Z', '+00:00'))
+                          duration_seconds = (updated_at - created_at).total_seconds()
+                          
+                          # Extract agent from run name or path if available
+                          run_name = run.get('display_title', run.get('name', ''))
+                          agent_name = None
+                          import re
+                          
+                          # Try multiple patterns for agent extraction
+                          if '@' in run_name:
+                              # Pattern 1: "@agent-name" in display title
+                              agent_match = re.search(r'@([a-z-]+(?:-[a-z]+)*)', run_name, re.IGNORECASE)
+                              if agent_match:
+                                  agent_name = agent_match.group(1)
+                          
+                          # Try to get more metadata from workflow run jobs/artifacts
+                          # Check head commit message for agent references
+                          head_commit = run.get('head_commit', {})
+                          commit_message = head_commit.get('message', '') if head_commit else ''
+                          if not agent_name and '@' in commit_message:
+                              agent_match = re.search(r'@([a-z-]+(?:-[a-z]+)*)', commit_message, re.IGNORECASE)
+                              if agent_match:
+                                  agent_name = agent_match.group(1)
+                          
+                          # Extract issue number from multiple sources
+                          issue_number = None
+                          
+                          # Pattern 1: From display title (e.g., "Fix #123" or "Issue #456")
+                          issue_match = re.search(r'#(\d+)', run_name)
+                          if issue_match:
+                              issue_number = int(issue_match.group(1))
+                          
+                          # Pattern 2: From commit message
+                          if not issue_number and commit_message:
+                              issue_match = re.search(r'#(\d+)', commit_message)
+                              if issue_match:
+                                  issue_number = int(issue_match.group(1))
+                          
+                          # Pattern 3: If event is 'issues', try to get from repository_dispatch
+                          if not issue_number and run['event'] == 'issues':
+                              # The issue number might be in the workflow path
+                              # This is a best-effort extraction
+                              pass
+                          
+                          # Get PR numbers from pull_requests array (GitHub provides this)
+                          pr_numbers = [pr['number'] for pr in run.get('pull_requests', [])]
+                          
+                          # Try to fetch associated PRs from head_sha if we have it
+                          if not pr_numbers and run.get('head_sha'):
+                              try:
+                                  # Search for PRs with this commit
+                                  pr_search_url = f'https://api.github.com/repos/{REPO}/commits/{run["head_sha"]}/pulls'
+                                  pr_response = requests.get(pr_search_url, headers=headers, timeout=5)
+                                  if pr_response.status_code == 200:
+                                      prs = pr_response.json()
+                                      pr_numbers = [pr['number'] for pr in prs]
+                              except Exception as e:
+                                  pass  # Silently fail for PR lookups
+                          
+                          run_data = {
+                              'id': run['id'],
+                              'run_number': run['run_number'],
+                              'workflow_name': run['name'],
+                              'workflow_file': workflow_file,
+                              'display_title': run.get('display_title', run['name']),
+                              'status': run['status'],
+                              'conclusion': run.get('conclusion'),
+                              'created_at': run['created_at'],
+                              'updated_at': run['updated_at'],
+                              'duration_seconds': round(duration_seconds, 2),
+                              'html_url': run['html_url'],
+                              'run_started_at': run.get('run_started_at'),
+                              'triggering_actor': run.get('triggering_actor', {}).get('login'),
+                              'event': run['event'],
+                              'head_branch': run.get('head_branch'),
+                              'head_sha': run['head_sha'][:8] if run.get('head_sha') else None,
+                              'agent_name': agent_name,
+                              'issue_number': issue_number,
+                              'pr_numbers': pr_numbers,
+                              'pull_requests': [
+                                  {
+                                      'number': pr['number'],
+                                      'url': pr['url']
+                                  }
+                                  for pr in run.get('pull_requests', [])
+                              ]
+                          }
+                          
+                          all_runs.append(run_data)
+                  
+                  elif response.status_code == 404:
+                      print(f"   ⚠️  Workflow not found: {workflow_file}")
+                  else:
+                      print(f"   ⚠️  Error {response.status_code}: {response.text[:100]}")
+              
+              except Exception as e:
+                  print(f"   ⚠️  Error fetching {workflow_file}: {e}")
+          
+          # Sort by created_at descending
+          all_runs.sort(key=lambda x: x['created_at'], reverse=True)
+          
+          # Calculate summary statistics
+          total_runs = len(all_runs)
+          completed_runs = [r for r in all_runs if r['status'] == 'completed']
+          success_runs = [r for r in completed_runs if r['conclusion'] == 'success']
+          failure_runs = [r for r in completed_runs if r['conclusion'] == 'failure']
+          in_progress_runs = [r for r in all_runs if r['status'] == 'in_progress']
+          
+          success_rate = (len(success_runs) / len(completed_runs) * 100) if completed_runs else 0
+          avg_duration = sum(r['duration_seconds'] for r in completed_runs) / len(completed_runs) if completed_runs else 0
+          
+          # Agent workload analysis
+          agent_workload = {}
+          for run in all_runs:
+              if run['agent_name']:
+                  if run['agent_name'] not in agent_workload:
+                      agent_workload[run['agent_name']] = {
+                          'total': 0,
+                          'success': 0,
+                          'failure': 0,
+                          'in_progress': 0
+                      }
+                  
+                  agent_workload[run['agent_name']]['total'] += 1
+                  if run['status'] == 'completed':
+                      if run['conclusion'] == 'success':
+                          agent_workload[run['agent_name']]['success'] += 1
+                      elif run['conclusion'] == 'failure':
+                          agent_workload[run['agent_name']]['failure'] += 1
+                  elif run['status'] == 'in_progress':
+                      agent_workload[run['agent_name']]['in_progress'] += 1
+          
+          # Workflow distribution
+          workflow_stats = {}
+          for run in all_runs:
+              wf = run['workflow_file']
+              if wf not in workflow_stats:
+                  workflow_stats[wf] = {
+                      'total': 0,
+                      'success': 0,
+                      'failure': 0,
+                      'in_progress': 0,
+                      'avg_duration': 0
+                  }
+              
+              workflow_stats[wf]['total'] += 1
+              if run['status'] == 'completed':
+                  if run['conclusion'] == 'success':
+                      workflow_stats[wf]['success'] += 1
+                  elif run['conclusion'] == 'failure':
+                      workflow_stats[wf]['failure'] += 1
+              elif run['status'] == 'in_progress':
+                  workflow_stats[wf]['in_progress'] += 1
+          
+          # Calculate average durations per workflow
+          for wf in workflow_stats:
+              wf_runs = [r for r in completed_runs if r['workflow_file'] == wf]
+              if wf_runs:
+                  workflow_stats[wf]['avg_duration'] = round(
+                      sum(r['duration_seconds'] for r in wf_runs) / len(wf_runs), 2
+                  )
+          
+          # Recent failures (last 24 hours)
+          now = datetime.now(timezone.utc)
+          recent_failures = [
+              r for r in failure_runs
+              if (now - datetime.fromisoformat(r['created_at'].replace('Z', '+00:00'))).total_seconds() < 86400
+          ]
+          
+          # Build final data structure
+          agentops_data = {
+              'last_updated': datetime.now(timezone.utc).isoformat(),
+              'summary': {
+                  'total_runs': total_runs,
+                  'completed': len(completed_runs),
+                  'in_progress': len(in_progress_runs),
+                  'success': len(success_runs),
+                  'failure': len(failure_runs),
+                  'success_rate': round(success_rate, 2),
+                  'avg_duration_seconds': round(avg_duration, 2),
+                  'recent_failures_24h': len(recent_failures)
+              },
+              'agent_workload': agent_workload,
+              'workflow_stats': workflow_stats,
+              'runs': all_runs[:100],  # Keep last 100 runs for dashboard
+              'recent_failures': recent_failures[:20]  # Last 20 failures for quick debugging
+          }
+          
+          # Save to docs/data
+          os.makedirs('docs/data', exist_ok=True)
+          output_file = 'docs/data/agentops-runs.json'
+          
+          with open(output_file, 'w') as f:
+              json.dump(agentops_data, f, indent=2)
+          
+          print(f"\n✅ AgentOps data synced to {output_file}")
+          print(f"\n📊 Summary:")
+          print(f"   Total runs: {total_runs}")
+          print(f"   Success rate: {success_rate:.1f}%")
+          print(f"   Avg duration: {avg_duration:.1f}s")
+          print(f"   In progress: {len(in_progress_runs)}")
+          print(f"   Recent failures (24h): {len(recent_failures)}")
+          print(f"   Agents tracked: {len(agent_workload)}")
+          
+          # Set outputs
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+              f.write(f"total_runs={total_runs}\n")
+              f.write(f"success_rate={success_rate:.1f}\n")
+              f.write(f"has_changes=true\n")
+          EOF
+      
+      - name: Create PR with AgentOps data
+        id: create_pr
+        if: steps.fetch.outputs.has_changes == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          git add docs/data/agentops-runs.json
+          
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+            echo "pr_created=false" >> $GITHUB_OUTPUT
+          else
+            TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+            BRANCH_NAME="agentops-sync/${TIMESTAMP}-${{ github.run_id }}"
+            
+            git checkout -b "$BRANCH_NAME"
+            git commit -m "🔄 AgentOps data sync - $(date '+%Y-%m-%d %H:%M')"
+            git push origin "$BRANCH_NAME"
+            
+            PR_URL=$(gh pr create \
+              --title "🔄 AgentOps Dashboard Data Sync - $(date +%Y-%m-%d)" \
+              --body "## 🔄 AgentOps Dashboard Data Sync
+          
+          **Total Runs:** ${{ steps.fetch.outputs.total_runs }}
+          **Success Rate:** ${{ steps.fetch.outputs.success_rate }}%
+          **Sync Run:** [View Details](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+          
+          This PR updates the AgentOps dashboard data with the latest workflow run information.
+          
+          Updated data includes:
+          - ✅ Recent workflow runs (all monitored workflows)
+          - ✅ Success/failure metrics
+          - ✅ Agent workload distribution  
+          - ✅ Performance statistics
+          - ✅ Recent failures for debugging
+          
+          ---
+          
+          *🤖 Created by workflow: [${{ github.workflow }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})*" \
+              --label "automated,documentation,auto-merge,copilot" \
+              --base main \
+              --head "$BRANCH_NAME")
+            
+            # Extract PR number from URL
+            PR_NUMBER=$(echo "$PR_URL" | grep -oE '[0-9]+$')
+            echo "pr_number=$PR_NUMBER" >> $GITHUB_OUTPUT
+            echo "pr_created=true" >> $GITHUB_OUTPUT
+            echo "✅ Created PR #$PR_NUMBER"
+          fi
+      
+      - name: Auto-merge PR
+        if: steps.create_pr.outputs.pr_created == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PR_NUMBER="${{ steps.create_pr.outputs.pr_number }}"
+          echo "🔄 Auto-merging AgentOps Data Sync PR #$PR_NUMBER..."
+          
+          # Wait a few seconds for PR to be ready
+          echo "⏳ Waiting 5 seconds for PR to be ready..."
+          sleep 5
+          
+          # Check PR mergeable state
+          PR_DATA=$(gh pr view "$PR_NUMBER" --json mergeable,mergeStateStatus,state)
+          MERGEABLE=$(echo "$PR_DATA" | jq -r '.mergeable')
+          MERGE_STATE=$(echo "$PR_DATA" | jq -r '.mergeStateStatus')
+          PR_STATE=$(echo "$PR_DATA" | jq -r '.state')
+          
+          echo "📊 PR Status:"
+          echo "   State: $PR_STATE"
+          echo "   Mergeable: $MERGEABLE"
+          echo "   Merge State: $MERGE_STATE"
+          
+          # Check if already merged
+          if [ "$PR_STATE" = "MERGED" ]; then
+            echo "✅ PR #$PR_NUMBER is already merged!"
+            exit 0
+          fi
+          
+          # Attempt merge with auto strategy (squash for cleaner history)
+          echo "🚀 Attempting to merge PR #$PR_NUMBER..."
+          if gh pr merge "$PR_NUMBER" --repo ${{ github.repository }} --auto --squash --delete-branch; then
+            echo "✅ PR #$PR_NUMBER merge initiated successfully!"
+            echo "🎉 AgentOps data sync PR merged"
+            
+            # Brief wait to confirm merge completed
+            sleep 2
+            FINAL_STATE=$(gh pr view "$PR_NUMBER" --json state --jq '.state')
+            if [ "$FINAL_STATE" = "MERGED" ]; then
+              echo "✅ Merge confirmed!"
+            else
+              echo "ℹ️  Merge is processing (state: $FINAL_STATE)"
+            fi
+          else
+            echo "⚠️  Merge command failed, checking if PR can be force merged..."
+            
+            # Try regular merge without auto flag
+            if gh pr merge "$PR_NUMBER" --repo ${{ github.repository }} --squash --delete-branch; then
+              echo "✅ PR #$PR_NUMBER merged successfully (direct merge)!"
+              echo "🎉 AgentOps data sync PR merged"
+            else
+              echo "❌ Failed to merge PR #$PR_NUMBER"
+              echo "This may indicate:"
+              echo "  - Merge conflicts"
+              echo "  - Required checks not passing"
+              echo "  - Branch protection rules blocking"
+              echo ""
+              echo "Check PR status at: https://github.com/${{ github.repository }}/pull/$PR_NUMBER"
+              exit 1
+            fi
+          fi

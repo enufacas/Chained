@@ -1,22 +1,20 @@
+# ============================================================================
+# WORKFLOW DISABLED
+# Disabled on: 2025-12-29T02:43:14.994388
+# Original workflow name: Performance: Metrics Collection
+# Original triggers: schedule, workflow_run, workflow_dispatch
+# 
+# To re-enable: Use the tools/enable_workflows.py script with the
+# workflow_disable_metadata.json file to restore original triggers.
+# ============================================================================
+
 name: "Performance: Metrics Collection"
 
 # Automatically collect performance metrics on schedule and workflow completion
 # Created by @assert-specialist for comprehensive performance monitoring
 
 on:
-  schedule:
-    # Collect metrics every 6 hours
-    - cron: '0 */6 * * *'
-  workflow_run:
-    workflows: ["Agent System: Evaluator", "System: Monitor", "Agent System: Spawner"]
-    types: [completed]
   workflow_dispatch:
-    inputs:
-      generate_report:
-        description: 'Generate performance report'
-        required: false
-        type: boolean
-        default: false
 
 permissions:
   contents: write

@@ -1,19 +1,18 @@
+# ============================================================================
+# WORKFLOW DISABLED
+# Disabled on: 2025-12-29T02:43:14.994388
+# Original workflow name: Agent System: Issue Discussion
+# Original triggers: workflow_dispatch, issues
+# 
+# To re-enable: Use the tools/enable_workflows.py script with the
+# workflow_disable_metadata.json file to restore original triggers.
+# ============================================================================
+
 name: "Agent System: Issue Discussion"
 
 on:
+
   workflow_dispatch:
-    inputs:
-      issue_number:
-        description: 'Issue number to discuss'
-        required: true
-        type: number
-      discussion_rounds:
-        description: 'Number of discussion rounds (2-5)'
-        required: false
-        type: number
-        default: 3
-  issues:
-    types: [labeled]
 
 permissions:
   contents: read

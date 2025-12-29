@@ -1,3 +1,13 @@
+# ============================================================================
+# WORKFLOW DISABLED
+# Disabled on: 2025-12-29T02:43:14.994388
+# Original workflow name: System: Copilot Setup Steps
+# Original triggers: workflow_dispatch, push, pull_request
+# 
+# To re-enable: Use the tools/enable_workflows.py script with the
+# workflow_disable_metadata.json file to restore original triggers.
+# ============================================================================
+
 name: "System: Copilot Setup Steps"
 
 # This workflow is automatically executed by GitHub Copilot before the agent starts working.
@@ -11,12 +21,6 @@ name: "System: Copilot Setup Steps"
 
 on:
   workflow_dispatch:
-  push:
-    paths:
-      - .github/workflows/copilot-setup-steps.yml
-  pull_request:
-    paths:
-      - .github/workflows/copilot-setup-steps.yml
 
 jobs:
   # The job MUST be named 'copilot-setup-steps' for Copilot to recognize it

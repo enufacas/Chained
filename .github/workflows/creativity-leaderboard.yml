@@ -1,16 +1,17 @@
+# ============================================================================
+# WORKFLOW DISABLED
+# Disabled on: 2025-12-29T02:43:14.994388
+# Original workflow name: Content: Creativity Leaderboard
+# Original triggers: schedule, workflow_dispatch
+# 
+# To re-enable: Use the tools/enable_workflows.py script with the
+# workflow_disable_metadata.json file to restore original triggers.
+# ============================================================================
+
 name: "Content: Creativity Leaderboard"
 
 on:
-  schedule:
-    # Run daily at 6 AM UTC (after evaluations)
-    - cron: '0 6 * * *'
   workflow_dispatch:
-    inputs:
-      publish_to_pages:
-        description: 'Publish leaderboard to GitHub Pages'
-        required: false
-        type: boolean
-        default: true
 
 permissions:
   contents: write

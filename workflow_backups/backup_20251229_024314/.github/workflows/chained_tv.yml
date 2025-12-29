@@ -1,0 +1,74 @@
+name: "Content: Chained TV Episode Generator"
+
+on:
+  schedule:
+    # Run every 2 hours
+    - cron: '0 */2 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: read
+  pull-requests: write
+
+jobs:
+  generate-episode:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: |
+          pip install requests
+
+      - name: Generate episode
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: |
+          python scripts/generate_episode.py
+          
+      - name: Generate episode index
+        run: |
+          python scripts/generate_episode_index.py
+
+      - name: Commit and create PR
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config user.name "chained-bot"
+          git config user.email "chained-bot@example.com"
+          
+          git add docs/episodes/
+          
+          if git diff --staged --quiet; then
+            echo "No new episode to commit"
+          else
+            # Create a new branch for the PR with unique name using run ID
+            TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+            BRANCH_NAME="chained-tv-episode/${TIMESTAMP}-${{ github.run_id }}"
+            git checkout -b "$BRANCH_NAME"
+            
+            # Commit changes
+            git commit -m "chore: new chained tv episode"
+            
+            # Push branch
+            git push origin "$BRANCH_NAME"
+            
+            # Create PR with consistent date formatting
+            PR_DATE=$(date +%Y-%m-%d)
+            gh pr create \
+              --title "📺 New Chained TV Episode - ${PR_DATE}" \
+              --body "## 📺 New Chained TV Episode"$'\n\n'"This PR adds a new Chained TV episode generated from recent repository activity."$'\n\n'"### Changes"$'\n'"- Updated \`docs/episodes/latest.json\`"$'\n'"- Added timestamped episode file in \`docs/episodes/\`"$'\n\n'"---"$'\n'"*🤖 Automated episode generation workflow*" \
+              --label "chained-tv,automated,copilot" \
+              --base main \
+              --head "$BRANCH_NAME"
+            
+            echo "✅ PR created for new Chained TV episode"
+          fi

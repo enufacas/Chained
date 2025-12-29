@@ -1,3 +1,13 @@
+# ============================================================================
+# WORKFLOW DISABLED
+# Disabled on: 2025-12-29T02:43:14.994388
+# Original workflow name: Workflow Execution Tracker
+# Original triggers: workflow_run
+# 
+# To re-enable: Use the tools/enable_workflows.py script with the
+# workflow_disable_metadata.json file to restore original triggers.
+# ============================================================================
+
 name: Workflow Execution Tracker
 # Created by @create-botter
 # 
@@ -5,9 +15,7 @@ name: Workflow Execution Tracker
 # to the AI-powered workflow orchestrator for improved predictions.
 
 on:
-  workflow_run:
-    workflows: ["*"]
-    types: [completed]
+  workflow_dispatch:
 
 permissions:
   contents: write

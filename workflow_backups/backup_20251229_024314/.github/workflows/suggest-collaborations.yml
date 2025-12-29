@@ -1,0 +1,350 @@
+name: "Agent System: Suggest Collaborations"
+
+# Suggests collaboration opportunities between agents based on:
+# - Complementary specializations
+# - Recent activity patterns
+# - Issue complexity requiring multiple expertise areas
+# - Agent performance metrics
+
+on:
+  schedule:
+    # Run daily at 9 AM UTC
+    - cron: '0 9 * * *'
+  
+  workflow_dispatch:
+    inputs:
+      issue_number:
+        description: 'Specific issue to analyze for collaboration (optional)'
+        required: false
+        type: number
+      max_suggestions:
+        description: 'Maximum number of collaboration suggestions'
+        required: false
+        type: number
+        default: 5
+      min_agents:
+        description: 'Minimum agents required for collaboration'
+        required: false
+        type: number
+        default: 2
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: read
+
+jobs:
+  suggest-collaborations:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then
+            pip install -r requirements.txt
+          fi
+      
+      - name: Load agent registry
+        id: load_agents
+        run: |
+          python3 << 'PYTHON_SCRIPT'
+          import json
+          import sys
+          
+          # Use registry manager
+          sys.path.insert(0, 'tools')
+          from registry_manager import RegistryManager
+          
+          try:
+              # Load registry
+              registry = RegistryManager()
+              
+              # Get active agents
+              active_agents = registry.list_agents(status='active')
+              
+              print(f"✅ Loaded {len(active_agents)} active agents")
+              
+              if len(active_agents) < 2:
+                  print("⚠️ Not enough active agents for collaboration suggestions (need at least 2)")
+                  with open('agent_count.txt', 'w') as f:
+                      f.write('0')
+                  exit(0)
+              
+              # Save count for next step
+              with open('agent_count.txt', 'w') as f:
+                  f.write(str(len(active_agents)))
+                  
+          except Exception as e:
+              print(f"❌ Error loading agents: {e}")
+              with open('agent_count.txt', 'w') as f:
+                  f.write('0')
+              exit(1)
+          PYTHON_SCRIPT
+      
+      - name: Check if we have enough agents
+        id: check_agents
+        run: |
+          AGENT_COUNT=$(cat agent_count.txt)
+          echo "agent_count=$AGENT_COUNT" >> $GITHUB_OUTPUT
+          
+          if [ "$AGENT_COUNT" -lt 2 ]; then
+            echo "skip_workflow=true" >> $GITHUB_OUTPUT
+            echo "⚠️ Skipping collaboration suggestions - not enough active agents"
+          else
+            echo "skip_workflow=false" >> $GITHUB_OUTPUT
+            echo "✅ Ready to suggest collaborations for $AGENT_COUNT agents"
+          fi
+      
+      - name: Analyze open issues for collaboration opportunities
+        if: steps.check_agents.outputs.skip_workflow == 'false'
+        id: analyze_issues
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SPECIFIC_ISSUE: ${{ github.event.inputs.issue_number }}
+        run: |
+          python3 << 'PYTHON_SCRIPT'
+          import json
+          import os
+          import sys
+          
+          # Use registry manager
+          sys.path.insert(0, 'tools')
+          from registry_manager import RegistryManager
+          
+          try:
+              registry = RegistryManager()
+              active_agents = registry.list_agents(status='active')
+              
+              # Build specialization map
+              specializations = {}
+              for agent in active_agents:
+                  spec = agent.get('specialization', 'unknown')
+                  if spec not in specializations:
+                      specializations[spec] = []
+                  specializations[spec].append(agent['id'])
+              
+              print("📊 Agent Specialization Distribution:")
+              for spec, agents in sorted(specializations.items()):
+                  print(f"  - {spec}: {len(agents)} agents")
+              
+              # Save specialization map for analysis
+              with open('specialization_map.json', 'w') as f:
+                  json.dump(specializations, f, indent=2)
+              
+              print(f"\n✅ Analyzed {len(active_agents)} agents across {len(specializations)} specializations")
+              
+          except Exception as e:
+              print(f"❌ Error analyzing issues: {e}")
+              exit(1)
+          PYTHON_SCRIPT
+      
+      - name: Generate collaboration suggestions
+        if: steps.check_agents.outputs.skip_workflow == 'false'
+        id: generate_suggestions
+        env:
+          MAX_SUGGESTIONS: ${{ github.event.inputs.max_suggestions || '5' }}
+          MIN_AGENTS: ${{ github.event.inputs.min_agents || '2' }}
+        run: |
+          python3 << 'PYTHON_SCRIPT'
+          import json
+          import os
+          import sys
+          import random
+          
+          # Use registry manager
+          sys.path.insert(0, 'tools')
+          from registry_manager import RegistryManager
+          
+          try:
+              registry = RegistryManager()
+              active_agents = registry.list_agents(status='active')
+              
+              max_suggestions = int(os.environ.get('MAX_SUGGESTIONS', '5'))
+              min_agents = int(os.environ.get('MIN_AGENTS', '2'))
+              
+              # Load specialization map
+              with open('specialization_map.json', 'r') as f:
+                  specializations = json.load(f)
+              
+              # Define complementary specialization pairs
+              complementary_pairs = [
+                  ('features', 'tests'),
+                  ('infrastructure', 'security'),
+                  ('performance', 'tests'),
+                  ('documentation', 'features'),
+                  ('refactoring', 'tests'),
+                  ('integrations', 'security'),
+                  ('workflows', 'security'),
+                  ('code-analysis', 'refactoring'),
+              ]
+              
+              suggestions = []
+              
+              # Generate suggestions based on complementary skills
+              for spec1, spec2 in complementary_pairs:
+                  if spec1 in specializations and spec2 in specializations:
+                      agents1 = specializations[spec1]
+                      agents2 = specializations[spec2]
+                      
+                      if agents1 and agents2:
+                          # Pick random agents from each specialization
+                          agent1_id = random.choice(agents1)
+                          agent2_id = random.choice(agents2)
+                          
+                          # Get agent details
+                          agent1 = next((a for a in active_agents if a['id'] == agent1_id), None)
+                          agent2 = next((a for a in active_agents if a['id'] == agent2_id), None)
+                          
+                          if agent1 and agent2:
+                              suggestions.append({
+                                  'agents': [agent1['id'], agent2['id']],
+                                  'specializations': [spec1, spec2],
+                                  'reason': f"Complementary expertise: {spec1} + {spec2}",
+                                  'agent_names': [agent1.get('name', agent1['id']), agent2.get('name', agent2['id'])]
+                              })
+              
+              # Limit suggestions
+              if len(suggestions) > max_suggestions:
+                  suggestions = random.sample(suggestions, max_suggestions)
+              
+              # Save suggestions
+              with open('collaboration_suggestions.json', 'w') as f:
+                  json.dump(suggestions, f, indent=2)
+              
+              print(f"✅ Generated {len(suggestions)} collaboration suggestions")
+              for i, sugg in enumerate(suggestions, 1):
+                  print(f"\n{i}. {sugg['agent_names'][0]} ({sugg['specializations'][0]}) + " +
+                        f"{sugg['agent_names'][1]} ({sugg['specializations'][1]})")
+                  print(f"   Reason: {sugg['reason']}")
+              
+              # Set output
+              with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+                  f.write(f"suggestion_count={len(suggestions)}\n")
+              
+          except Exception as e:
+              print(f"❌ Error generating suggestions: {e}")
+              import traceback
+              traceback.print_exc()
+              exit(1)
+          PYTHON_SCRIPT
+      
+      - name: Create summary comment
+        if: steps.check_agents.outputs.skip_workflow == 'false' && steps.generate_suggestions.outputs.suggestion_count > 0
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python3 << 'PYTHON_SCRIPT'
+          import json
+          import os
+          import subprocess
+          from datetime import datetime
+          
+          try:
+              # Load suggestions
+              with open('collaboration_suggestions.json', 'r') as f:
+                  suggestions = json.load(f)
+              
+              if not suggestions:
+                  print("No suggestions to report")
+                  exit(0)
+              
+              # Create issue for collaboration suggestions
+              title = f"🤝 Agent Collaboration Suggestions - {datetime.now().strftime('%Y-%m-%d')}"
+              
+              body = f"""# 🤝 Agent Collaboration Suggestions
+          
+          The system has identified **{len(suggestions)}** opportunities for agent collaboration based on complementary specializations and expertise areas.
+          
+          ## Suggested Collaborations
+          
+          """
+              
+              for i, sugg in enumerate(suggestions, 1):
+                  body += f"### {i}. {sugg['agent_names'][0]} + {sugg['agent_names'][1]}\n\n"
+                  body += f"- **Specializations**: {sugg['specializations'][0]} + {sugg['specializations'][1]}\n"
+                  body += f"- **Reason**: {sugg['reason']}\n"
+                  body += f"- **Agent IDs**: `{sugg['agents'][0]}`, `{sugg['agents'][1]}`\n\n"
+                  body += "**Potential use cases:**\n"
+                  
+                  # Add use case examples based on specializations
+                  spec_pair = tuple(sorted(sugg['specializations']))
+                  use_cases = {
+                      ('features', 'tests'): [
+                          "Implement new features with comprehensive test coverage",
+                          "Add tests for existing features"
+                      ],
+                      ('infrastructure', 'security'): [
+                          "Set up secure infrastructure components",
+                          "Review and harden deployment configurations"
+                      ],
+                      ('performance', 'tests'): [
+                          "Optimize code with performance benchmarks",
+                          "Create performance regression tests"
+                      ],
+                      ('documentation', 'features'): [
+                          "Document new features as they're developed",
+                          "Update docs for feature changes"
+                      ],
+                  }
+                  
+                  cases = use_cases.get(spec_pair, ["Joint work on complex issues requiring both specializations"])
+                  for case in cases:
+                      body += f"- {case}\n"
+                  body += "\n"
+              
+              body += f"""
+          ## How to Use These Suggestions
+          
+          1. **Label Issues**: Add labels like `needs:features` and `needs:tests` to issues that could benefit from collaboration
+          2. **Multi-Agent Assignment**: Assign multiple agents to complex issues
+          3. **PR Reviews**: Leverage complementary expertise in code reviews
+          4. **Knowledge Sharing**: Create opportunities for agents to learn from each other
+          
+          ---
+          
+          *🤖 Generated by the Agent Collaboration System*
+          *Next run: Tomorrow at 9 AM UTC*
+          """
+              
+              # Create issue
+              cmd = [
+                  'gh', 'issue', 'create',
+                  '--title', title,
+                  '--body', body,
+                  '--label', 'collaboration-suggestions,automated'
+              ]
+              
+              result = subprocess.run(cmd, capture_output=True, text=True)
+              
+              if result.returncode == 0:
+                  print(f"✅ Created collaboration suggestions issue")
+                  print(result.stdout)
+              else:
+                  print(f"❌ Failed to create issue: {result.stderr}")
+                  exit(1)
+              
+          except Exception as e:
+              print(f"❌ Error creating summary: {e}")
+              import traceback
+              traceback.print_exc()
+              exit(1)
+          PYTHON_SCRIPT
+      
+      - name: Summary
+        if: steps.check_agents.outputs.skip_workflow == 'false'
+        run: |
+          echo "## 🤝 Collaboration Suggestion Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Active Agents**: ${{ steps.check_agents.outputs.agent_count }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Suggestions Generated**: ${{ steps.generate_suggestions.outputs.suggestion_count || '0' }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Check the created issue for detailed collaboration suggestions!" >> $GITHUB_STEP_SUMMARY
