@@ -1,0 +1,486 @@
+================================================================================
+GITHUB WORKFLOWS INVENTORY REPORT
+Generated: 2025-12-29T02:38:21.097688
+================================================================================
+
+Total Workflows: 118
+Enabled: 85
+Disabled: 33
+
+================================================================================
+ENABLED WORKFLOWS
+================================================================================
+1. A2A: Agent Worker
+   File: .github/workflows/a2a-agent-worker.yml
+   Triggers: issues, workflow_dispatch
+
+2. Test: A2A Full Suite
+   File: .github/workflows/a2a-test-full-suite.yml
+   Triggers: push, pull_request, workflow_dispatch
+
+3. Demo: A2A Multi-Agent Collaboration
+   File: .github/workflows/a2a-test-multi-agent-demo.yml
+   Triggers: push, workflow_dispatch
+
+4. Test: A2A Quick Validation
+   File: .github/workflows/a2a-test-quick-validation.yml
+   Triggers: push, workflow_dispatch
+
+5. Test: A2A Tier 1 Integration
+   File: .github/workflows/a2a-test-tier1-integration.yml
+   Triggers: push, workflow_dispatch
+
+6. System: A/B Testing
+   File: .github/workflows/ab-testing-system.yml
+   Triggers: schedule, workflow_dispatch
+
+7. Agent System: Actions Generator
+   File: .github/workflows/actions-generator-agent.yml
+   Triggers: schedule, workflow_dispatch
+
+8. A2A: ADK Blog Pipeline
+   File: .github/workflows/adk-a2a-blog-pipeline.yml
+   Triggers: schedule, workflow_dispatch
+
+9. Agent System: Data Sync
+   File: .github/workflows/agent-data-sync.yml
+   Triggers: push, workflow_dispatch
+
+10. Agent System: Evaluator
+   File: .github/workflows/agent-evaluator.yml
+   Triggers: schedule, workflow_dispatch
+
+11. Evolution: Agent Genetic Algorithm
+   File: .github/workflows/agent-evolution.yml
+   Triggers: schedule, workflow_dispatch
+
+12. Agent System: Issue Discussion
+   File: .github/workflows/agent-issue-discussion.yml
+   Triggers: workflow_dispatch, issues
+
+13. Agent System: Missions
+   File: .github/workflows/agent-missions.yml
+   Triggers: workflow_dispatch, workflow_run
+
+14. Agent System: Spawning
+   File: .github/workflows/agent-spawning.yml
+   Triggers: schedule, workflow_dispatch
+
+15. Data: AgentOps Dashboard Sync
+   File: .github/workflows/agentops-data-sync.yml
+   Triggers: schedule, workflow_dispatch
+
+16. AI: Friend Daily Conversation
+   File: .github/workflows/ai-friend-daily.yml
+   Triggers: schedule, workflow_dispatch
+
+17. AI-Native Control Plane - Build and Test
+   File: .github/workflows/ai-native-build-test.yml
+   Triggers: push, pull_request, workflow_dispatch
+
+18. AI-Native Control Plane - Deploy
+   File: .github/workflows/ai-native-deploy.yml
+   Triggers: workflow_dispatch, push
+
+19. Demo: AI Workflow Orchestrator
+   File: .github/workflows/ai-workflow-orchestrator-demo.yml
+   Triggers: workflow_dispatch, schedule
+
+20. AI Workflow Orchestrator - Live Predictions
+   File: .github/workflows/ai-workflow-orchestrator-live.yml
+   Triggers: workflow_dispatch, schedule
+
+21. Learning: Apply Commit Strategies
+   File: .github/workflows/apply-commit-strategies.yml
+   Triggers: schedule, workflow_dispatch
+
+22. Evolution: Architecture Tracker
+   File: .github/workflows/architecture-evolution.yml
+   Triggers: schedule, workflow_dispatch
+
+23. Agent System: Match to Learnings
+   File: .github/workflows/assign-agents-to-learnings.yml
+   Triggers: schedule, workflow_dispatch
+
+24. Automation: Auto Review & Merge (Improved)
+   File: .github/workflows/auto-review-merge.yml
+   Triggers: pull_request, pull_request_review, schedule, workflow_dispatch
+
+25. Automation: Issue Clustering
+   File: .github/workflows/automated-issue-clustering.yml
+   Triggers: schedule, workflow_dispatch
+
+26. Evolution: Autonomous A/B Testing
+   File: .github/workflows/autonomous-ab-testing.yml
+   Triggers: schedule, workflow_dispatch
+
+27. Code Quality: 🤖 Autonomous Reviewer
+   File: .github/workflows/autonomous-code-reviewer.yml
+   Triggers: pull_request, pull_request_review, workflow_dispatch
+
+28. Automation: Issue Prioritizer
+   File: .github/workflows/autonomous-issue-prioritizer.yml
+   Triggers: schedule, workflow_dispatch
+
+29. Learning: Autonomous Pipeline
+   File: .github/workflows/autonomous-pipeline.yml
+   Triggers: schedule, workflow_dispatch
+
+30. Learning: Autonomous Refactoring
+   File: .github/workflows/autonomous-refactoring-learning.yml
+   Triggers: pull_request, schedule, workflow_dispatch
+
+31. Content: Chained TV Episode Generator
+   File: .github/workflows/chained_tv.yml
+   Triggers: schedule, workflow_dispatch
+
+32. Claude: 🎯 A2A Coordinator
+   File: .github/workflows/claude-a2a-coordinator.yml
+   Triggers: workflow_dispatch, issue_comment
+
+33. Cleanup: Chained TV PRs
+   File: .github/workflows/cleanup-chained-tv-prs.yml
+   Triggers: schedule, workflow_dispatch
+
+34. Cleanup: Close Stale Issues and Conflicted PRs
+   File: .github/workflows/close-stale-issues-and-prs.yml
+   Triggers: schedule, workflow_dispatch
+
+35. AI Code Pattern Hypothesis Testing
+   File: .github/workflows/code-pattern-hypothesis-testing.yml
+   Triggers: schedule, workflow_dispatch
+
+36. Code Quality: Analysis System
+   File: .github/workflows/code-quality.yml
+   Triggers: push, pull_request, schedule, workflow_dispatch
+
+37. Data: Collect Resolved Issues
+   File: .github/workflows/collect-resolved-issues.yml
+   Triggers: pull_request, workflow_dispatch
+
+38. Automation: Copilot Assignment
+   File: .github/workflows/copilot-graphql-assign.yml
+   Triggers: issues, schedule, workflow_dispatch, workflow_run
+
+39. Automation: Copilot PR Assignment
+   File: .github/workflows/copilot-pr-assignment.yml
+   Triggers: schedule, workflow_dispatch
+
+40. System: Copilot Setup Steps
+   File: .github/workflows/copilot-setup-steps.yml
+   Triggers: workflow_dispatch, push, pull_request
+
+41. Content: Creative Coding Challenge
+   File: .github/workflows/creative-coding-challenge-generator.yml
+   Triggers: schedule, workflow_dispatch
+
+42. Content: Creativity Leaderboard
+   File: .github/workflows/creativity-leaderboard.yml
+   Triggers: schedule, workflow_dispatch
+
+43. Learning: Daily Reflection
+   File: .github/workflows/daily-learning-reflection.yml
+   Triggers: schedule, workflow_dispatch
+
+44. Demo: Experiments
+   File: .github/workflows/demos-and-experiments.yml
+   Triggers: issues, pull_request, workflow_dispatch
+
+45. Deploy: ADK Agents
+   File: .github/workflows/deploy-adk-agents.yml
+   Triggers: push, workflow_dispatch
+
+46. Deploy: GCP Infrastructure
+   File: .github/workflows/deploy-gcp-infrastructure.yml
+   Triggers: push, workflow_dispatch
+
+47. Code Quality: Design Decisions Documenter
+   File: .github/workflows/design-decisions-documenter.yml
+   Triggers: schedule, workflow_dispatch
+
+48. AI: 🌌 Discover Universal Truths
+   File: .github/workflows/discover-universal-truths.yml
+   Triggers: schedule, workflow_dispatch
+
+49. Maintenance: Ensure Repository Labels Exist
+   File: .github/workflows/ensure-labels-exist.yml
+   Triggers: schedule, workflow_dispatch, push
+
+50. Gemini: 🔀 Dispatch
+   File: .github/workflows/gemini-dispatch.yml
+   Triggers: pull_request_review_comment, pull_request_review, issue_comment
+
+51. Gemini: 🔧 Fix
+   File: .github/workflows/gemini-fix.yml
+   Triggers: workflow_call
+
+52. Gemini: ▶️ Invoke
+   File: .github/workflows/gemini-invoke.yml
+   Triggers: workflow_call
+
+53. Gemini: �� Review
+   File: .github/workflows/gemini-review.yml
+   Triggers: workflow_call
+
+54. Gemini: 🏷️ Triage
+   File: .github/workflows/gemini-triage.yml
+   Triggers: workflow_call
+
+55. Data: Reviewer Dashboard
+   File: .github/workflows/generate-reviewer-dashboard.yml
+   Triggers: workflow_dispatch, schedule, push
+
+56. Documentation: GitHub Pages Review
+   File: .github/workflows/github-pages-review.yml
+   Triggers: schedule, workflow_dispatch
+
+57. System: Goal and Idea
+   File: .github/workflows/goal-and-idea-system.yml
+   Triggers: schedule, workflow_dispatch
+
+58. Handle Cloud Run Errors
+   File: .github/workflows/handle-cloudrun-errors.yml
+   Triggers: repository_dispatch
+
+59. Learning: Git Commit Strategies
+   File: .github/workflows/learn-commit-strategies.yml
+   Triggers: schedule, workflow_dispatch, pull_request
+
+60. Learning: GitHub Copilot
+   File: .github/workflows/learn-from-copilot.yml
+   Triggers: schedule, workflow_dispatch
+
+61. Automation: Merge Conflict Resolver
+   File: .github/workflows/merge-conflict-resolver.yml
+   Triggers: pull_request, schedule, workflow_dispatch
+
+62. Meta: Agent Coordination
+   File: .github/workflows/meta-agent-coordination.yml
+   Triggers: issues, workflow_dispatch
+
+63. Meta: Coordinator Orchestration
+   File: .github/workflows/meta-coordinator.yml
+   Triggers: schedule, workflow_dispatch
+
+64. Meta-Learning Workflow Optimizer
+   File: .github/workflows/meta-learning-optimizer.yml
+   Triggers: schedule, workflow_dispatch
+
+65. Code Quality: Pattern Matcher
+   File: .github/workflows/pattern-matcher.yml
+   Triggers: schedule, workflow_dispatch
+
+66. Performance: Metrics Collection
+   File: .github/workflows/performance-metrics-collection.yml
+   Triggers: schedule, workflow_run, workflow_dispatch
+
+67. Automation: Smart PR Auto-Labeling
+   File: .github/workflows/pr-auto-labeler.yml
+   Triggers: pull_request, workflow_dispatch
+
+68. AI: PR Failure Intelligence System
+   File: .github/workflows/pr-failure-intelligence.yml
+   Triggers: schedule, workflow_dispatch
+
+69. System: PR Failure Learning
+   File: .github/workflows/pr-failure-learning.yml
+   Triggers: schedule, pull_request, workflow_dispatch
+
+70. AI: Prompt Performance Tracker
+   File: .github/workflows/prompt-performance-tracker.yml
+   Triggers: schedule, workflow_dispatch
+
+71. AI: Pattern Repetition Detector
+   File: .github/workflows/repetition-detector.yml
+   Triggers: pull_request, schedule, workflow_dispatch
+
+72. Evolution: RL Resource Optimization
+   File: .github/workflows/rl-resource-optimization.yml
+   Triggers: workflow_dispatch, schedule
+
+73. Learning: Self-Documenting AI Enhanced
+   File: .github/workflows/self-documenting-ai-enhanced.yml
+   Triggers: issues, workflow_dispatch
+
+74. Learning: Self-Documenting AI Discussions
+   File: .github/workflows/self-documenting-ai.yml
+   Triggers: issues, workflow_dispatch
+
+75. Cleanup: Sub-Agent
+   File: .github/workflows/subagent-cleanup.yml
+   Triggers: schedule, workflow_dispatch
+
+76. Agent System: Suggest Collaborations
+   File: .github/workflows/suggest-collaborations.yml
+   Triggers: schedule, workflow_dispatch
+
+77. System: Kickoff
+   File: .github/workflows/system-kickoff.yml
+   Triggers: push, workflow_dispatch
+
+78. System: Monitor
+   File: .github/workflows/system-monitor.yml
+   Triggers: schedule, workflow_dispatch
+
+79. Agent System: Investment Updates
+   File: .github/workflows/update-agent-investments.yml
+   Triggers: pull_request
+
+80. Update Changelog
+   File: .github/workflows/update-changelog.yml
+   Triggers: pull_request
+
+81. Data: Update Context Summaries
+   File: .github/workflows/update-context-summaries.yml
+   Triggers: schedule, workflow_dispatch, push
+
+82. Data: Workflow Execution Collection
+   File: .github/workflows/workflow-data-collection.yml
+   Triggers: workflow_dispatch, schedule
+
+83. Workflow Execution Recorder
+   File: .github/workflows/workflow-execution-recorder.yml
+   Triggers: workflow_run
+
+84. Workflow Execution Tracker
+   File: .github/workflows/workflow-execution-tracker.yml
+   Triggers: workflow_run
+
+85. CI: Workflow Validation
+   File: .github/workflows/workflow-validation.yml
+   Triggers: pull_request, workflow_dispatch
+
+================================================================================
+DISABLED WORKFLOWS
+================================================================================
+1. A2A: Local Orchestration Example
+   File: .github/workflows/a2a-local-orchestration.yml
+   Reason: No active triggers
+
+2. A2A: Multi-Agent Orchestration
+   File: .github/workflows/a2a-multi-agent.yml
+   Reason: No active triggers
+
+3. A2A: Parallel Agent Orchestration
+   File: .github/workflows/a2a-parallel-agents.yml
+   Reason: No active triggers
+
+4. GitHub Actions Generator Agent (Using Custom Actions)
+   File: .github/workflows/archive/actions-generator-agent-DEMO.yml
+   Reason: Archived
+
+5. Autonomous Code Reviewer
+   File: .github/workflows/archive/autonomous-code-reviewer.yml
+   Reason: Archived
+
+6. Cleanup: Old Learning Files
+   File: .github/workflows/archive/cleanup-old-learning-files.yml
+   Reason: Archived
+
+7. AI Code Pattern Hypothesis Testing
+   File: .github/workflows/archive/code-pattern-hypothesis-testing.yml
+   Reason: Archived
+
+8. Orchestrator: Dynamic Scheduling
+   File: .github/workflows/archive/dynamic-orchestrator.yml
+   Reason: Archived
+
+9. Example Workflow with A/B Testing
+   File: .github/workflows/archive/example-ab-testing-workflow.yml
+   Reason: Archived
+
+10. Example: Copilot with MCP
+   File: .github/workflows/archive/example-copilot-mcp.yml
+   Reason: Archived
+
+11. Example - Enhanced Custom Actions
+   File: .github/workflows/archive/example-enhanced-actions.yml
+   Reason: Archived
+
+12. Learning: Git Commit Strategies
+   File: .github/workflows/archive/learn-commit-strategies.yml
+   Reason: Archived
+
+13. Mentorship Monitoring Dashboard
+   File: .github/workflows/archive/mentorship-monitoring.yml
+   Reason: Archived
+
+14. Meta-Learning Workflow Optimizer
+   File: .github/workflows/archive/meta-learning-optimizer.yml
+   Reason: Archived
+
+15. 🧠 Neural Workflow Adaptation
+   File: .github/workflows/archive/neural-workflow-adaptation.yml
+   Reason: Archived
+
+16. AI: Prompt Auto-Tuner
+   File: .github/workflows/archive/prompt-auto-tuner.yml
+   Reason: Archived
+
+17. AI: Prompt Generator Integration
+   File: .github/workflows/archive/prompt-generator-integration.yml
+   Reason: Archived
+
+18. Review Criteria Learning
+   File: .github/workflows/archive/review-criteria-learning.yml
+   Reason: Archived
+
+19. Self-Reinforcement Learning
+   File: .github/workflows/archive/self-reinforcement.yml
+   Reason: Archived
+
+20. Setup Tech Lead Review Labels
+   File: .github/workflows/archive/setup-tech-lead-labels.yml
+   Reason: Archived
+
+21. Validate Copilot Instructions Size
+   File: .github/workflows/archive/validate-instructions-size.yml
+   Reason: Archived
+
+22. Learning: Combined Sources
+   File: .github/workflows/combined-learning.yml
+   Reason: No active triggers
+
+23. AI: Friend Create Follow-ups
+   File: .github/workflows/create-ai-friend-follow-ups.yml
+   Reason: No active triggers
+
+24. Agent System: Debug Custom Agents
+   File: .github/workflows/debug-custom-agents.yml
+   Reason: No active triggers
+
+25. Demo: Workflow A/B Test Example
+   File: .github/workflows/example-workflow-ab-test.yml
+   Reason: No active triggers
+
+26. Initialize ADK Pipeline Tracking Issue
+   File: .github/workflows/initialize-adk-tracking-issue.yml
+   Reason: No active triggers
+
+27. Agent System: Inspect Assignment
+   File: .github/workflows/inspect-issue-assignment.yml
+   Reason: No active triggers
+
+28. Learning: Hacker News
+   File: .github/workflows/learn-from-hackernews.yml
+   Reason: No active triggers
+
+29. Learning: TLDR Tech
+   File: .github/workflows/learn-from-tldr.yml
+   Reason: No active triggers
+
+30. AI: Self-Improving Prompt Generator Demo
+   File: .github/workflows/self-improving-prompt-demo.yml
+   Reason: No active triggers
+
+31. Test New Custom Actions
+   File: .github/workflows/test-new-actions.yml
+   Reason: No active triggers
+
+32. System: Workflow Failure Handler
+   File: .github/workflows/workflow-failure-handler.yml
+   Reason: No active triggers
+
+33. System: World Model Update
+   File: .github/workflows/world-update.yml
+   Reason: No active triggers
