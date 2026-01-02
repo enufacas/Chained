@@ -1,5 +1,10 @@
 # Changelog
 
+> [!WARNING]  
+> **Automation/Orchestration Currently Disabled** (as of 2025-12-29)  
+> 85 workflows including meta-coordinator, agent missions, and learning pipelines are currently disabled.  
+> To re-enable: `python3 tools/enable_workflows.py` (see `docs/data/workflow-analysis/workflow_disable_report.txt` for details)
+
 All notable changes to the Chained project are documented in this file.
 
 The format captures:
